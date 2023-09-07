@@ -1,0 +1,487 @@
+{extend name="Public/aside" /}
+{block name="title"}首頁顯示設定 - {$product.title} - 分類主題館{/block}
+{block name="css"}
+    <style type="text/css">
+        #open,#r_close,
+        #close{
+            margin-top: 4px;
+            margin-left: 10px;
+            margin-right: 5px;
+            cursor: pointer; 
+        }
+        .change-title{
+            position: absolute;
+            border: 2px solid rgb(157, 157, 157);
+            background: rgb(255, 255, 255);
+            padding: 5px;
+            width: 150px;
+            margin-top:-5px;
+            margin-left: 30px;
+            z-index: 999;
+        }
+        .change-title input {
+            border: 1px solid #000000;
+        }
+        .frame{
+            padding:10px 20px;
+            border: 1.5px #9D9D9D solid;
+            margin:10px auto;
+            width:99%
+        }
+        .frame li{
+            display:inline;
+        }
+        table{
+            margin: 0px auto;
+            margin-bottom: 10px;
+            width: 99%;
+        }
+        table, table tr, table td{
+            padding: 20px;
+            border: 2px #9D9D9D solid;
+        }
+        table tr:nth-child(3),
+        table td:nth-child(3),
+        table tr:nth-child(4),
+        table td:nth-child(4){
+            border:none
+        }
+        input{
+            border:none;
+            border-bottom:1px solid #000000;
+        }
+        .infobox input{
+            width: calc(100% - 50px);
+            padding: 0px 5px;
+        }
+        .img-box{
+                margin:0 auto;
+        }
+        .imgbox-text{
+            position: absolute
+        }
+        .preview{
+            max-height: 100%;
+            max-width: 100%;
+            position: relative
+        }
+        .url-box1{
+            width: 70%;
+            float: right;
+            margin-top:0px;
+        }
+        .url-box2{
+            width: 40%;
+            float: left;
+            margin-left:20px;
+            text-align: left;
+        } 
+        .url-box3{
+            width: 95%;
+            margin-left:20px;
+            text-align: left;
+        } 
+        .url-box4{
+            width: 95%;
+            margin-left:20px;
+            margin-top: 25px;
+        }  
+        .url-box4 textarea{
+            width: 100%;
+            height: 100px;
+        }
+        td p{
+            margin-top:10px
+        }
+        textarea{
+            border:2px solid #000000;
+            padding:5px;
+        }
+        td .button{
+            padding:5px 20px
+        }
+        @media (max-width:1919px){
+            .ad-title{ width:10px; }
+            .infobox{ width:100%; }
+            .url-box1{ float:left; width:100%; }
+            table td{ text-align:center }
+        }
+        .delbutton {
+            height: 20px; 
+            width: 100px; 
+            display:flex; 
+            margin-bottom:5px;
+        }
+    </style>
+{/block}
+{block name="content"}
+    <form action="{:url('product/update')}" name="productForm" method="post" enctype="multipart/form-data">
+        <div id="content">
+            <p id="title">分類主題館 > {$product.title}</p>
+            <div id="item-title" onclick="Show('.change-title')">{$product.title}</div>
+
+            <!-- 更改標題 -->
+            <div class="change-title none">
+                <p style="margin-bottom:5px">分類主題館名稱</p>
+                <input id="item-name" name="title" type="text" value="{$product.title}" style="width:100%; margin-bottom:10px" autofocus>
+                <div style="text-align:right">
+                    <a class="button" onclick="productForm.submit();" style="display:unset; border:1px solid #000000; padding:0px 5px">儲存</a>
+                    <a class="button" onclick="Show('.change-title')" style="display:unset; border:1px solid #000000; padding:0px 5px">取消</a>
+                </div>
+            </div>
+            <!-- 更改標題 結束 -->
+
+            <div style="display: inline-flex; margin-left: 30px;" id="radioDiv">
+                首頁顯示：
+                <input type="radio" name="show-btn" id="open" value="1">
+                <label for="open" style="font-weight:normal; cursor:pointer">開啟</label>
+                <input type="radio" name="show-btn" id="close" value="0">
+                <label for="close" style="font-weight:normal; cursor:pointer">隱藏</label>
+                <input type="radio" name="show-btn" id="r_close" value="2">
+                <label for="r_close" style="font-weight:normal; cursor:pointer">關閉</label>
+            </div>
+            <div style="display: inline-flex; margin-left: 30px;">
+                排序：<input type="number" name="order_id" value="{$product.order_id}">
+                <span>(排序越小越前面)</span>
+            </div>
+
+            <div class="frame">
+                <ul style="padding:0; font-size:20px; margin-bottom:0px;">
+                    <li><a style="text-decoration: underline;">首頁顯示設定</a></li>
+                    <!-- <li style="margin-left:40px;"><a href="{:url('typeinfo/index', ['parent_id' => $product.id])}">分類別列表</a></li> -->
+                </ul>
+            </div>
+
+            <!-- 圖片更改區 -->
+            <table>
+                <input type="hidden" name="id" value="{$product.id}"/>
+                <!--首頁分館廣告 開始-->
+                <tr>
+                    <td class="ad-title" rowspan="2">首頁分館廣告
+                         <p style="color:red">*連結請插入商品詳細內容頁網址</p>
+                    </td>
+                    <td rowspan="2">
+                        <div class="img-box delbutton" onclick="delImg('index_adv01_pic')">
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </div>
+                        <div class="img-box" style="height: 150px; width: 100px; display:flex;">
+                            <span class="glyphicon glyphicon-edit"></span>
+                            <input type='file' class="upl" name="index_adv01_pic" accept="image/*" onclick="ChangeImages()">
+                            <img class="preview" id="index_adv01_pic" name="index_adv01_pic" src="__UPLOAD__{$product.index_adv01_pic}"/>
+                        </div>
+                        <p>建議大小：540*540</p>
+                        <div class="infobox">
+                            <label>URL：</label><input type="text" name="index_adv01_link" value="{$product.index_adv01_link}">
+                        </div>
+                    </td>
+                    <td>
+                        <div class="img-box delbutton" onclick="delImg('index_adv02_pic')">
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </div>
+                        <div class="img-box" style="height: 100px; width: 100px;">
+                            <span class="glyphicon glyphicon-edit"></span>
+                            <input type='file' class="upl" name="index_adv02_pic" accept="image/*" onclick="ChangeImages()">
+                            <img class="preview" id="index_adv02_pic" name="index_adv02_pic" src="__UPLOAD__{$product.index_adv02_pic}"/>
+                        </div>
+                        <div class="url-box1">
+                            <p>建議大小：282*240</p>
+                            <div class="infobox">
+                                <label>URL：</label><input type="text" name="index_adv02_link" value="{$product.index_adv02_link}">
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="img-box delbutton" onclick="delImg('index_adv04_pic')">
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </div>
+                        <div class="img-box" style="height: 100px; width: 100px;">
+                            <span class="glyphicon glyphicon-edit"></span>
+                            <input type='file' class="upl" name="index_adv04_pic" accept="image/*" onclick="ChangeImages()">
+                            <img class="preview" id="index_adv04_pic" name="index_adv04_pic" src="__UPLOAD__{$product.index_adv04_pic}"/>
+                        </div>
+                        <div class="url-box1">
+                            <p>建議大小：282*240</p>
+                            <div class="infobox">
+                                <label>URL：</label><input type="text" name="index_adv04_link" value="{$product.index_adv04_link}">
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="img-box delbutton" onclick="delImg('index_adv06_pic')">
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </div>
+                        <div class="img-box" style="height: 100px; width: 100px;">
+                            <span class="glyphicon glyphicon-edit"></span>
+                            <input type='file' class="upl" name="index_adv06_pic" accept="image/*" onclick="ChangeImages()">
+                            <img class="preview" id="index_adv06_pic" name="index_adv06_pic" src="__UPLOAD__{$product.index_adv06_pic}"/>
+                        </div>
+                        <div class="url-box1">
+                            <p>建議大小：282*240</p>
+                            <div class="infobox">
+                                <label>URL：</label><input type="text" name="index_adv06_link" value="{$product.index_adv06_link}">
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="img-box delbutton" onclick="delImg('index_adv03_pic')">
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </div>
+                        <div class="img-box" style="height: 85px; width: 100px;">
+                            <span class="glyphicon glyphicon-edit"></span>
+                            <input type='file' class="upl" name="index_adv03_pic" accept="image/*" onclick="ChangeImages()">
+                            <img class="preview" id="index_adv03_pic" name="index_adv03_pic" src="__UPLOAD__{$product.index_adv03_pic}"/>
+                        </div>
+                        <div class="url-box1">
+                            <p>建議大小：282*240</p>
+                            <div class="infobox">
+                                <label>URL：</label><input type="text" name="index_adv03_link" value="{$product.index_adv03_link}">
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="img-box delbutton" onclick="delImg('index_adv05_pic')">
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </div>
+                        <div class="img-box" style="height: 85px; width: 100px;">
+                            <span class="glyphicon glyphicon-edit"></span>
+                            <input type='file' class="upl" name="index_adv05_pic" accept="image/*" onclick="ChangeImages()">
+                            <img class="preview" id="index_adv05_pic" name="index_adv05_pic" src="__UPLOAD__{$product.index_adv05_pic}"/>
+                        </div>
+                        <div class="url-box1">
+                            <p>建議大小：282*240</p>
+                            <div class="infobox">
+                                <label>URL：</label><input type="text" name="index_adv05_link" value="{$product.index_adv05_link}">
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="img-box delbutton" onclick="delImg('index_adv07_pic')">
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </div>
+                        <div class="img-box" style="height: 85px; width: 100px;">
+                            <span class="glyphicon glyphicon-edit"></span>
+                            <input type='file' class="upl" name="index_adv07_pic" accept="image/*" onclick="ChangeImages()">
+                            <img class="preview" id="index_adv07_pic" name="index_adv07_pic" src="__UPLOAD__{$product.index_adv07_pic}"/>
+                        </div>
+                        <div class="url-box1">
+                            <p>建議大小：282*240</p>
+                            <div class="infobox">
+                                <label>URL：</label><input type="text" name="index_adv07_link" value="{$product.index_adv07_link}">
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <!--首頁分館廣告 結束-->
+
+                <!--分館內頁廣告 開始-->
+                <tr>
+                    <td class="ad-title" rowspan="2">分館內頁廣告</td>
+                    <td colspan="4" style="border-bottom:none">
+                        <div class="img-box delbutton" onclick="delImg('inner_adv01_pic')">
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </div>
+                        <div class="img-box" style="height: 100px; width: 50%; float:left; margin-left:5%">
+                            <span class="glyphicon glyphicon-edit"></span>
+                            <input type='file' class="upl" name="inner_adv01_pic" accept="image/*" onclick="ChangeImages()">
+                            <img class="preview" id="inner_adv01_pic" name="inner_adv01_pic" src="__UPLOAD__{$product.inner_adv01_pic}"/>
+                        </div>
+                        <div class="url-box2" style="margin-top:16.5px;">
+                            <p>建議大小：1086*244</p>
+                            <div class="infobox">
+                                <label>URL：</label><input type="text" name="inner_adv01_link" value="{$product.inner_adv01_link}">
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="4" style="border-top:none; padding-top:0px">
+                        <div class="img-box delbutton" onclick="delImg('inner_adv02_pic')">
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </div>
+                        <div class="img-box" style="height: 200px; width: 50%; float:left; margin-left:5%">
+                            <span class="glyphicon glyphicon-edit"></span>
+                            <input type='file' class="upl" name="inner_adv02_pic" accept="image/*" onclick="ChangeImages()">
+                            <img class="preview" id="inner_adv02_pic" name="inner_adv02_pic" src="__UPLOAD__{$product.inner_adv02_pic}"/>
+                        </div>
+                        <div class="url-box2" style="margin-top:116px;">
+                            <p>建議大小：1086*358</p>
+                            <div class="infobox">
+                                <label>URL：</label><input type="text" name="inner_adv02_link" value="{$product.inner_adv02_link}">
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <!--分館內頁廣告 結束-->
+
+                <!--分館關鍵字 開始-->
+                <tr>
+                    <td class="ad-title">分館隱藏資訊</td>
+                    <td colspan="4" style="text-align:left; position:relative">
+                        <div class="url-box3">
+                            <p>分館關鍵字(輸入範例ex:德安堂,長大人)</p>
+                            <div class="infobox">
+                                <label>關鍵字：</label><input type="text" name="webtype_keywords" value="{$product.webtype_keywords}">
+                            </div>
+                        </div>
+                        <div class="url-box4">
+                            <p>分館描述</p>
+                            <textarea id="editorspace" name="webtype_description">{$product.webtype_description}</textarea>
+                        </div>
+                    </td>
+                </tr>
+                <!--分館關鍵字 結束-->
+
+                <!--分館文字廣告 開始-->
+                <tr>
+                    <td class="ad-title">分館文字廣告</td>
+                    <td colspan="4" style="text-align:left; position:relative">
+                        <div style="margin-left:5%; margin-bottom: 50px; width:50%; height:200px; float:left">
+                            <textarea id="editor" name="content">{$product.content}</textarea>
+                        </div>
+    					<div style="width:100%;">					
+    						<div class="img-box" style="height: 75px; width: 200px; margin-left:1.6%; margin-bottom: 50px;">
+    							<span class="glyphicon glyphicon-edit"></span>
+    							<p style="position:absolute; ">分館圖</p>
+    							<p style="position:absolute; top: 70px;">建議大小：509*283</p>
+    							<input type='file' class="upl" name="pic" accept="image/*" onclick="ChangeImages()">
+    							<img class="preview" id="pic" name="pic" src="__UPLOAD__{$product.pic}"/>
+    						</div>
+    						<div class="img-box delbutton" onclick="delImg('pic')" style="height: 25px;display: inline-block;">
+    							<span class="glyphicon glyphicon-trash"></span>
+    						</div>
+    					</div>
+                    </td>
+                </tr> 
+                <tr>
+                    <td class="ad-title">分館左側ICON圖</td>
+                    <td colspan="4" style="text-align:left; position:relative">
+                        <div style="width:100%;">
+    						<div class="img-box" style="height: 75px; width: 200px; margin-left:1.6%; margin-bottom: 50px;">
+    							<span class="glyphicon glyphicon-edit"></span>
+    							<p style="position:absolute; ">分館左側ICON圖</p>
+    							<p style="position:absolute; top: 70px;">建議40px*40px</p>
+    							<input type='file' class="upl" name="pic_icon" accept="image/*" onclick="ChangeImages()">
+    							<img class="preview" id="pic_icon" name="pic_icon" src="__UPLOAD__{$product.pic_icon}"/>
+    						</div>
+    						<div class="img-box delbutton" onclick="delImg('pic_icon')" style="height: 25px;display: inline-block;">
+    							<span class="glyphicon glyphicon-trash"></span>
+    						</div>
+    					</div>
+                        <div style="border:none; position: absolute; right: 1%; bottom: 5%;">
+                            <a class="button" onclick="productForm.submit();">儲　存</a>
+                            <a class="button" onclick="location.reload();">還　原</a>
+                        </div>
+                    </td>
+                </tr>
+                <!--分館文字廣告 結束-->
+            </table>
+        </div>
+
+        <input type='hidden' name="del_index_adv01_pic" value="0">
+        <input type='hidden' name="del_index_adv02_pic" value="0">
+        <input type='hidden' name="del_index_adv03_pic" value="0">
+        <input type='hidden' name="del_index_adv04_pic" value="0">
+        <input type='hidden' name="del_index_adv05_pic" value="0">
+        <input type='hidden' name="del_index_adv06_pic" value="0">
+        <input type='hidden' name="del_index_adv07_pic" value="0">
+        <input type='hidden' name="del_inner_adv01_pic" value="0">
+        <input type='hidden' name="del_inner_adv02_pic" value="0">
+        <input type='hidden' name="del_pic" value="0">
+    	<input type='hidden' name="del_pic_icon" value="0">
+    </form>
+{/block}
+
+{block name="ownJS"}
+    <script src="__PUBLIC__/js/action.js"></script>
+    <script charset="utf-8" src="__PUBLIC__/js/kindeditor/kindeditor.js"></script>
+    <script charset="utf-8" src="__PUBLIC__/js/kindeditor/lang/zh_TW.js"></script>
+    <script>
+        var editor;
+        var editorspace;
+        KindEditor.ready(function(K) {
+                editor = K.create('#editor', {
+                        afterBlur: function(){this.sync();},
+                        langType : 'zh_TW',
+                        items:['link', 'hr'],
+                        width:'100%',
+                        height:'100%',
+                        resizeType:0
+                });
+                editorspace = K.create('#editor', {
+                        afterBlur: function(){this.sync();},
+                        langType : 'zh_TW',
+                        items:[],
+                        width:'100%',
+                        height:'100%',
+                        resizeType:0
+                });
+        });
+      
+        function cellCtrl(data) {
+            $.ajax({
+                url: "{:url('product/cellCtrl')}",
+                type: 'POST',
+                dataType: 'json',
+                data: data,
+                success: function(response) {
+                    if(response.status){
+                        alert('更改成功');
+                    }else{
+                        alert('更改失敗');
+                        console.log(response.message);
+                    }
+                },
+                error: function(xhr) {
+                    alert('更改失敗');
+                    console.log(xhr);
+                }
+            });
+        }
+        $(function() {
+            $(document).click(function() {
+                $('.change-title').fadeOut();
+            })
+            $('#item-title').click(function(event) {
+                event.stopPropagation();
+            })
+            $('.change-title').click(function(event) {
+                event.stopPropagation();
+            })
+        });
+
+        switch(+"{$product.online}"){
+            case 0 :
+                $('#close').click();break;
+            case 1 :
+                $('#open').click();break;
+            case 2 :
+                $('#r_close').click();break;
+        }
+
+        $("#radioDiv :radio").change(function ()
+            {               
+                var value = $(this).val();
+                var data = {
+                    id: "{$product.id}",
+                    online: value
+                };
+                cellCtrl(data);         
+            }
+        );
+        function openList() {
+            $('#productListli').click();
+        }
+        function delImg(id) {
+            $("#" + id).attr('src', '');
+            $("input[name='del_" + id + "']").val(1);
+        }
+
+        $("img").load(function () {
+            if($(this).attr('src') != ''){
+                $("input[name='del_" + $(this).attr('name') + "']").val(0);
+            }
+        });
+    </script>
+{/block}

@@ -1,0 +1,48 @@
+{extend name="Public/mainTpl" /}
+{block name="title"}{$lang_menu['隱私政策']} | {$seo[0]['title']}{/block}
+{block name="css"}
+
+<style type="text/css">
+    .memberContentBox p{
+        line-height: 1.5rem;
+    }
+</style>
+{/block}
+
+{block name="content"}
+<!-- /////////////////////////////////////////////////////////////////////////////////////////////// -->
+<!-- announcement start -->
+{include file='Public/newsLink' /}
+<!-- announcement end -->
+<!-- /////////////////////////////////////////////////////////////////////////////////////////////// -->
+<section class="container max-wideVersion directoryRow">
+    <ul class="clearfix">
+        <li><a href="{$MAIN_WEB_LAN}/">{$lang_menu['首頁']}</a><i class="icon-right"></i></li>
+        <!-- <li><a href="">關於我們</a><i class="icon-right"></i></li> -->
+        <li id="aboutDirectoryText"><a href="{:url('Login/signup')}">{$lang_menu['隱私政策']}</a></li>
+    </ul>
+</section>
+<section class="container max-wideVersion min-heightVersion aboutUsBox">
+    <!-- /////////////////////////////////////////////////////////////////////////////////////// -->
+    <!-- /////////////////////////////////////////////////////////////////////////////////////// -->
+    <!-- /////////////////////////////////////////////////////////////////////////////////////// -->
+    <div class="titleBox innerPage">
+        <h2 class="chText">
+            {$lang_menu['隱私政策']}
+            <!-- <span class="enText">PRIVACY POLICY</span> -->
+        </h2>
+    </div>
+    <div class="memberContentBox registeredBox">
+        <div class="memberMiddle">
+            <div class="row">
+                <div class="form-group col-12">
+                    {$consent.privacy}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{/block}
+
+{block name="ownJS"}
+{/block}

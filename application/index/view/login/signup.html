@@ -1,0 +1,374 @@
+{extend name="Public/mainTpl" /}
+{block name="title"}{$lang_menu['註冊會員']} | {$seo[0]['title']}{/block}
+{block name="css"}
+{/block}
+
+{block name="flulid_content"}
+    <!-- /////////////////////////////////////////////////////////////////////////////////////////////// -->
+    <!-- announcement start -->
+    {include file='Public/newsLink' /}
+    <!-- announcement end -->
+    <!-- /////////////////////////////////////////////////////////////////////////////////////////////// -->
+
+    <div class="d-flex justify-content-center">
+        <div class="w-100 bg_anuenue bg_pic d-flex justify-content-center">
+            <section class="reg_prod_area box_show bg_white max-wideVersion productPublic">
+                <div class="pt_sxsmal pb_ssmal">
+                    <h3 class="page_title">
+                        {$lang_menu['註冊會員']}
+                    </h3>
+                </div>
+
+                <form action="{:url('Login/dosignup')}" method="post" name="signupForm" id="signupForm">
+                    <div class="container_flulid">
+                        <div class="row pb_ssmal">
+                            <div class="form-group col-12 mb-0">
+                                <label for="su_email" class="col-form-label">{$lang_menu['帳號設定']}</label>
+                                <!-- <span class="smallText">{$lang_menu['必填']}</span> -->
+                                <input type="text" class="form-control " name="email" id="su_email" placeholder="{$lang_menu['請輸入您的Email信箱作為會員帳號']}">
+                            </div>
+                            <div class="form-group col-12">
+                                <span class="smallText">
+                                    {$lang_menu['註冊完成後系統將發出認證信至您的E-mail信箱，請您至個人信箱中收取認證信，完成會員認證。']}
+                                </span>
+                            </div>
+                            <div class="form-group col-12">
+                                <label for="su_password" class="col-form-label">{$lang_menu['密碼設定']}</label>
+                                <!-- <span class="smallText">{$lang_menu['必填']}，需包含英文及數字</span> -->
+                                <input type="password" class="form-control " name="password" id="su_password" placeholder="{$lang_menu['密碼需包含英文及數字']}">
+                            </div>
+                            <div class="form-group col-12">
+                                <label for="su_passwordB" class="col-form-label">{$lang_menu['確認密碼']}</label>
+                                <!-- <span class="smallText">{$lang_menu['必填']}</span> -->
+                                <input type="password" class="form-control" name="passwordB" id="su_passwordB" placeholder="{$lang_menu['請再次輸入上方設定的密碼，並確認密碼無誤']}">
+                            </div>
+                        </div>
+
+                        <div class="pb_ssmal">
+                            <span class="other_login color_gray"><span>{$lang_menu['基本資料']}</span></span>
+                        </div>
+                        <div class="row pb_xsmal">
+                            <div class="form-group col-6">
+                                <label for="su_name" class="col-form-label">{$lang_menu['姓名']}</label>
+                                <!-- <span class="smallText">{$lang_menu['必填']}</span> -->
+                                <input type="text" class="form-control" name="name" id="su_name" placeholder="">
+                                <span class="smallText">{$lang_menu['請務必提供正確姓名。']}</span>
+                            </div>
+
+                            <div class="form-group col-6">
+                                <label for="" class="col-form-label">{$lang_menu['生日']}</label>
+                                <!-- <input type="text" class="form-control " id="" placeholder="生日下拉式"> -->
+                                <input type="date" class="form-control" name="birthday" id="su_birthday" placeholder="" value="">
+                            </div>
+
+                            <div class="form-group col-12">
+                                <label for="" class="col-form-label">{$lang_menu['聯絡地址']}</label>
+                                <!-- <span class="smallText">{$lang_menu['必填']}</span> -->
+                                <div class="row addressBox w-100">
+                                    {if condition="$subDeparment=='A'"}
+                                        <div class="col-sm-6 use-mb">
+                                            <div class="row use-row">
+                                                <div class="col-md-4 col-6 use-col">
+                                                    <select name="F_I_CNo" id="myCity" class="ui fluid selection dropdown no label use-btn">
+                                                        <option value="">{$lang_menu['請選擇縣市']}</option>
+                                                        {volist name="city" id="vo"}
+                                                            <option value="{$vo.AutoNo}">{$vo.Name}</option>
+                                                        {/volist}
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-4 col-6 use-col">
+                                                    <select name="F_I_TNo" id="myTown" class="ui fluid selection dropdown no label use-btn">
+                                                        <option value="">{$lang_menu['請選擇']}</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-4 col-12 use-col mt-md-0 mt-2">
+                                                    <input type="text" class="form-control" id="myZip" name="F_S_NH_Zip" size="3" placeholder="{$lang_menu['郵遞區號']}" readonly="ture">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {/if}
+                                    {if condition="$subDeparment=='A'"}
+                                        <div class="col-sm-6 use-mb">
+                                    {else /}
+                                        <div class="col-sm-12 use-mb">
+                                    {/if}
+                                        <input name="F_S_NH_Address" type="text" class="form-control" id="" placeholder="{$lang_menu['請輸入地址']}">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group col-12">
+                                <label for="su_mobile" class="col-form-label">{$lang_menu['手機號碼']}</label>
+                                <!-- <span class="smallText">{$lang_menu['必填']}</span> -->
+                                <input type="text" class="form-control" name="mobile" id="su_mobile" placeholder="">
+                            </div>
+
+                            <input type="hidden" class="form-control" name="tel" id="su_tel" placeholder="">
+                           <!--  <div class="form-group col-12">
+                                <label for="su_tel" class="col-form-label">{$lang_menu['聯絡電話']}</label>
+                                <input type="text" class="form-control" name="tel" id="su_tel" placeholder="">
+                            </div> -->
+
+                            <div class="form-group col-12">
+                                <label for="su_verifyCode">{$lang_menu['驗證碼']}</label>
+                                <div class="verification w-100" id="verification_signupForm"></div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-12 justify-content-center">
+                                <div class="form-check term-error-box">
+                                    <input class="form-check-input" type="checkbox" value="" id="su_agreement" type="checkbox" name="term">
+                                    <label class="form-check-label d-inline" for="su_agreement">
+                                        <span>{$lang_menu['我已詳細閱讀']} <a href="#" data-toggle="modal" data-target="#memberRuleModel">{$lang_menu['相關服務與隱私權條款']}</a>{$lang_menu['內容，並同意接受條款內容所有款項之規定']}</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group offset-2 col-8 text-center">
+                                <label class="btn w-100 color_white bg_gray" style="cursor: pointer;">
+                                    {$lang_menu['送出資料']}
+                                    <!-- <i class="icon-right"></i> -->
+                                    <input type="submit" value="{$lang_menu['送出資料']}" id="check_btn_signupForm">
+                                </label> 
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </section>
+        </div>
+    </div>
+{/block}
+
+{block name="Modal"}
+    <!-- Modal -->
+    <div class="modal fade memberRuleModel" id="memberRuleModel"
+         tabindex="-1" role="dialog" aria-labelledby="memberRuleModelTitle" aria-hidden="true">
+        <div class="reg_prod_area bg_white pb_sxsmal modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content border-0">
+                <!-- <div class="modal-header">
+                    <h5 class="modal-title" id="memberRuleModelTitle">{$lang_menu['會員條款']}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div> -->
+                <div class="pt_sxsmal pb_ssmal">
+                    <h3 class="page_title">
+                        {$lang_menu['服務與隱私權條款']}
+                    </h3>
+                </div>
+                <div class="pb_ssmal">
+                    <span class="other_login color_gray"><span>{$lang_menu['服務與隱私權條款']}</span></span>
+                </div>
+                <div class="modal-body p-0">
+                    {$consent.member}
+                </div>
+            </div>
+        </div>
+    </div>
+{/block}
+
+{block name="ownJS"}
+    <script src="https://static.runoob.com/assets/jquery-validation-1.14.0/dist/jquery.validate.min.js"></script>
+    <script src="https://static.runoob.com/assets/jquery-validation-1.14.0/dist/localization/messages_zh.js"></script>
+    <script>
+        {if condition="$subDeparment=='A'"}
+            //利用jQuery的ajax把縣市編號(CNo)傳到Town_ajax.php把相對應的區域名稱回傳後印到選擇區域(鄉鎮)下拉選單
+            if ($('#myCity').val()) {
+                var CNo = $('#myCity').val();
+                $.ajax({
+                    type: "POST",
+                    url: "{:url('Login/Town_ajax')}", //{:url('Member/Town_ajax')}
+                    cache: false,
+                    data: { CNo: CNo },
+                    error: function() {
+                        alert("{$lang_menu['發生錯誤']}");
+                    },
+                    success: function(data) {
+                        console.log(data);
+                        $('#myTown').html("<option value=\"\">{$lang_menu['請選擇區']}</option>" + data);
+                        $('#myZip').val(""); //避免重新選擇縣市後郵遞區號還存在，所以在重新選擇縣市後郵遞區號欄位清空
+                    }
+                });
+            }
+            $('#myCity').change(function() {
+                var CNo = $('#myCity').val();
+                $.ajax({
+                    type: "POST",
+                    url: "{:url('Login/Town_ajax')}", //{:url('Member/Town_ajax')}
+                    cache: false,
+                    data: { CNo: CNo },
+                    error: function() {
+                        alert("{$lang_menu['發生錯誤']}");
+                    },
+                    success: function(data) {
+                        console.log(data);
+                        $('#myTown').html("<option value=\"\">{$lang_menu['請選擇區']}</option>" + data);
+                        $('#myZip').val(""); //避免重新選擇縣市後郵遞區號還存在，所以在重新選擇縣市後郵遞區號欄位清空
+                    }
+                });
+            });
+
+            //利用jQuery的ajax把縣市編號(CNo)傳到Town_ajax.php把相對應的區域名稱回傳後印到選擇區域(鄉鎮)下拉選單
+            $('#myTown').change(function() {
+                var TNo = $('#myTown').val();
+                $.ajax({
+                    type: "POST",
+                    url: "{:url('Login/ZIP_ajax')}", //{:url('Member/Zip_ajax')}
+                    cache: false,
+                    data: { TNo: TNo },
+                    error: function() {
+                        alert("{$lang_menu['發生錯誤']}");
+                    },
+                    success: function(data) {
+                        $('#myZip').val(data);
+                    }
+                });
+            });
+
+            $.validator.setDefaults({
+                submitHandler: function() {
+                    if(codeVerifyCheck_signupForm){
+                        submitForm('signupForm');
+                    }
+                }
+            });
+        {/if}//
+
+        $.validator.addMethod(
+            "regex",
+            function(value, element, regexp) {
+                var re = new RegExp(regexp);
+                return this.optional(element) || re.test(value);
+            },
+            "Please check your input."
+        );
+
+        $("#signupForm").validate({
+            rules: {
+                name: {
+                    required: true
+                },
+                password: {
+                    required: true
+                },
+                passwordB: {
+                    required: true,
+                    equalTo: "#su_password"
+                },
+                email: {
+                    remote: {
+                        url: "{:url('Ajax/ckaccount')}",
+                        type: "post",
+                    },
+                    required: true,
+                    email: true
+                },
+                mobile: {
+                    required: true,
+                    number: true
+                },
+                addr: {
+                    required: true
+                },
+                F_I_CNo:{
+                    required: true
+                },
+                F_I_TNo:{
+                    required: true
+                },
+                F_S_NH_Address:{
+                    required: true
+                },
+                term: {
+                    required: true
+                },
+            },
+            messages: {
+                name: {
+                    required: "{$lang_menu['名稱不得為空']}"
+                },
+                password: {
+                    required: "{$lang_menu['密碼不得為空']}",
+                },
+                passwordB: {
+                    required: "{$lang_menu['密碼不得為空']}",
+                    equalTo: "{$lang_menu['密碼不一致']}"
+                },
+                email: {
+                    remote: "{$lang_menu['帳號已被使用']}",
+                    required: "{$lang_menu['帳號不得為空']}",
+                    email: "{$lang_menu['帳號格式錯誤']}"
+                },
+                mobile: {
+                    required: "{$lang_menu['手機不得為空']}",
+                    number: "{$lang_menu['手機只能是數字']}"
+                },
+                addr: {
+                    required: "{$lang_menu['地址不得為空']}"
+                },
+                F_I_CNo: {
+                    required: "{$lang_menu['請選擇縣市']}"
+                },
+                F_I_TNo: {
+                    required: "{$lang_menu['請選擇區']}"
+                },
+                F_S_NH_Address: {
+                    required: "{$lang_menu['地址不得為空']}"
+                },
+                term: {
+                    required: "{$lang_menu['請確認已閱讀，並同意遵守本網站之會員條款']}"
+                },
+            }
+        });
+    </script>
+
+    {if condition="$subDeparment=='A'"}
+        <script type="text/javascript">
+            $( document ).ready(function() {
+                setTimeout(function(){ 
+                    if($('#myCity').val() !=""){
+                        var CNo = $('#myCity').val();
+                        $.ajax({
+                            type: "POST",
+                            url: "{:url('Login/Town_ajax')}",
+                            cache: false,
+                            data: { CNo: CNo },
+                            error: function() {
+                                alert("{$lang_menu['發生錯誤']}");
+                            },
+                            success: function(data) {
+                                console.log(data);
+                                $('#myTown').html("<option value=\"\">{$lang_menu['請選擇區']}</option>" + data);
+                                $('#myZip').val(""); //避免重新選擇縣市後郵遞區號還存在，所以在重新選擇縣市後郵遞區號欄位清空
+                            }
+                        });
+                    }
+                }, 500);;
+            });
+        </script>
+    {/if}
+
+    <script type="text/javascript">
+        /*註冊驗證碼*/
+        var codeVerifyCheck_signupForm = true
+        $('#verification_signupForm').codeVerify({
+            type: 1,
+            // arith:24,
+            width: '100%',
+            height: '40px',
+            fontSize: '30px',
+            codeLength: 4,
+            btnId: 'check_btn_signupForm',
+            ready: function () {},
+            success: function () {
+                codeVerifyCheck_signupForm = true;
+            },
+            error: function () {
+                alert("{$lang_menu['驗證失敗']}");
+                codeVerifyCheck_signupForm = false;
+            }
+        });
+        $('.verify-change-code').html("{$lang_menu['換一張']}");
+        // $('label[for="su_verifyCode"]').css({width: '180px'});
+    </script>
+{/block}
+

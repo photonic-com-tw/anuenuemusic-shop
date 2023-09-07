@@ -1,0 +1,205 @@
+{extend name="Public/aside" /}
+
+{block name="title"}參數設定區 - 會員優惠設定{/block}
+
+{block name="css"}
+    <style type="text/css">
+    	#content {
+		    width: calc(100% - 150px);
+		    height: 80%;
+		    position: absolute;
+		    right: 0;
+		}
+		#title {
+		    padding: 15px 30px;
+		    font-size: 22px;
+		    border-bottom: 1px #9D9D9D solid;
+		}
+
+        table {
+            margin: 30px;
+           /* width: 80%;*/
+        }
+
+        table td {
+            padding: 10px;
+			border: 2px #9D9D9D solid;
+        }
+
+        input{
+            /*width:84.9%;*/
+        }
+        table tr:nth-child(3) td,
+        table tr:nth-child(4) td,
+        table tr:nth-child(5) td,
+        table tr:nth-child(6) td {
+            /*border:none;*/
+        }            
+
+    </style>
+
+{/block}
+
+{block name="content"}
+
+    <div id="content">
+
+        <p id="title">參數設定區 > 會員優惠設定</p>
+
+        {if condition="$FirstBuyDiscount==1"}
+        <div>
+        	<h3 class="text-left" style="margin-left: 30px;">會員首購優惠設定</h3>
+        	<table>
+				 <tr>
+					<td>優惠方式</td>
+					<td>優惠說明</td>
+					<td style="text-align:center;">更新</td>
+				</tr>  
+				<form action="{:url('Admin/update_vip_type')}?id=0" method="post">
+					<input type="hidden" name="id" value="0">
+					<input type="hidden" name="vip_name" value="會員首購優惠">
+					<tr>
+						<td>
+							<input type="radio" name="type" id="type0_0" value="0" {if condition="$fisrt_buy.type==0"}checked{/if}>
+							<label for="type0_0">打折</label>&nbsp;&nbsp;&nbsp;&nbsp;
+							<input type="radio" name="type" id="type0_1" value="1" {if condition="$fisrt_buy.type==1"}checked{/if}>
+							<label for="type{$fisrt_buy.id}_1">扣元</label>
+							<br>
+							<input type="number" name="discount" class="discount" value="{$fisrt_buy.discount}" step="0.01">
+							<br><span style="color: red">如需打85折，請輸入8.5</span>
+						</td>
+						<td><input type="text" name="note" value="{$fisrt_buy.note}"></td>
+						<td style="text-align:center"><button  class="btn btn-success">更改</button></td>
+					</tr>    
+				 </form>
+            </table>
+        </div>
+        <hr class="w-100">
+        {/if}
+
+        {if condition="$VipDiscount==1"}
+        <div>
+        	<h3 class="text-left" style="margin-left: 30px;">VIP等級設定</h3>
+		   	<form action="{:url('Admin/add_vip_type')}" method="post">
+
+                <table class="add" style="margin-top:0">
+                    <tr>
+						<td>等級名稱：<br><input type="text" name="vip_name"></td>
+						<td>優惠方式：<br>
+							<input type="radio" name="type" id="type_0" value="0" checked>
+							<label for="type_0">打折</label>&nbsp;&nbsp;&nbsp;&nbsp;
+							<input type="radio" name="type" id="type_1" value="1">
+							<label for="type_1">扣元</label>
+							<br>
+							<input type="number" name="discount" class="discount" step="0.01">
+							<br><span style="color: red">如需打85折，請輸入8.5</span>
+						</td>
+						<td>升等條件金額：<br><input type="number" name="rule">
+							<br><span style="color: red">如設定0元，則只要有消費過即符合</span>
+						</td>
+						<td>等級說明：<br><input type="text" name="note"></td>
+                        <td colspan="2" style="text-align:right"><button class="btn btn-primary">新增</button></td>
+                    </tr>
+                </table>
+            </form>
+            <table>
+				 <tr>
+					<td>等級名稱</td>
+					<td>優惠方式</td>
+					<td>升等條件金額</td>
+					<td>等級說明</td>				
+					<td style="text-align:center;">更新</td>
+					<td style="text-align:center">刪除</td>
+				</tr>  
+
+				{volist name="vip_type" id="vo"}
+				<form action="{:url('Admin/update_vip_type')}?id={$vo.id}" method="post">
+					<input name="id" type="hidden" value="{$vo.id}">    
+					<tr>
+						<td><input type="text" name="vip_name" value="{$vo.vip_name}"></td>
+						<td>
+							<input type="radio" name="type" id="type{$vo.id}_0" value="0" {if condition="$vo.type==0"}checked{/if}>
+							<label for="type{$vo.id}_0">打折</label>&nbsp;&nbsp;&nbsp;&nbsp;
+							<input type="radio" name="type" id="type{$vo.id}_1" value="1" {if condition="$vo.type==1"}checked{/if}>
+							<label for="type{$vo.id}_1">扣元</label>
+							<br>
+							<input type="number" name="discount" class="discount" value="{$vo.discount}" step="0.01">
+						</td>
+						<td><input type="number" name="rule" value="{$vo.rule}"></td>
+						<td><input type="text" name="note" value="{$vo.note}"></td>
+						<td style="text-align:center"><button class="btn btn-success">更改</button></td>
+						<td style="text-align:center"><a class="btn btn-danger" href="javascript:if(confirm('確定刪除?'))location.href='{:url('Admin/del_vip_type')}?id={$vo.id}'">刪除</a></td>
+					</tr>    
+				</form>
+				{/volist}
+            </table>
+        </div>
+        {/if}
+    </div>
+{/block}
+
+{block name="ownJS"}
+{/block}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

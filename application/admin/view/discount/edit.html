@@ -1,0 +1,967 @@
+{extend name="Public/aside" /}
+
+{block name="title"}折扣優惠-修改折扣{/block}
+
+{block name="css"}
+
+    <style>
+
+
+
+        .back{
+
+            border:1px solid #333;
+
+            background:#E0E0E0;
+
+            padding:0px 10px;
+
+            padding-top:4px;
+
+            color:#333;
+
+            margin-left:10px
+
+        }
+
+        .img-box{
+
+            margin:0px
+
+        }
+
+        .sm-img-box{
+
+            width:85px;
+
+            height:85px;
+
+            display: inline-flex;
+
+            margin-top:6.5px
+
+        }
+
+
+
+        .info-div{
+
+            border-bottom:1px solid #000000;
+
+            margin-bottom:10px;
+
+            width:480px;
+
+            position:relative;
+
+        }
+
+        label{
+
+            font-weight: normal;
+
+            cursor: pointer;
+
+            margin:0px;
+
+        }
+
+        .glyphicon-plus{
+
+            color:#fff;
+
+            font-size:14px;
+
+            text-align:center;
+
+            background:#333;
+
+            padding:6px;
+
+            border-radius:100px;
+
+            cursor:pointer
+
+        }
+
+
+
+        /* 主體表格設置 */
+
+        table{
+
+            width:99%;
+
+            margin: 10px auto
+
+        }
+
+        table td{
+
+            padding:5%
+
+
+
+        }
+
+
+
+        /* 第一列設置 */
+
+        .sm-group{
+
+            float:left;
+
+            margin-left:10px;
+
+            margin-right:10%
+
+        }
+
+        .info-div textarea{
+
+            height:100px;
+
+            width:400px;
+
+            position:absolute;
+
+            margin-left:10px;
+
+            margin-top:2px
+
+        }
+
+        @media (max-width:1280px){
+
+            .sm-group{ margin-right:20 }
+
+            .setting{ margin:0px auto; display: flex;; }
+
+        }
+
+
+
+        /* 第二列設置 */
+
+        #setting{
+
+            margin:10px auto;
+
+            width:100%;
+
+        }
+
+        #setting, #setting tr, #setting td{
+
+            border:2px #9D9D9D solid
+
+        }
+
+        #setting td{
+
+            padding:1%
+
+        }
+
+        #setting td:nth-child(1){
+
+            background: #E0E0E0;
+
+            text-align: center;
+
+            width:10%;
+
+        }
+
+        .discount{
+
+            width:30%;
+
+            padding:0px 5px;
+
+            text-align: right;
+
+        }
+
+        .confirm{
+
+            position: absolute;
+
+            left: 45%;
+
+            margin-top: 20px;
+
+            font-size: 22px;
+
+            padding: 5px 20px;
+
+        }
+
+
+
+
+
+
+
+    </style>
+
+{/block}
+
+{block name="content"}
+
+    <div id="content">
+
+        <p id="title">折扣優惠 > 折扣編輯</p>
+
+        <a class="back" href="{:url('Discount/index')}">
+
+            <span style="font-size:18px; color:#333" class="glyphicon glyphicon-arrow-left"></span>
+
+        </a>
+
+        <!-- <form action="{:url('act/doCreate')}" name="actForm" method="post"> -->
+
+        <form name="actForm" method="post">
+
+        <table>
+            <!-- 第一列 -->
+            <tr>
+                <td>
+                    <div>
+                        <div class="info-div">
+                            折扣名稱<span class="text-danger">*</span>：
+                            <input type="text" ng-model="contCtrl.model.actInfo.name" name="name" style="border:none"  placeholder="必填" class="w-c100">
+                        </div>
+                        <div class="info-div" style="height:140px;">
+                            注意簡介
+                            <textarea ng-model="contCtrl.model.actInfo.content" name="content"></textarea>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <div>
+                        <div class="info-div">
+                            介紹圖片：(建議寬度1100px，高度不限)<input type='file' name="img" ng-file-select="onFileSelect($files)" ng-model="contCtrl.img">
+                            <img ng-if="contCtrl.img!='/public/static/index' && contCtrl.img!='/public/static/indexnull'" ng-src="<%contCtrl.img%>" style="max-width: 100%;"/>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <!-- 第一列結束 -->
+            <!-- 第二列 -->
+            <tr>
+                <td  colspan="2">
+                    折扣設定
+                    <table id="setting">
+                        <tr>
+                            <td>時間</td>
+                            <td colspan="2">
+                                <p>開始日期 <input type="date" ng-model="contCtrl.model.actInfo['start']" name="start" id="start" value=""></p>
+                                <p><input type="checkbox" ng-model="contCtrl.model.noEndTime" style="margin-left:70px" id="noEndTime"> 沒有結束日期</p>
+                                <span id="endPTag">結束日期</span> 
+                                <input type="date" ng-model="contCtrl.model.actInfo['end']" ng-show="!contCtrl.model.noEndTime" name="end" id="end">
+                            </td>
+                        </tr>                       
+                        <tr>
+                            <td>
+                                折扣方式 <span class="text-danger">*</span>
+                            </td>
+                            <td style="border:2px dashed #9D9D9D">
+                                <div>
+									<p style="margin-left:15px">
+										折 <input ng-model="contCtrl.model.actInfo.discount1" class="discount" type="number" name=""> 元</p>
+                                </div>
+                            </td>
+                            <td style="border:2px dashed #9D9D9D">                              
+                            </td>
+                        </tr>
+                    </table>
+                   <!--  <a class="button confirm" onclick="actForm.submit();">活動建立</a> -->
+                </td>
+            </tr>
+            <!-- 第二列結束 -->
+        </table>
+        </form>
+
+        <div>
+
+			<div class="container-fluid">
+
+					<div class="">
+
+						<span ng-click="contCtrl.selectAll()" class="text-primary"> 全選</span>
+
+					</div>
+
+					<div class="">
+
+						<div ng-repeat="item in contCtrl.model.actProd" class="col-sm-3">
+
+							<div>
+
+								<div>
+									<input ng-model="item.select" type="checkbox">
+									<span onclick="$(this).prev('input').click()"><% item.title%></span>
+								</div>
+								<div onclick="$(this).prev().children('input').click()">
+									<img src="/public/static/index<%item.pic1%>" width=200>
+								</div>
+
+							</div>
+
+							
+
+						</div>
+
+					</div>
+
+					<br>
+
+					<div class="">
+
+						<button ng-click="contCtrl.delActProd()" class="btn btn-primary" style="width: 100%">刪除折扣產品</button>	
+
+					</div>
+					<br><br>
+
+			</div>
+
+		</div>
+
+        <div class="container-fluid">
+
+    		<p ng-click="contCtrl.getList()" class="text-primary">折扣設定重整</p>
+
+    		<p>
+
+				<span ng-show="contCtrl.showSeries"><% contCtrl.currCate %></span>
+
+				<span ng-show="contCtrl.showBreadcrumb"> / </span>
+
+				<span ng-show="contCtrl.showCate"><% contCtrl.catProd %> <span ng-click="contCtrl.selectAllProd()" class="text-primary"> 全選</span></span>
+
+			</p> 
+
+			<span ng-repeat="item in contCtrl.model.series"> 
+
+				<!--input ng-model = "item.select" type="checkbox" --> 
+
+				&emsp;
+
+				<span ng-click="contCtrl.getCate(item)"><% item.title %></span>
+
+			</span>
+
+			<span ng-repeat="item in contCtrl.model.cate2"> 
+
+				<!--input ng-model = "item.select" type="checkbox" --> 
+
+				&emsp;
+
+				<span ng-click="contCtrl.getCate2(item)"><% item.title %></span>
+
+			</span>
+
+			<span ng-repeat="item in contCtrl.model.cate"> 
+
+				<input ng-model = "item.select" type="checkbox" > 
+
+				<span ng-click="contCtrl.getCateProd(item)"><% item.title %></span>
+
+			</span>
+
+
+
+    		<div class="container-fluid">
+
+				<div class="row">
+
+					<div ng-repeat="item in contCtrl.model.cateProd" class="col-sm-3">
+
+						<div>
+
+							<div>
+								<input ng-model="item.select" type="checkbox">
+								<span onclick="$(this).prev('input').click()"><% item.title%></span>
+							</div>
+							<div onclick="$(this).prev().children('input').click()">
+								<img src="/public/static/index<%item.pic1%>" width=200>
+							</div>
+
+						</div>
+
+						
+
+					</div>
+
+				</div>
+
+				
+
+			</div>
+
+			<div><button class="btn btn-primary" ng-click="contCtrl.updateAct()" style="width: 100%">更新折扣</button></div>
+
+			
+
+    	</div>
+
+
+
+    	    <br><br> <br> <br> <br> <br> <br> 
+
+    </div>
+
+
+
+
+
+
+
+
+
+{/block}
+
+{block name="ownJS"}
+
+    <script>
+
+        $.ajax({
+
+            url: "{:url('Product/getList')}",
+
+            type: 'GET',
+
+            datatype: 'json',
+
+            error: function(xhr) {
+
+                //alert('Ajax request 發生錯誤');
+
+            },
+
+            success: function(response) {
+
+                if(response.status){
+
+                    //console.log(response);
+
+                    var productList = '';
+
+                    response.message.forEach(
+
+                        function listLoop(value) {
+
+                            $('#productList').append("<option value='" + value.id + "'>" + value.title + "</option>");
+
+                        }
+
+                    );
+
+                }else{
+
+                    console.error(response);
+
+                }
+
+            }
+
+        });
+
+        $("#noEndTime").click(function() {
+
+            if($("#noEndTime").prop("checked")) {
+
+                $('#end').val('1970-01-01');
+
+                $('#end').hide();
+
+                $('#endPTag').hide();
+
+            } else {
+
+                $('#end').val($('#start').val());
+
+                $('#end').show();
+
+                $('#endPTag').show();
+
+            }
+
+        });
+
+    </script>
+
+
+    <script type="text/javascript" src="__PUBLIC__/js/angular/angular-1.4.4/angular.js"></script>
+    <script>
+
+    ///////////////
+
+    //   Angular
+
+    ///////////////
+
+    var app = angular.module('app',[]);
+
+
+
+	app.config(function($interpolateProvider){
+
+		$interpolateProvider.startSymbol('<%');
+
+		$interpolateProvider.endSymbol('%>');
+
+	});
+
+
+
+	app.controller('ContentController',['$http',function($http){
+
+		var currUrl = window.location.pathname ;
+		var urlSplit= currUrl.split('/');
+		var actId 	= urlSplit[5].split('.');
+
+		var self = this; //self.ngtest = "angular test";alert(self.ngtest);
+
+		self.actId 	= actId[0];
+		self.showSeries 		= false;
+		self.showCate 			= false; //Categories
+		self.showDiscType 		= [false,true,false,false,false];
+		self.showBreadcrumb 	= true;
+
+		self.model 				= {};
+		self.model.location 	= '0';
+		self.model.noEndTime 	= false;
+		self.model.act 			= {};
+		self.model.series 		= {};
+		self.model.cate 		= {};
+		self.model.cate2        = {};
+		self.model.cateProd 	= {};
+
+		self.getActProd = function(){
+			$http({
+				method : "post",
+				url : "{:url('Discount/getActProd')}",
+				data: {actId:self.actId},
+			}).success(function(data){
+				self.model.actInfo = data.actInfo;
+				self.img = "/public/static/index" + data.actInfo['img'];
+				self.model.actInfo['start'] = new Date(self.model.actInfo['start']);
+				self.model.actInfo['discount1'] = parseInt(self.model.actInfo['discount1']);
+				if (self.model.actInfo['end'] == ''){
+					self.model.noEndTime = true;
+				}else{
+					self.model.actInfo['end'] 	= new Date(self.model.actInfo['end']);	
+				}
+
+				self.model.actProd = data.actProd;
+				// console.log(self.model.actProd)
+			}).error(function(){
+			})//error
+		}//self.login
+		self.getActProd();
+
+		self.getList = function(){
+			self.showSeries 		= false;
+			self.showCate 			= false; //Categories
+			self.model.act 			= {};
+			self.model.series 		= {};
+			self.model.cate 		= {};
+			self.model.cate2        = {};
+			self.model.cateProd 	= {};
+
+			$http({
+				method : "post",
+				url : "{:url('Product/getList')}",
+				//data: orderPost,
+			}).success(function(data){
+				// console.log(data); 
+				self.model.series = data.message;
+				// 
+			}).error(function(){
+			})//error
+		}//self.getList
+		self.getList();
+
+		self.getCate = function(item){
+
+			// console.log(seriesId);
+
+			self.showSeries = true;
+
+			self.model.series = {};
+
+			$http({
+
+				method : "post",
+
+				url : "{:url('Product/getCate')}",
+
+				data: {seriesId:item.id},
+
+			}).success(function(data){
+
+				/*
+
+				self.model.series = data.cate;
+
+				
+
+				if(!self.currCate){
+
+					self.currCate = item.title;
+
+				}else{
+
+					self.currCate = self.currCate +' / '+item.title;
+
+				}
+
+				if(data.getCateProd == 1)
+
+					self.getCateProd(item.id);
+
+				*/
+
+				data['first'] = true;
+                // console.log(data)
+				self.getCateProd(data);
+
+				
+
+				self.model.cate2 = data.cate;
+
+				self.currCate = item.title;
+
+				for (var prop in self.model.series){
+
+					self.model.series[prop]['select'] = false;
+
+				}
+
+			}).error(function(){
+
+
+
+			})//error
+
+		}
+
+
+
+		self.getCate2 = function(item){
+
+			console.log(item.id);
+
+			self.showSeries = true;
+
+			self.model.series = {};
+
+			$http({
+
+				method : "post",
+
+				url : "{:url('Product/getCate2')}",
+
+				data: {seriesId:item.id},
+
+			}).success(function(data){
+
+				
+
+				self.model.cate2 = data.cate;
+
+				
+
+				if(!self.currCate){
+
+					self.currCate = item.title;
+
+				}else{
+
+					self.currCate = self.currCate +' / '+item.title;
+
+				}
+
+				
+
+				if(data.getCateProd == 1){
+
+					self.model.cate2 = {};
+
+					//self.currCate = '';
+
+					
+
+				}
+
+				self.getCateProd(data);
+
+				
+
+				/*
+
+				self.model.cate2 = data.cate;
+
+				self.currCate = item.title;
+
+				for (var prop in self.model.series){
+
+					self.model.series[prop]['select'] = false;
+
+				}
+
+				*/
+
+			}).error(function(){
+
+
+
+			})//error
+
+		}
+
+		self.getCateProd = function (item){
+
+			// console.log(seriesId);
+
+			self.showCate 			= true; //Categories
+
+			self.model.cate = {};
+
+			$http({
+
+				method : "post",
+
+				url : "{:url('Product/getCateProd')}",
+
+				data: {cateId:item.seriesId, first:item.first},
+
+			}).success(function(data){
+
+				self.catProd = item.title;
+
+				for (var prop in self.model.cate){
+
+					self.model.cate[prop]['select'] = false;
+
+				}
+
+				self.model.cateProd = data.productinfo;	
+
+			}).error(function(){
+
+
+
+			})//error
+
+		}//self.getProd()
+
+
+
+		self.selDiscType = function(typeId){
+
+			for(var prop in self.showDiscType){
+
+				self.showDiscType[prop] = false;
+
+				if (prop == typeId){
+
+					self.showDiscType[prop] = true;
+
+				}
+
+			}
+
+			console.log(self.showDiscType);
+
+		}
+
+
+
+		self.updateAct = function(){
+			$('#block_block').show();
+			var foolproof = true;
+
+			if ((!self.model.actInfo.name)||(self.model.actInfo.name=='')){
+				foolproof = false;
+				alert('請填折扣活動名稱');
+			}
+
+			self.model.start 	= $('#start').val();
+			self.model.end 		= $('#end').val();
+			self.model.location = 0;
+			self.model.img = self.img;
+
+			console.log(self.model);
+
+			$http({
+				method : "post",
+				url : "{:url('Discount/updateAct')}",
+				data: self.model,
+			}).success(function(data){
+				if (data.status == '200'){
+					alert("新增折扣已更新")
+					// location.href="/admin/discount/index.html";
+					location.reload();
+				}else{
+					alert("網路異常");
+				}
+				$('#block_block').hide();
+			}).error(function(){
+				alert("網路異常");
+				$('#block_block').hide();
+			})//error
+		}
+
+
+		self.delActProd = function(){
+			$('#block_block').show();
+			
+			for(var prop in self.model.cateProd){
+				self.model.actProd[prop]['actId'] = self.actId;
+			}
+
+			$http({
+				method : "post",
+				url : "{:url('Act/delActProd')}",
+				data: {cateProd:self.model.actProd}
+			}).success(function(data){
+				if (data.status == 200){
+					alert("活動商品已刪除")
+					location.reload();
+				}else{
+					alert("網路異常");
+					$('#block_block').hide();
+				}
+			}).error(function(){
+				alert("網路異常");
+				$('#block_block').hide();
+			})//error
+		}
+
+
+
+
+
+		self.selectAll = function(){
+
+			for(var prop in self.model.actProd){
+
+				self.model.actProd[prop]['select'] = true;
+
+			}
+
+		}
+
+
+
+		self.selectAllProd = function(){
+
+			for(var prop in self.model.cateProd){
+
+				self.model.cateProd[prop]['select'] = true;
+
+			}
+
+		}
+
+
+
+
+
+		
+
+
+
+		// self.login = function(){
+
+		// 	$http({
+
+		// 		method : "post",
+
+		// 		url : "/webapi/getOrder",
+
+		// 		//data: orderPost,
+
+		// 	}).success(function(data){
+
+
+
+		// 	}).error(function(){
+
+
+
+		// 	})//error
+
+		// }//self.login
+
+
+
+	}])//app.controller()
+	.directive("ngFileSelect", function(fileReader, $timeout) {
+            return {
+                scope: {
+                    ngModel: '='
+                },
+                link: function($scope, el) {
+                    function getFile(file) {
+                        fileReader.readAsDataUrl(file, $scope)
+                        .then(function(result) {
+                            $timeout(function() {
+                                $scope.ngModel = result;
+                            });
+                        });
+                    }
+                    el.bind("change", function(e) {
+                        var file = (e.srcElement || e.target).files[0];
+                        getFile(file);
+                    });
+                }
+            };
+    })
+    .factory("fileReader", function($q, $log) {
+        var onLoad = function(reader, deferred, scope) {
+            return function() {
+                scope.$apply(function() {
+                    deferred.resolve(reader.result);
+                });
+            };
+        };
+        var onError = function(reader, deferred, scope) {
+            return function() {
+                scope.$apply(function() {
+                    deferred.reject(reader.result);
+                });
+            };
+        };
+        var onProgress = function(reader, scope) {
+            return function(event) {
+                scope.$broadcast("fileProgress", {
+                    total: event.total,
+                    loaded: event.loaded
+                });
+            };
+        };
+        var getReader = function(deferred, scope) {
+            var reader = new FileReader();
+            reader.onload = onLoad(reader, deferred, scope);
+            reader.onerror = onError(reader, deferred, scope);
+            reader.onprogress = onProgress(reader, scope);
+            return reader;
+        };
+        var readAsDataURL = function(file, scope) {
+            var deferred = $q.defer();
+            var reader = getReader(deferred, scope);
+            reader.readAsDataURL(file);
+            return deferred.promise;
+        };
+        return {
+            readAsDataUrl: readAsDataURL
+        };
+    });
+	</script>
+
+{/block}

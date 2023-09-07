@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html ng-app="app">
+  <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  </head>
+  <style type="text/css">
+    body{
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    #svg_img, #img_bg{
+      display:none;
+    }
+
+    @media only screen and (max-width: 670px){
+      #ticketModel .modal-dialog{
+        min-width: auto;
+      }
+      #canvas{
+        transform: scale(0.7);
+      }
+    }
+    @media only screen and (max-width: 480px){
+      #canvas{
+        transform: scale(0.65);
+      }
+    }
+    @media only screen and (max-width: 480px){
+      #canvas{
+        transform: scale(0.6);
+      }
+    }
+    @media only screen and (max-width: 420px){
+      #canvas{
+        transform: scale(0.55);
+      }
+    }
+    @media only screen and (max-width: 380px){
+      #canvas{
+        transform: scale(0.5);
+      }
+    }
+    @media only screen and (max-width: 350px){
+      #canvas{
+        transform: scale(0.45);
+      }
+    }
+  </style>
+  <body>
+    
+    <canvas id="canvas" width="649" height="453">
+    </canvas>
+
+    <div id="svg_img">
+      <svg xmlns="http://www.w3.org/2000/svg" width="649" height="453">
+       <foreignObject width="100%" height="100%">
+          <head>
+            <style type="text/css">
+              .word_area{
+                font-size:14px; 
+                position: absolute; 
+                top:50px; 
+                padding: 20px;
+              }
+              table{ 
+                width: 100%; 
+                border-spacing: 0px;
+                border: 1px solid #baaf1d;
+                vertical-align: middle;
+                table-layout:fixed;
+              }
+              th, td{
+                border: 1px solid #baaf1d;
+              }
+              td{
+                word-wrap:break-word;
+                padding-left: 15px;
+              }
+              ws{
+                display: inline-block;
+                width: 5%;
+              }
+              sws{
+                display: inline-block;
+                width: 1%;
+              }
+              .margin_5{
+                margin-top: 5px;
+                margin-bottom: 5px;
+              }
+            </style>
+          </head>
+          <div xmlns="http://www.w3.org/1999/xhtml" class="word_area">
+            <table>
+              <tr>
+                <th style="width: 20%;">考<ws></ws><ws></ws>試<ws></ws><ws></ws>名<ws></ws><ws></ws>稱</th>
+                <td style="width: 80%;">{$p.in_title}</td>
+              </tr>
+              <tr>
+                <th>考<ws></ws><ws></ws>試<ws></ws><ws></ws>日<ws></ws><ws></ws>期</th>
+                <td>
+                  {if condition="$p.examinee_date=-28800"}
+                    無時間
+                  {else/}
+                    {$p.examinee_date|date='Y-m-d',###}
+                  {/if}
+                </td>
+              </tr>
+              <tr>
+                <th>考<ws></ws><ws></ws>試<ws></ws><ws></ws>時<ws></ws><ws></ws>間</th>
+                <td>{$p.examinee_note}</td>
+              </tr>
+              <tr>
+                <th>報<ws></ws><ws></ws>名<ws></ws><ws></ws>學<ws></ws><ws></ws>校</th>
+                <td>{$p.examinee_school}</td>
+              </tr>
+              <tr>
+                <th>報<ws></ws><ws></ws>名<ws></ws><ws></ws>班<ws></ws><ws></ws>級</th>
+                <td>{$p.examinee_class}</td>
+              </tr>
+              <tr>
+                <th>考<ws></ws><ws></ws>生<ws></ws><ws></ws>姓<ws></ws><ws></ws>名</th>
+                <td>{$p.examinee_name}</td>
+              </tr>
+              <tr>
+                <th>准<ws></ws>考<ws></ws>證<ws></ws>號<ws></ws>碼</th>
+                <td>{$p.examinee_ticket}</td>
+              </tr>
+              <tr>
+                <th>考<ws></ws><ws></ws>場<ws></ws><ws></ws>地<ws></ws><ws></ws>點</th>
+                <td>{$p.title}</td>
+              </tr>
+              <tr>
+                <th>考<ws></ws><ws></ws>試<ws></ws><ws></ws>地<ws></ws><ws></ws>點</th>
+                <td>{$p.exam_school}</td>
+              </tr>
+              <tr>
+                <th>教<ws></ws><ws></ws><ws></ws><ws></ws><ws></ws><ws></ws><ws></ws><ws></ws><ws></ws><ws></ws><ws></ws>室</th>
+                <td>{$p.examinee_room}</td>
+              </tr>
+              <tr>
+                <th>座<ws></ws><ws></ws><ws></ws><ws></ws><ws></ws><ws></ws><ws></ws><ws></ws><ws></ws><ws></ws><ws></ws>位</th>
+                <td>{$p.examinee_site}</td>
+              </tr>
+            </table>
+            <p class="margin_5">說明：</p>
+            <ol class="margin_5">
+              <li>建議考生可「自行列印」或「手機截圖」備存，方便當天應試攜帶以減少找尋座位的時間(視考場當天狀況可能會有所變動，請依現場安排為主，如有不便請見諒)</li>
+              <li>考前相關須知會於官網首頁公告</li>
+            </ol>
+          </div>
+       </foreignObject>
+      </svg>
+    </div>
+    
+    <img src="/public/static/index/img/admission_ticket_bg.jpg" id="img_bg">
+
+    <br>
+
+    <!-- <button type="button" class="btn btn-secondary" id="download" onclick="download()">下載</button> -->
+
+    <script>
+      //Edge Blob polyfill https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/toBlob
+      if (!HTMLCanvasElement.prototype.toBlob) {
+         Object.defineProperty(HTMLCanvasElement.prototype, 'toBlob', {
+           value: function (callback, type, quality) {
+             var canvas = this;
+             setTimeout(function() {
+               var binStr = atob( canvas.toDataURL(type, quality).split(',')[1] ),
+               len = binStr.length,
+               arr = new Uint8Array(len);
+
+               for (var i = 0; i < len; i++ ) {
+                  arr[i] = binStr.charCodeAt(i);
+               }
+
+               callback( new Blob( [arr], {type: type || 'image/png'} ) );
+             });
+           }
+        });
+      }
+
+      var canvas = document.getElementById('canvas');
+      var ctx = canvas.getContext('2d');
+
+      var img = document.getElementById("img_bg"); 
+      img.onload = function() {
+        ctx.drawImage(img, 0, 0); 
+
+        setTimeout(function(){
+          var data = $('#svg_img').html();
+          data = encodeURIComponent(data);
+
+          var img = new Image();
+          img.onload = function() {
+            ctx.drawImage(img, 0, 0);
+            // console.log(canvas.toDataURL());
+           
+            canvas.toBlob(function(blob) {
+              var newImg = document.createElement('img'),
+              url = URL.createObjectURL(blob);
+
+              newImg.onload = function() {
+              // no longer need to read the blob so it's revoked
+              URL.revokeObjectURL(url);
+             };
+
+             newImg.src = url;
+             // document.body.appendChild(newImg); // 插入img圖片
+           });
+          }
+
+          img.src = "data:image/svg+xml," + data;
+          var data = canvas.toDataURL("image/png");   
+        }, 300);
+      }
+
+      var download = function(){
+          var link = document.createElement('a');
+          link.download = '{$p.in_title}_准考證.png';
+          link.href = canvas.toDataURL()
+          link.click();
+      }
+    </script>
+  </body>
+</html>

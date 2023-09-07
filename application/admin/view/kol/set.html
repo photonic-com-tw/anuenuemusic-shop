@@ -1,0 +1,654 @@
+{extend name="Public/aside" /}
+
+{block name="title"}網紅列表{/block}
+
+{block name="css"}
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <style type="text/css">
+        .toasted-container.top-right{
+            top: 5% !important;
+            right: 5% !important;
+        }
+        #wW3fao-Tu div{
+            font-size: 20px;
+            padding: 10px 30px;
+        }
+        a:focus{
+            outline: none;
+        }
+
+        .frame{
+            padding:10px 20px;
+            border: 1.5px #9D9D9D solid;
+            margin: 0px auto;
+            margin-top: 10px;
+            width: 99%
+        }
+        .frame li{
+            display: inline;
+        }
+        .frame .add{
+            color:#fff;
+            font-size:20px;
+            text-align:center;
+            background:#333;
+            padding:10px;
+            border-radius:100px;
+            cursor:pointer
+        }
+        .frame .edit{
+            font-size:25px;
+            display: inline-block;
+            margin-left:5%;
+            cursor:pointer
+        }
+
+        /* 新增經驗區塊 */
+        .add-kol{
+            position: absolute;
+            background: #fff;
+            padding:20px;
+            width: 1100px;
+            /*max-height: 700px;*/
+            /*overflow-y: scroll;*/
+            z-index:999;
+            top:calc(10%);
+            left:calc(50% - 1100px / 2);
+        }
+        .add-kol>div>label {
+            margin: 10px 0px;
+            flex: 0 0 100px;
+            text-align: right;
+        }
+        .add-kol>div>input {
+            margin: 10px 0px;
+        }
+        .add-kol>div>h4{
+            width: 100%;
+        }
+        .three_column{
+            width: 250px
+        }
+        .two_column{
+            width: 425px
+        }
+        .big_column{
+            width: 600px
+        }
+        .small_column{
+            width: 250px
+        }
+        .add-kol textarea{
+            margin-top:-15px;
+            margin-left:52px;
+            width:278px;
+            height:150px;
+            padding:5px
+        }            
+        .add-kol .button{
+            right:20px;
+            bottom:-12px;
+            position:absolute;
+        }
+
+        /* 表格設定 */
+        td, th{
+            text-align: center;
+        }
+        table th{
+            cursor: default;
+        }
+        table{
+            width:99%;
+            margin:0px auto;
+            margin-top:-2px;
+        }
+        .tableListA tr:nth-child(1) td {
+            background: #E0E0E0;
+            border: 2px #9D9D9D solid;
+            padding-right: 5px;
+        }
+        .tableListA td:nth-child(1), 
+        .tableListA td:nth-child(2), 
+        .tableListA td:nth-child(9){
+            width:5%;
+        }
+        .tableListA td:nth-child(3), 
+        .tableListA td:nth-child(6), 
+        .tableListA td:nth-child(7){
+            width:15%;
+        }
+        .tableListA td:nth-child(4), 
+        .tableListA td:nth-child(5){
+            width:10%;
+        }
+        .tableListA td:nth-child(8){
+            width:20%;
+        }
+
+        .productTable img{
+            max-width: 50px;
+        }
+
+        .productTable.sellingTable td:nth-child(1){ width:30%; }
+        .productTable.sellingTable td:nth-child(2){ width:20%; }
+        .productTable.sellingTable td:nth-child(3){ width:50%; }
+
+
+        .glyphicon-edit{
+            position: relative;
+            right: -5px;
+        }
+        .view{
+            top: 3px;
+            position: relative;
+        }
+
+        input:read-only{
+            background-color: #E0E0E0;
+        }
+    </style>
+{/block}
+
+{block name="content"}
+
+    <div id="block" onclick="CloseAdd('.add-kol')"></div>
+
+    <!-- 新增修改問答開始 -->
+    <div class="add-kol none" id="Box">
+        <div style="padding:10px 0px; display: flex; flex-direction: row; flex-wrap: wrap; position: relative;">
+            <h4>基本資料</h4>
+            <label for="email">帳號(MAIL)：</label><input id="email" v-model="email" class="two_column">
+            <label for="password">密碼：</label><input id="password" v-model="password" class="two_column">
+
+            <label for="kol_name">網紅名：</label><input id="kol_name" v-model="kol_name" class="three_column">
+            <label for="real_name">姓名：</label><input id="real_name" v-model="real_name" class="three_column">
+            <label for="english_name">英文：</label><input id="english_name" v-model="english_name" class="three_column">
+
+            <br>
+            <label for="category">分類：</label><input id="category" v-model="category" class="three_column">
+            <label for="phone">電話：</label><input id="phone" v-model="phone" class="three_column">
+            <label for="mobile">手機：</label><input id="mobile" v-model="mobile" class="three_column">
+
+            <label for="address">地址：</label><input id="address" v-model="address" class="big_column">
+            <label for="address_memo">備註：</label><input id="address_memo" v-model="address_memo" class="small_column">
+
+            <label for="bank_name">匯款銀行：</label><input id="bank_name" v-model="bank_name" class="two_column">
+            <label for="bank_account">匯款帳號：</label><input id="bank_account" v-model="bank_account" class="two_column">
+
+            <label for="id_no">身份証：</label><input id="id_no" v-model="id_no" class="small_column">
+            <label for="memo">備註：</label><input id="memo" v-model="memo" class="big_column">
+
+            <h4>設定</h4>
+            <span v-if="id == 0" style="width: 50%">
+                <label for="start_date">起計日：</label><input id="start_date" v-model="start_date" class="two_column" type="date">
+            </span>
+            <span v-if="id != 0" style="width: 50%">
+                <label for="start_date">起計日：</label><input id="start_date" v-model="start_date" class="two_column" type="date" readonly>
+            </span>
+
+            <span v-if="id == 0" style="width: 50%">
+                <label for="count_days">結算日周期：</label><input id="count_days" v-model="count_days" class="two_column" type="number">
+            </span>
+            <span v-if="id != 0" style="width: 50%">
+                <label for="count_days">結算日周期：</label><input id="count_days" v-model="count_days" class="two_column" type="number" readonly>
+            </span>
+
+            <span style="color: red">註：起計日、結算日周期設定之後就不可再修改</span>
+            <a class="button" @click="ajaxSubmit">儲存</a>
+        </div>
+
+        <div v-if="id != 0">
+            <hr>
+            <div id="tabs">
+              <ul>
+                <li><a href="#tabs-1">銷售統計</a></li>
+                <li><a href="#tabs-2">代銷中商品</a></li>
+              </ul>
+              <div id="tabs-1">
+                <table class="productTable">
+                    <tr>
+                        <th>開賣日</th>
+                        <th>商品名</th>
+                        <th>商品圖</th>
+                        <th>售價</th>
+                        <th>己結算銷售數量</th>
+                        <th>己結算銷售總額</th>
+                    </tr>
+                    <tr v-for="product in sale_record">
+                        <td>{{ product.s_time }}</td>
+                        <td><a target="_blank" :href="'https://'+product.product.url">{{ product.product.name }}</a></td>
+                        <td><img :src="'https://'+product.product.url2"></td>
+                        <td>{{ product.product.price }}</td>
+                        <td>{{ product.num }}</td>
+                        <td>{{ product.total }}</td>
+                    </tr>
+                </table>
+              </div>
+              <div id="tabs-2">
+                <table class="productTable sellingTable">
+                    <tr>
+                        <th>商品名</th>
+                        <th>商品圖</th>
+                        <th>代銷網址</th>
+                    </tr>
+                    <tr v-for="product in selling_product">
+                        <td>{{ product.title }}</td>
+                        <td><img :src="product.pic"></td>
+                        <td>
+                                <!-- v-text="'https://'+'{$_SERVER[\'HTTP_HOST\']}'+'/index/product/productinfo.html?id='+ product.id +'&kol='+ product.kol_id" -->
+                                <!-- https://{$_SERVER['HTTP_HOST']}/index/product/productinfo.html?id={{ product.id }}&kol={{ product.kol_id }} -->
+                                <input class="copyurl" type="text" readonly :value="'https://'+'{$_SERVER[\'HTTP_HOST\']}'+'/index/product/productinfo.html?id='+ product.id +'&kol='+ product.kol_id" style="width: 90%">
+                                <input type="button" value="查看商品" @click="open_page(product.id, product.kol_id)">
+                                <input type="button" value="複製網址" @click="copy_url(this)">
+                        </td>
+                    </tr>
+                </table>
+              </div>
+            </div>
+        </div>
+    </div>
+    <!-- 新增修改問答結束 -->
+
+
+    <div id="content">
+        <p id="title" onclick="javascript:location.href='index.html'" style="cursor:pointer;">
+            網紅列表
+            {neq name="searchKey" value=""}
+                > 搜尋：{$searchKey}
+            {/neq}
+        </p>
+
+        <div style="padding:10px 30px;">
+            <form action="" name="searchForm" method="get">
+                <input type="text" name="searchKey" style="text-align:center;width: 350px;" placeholder="請輸入帳號/網紅名/姓名/英文名/手機/分類" value="{$searchKey}">
+                <a class="button" onclick="searchForm.submit();">搜尋</a>
+                <a class="button" onclick="location.href='/admin/kol/index.html?searchKey='">清除搜尋</a>
+
+            </form>
+        </div>
+
+        <!--新增與編輯-->
+        <div class="frame">
+            <span class="glyphicon glyphicon-plus add" onclick="newBlock();"></span>
+            <div class="edit" onclick="multiDelete();">刪除  <span style="margin-left: 15px;" class="glyphicon glyphicon-trash"></span></div>
+        </div>
+
+        <!--表格 開始-->
+        <table class="tableListA">
+            <tr>
+                <td><input type="checkbox" class="activityCheckboxAll" onclick="$('.tableListA input[class=qaCheckbox]').prop('checked', ($(this).is(':checked')?true:false))"style="width:100%; cursor:pointer;"></td>
+                <td>編號</td>
+                <td>帳號</td>
+                <td>網紅名</td>
+                <td>姓名</td>
+                <td>電話</td>
+                <td>手機</td>
+                <td>地址</td>
+                <td>刪除</td>
+            </tr>
+
+            {volist name="kol" id="vo" empty="沒有數據"}
+            <tr id="kol_{$vo.id}">
+                <td><input type="checkbox" class="qaCheckbox" alt="{$vo.id}"></td>
+                <td>{{id}}</td>
+                <td><a @click="openBox">{{email}}<span class="glyphicon glyphicon-edit"></span></a></td>
+                <td>
+                    <a href="/admin/kol/salelist.html?id={$vo.id}" target="_blank">
+                        {{kol_name}}
+                        <!-- <svg class="view" width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-view-list" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M3 4.5h10a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2zm0 1a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1H3zM1 2a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13A.5.5 0 0 1 1 2zm0 12a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13A.5.5 0 0 1 1 14z"/>
+                        </svg> -->
+                        <svg class="view" width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-card-list" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                          <path fill-rule="evenodd" d="M14.5 3h-13a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-13z"/>
+                          <path fill-rule="evenodd" d="M5 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 5 8zm0-2.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm0 5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5z"/>
+                          <circle cx="3.5" cy="5.5" r=".5"/>
+                          <circle cx="3.5" cy="8" r=".5"/>
+                          <circle cx="3.5" cy="10.5" r=".5"/>
+                        </svg>
+                    </a>
+                </td>
+                <td>{{real_name}}</td>
+                <td>{{phone}}</td>
+                <td>{{mobile}}</td>
+                <td>{{address}}</td>
+                <td><span class="glyphicon glyphicon-trash" onclick="if(confirm('確定刪除？')){location.href = '{:url('kol/delete')}?id={$vo.id}'}"></span></td>
+            </tr>
+            {/volist}
+
+        </table>
+
+        <div class="row text-center">
+            {$kol->render()}
+        </div>
+    </div>
+{/block}
+
+{block name="ownJS"}
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="__PUBLIC__/js/action.js"></script>
+    <script>
+        $(function() {
+            $(document).click(function() {
+                $('.edit-item').fadeOut();
+            })
+            $('.edit').click(function(event) {
+                event.stopPropagation();
+            })
+        });
+
+        function check_require(Data){
+            if(Data.email==''){
+                return '請輸入帳號(MAIL)';
+            }else if(Data.password==''){
+                return '請輸入密碼';
+            }else if(Data.kol_name==''){
+                return '請輸入網紅名';
+            }else if(Data.mobile==''){
+                return '請輸入手機';
+            }else if(Data.bank_name==''){
+                return '請輸入匯款銀行';
+            }else if(Data.bank_account==''){
+                return '請輸入匯款帳號';
+            }else if(Data.start_date==''){
+                return '請輸入起計日';
+            }else if(Data.count_days==''){
+                return '請輸入結算日周期';
+            }else{
+                return '';
+            }
+
+        }
+
+        Vue.use(Toasted);
+
+        Vue.prototype.createKol = function (Data) {
+            require_mesg = check_require(Data);
+            if(require_mesg == ''){
+                $.ajax({
+                    url: "{:url('kol/doCreate')}",
+                    type: 'POST',
+                    dataType: 'json',
+                    data: Data,
+                    success: function(response) {
+                        if(response.status){
+                            location.reload();
+                        }else{
+                            alert('新增失敗:'+response.message);
+                            console.log(response.message);
+                        }
+                    },
+                    error: function(xhr) {
+                        alert('新增失敗');
+                        console.log(xhr);
+                    }
+                });
+            }else{
+                alert(require_mesg);
+            }
+        };
+
+        Vue.prototype.updateKol = function (Data) {
+            require_mesg = check_require(Data);
+            if(require_mesg == ''){
+                $.ajax({
+                    url: "{:url('kol/update')}",
+                    type: 'POST',
+                    dataType: 'json',
+                    data: Data,
+                    success: function(response) {
+                        if(response.status){
+                            alert('更改成功');
+                            BoxVM.updateCallerData();
+                        }else{
+                            alert('更改失敗:'+response.msg);
+                            console.log(response.msg);
+                        }
+                    },
+                    error: function(xhr) {
+                        alert('更改失敗');
+                        console.log(xhr);
+                    }
+                });
+            }else{
+                alert(require_mesg);
+            }
+        };
+
+        var Box = { 
+                    id: 0, email: "", password: "", 
+                    kol_name:"", real_name:"", english_name:"", 
+                    category:"", phone:"", mobile:"", 
+                    address:"", address_memo:"", 
+                    bank_name:"", bank_account:"", 
+                    id_no:"", memo:"", 
+                    start_date:"", count_days:0,
+                    caller: null,
+                    sale_record: [],
+                    selling_product: [],
+                }
+        var BoxVM = new Vue({
+            el: '#Box', 
+            data: Box,
+            methods: {
+                ajaxSubmit: function () {
+                    var Data = {
+                        email: this.email,
+                        password: this.password,
+                        kol_name: this.kol_name,
+                        real_name: this.real_name,
+                        english_name: this.english_name,
+                        category: this.category,
+                        phone: this.phone,
+                        mobile: this.mobile,
+                        address: this.address,
+                        address_memo: this.address_memo,
+                        bank_name: this.bank_name,
+                        bank_account: this.bank_account,
+                        id_no: this.id_no,
+                        memo: this.memo,
+                        start_date: this.start_date,
+                        count_days: this.count_days,
+                    }
+                    if(this.caller == 'new'){
+                        this.createKol(Data);
+                    }else{
+                        Data.id = this.id;
+                        this.updateKol(Data);
+                    }
+                },
+                updateCallerData: function () {
+                    this.caller.email = this.email;
+                    this.caller.password = this.password;
+                    this.caller.kol_name = this.kol_name;
+                    this.caller.real_name = this.real_name;
+                    this.caller.english_name = this.english_name;
+                    this.caller.category = this.category;
+                    this.caller.phone = this.phone;
+                    this.caller.mobile = this.mobile;
+                    this.caller.address = this.address;
+                    this.caller.address_memo = this.address_memo;
+                    this.caller.bank_name = this.bank_name;
+                    this.caller.bank_account = this.bank_account;
+                    this.caller.id_no = this.id_no;
+                    this.caller.memo = this.memo;
+                    this.caller.start_date = this.start_date;
+                    this.caller.count_days = this.count_days;
+                    CloseAdd('.add-kol');
+                },
+                open_page: function(prod_id, kol_id){
+                    url = "https://{$_SERVER['HTTP_HOST']}/index/product/productinfo.html?id="+ prod_id +"&kol="+ kol_id;
+                    window.open(url);
+                },
+                copy_url: function(item){
+                    target = $(event.target);
+                    var copyText = target.prev().prev();
+                    copyText.select();
+                    document.execCommand("Copy");
+                    Vue.toasted.show('複製成功',{duration:1500});
+                },
+            }
+        });
+
+
+
+        {volist name="kol" id="vo" empty=""}
+            var kol_{$vo.id} = {
+                id: "{$vo.id}",
+                email: "{$vo.email}",
+                password: "{$vo.password}",
+                kol_name: "{$vo.kol_name}",
+                real_name: "{$vo.real_name}",
+                english_name: "{$vo.english_name}",
+                category: "{$vo.category}",
+                phone: "{$vo.phone}",
+                mobile: "{$vo.mobile}",
+                address: "{$vo.address}",
+                address_memo: "{$vo.address_memo}",
+                bank_name: "{$vo.bank_name}",
+                bank_account: "{$vo.bank_account}",
+                id_no: "{$vo.id_no}",
+                memo: "{$vo.memo}",
+                start_date: "{$vo.start_date}",
+                count_days: "{$vo.count_days}",
+                sale_record: [],
+                selling_product: [],
+            }
+            var kol_{$vo.id}_VM = new Vue({
+                el: '#kol_{$vo.id}',
+                data: kol_{$vo.id},
+                methods: {
+                    openBox: function () {
+                        BoxVM.id = this.id;
+                        BoxVM.email = this.email;
+                        BoxVM.password = this.password;
+                        BoxVM.kol_name = this.kol_name;
+                        BoxVM.real_name = this.real_name;
+                        BoxVM.english_name = this.english_name;
+                        BoxVM.category = this.category;
+                        BoxVM.phone = this.phone;
+                        BoxVM.mobile = this.mobile;
+                        BoxVM.address = this.address;
+                        BoxVM.address_memo = this.address_memo;
+                        BoxVM.bank_name = this.bank_name;
+                        BoxVM.bank_account = this.bank_account;
+                        BoxVM.id_no = this.id_no;
+                        BoxVM.memo = this.memo;
+                        BoxVM.start_date = this.start_date;
+                        BoxVM.count_days = this.count_days;
+                        BoxVM.caller = this;
+                        ShowAdd('.add-kol');
+
+                        if(this.id != 0){
+                            this.get_sale_record(this.id);
+                            this.get_selling_product(this.id);
+
+                            // 初始化頁籤功能
+                            setTimeout(function(){ $( "#tabs" ).tabs(); }, 5);
+                        }else{
+                             BoxVM.sale_record = [];
+                             BoxVM.selling_product = [];
+                        }
+                    },
+                    get_sale_record: function(kol_id){
+                        $.ajax({
+                            url: "{:url('index/kol/get_sale_record')}",
+                            type: 'POST',
+                            datatype: 'json',
+                            data: {
+                                kol_id: kol_id,
+                                type: 2,
+                            },
+                            error: function (xhr) {
+                                alert('失敗');
+                                console.error(xhr);
+                            },
+                            success: function (response) {
+                                BoxVM.sale_record = response;
+                            },
+                        });
+                    },
+                    get_selling_product: function(kol_id){
+                        $.ajax({
+                            url: "{:url('index/kol/get_selling_product')}?kol_id="+kol_id,
+                            type: 'GET',
+                            datatype: 'json',
+                            error: function (xhr) {
+                                alert('失敗');
+                                console.error(xhr);
+                            },
+                            success: function (response) {
+                                BoxVM.selling_product = response;
+                            },
+                        });
+                    },
+                }
+            });
+        {/volist}
+
+        function newBlock(){
+            BoxVM.id = 0;
+            BoxVM.email = "";
+            BoxVM.password = "";
+            BoxVM.kol_name = "";
+            BoxVM.real_name = "";
+            BoxVM.english_name = "";
+            BoxVM.category = "";
+            BoxVM.phone = "";
+            BoxVM.mobile = "";
+            BoxVM.address = "";
+            BoxVM.address_memo =  "";
+            BoxVM.bank_name = "";
+            BoxVM.bank_account = "";
+            BoxVM.id_no = "";
+            BoxVM.memo = "";
+            BoxVM.start_date = "";
+            BoxVM.count_days = "";
+            BoxVM.caller = "new";
+            BoxVM.sale_record = [];
+            BoxVM.selling_product = [];
+            ShowAdd('.add-kol');
+        }
+
+        function getMultiId() {
+            var multiIdArray = [];
+            $('.qaCheckbox').each(function () {
+                if($(this).prop("checked")){
+                    multiIdArray.push($(this).attr('alt'));
+                    $(this).prop("checked", false);
+                }
+            });
+            return multiIdArray;
+        }
+
+        function multiDelete() {
+
+            multiId = document.createElement("input");
+            multiId.value = JSON.stringify(getMultiId());
+
+            if(multiId.value=='[]'){
+                alert('請選擇網紅');
+                return;
+            }
+
+            if(confirm("確定刪除？")){
+                var form = document.createElement("form");
+                form.action = "{:url('kol/multiDelete')}";
+                form.method = "post";
+
+                multiId.name = "id";
+
+                form.appendChild(multiId);
+                document.body.appendChild(form);
+                form.submit();
+
+                $('.activityCheckboxAll').each(function () {
+                    if($(this).prop("checked")){
+                        $(this).prop("checked", false);
+                    }
+                });
+            }
+        }
+    </script>
+
+{/block}

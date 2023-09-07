@@ -1,0 +1,302 @@
+{extend name="Public/aside" /}
+{block name="title"}行銷管理區 > 優惠券管理{/block}
+{block name="cssChange"}
+    <link rel="stylesheet" href="__PUBLIC__/css/style_old.css">
+{/block}
+{block name="css"}
+    <style>
+        .item-info td:nth-child(1){
+            text-align: center;
+            width:5%;
+            border-right:none
+        }
+        .item-info td:nth-child(2){
+            text-align: center;
+            width:11%;
+            border-right:none;
+            border-left:none;    
+        }
+        .item-info td:nth-child(3){
+            position:relative;
+            text-align: left;
+            width:13%;
+            border-right:none;
+            border-left:none;   
+        }
+        .item-info td:nth-child(4){
+            text-align: left;
+            width:11%;
+            border-right:none;
+            border-left:none;   
+        }
+        .item-info td:nth-child(5){
+            text-align: left;
+            width:11%;
+            border-right:none;
+            border-left:none;   
+        }
+        .item-info td:nth-child(6){
+            text-align: left;
+            width:11%;
+            border-right:none;
+            border-left:none;   
+        }
+        .item-info td:nth-child(7){
+            text-align: right;
+            width:10%;
+            border-right:none;
+            border-left:none;   
+        }
+        .item-info td:nth-child(8){
+            text-align: right;
+            width:13%;
+            border-right:none;
+            border-left:none;   
+        }
+        .item-info td:nth-child(9){
+            text-align: right;
+            width:10%;
+            border-right:none;
+            border-left:none;   
+        }
+        .item-info td:nth-child(10){
+            text-align: center;
+            width:5%;
+            border-right:none;
+            border-left:none;   
+        }
+        .add_coupon{
+            color:#fff; 
+            font-size:20px; 
+            text-align:center;
+            background:#333; 
+            padding:10px; 
+            border-radius:100px; 
+            cursor:pointer
+        }
+    </style>
+{/block}
+{block name="content"}
+    <div class="content">
+        <p class="title" onclick="javascript:location.href='index.html'" style="cursor:pointer;">
+            行銷管理區 > 優惠券管理
+            {neq name="searchKey" value=""}
+                > 搜尋：{$searchKey}
+            {/neq}
+        </p>
+        <div style="padding:10px 20px; margin:10px; width:99%">
+            <form action="{:url('coupon/index')}" name="searchForm" method="get" style="display: inline-block;">
+                <input type="text" name="searchKey" style="text-align:center" placeholder="搜尋優惠卷">
+                <a class="button" onclick="searchForm.submit();">搜尋</a>
+            </form>
+            <div style="float: right;">
+                <input type="date" id="searchTimeStart">
+                <input type="date" id="searchTimeEnd">
+                <a class="button" onclick="searchTime();">搜尋</a>
+            </div>
+        </div>
+        <div style="padding:15px 20px; border: 2px #9D9D9D solid; margin:0 10px; width:99%">
+            <a href="{:url('Coupon/create')}">
+                <span class="glyphicon glyphicon-plus add_coupon"></span>
+            </a>
+            <!-- 多項編輯開始 -->
+            <div class="edit" style="font-size:25px; display: inline-block; margin-left:5%; cursor:pointer">
+                編輯
+                <span class="glyphicon glyphicon-triangle-bottom"></span>
+            </div>
+            <div class="edit-item none">
+                <a onclick="multiOnline();">
+                    <font>上架&nbsp;</font>
+                    <label class="switch" name="0">
+                        <input type="checkbox" disabled checked><span class="slider round"></span>
+                    </label>
+                </a>
+                <br>
+                <a onclick="multiOffline();">
+                    <font>下架&nbsp;</font>
+                    <label class="switch" name="0">
+                        <input type="checkbox" disabled><span class="slider round"></span>
+                    </label>
+                </a>
+                <br>
+                <hr style="border-top: 1px solid #333; margin:10px 0px">
+                <a onclick="multiDelete();">
+                    刪除 <span style="margin-left: 15px;" class="glyphicon glyphicon-trash"></span>
+                </a>
+            </div>
+            <!-- 多項編輯結束 -->
+        </div>
+        <table class="item-info">
+            <tr>
+                <td><input type="checkbox" class="activityCheckboxAll" onclick="$('.item-info input[class=couponCheckbox]').prop('checked', ($(this).is(':checked')?true:false))"style="width:100%; cursor:pointer;"></td>
+                <td style="cursor:pointer">上下架<span class="glyphicon glyphicon-arrow-down"></span></td>
+                <td>優惠券品號</td>
+                <td>商品名稱</td>
+                <td style="cursor:pointer">開始日期<span class="glyphicon glyphicon-arrow-down"></td>
+                <td style="cursor:pointer">結束日期<span class="glyphicon glyphicon-arrow-down"></td>
+                <td style="cursor:pointer">生產張數<span class="glyphicon glyphicon-arrow-down"></td>
+                <td style="cursor:pointer">已領取張數<span class="glyphicon glyphicon-arrow-down"></td>
+                <td style="cursor:pointer">已使用張數<span class="glyphicon glyphicon-arrow-down"></td>
+                <td>刪除</td>
+            </tr>
+            {volist name="rowDataItems" id="vo" empty="沒有數據"}
+            <tr id="coupon_{$vo.id}">
+                <td><input type="checkbox" class="couponCheckbox" alt="{$vo.id}"></td>
+                <td>
+                    <label class="switch" style="display:inline-flex; margin-top: 5px;">
+                        <input type="checkbox" v-model="online">
+                        <span class="slider round"></span>
+                    </label>
+                </td>
+                <td>{$vo.number}</td>
+                <td><a href="{:url('coupon/show', ['id' => $vo.id])}">{$vo.title}</a></td>
+                <td>{$vo.start|date='Y-m-d',###}</td>
+                <td>{$vo.end|date='Y-m-d',###}</td>
+                <td>{$vo.num}</td>
+                <td>{$vo.sellCount}</td>
+                <td>{$vo.useCount}</td>
+                <td><span class="glyphicon glyphicon-trash" onclick="location.href = '{:url('coupon/delete')}?id={$vo.id}'"></span></td>
+            </tr>
+            {/volist}
+        </table>
+        <div class="row text-center">
+            {$coupon->render()}
+        </div>
+    </div>
+{/block}
+{block name="ownJS"}
+    <script>
+        $(function () {
+            // 新增
+            $('.add').click(function(){
+                if($('.add-item').is(':visible')==true){
+                    $('.add-item').hide();
+                }
+                else{
+                    $('.add-item').show();
+                }
+            })
+            // 編輯
+            $('.edit').click(function(){
+                if($('.edit-item').is(':visible')==true){
+                    $('.edit-item').hide();
+                }
+                else{
+                    $('.edit-item').show();
+                }
+            })
+        });
+
+        Vue.prototype.blockCtrl = function (blockData) {
+            $.ajax({
+                url: "{:url('coupon/cellCtrl')}",
+                type: 'POST',
+                dataType: 'json',
+                data: blockData,
+                success: function(response) {
+                    if(response.status){
+                        //alert('留言成功');
+                    }else{
+                        alert('更改失敗');
+                        console.log(response.message);
+                    }
+                },
+                error: function(xhr) {
+                    alert('更改失敗');
+                    console.log(xhr);
+                }
+            });
+        };
+        {volist name="coupon" id="vo" empty=""}
+            var coupon_{$vo.id} = new Vue({
+                el: '#coupon_{$vo.id}',
+                data: {
+                    id: +"{$vo.id}",
+                    online: +"{$vo.online}"
+                },
+                watch: {
+                    online: function () {
+                        blockData = {
+                            id: this.id,
+                            online: this.online ? 1 : 0
+                        }
+                        this.blockCtrl(blockData);
+                    }
+                }
+            });
+        {/volist}
+
+        function getMultiId() {
+            var multiIdArray = [];
+            $('.couponCheckbox').each(function () {
+                if($(this).prop("checked")){
+                    multiIdArray.push($(this).attr('alt'));
+                    $(this).prop("checked", false);
+                }
+            });
+            return multiIdArray;
+        }
+
+        function multiDelete() {
+            var form = document.createElement("form");
+            form.action = "{:url('coupon/multiDelete')}";
+            form.method = "post";
+
+            multiId = document.createElement("input");
+            multiId.value = JSON.stringify(getMultiId());
+            multiId.name = "id";
+
+            form.appendChild(multiId);
+            document.body.appendChild(form);
+            form.submit();
+            $('.activityCheckboxAll').each(function () {
+            if($(this).prop("checked")){
+                $(this).prop("checked", false);
+            }
+        });
+        }
+
+        function multiOnline() {
+            var multiIdArray = getMultiId();
+            multiIdArray.forEach(function(element) {
+                eval('coupon_' + element + '.online = true;');
+            });
+            $('.activityCheckboxAll').each(function () {
+            if($(this).prop("checked")){
+                $(this).prop("checked", false);
+            }
+        });
+        }
+
+        function multiOffline() {
+            var multiIdArray = getMultiId();
+            multiIdArray.forEach(function(element) {
+                eval('coupon_' + element + '.online = false;');
+            });
+            $('.activityCheckboxAll').each(function () {
+            if($(this).prop("checked")){
+                $(this).prop("checked", false);
+            }
+        });
+        }
+
+        function searchTime() {
+            var form = document.createElement("form");
+            form.action = "{:url('Coupon/searchTime')}";
+            form.method = "get";
+
+            start = document.createElement("input");
+            start.value = $('#searchTimeStart').val();
+            start.name = "start";
+            form.appendChild(start);
+
+            end = document.createElement("input");
+            end.value = $('#searchTimeEnd').val();
+            end.name = "end";
+            form.appendChild(end);
+
+            document.body.appendChild(form);
+            form.submit();
+        }
+    </script>
+{/block}

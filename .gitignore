@@ -1,0 +1,51 @@
+.idea
+composer.lock
+*.log
+!runtime/.gitignore
+runtime/cache/*
+runtime/temp/*
+runtime/log/*
+# thinkphp
+
+public/static/index/upload/*
+!public/static/index/upload/.gitignore.
+!public/static/index/upload/examinee
+public/static/index/upload/examinee/*
+!public/static/index/upload/examinee/.gitignore
+public/static/admin/js/kindeditor/attached/*
+!public/static/admin/js/kindeditor/attached/.gitignore
+
+public/uploads/examination/*
+!public/uploads/examination/.gitignore
+public/uploads/qrcode/*
+!public/uploads/qrcode/.gitignore
+public/uploads/excel/*
+!public/uploads/excel/.gitignore
+public/uploads/findorderForm/*
+!public/uploads/findorderForm/.gitignore
+# application/config.php
+# application/database.php
+
+# 初始化圖片
+!public/static/index/upload/06
+!public/static/index/upload/07
+!public/static/index/upload/1e
+!public/static/index/upload/2a
+!public/static/index/upload/46
+!public/static/index/upload/47
+!public/static/index/upload/61
+!public/static/index/upload/6a
+!public/static/index/upload/6c
+!public/static/index/upload/99
+!public/static/index/upload/9c
+!public/static/index/upload/ba
+!public/static/index/upload/e2
+!public/static/index/upload/e5
+!public/static/index/upload/fb
+!public/static/index/upload/productinfo_pic0_1.png
+!public/static/index/upload/productinfo_pic0_2.png
+!public/static/index/upload/slideshow1.jpg
+!public/static/index/upload/slideshow2.jpg
+!public/static/index/upload/slideshow3.jpg
+!public/static/index/upload/slideshow4.jpg
+!public/static/index/upload/slideshow5.jpg

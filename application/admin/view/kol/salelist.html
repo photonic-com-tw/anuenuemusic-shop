@@ -1,0 +1,197 @@
+{extend name="Public/aside" /}
+
+{block name="title"}銷售列表{/block}
+
+{block name="css"}
+    <style type="text/css">
+        .frame{
+            padding:10px 20px;
+            border: 1.5px #9D9D9D solid;
+            margin: 0px auto;
+            margin-top: 10px;
+            width: 99%
+        }
+        .type_btn{
+            margin: 10px;
+        }
+        .type_btn a{
+            padding: 5px 10px;
+            color: #000;
+            border: 1px solid #9D9D9D;
+        }
+        .type_btn a.active, 
+        .type_btn a:hover{
+            text-decoration: none;
+            background-color: #9D9D9D;
+            color: #fff;
+        }
+
+        /* 表格設定 */
+        td, th{
+            text-align: center;
+        }
+        table th{
+            cursor: default;
+        }
+        table{
+            width:99%;
+            margin:0px auto;
+            margin-top:-2px;
+        }
+        .tableListA tr:nth-child(1) td {
+            background: #E0E0E0;
+            border: 2px #9D9D9D solid;
+            padding-right: 5px;
+        }
+        .tableListA td:nth-child(1){
+            width:5%;
+        }
+        .tableListA td:nth-child(2), 
+        .tableListA td:nth-child(3), 
+        .tableListA td:nth-child(4),
+        .tableListA td:nth-child(6),
+        .tableListA td:nth-child(7),
+        .tableListA td:nth-child(8),
+        .tableListA td:nth-child(9),
+        .tableListA td:nth-child(10){
+            width:8%;
+        }
+        .tableListA td:nth-child(5){
+            width:20%;
+        }
+
+        .tableListA table.productTable{
+            border: none;
+        }
+        .productTable img{
+            max-width: 100px;
+        }
+        .tableListA .productTable tr td{
+            background: #fff;
+            border: none;
+            width: 20%;
+        }
+
+    </style>
+{/block}
+
+{block name="content"}
+    <div id="content">
+        <p id="title">
+            {$kol.kol_name} >銷售列表
+        </p>
+
+        <div style="padding:10px 30px;">
+            <form action="" name="searchForm" method="get">
+                選定出貨區間
+                <input type="date" name="start" placeholder="開始時間" value="{$start}">~
+                <input type="date" name="end" placeholder="結束時間" value="{$end}">
+                <input type="hidden" name="id" value="{$kol.id}">
+                <input type="hidden" name="type" value="{$type}">
+                <a class="button" onclick="searchForm.submit();">搜尋</a>
+                <a class="button" onclick="location.href='/admin/kol/salelist.html?id={$kol.id}&type={$type}'">清除搜尋</a>
+
+            </form>
+        </div>
+
+        <!--查看類型-->
+        <div class="frame">
+            <span class="type_btn"><a href="/admin/kol/salelist.html?id={$kol.id}&type=0" :class="['{$type}' == '0' ? 'active' : '']">未結算</a></span>
+            <span class="type_btn"><a href="/admin/kol/salelist.html?id={$kol.id}&type=1" :class="['{$type}' == '1' ? 'active' : '']">結算中</a></span>
+            <span class="type_btn"><a href="/admin/kol/salelist.html?id={$kol.id}&type=2" :class="['{$type}' == '2' ? 'active' : '']">己結算</a></span>
+        </div>
+
+        <!--表格 開始-->
+        <table class="tableListA">
+            <tr>
+                <td>序號</td>
+                <td>日期</td>
+                <td>訂單編號</td>
+                <td>客戶名</td>
+                <td>寄送地</td>
+                <td>商品名</td>
+                <td>商品圖</td>
+                <td>單價</td>
+                <td>數量</td>
+                <td>總價</td>
+            </tr>
+            <tr v-for="(item, index) in orderform">
+                <td>{{ index+1 }}</td>
+                <td>{{ timestamp_to_date(item.create_time) }}</td>
+                <td>{{ item.order_number }}</td>
+                <td>{{ item.user_name }}</td>
+                <td>{{ item.transport_location }}</td>
+                <td colspan="5" style="padding: 0px">
+                    <table class="productTable">
+                        <tr v-for="(product) in product_decode(item.product)" v-if="product.key_type=='kol{$kol.id}'">
+                            <td><a target="_blank" :href="'https://'+product.url">{{ product.name }}</a></td>
+                            <td><img :src="'https://'+product.url2"></td>
+                            <td>{{ product.price }}</td>
+                            <td>{{ product.num }}</td>
+                            <td>{{ product.total }}</td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            
+
+        </table>
+
+        <div class="row text-center">
+            <ul class="pagination" v-if="totalpage!=0">
+                <li class="disabled" v-if="currentpage==1"><span>«</span></li>
+                <li v-if="currentpage!=1"><a href="/admin/kol/salelist.html?id={$kol.id}&type={$type}&start={$start}&end={$end}&page=1"><span>«</span></a></li>
+                
+                <li v-for="page in page_array()" :class="[page==currentpage?'active':'']">
+                    <span v-if="page==currentpage" v-text="page"></span>
+                    <a v-if="page!=currentpage" :href="'/admin/kol/salelist.html?id={$kol.id}&type={$type}&start={$start}&end={$end}&page='+page">
+                        <span  v-text="page"></span>
+                    </a>
+                </li>
+                
+                <li class="disabled" v-if="currentpage==totalpage"><span>»</span></li>
+                <li v-if="currentpage!=totalpage"><a :href="'/admin/kol/salelist.html?id={$kol.id}&type={$type}&start={$start}&end={$end}&page='+totalpage">»</a></li>
+            </ul>
+        </div>
+    </div>
+{/block}
+
+{block name="ownJS"}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js"></script>
+    <script type="text/javascript">
+        var content_data = {    
+                                orderform: {$orderform|json_encode},
+                                totalpage:{$totalpage},
+                                currentpage:{$page},
+                            }
+
+        var content = new Vue({
+            el: '#content', 
+            data: content_data,
+            computed: {
+            },
+            methods: {
+                page_array: function(){
+                    var pages = [];
+                    for (var i = -4; i < 4; i++) {
+                        page = i+this.currentpage;
+                        if( 1 <= page && page <= this.totalpage)
+                            pages.push(page);
+
+                        if(pages.length==5)
+                            return pages;
+                    }
+                    return pages;
+                },
+                timestamp_to_date : function(unix_timestamp){
+                    var a = new Date(unix_timestamp * 1000);
+                    return moment(a).format('YYYY-MM-DD')
+                },
+                product_decode : function(jstring){
+                    return JSON.parse(jstring);
+                }
+            }
+
+        });
+    </script>
+{/block}

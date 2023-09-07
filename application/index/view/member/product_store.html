@@ -1,0 +1,76 @@
+{extend name="Public/mainTpl" /}
+
+{block name="title"}{$lang_menu['我的最愛']} - {$lang_menu['會員專區']} | {$seo[0]['title']}{/block}
+
+{block name="css"}{/block}
+
+{block name="flulid_content"}
+<!--     <section class="container max-wideVersion directoryRow">
+        <ul class="clearfix">
+            <li><a href="{$MAIN_WEB_LAN}/">{$lang_menu['首頁']}</a><i class="icon-right"></i></li>
+            <li><a href="{:url('Member/member')}">{$lang_menu['會員專區']}</a><i class="icon-right"></i></li>
+            <li><a href="{:url('Member/favorites_product')}">{$lang_menu['我的最愛']}</a></li>
+        </ul>
+    </section> -->
+    <div class="d-flex justify-content-center">
+        <div class="w-100 bg_anuenue bg_pic d-flex justify-content-center">
+            <section class="reg_prod_area box_show bg_white max-wideVersion productPublic">
+                <div class="pt_sxsmal pb_ssmal">
+                    <h3 class="page_title">
+                        {$lang_menu['會員專區']}
+                        <span>{include file='Public/member_menu' /}</span>
+                    </h3>
+                </div>
+                <div class="row w-100">
+                    <div class="col-12 text-center mb-3">
+                        <span class="other_login color_gray"><span>{$lang_menu['我的最愛']}</span></span>
+                    </div>
+                    <table class="col-12 orderTable table table-striped table-bordered table-rwd">
+                        <tbody>
+                            {volist name="products" id="vo" empty=""}
+                            <tr>
+                                <td width="395" data-th="{$lang_menu['名稱']}">
+                                    <a href="{:url('Product/productinfo')}?id={$vo.id}" >{$vo.title}</a>
+                                </td>
+                                <td width="5" data-th="{$lang_menu['操作']}">
+                                    <a href="javascript:store_record('{$vo.id}')">
+                                        <img class="img" src="__PUBLIC__/anuenuemusic/images/shop/cancel.png">
+                                    </a>
+                                </td>
+                            </tr>
+                            {/volist}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="row paginationBox">
+                    <div class="col-12 boxCenter">
+                        {$page}
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>              
+{/block}
+
+{block name="ownJS"}
+    <script src="__PUBLIC__/js/memberToggle.js"></script>
+    <script type="text/javascript">
+        function store_record(prodInfoId){
+            $.ajax({
+                method : "post",
+                url : "/index/ajax/store_record",
+                data: {
+                    prodInfoId:prodInfoId, 
+                    status:"0",
+                },
+            }).success(function(data){
+                if(data.code == '1'){
+                    alert("{$lang_menu['操作成功']}");
+                    location.reload();
+                }
+            }).error(function(res){
+                // $('#block_block').hide();
+            })//error
+        }
+    </script>
+{/block}

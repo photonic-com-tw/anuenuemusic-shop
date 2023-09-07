@@ -1,0 +1,199 @@
+{extend name="Public/aside" /}
+
+{block name="title"}SEO設定 - 後台設定{/block}
+
+{block name="css"}
+
+   <style>
+       input, #title, textarea, select{
+           width:calc(100% - 450px);
+           padding:5px;
+           font-size:15px
+       }
+       textarea{
+           height:200px;
+       }
+       input[type=file]{
+           cursor: pointer;
+       }
+       label{
+           font-size:15px;
+           padding:5px;
+           width:200px;
+           text-align: right;
+       }
+       .block{
+           width:1100px;
+           margin:20px auto;
+           margin-bottom:60px;
+           position: relative;
+       }
+       .title{
+           font-size:30px;
+           font-weight: bold;
+           text-align: center
+       }
+       .form-group{
+           position: relative;
+       }
+       .button{
+           font-size:25px;
+           padding:3px 20px;
+       }
+       .upl, .imgbox{
+           width:calc(100% - 450px);
+           height:200px;
+       }
+       .imgbox{
+           border:1px solid #ADADAD;
+           position: absolute;
+           left:200px;
+           top:0;
+           text-align: center;
+       }
+       .preview{
+           position: relative;
+           max-height: 100%;
+           max-width: 100%;
+           z-index: 2;
+
+       }
+    </style>
+
+{/block}
+
+{block name="content"}
+
+<div id="content">
+
+    <form action="{:url('seo/update')}" method="post" enctype="multipart/form-data">
+
+    <input type="hidden" name="id" value="1">
+
+    <div class="block">
+
+        <p class="title">網頁基本設定</p>
+
+        <div class="form-group">
+
+            <label>網頁標題：</label><input type="text" id="title" name="title" value="{$seo.title}">
+
+            <font style="text-align:right; color:red">*三十字以內最佳</font>
+
+        </div>
+
+        <div class="form-group">
+
+            <label>關鍵字：</label><input type="text" id="seokey" name="seokey" value="{$seo.seokey}">
+
+            <font style="text-align:right; color:red">*請用,號區格，十組內最佳</font>
+
+        </div>
+
+        <div class="form-group">
+
+            <label style="position:absolute;">網頁描述：</label>
+
+            <textarea style="position:relative; left:200px" type="text" id="descr" name="descr">{$seo.descr}</textarea>
+
+            <font style="position:absolute; color:red; top:0; right:140px;">*兩百字以內最佳</font>
+
+        </div>
+
+    </div>
+
+    <div class="block" style="text-align:center">
+
+        <button class="button">儲存</button>
+
+    </div>            
+
+    </form>
+
+</div>
+
+{/block}
+
+{block name="ownJS"}
+
+    <script src="__PUBLIC__/js/action.js"></script>
+
+    <script>
+
+        
+
+        function format_float(num, pos)
+
+        {
+
+            var size = Math.pow(10, pos);
+
+            return Math.round(num * size) / size;
+
+        }
+
+    
+
+        function preview(input) {
+
+    
+
+            if (input.files && input.files[0]) {
+
+                var reader = new FileReader();
+
+                
+
+                reader.onload = function (e) {
+
+                    $('.preview').attr('src', e.target.result);
+
+                }
+
+    
+
+                reader.readAsDataURL(input.files[0]);
+
+            }
+
+        }
+
+    
+
+        $("body").on("change", ".upl", function (){
+
+            preview(this);
+
+        })
+
+
+
+        $('#down').click(function(){
+
+            $('.robots').animate({height:'710px'},1000)
+
+            $('#down').fadeOut()
+
+            $('#up').fadeIn()
+
+        })
+
+        $('#up').click(function(){
+
+            $('.robots').animate({height:'150px'},1000)
+
+            $('#up').fadeOut()
+
+            $('#down').fadeIn()
+
+        })
+
+        function openList() {
+
+            $('#backstageListli').click();
+
+        }
+
+    </script>
+
+{/block}

@@ -1,0 +1,69 @@
+{extend name="Public/mainTpl" /}
+
+{block name="title"}{$lang_menu['產品註冊紀錄']} - {$lang_menu['會員專區']} | {$seo[0]['title']}{/block}
+
+{block name="css"}{/block}
+
+{block name="flulid_content"}
+    <!-- <section class="container max-wideVersion directoryRow">
+        <ul class="clearfix">
+            <li><a href="{$MAIN_WEB_LAN}/">首頁</a><i class="icon-right"></i></li>
+            <li><a href="{:url('Member/member')}">{$lang_menu['會員專區']}</a><i class="icon-right"></i></li>
+            <li><a href="{:url('Member/reg_product')}">{$lang_menu['產品註冊紀錄']}</a></li>
+        </ul>
+    </section> -->
+    <div class="d-flex justify-content-center">
+        <div class="w-100 bg_anuenue bg_pic d-flex justify-content-center">
+            <section class="reg_prod_area box_show bg_white max-wideVersion productPublic">
+                <div class="pt_sxsmal pb_ssmal">
+                    <h3 class="page_title">
+                        {$lang_menu['會員專區']}
+                        <span>{include file='Public/member_menu' /}</span>
+                    </h3>
+                </div>
+                <div class="row">
+                    <div class="col-12 text-center mb-3">
+                        <span class="other_login color_gray"><span>{$lang_menu['產品註冊紀錄']}</span></span>
+                    </div>
+
+                    <div class="form-group col-12 justify-content-end">
+                        <a class="use-btn" href="/index/member/reg_product_sign.html">{$lang_menu['前往註冊產品']}</a>
+                    </div>
+                    <table class="col-12 prodReg orderTable table table-striped table-bordered table-rwd">
+                        <thead>
+                            <tr class="tr-only-hide">
+                                <th><span>{$lang_menu['產品種類']}</span></th>
+                                <th><span>{$lang_menu['產品型號']}</span></th>
+                                <th><span>{$lang_menu['產品序號']}</span></th>
+                                <th><span>{$lang_menu['購買日期']}</span></th>
+                                <th><span>{$lang_menu['註冊日期']}</span></th>
+                                <th>{$lang_menu['購買店家']}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {volist name="userD" id="vo" empty=""}
+                            <tr>
+                                <td data-th="{$lang_menu['產品種類']}"><span>{$vo.product_name} </span></td>
+                                <td data-th="{$lang_menu['產品型號']}"><span>{$vo.product_type_code} </span></td>
+                                <td data-th="{$lang_menu['產品序號']}"><span>{$vo.product_code} </span></td>
+                                <td data-th="{$lang_menu['購買日期']}"><span>{$vo.buytime} </span></td>
+                                <td data-th="{$lang_menu['註冊日期']}"><span>{$vo.regtime} </span></td>
+                                <td data-th="{$lang_menu['購買店家']}">{$vo.tax_ID_number}</td>
+                            </tr>
+                            {/volist}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="row paginationBox">
+                    <div class="col-12 boxCenter">
+                        {$page}
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>              
+{/block}
+
+{block name="ownJS"}
+    <script src="__PUBLIC__/js/memberToggle.js"></script>
+{/block}

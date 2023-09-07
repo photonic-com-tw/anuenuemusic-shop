@@ -1,0 +1,429 @@
+{extend name="Public/aside" /}
+{block name="title"}商品管理區 > 實體銷存{/block}
+{block name="css"}
+	<style type="text/css">
+		/*表格樣式*/
+		table{
+			margin-top:25px;
+			width: 100%;
+			table-layout: fixed;
+			border-collapse: collapse;
+		}
+		table th:nth-child(1){
+			border-left:none;
+		}
+
+		table th:nth-child(1) { width: 150px; cursor: default; }
+		table th:nth-child(2) { width: 100px; cursor: default; }
+		table th:nth-child(3) { width: 150px; cursor: default; }
+		table th:nth-child(4),
+		table td:nth-child(4) { width: 100px; text-align: right; }
+		table th:nth-child(5),
+		table td:nth-child(5) { width: 100px; text-align: right; }
+		table th:nth-child(6),
+		table td:nth-child(6) { width: 100px; text-align: right; }
+		table th:nth-child(7),
+		table td:nth-child(7) { width: 50px; text-align: right; }
+		table td:nth-child(1),
+		table td:nth-child(4) { word-break:break-all; }
+
+		table thead {
+			background-color:#E0E0E0;
+		}
+
+		table thead tr th span{
+			font-size:14px;
+			padding-left:1px;
+		}
+
+		/* 捲軸樣式 */
+		table tbody::-webkit-scrollbar {
+			width: .5em;
+		}
+		table tbody::-webkit-scrollbar-track {
+			-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+		}
+		table tbody::-webkit-scrollbar-thumb {
+			background-color: darkgrey;
+			outline: 1px solid slategrey;
+		}
+		.wrap-outer {
+			margin-left: calc(100vw - 100%);
+		}
+
+		#exampleModalLabel, .modal-title{
+			display: inline-block;
+		}
+	</style>
+{/block}
+{block name="content"}
+	<div id="content">
+		<p id="title">
+			商品管理區 > 實體銷存
+		</p>
+		<div style="padding:10px 30px;">
+			<form action="" name="searchForm" method="get">
+				條碼：<input type="text" name="searchKey" style="text-align:center" placeholder="搜尋" oninput="search_bar_mul();">
+				<a class="button" onclick="search_bar_mul();">搜尋</a>
+			</form>
+
+			<div style="padding-top:30px;font-size: -webkit-xxx-large;">
+				<h3>銷售列表</h3>
+			</div>
+			<table>
+				<!-- 標題 -->
+				<thead>
+					<tr>
+						<th>商品名稱</th>
+						<th>市價</th>
+						<th>品項</th>
+						<th>售價</th>
+						<th>位置編碼</th>
+						<th>數量</th>
+						<th>刪除</th>
+					</tr>
+				</thead>
+				<!-- 內容 -->
+				<tbody id="sell"></tbody>
+
+			</table>
+			<form name="Form" action="{:url('Sell/update')}" method="post" >
+				<input type="hidden" name="sell_array" value='{}'/>
+				<input type="hidden" name="searchKey" value='{$searchKey}'/>
+				<input type="hidden" name="model" value='0'/>
+			</form>
+			
+			<button type="button" class="btn btn-primary" onclick="ck_submit();">確認</button>
+			<!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" data-whatever="選擇模式">確認</button> -->
+		</div>	
+	</div>
+					
+	<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">New message</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<button type="button" class="btn btn-primary" onclick="model('現場銷售')">現場銷售</button>
+					<button type="button" class="btn btn-primary" onclick="model('網路出貨')">網路出貨</button>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+					<button type="button" class="btn btn-primary" onclick="ck_submit();">確認</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Modal -->
+	<div class="modal fade" id="select_type" tabindex="-1" role="dialog" aria-labelledby="select_typeModalLabel" aria-hidden="true">
+	  <div class="modal-dialog" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <h5 class="modal-title" id="select_typeModalLabel">選擇商品</h5>
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	          <span aria-hidden="true">&times;</span>
+	        </button>
+	      </div>
+	      <div class="modal-body">
+	        ...
+	      </div>
+	      <div class="modal-footer">
+
+	      </div>
+	    </div>
+	  </div>
+	</div>
+{/block}
+{block name="ownJS"}
+	<script>
+		$('#exampleModal').on('show.bs.modal', function (event) {
+		var button = $(event.relatedTarget)
+		var recipient = button.data('whatever')
+		var modal = $(this)
+		modal.find('.modal-title').text(recipient)
+		console.log(recipient);
+		})
+		
+		function model(x){
+			$('.modal-title').text('選擇：'+x);
+			
+			if(x == '現場銷售'){
+				$('input[name="model"]').val(0);
+			}else{
+				$('input[name="model"]').val(1);
+			}
+		}
+		
+		
+		function ck_submit(){
+			if(confirm("是否確認執行實體銷存?")){
+				var sell_array = $('input[name="sell_array"]').val();
+				var model = $('input[name="model"]').val();
+				var error = 0;
+				
+				
+				if(sell_array == '{}'){
+					alert('請先選擇商品');
+					error = 1;
+					return 0;
+				}
+				
+				if(model == ''){
+					alert('尚未選擇銷售模式');
+					error = 1;
+					return 0;
+				}
+				
+				if(error == 0){
+					Form.submit();
+				}
+			}
+		}
+		
+		
+		function select_position(){
+			var select_position = $('#select_position').val();
+			var select_position_number = $('#select_position_number').val();
+			
+			//console.log(select_position);
+			//console.log(select_position_number);
+			
+			$.ajax({
+				url: "{:url('sell/search')}",
+				type: 'POST',
+				data: {
+					product_id:'{$id}',
+					position_id:select_position,
+					position_number:select_position_number
+				},
+				success: function(r) {
+					
+					del_re(r[0]['productinfo_type'],r[0]['position_portion']);
+				},
+				error: function(xhr) {
+					console.log(xhr);
+				}
+			});
+		}
+
+		function del_array(id,por){
+		
+			var sell_array = $('input[name="sell_array"]').val();
+			sell_array = JSON.parse(sell_array);
+			//console.log(sell_array);
+			
+			var result = sell_array.filter(function(item,ikey){
+				//console.log(item);
+				//console.log(ikey);
+				return item.position_portion != por;
+				
+			});
+			/***/
+				var va = $('#num'+id).html();
+				
+				va--;
+				$('#num'+id).html(va);
+			/****/
+			
+			$('#por_'+por).hide();
+			
+			$('input[name="sell_array"]').val(JSON.stringify(result));
+		}
+	
+		function del_re(id,por){
+			
+			var show_error = $('#por_'+por).css('display');
+			if(show_error != 'none'){
+				alert('已顯示或是查詢無此位置');
+				return 0;	
+			}
+				
+			$('#por_'+por).show();
+			
+			var va = $('#num'+id).html();
+			
+			va++;
+			$('#num'+id).html(va);
+			
+			var sell_array = $('input[name="sell_array"]').val();
+			if(sell_array == '{}'){
+				sell_array = [
+					{
+						"productinfo_type":id,
+						"position_portion": por,
+						"num":1
+					}
+				];
+				//sell_array.push({'num': '0'});
+			}else{
+				sell_array = JSON.parse(sell_array);
+				sell_array.push({
+						"productinfo_type":id,
+						"position_portion": por,
+						"num":1
+					});
+			}
+			//JSON.parse()
+			$('input[name="sell_array"]').val(JSON.stringify(sell_array));
+		}
+
+		function del_no(id,por){
+		
+			var va = $('#num'+id).html();
+			var num = $('#por_num'+por).val();
+			va++;
+			$('#num'+id).html(va);
+			
+			var sell_array = $('input[name="sell_array"]').val();
+			if(sell_array == '{}'){
+				sell_array = [
+					{
+						"productinfo_type":id,
+						"position_portion": por,
+						"num":num
+					}
+				];
+				//sell_array.push({'num': '0'});
+			}else{
+				sell_array = JSON.parse(sell_array);
+				sell_array.push({
+						"productinfo_type":id,
+						"position_portion": por,
+						"num":num
+					});
+			}
+			//JSON.parse()
+			$('input[name="sell_array"]').val(JSON.stringify(sell_array));
+		}
+
+		$(function(){
+			$(document).ready(function(){
+				$(window).resize(function() {
+					var i ;
+					for(i=1 ; i<=8; i++){
+						$('table').find('td:nth-child('+i+')').outerWidth($('table').find('th:nth-child('+i+')').outerWidth());
+					}
+					if($('table').find('thead').find('tr').outerWidth() != $('table').find('tbody').find('tr').outerWidth()){
+						for(i=4 ; i<=8; i++){
+							$('table').find('td:nth-child('+i+')').css('padding-right','calc(19px - .5em)')
+						}
+					}
+				});
+			});
+
+			var i ;
+			for(i=1 ; i<=8; i++){
+				$('table').find('td:nth-child('+i+')').outerWidth($('table').find('th:nth-child('+i+')').outerWidth());
+			}
+			if($('table').find('thead').find('tr').outerWidth() != $('table').find('tbody').find('tr').outerWidth()){
+				for(i=4 ; i<=8; i++){
+					$('table').find('td:nth-child('+i+')').css('padding-right','calc(19px - .5em)')
+				}
+			}
+		})
+		
+	</script>
+
+	<script>
+		function search_bar_mul(){
+			var bar = $('input[name="searchKey"]').val();
+			var sell_array = $('input[name="sell_array"]').val();
+			
+			if(bar.length >= 0 ){
+			
+				$('input[name="searchKey"]').val('');
+				$.ajax({
+					url: "{:url('sell/search_bar_mul')}",
+					type: 'POST',
+					data: {
+						bar:bar,
+						sell_array:sell_array
+					},
+					success: function(re) {
+					
+						if(re == 'no'){
+							$.alert('無商品');
+							return 0;
+						}
+						$('#select_type').modal('show');
+						$('#select_type .modal-body').html(re);
+					}
+				});
+			}
+		}
+
+		function search_bar(pp_id,product_id){
+			$('#select_type').modal('hide');
+
+			var sell_array = $('input[name="sell_array"]').val();
+			
+			$.ajax({
+				url: "{:url('sell/search_bar')}",
+				type: 'POST',
+				data: {
+					pp_id:pp_id,
+					sell_array:sell_array,
+					product_id:product_id
+				},
+				success: function(re) {
+				
+					if(re == 'no'){
+						$.alert('無商品');
+						return 0;
+					}
+				
+					$('input[name="sell_array"]').val(re);
+
+					de_array = JSON.parse(re);
+					console.log(de_array);
+					show_goods_td(de_array);					
+				}
+			});
+		}
+
+		function show_goods_td(de_array){
+			var total = 0;
+			$( "#sell" ).empty();	
+			$.each(de_array, function(i, item) {
+				$( "#sell" ).append( "\
+						<tr>\
+							<td>"+item.title+"</td>\
+							<td>"+item.price+"</td>\
+							<td>"+item.dis+"</td>\
+							<td>"+item.count+"</td>\
+							<td>"+item.p_code+"</td>\
+							<td>"+item.num+"</td>\
+							<td onclick='sell_array_de("+ item.pp_id +")'>刪除</td>\
+						</tr>" );
+				total += (item.count*item.num);
+			});
+			$( "#sell" ).append( "<tr>\
+									<td colspan='5'></td>\
+									<td>總計：</td>\
+									<td>"+total+"元</td>\
+								</tr>" );
+		}
+
+		function sell_array_de(pp_id){
+		
+			var sell_array = $('input[name="sell_array"]').val();
+			
+			sell_array = JSON.parse(sell_array);
+						
+			var result = sell_array.filter(function(item,i){
+			   return item.pp_id != pp_id;
+			});
+			$( "#sell" ).empty();	
+			
+			$('input[name="sell_array"]').val(JSON.stringify(result));
+			
+			show_goods_td(result);
+
+		}
+	</script>
+{/block}

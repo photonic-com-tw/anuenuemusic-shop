@@ -1,0 +1,251 @@
+{extend name="Public/aside" /}
+
+{block name="title"}網頁編輯區 > {$frontend_menu['about']['name']}{/block}
+
+{block name="css"}
+
+    <style type="text/css">
+
+    #about{
+
+        height: 900px;
+
+        width: 60%;
+
+        margin: 40px auto;
+
+        margin-bottom:0px;
+
+        padding: 2%;
+
+        border: 1.5px #9D9D9D solid;
+
+        position: relative;
+
+    }
+
+    .glyphicon-menu-right{
+
+        font-size:16px
+
+    }
+
+    .title{
+
+        font-size:18px;
+
+        margin-bottom:10px;
+
+    }
+
+    .img-box{
+
+        width: 100%;
+
+        height: 48%;
+
+        margin:0px;
+
+    }
+
+    textarea{
+
+        width: 100%;
+
+        height: 48%;
+
+        border:2px solid #000000;
+
+        padding:5px;
+
+    }
+
+    img{
+
+        max-width:100%;
+
+        max-height:100%;
+
+    }
+
+    input{
+
+        border:none;
+
+        border-bottom:1px solid #000000;
+
+        padding:0px 5px;
+
+        width:90%;
+
+    }
+
+    .button.aboutButton{
+
+        position: absolute;
+
+        right: 0;
+
+        bottom: 0;
+
+        margin: 2%;
+
+    }
+
+    </style>
+
+{/block}
+
+{block name="content"}
+
+    <div id="content">
+
+        <p id="title">網頁編輯區 > {$frontend_menu['about']['name']}</p>
+
+        <div id="about">
+
+            <div class="title">
+
+                <!-- 歷史沿革 -->
+                {$frontend_menu['about']['second_menu']->about_story->name}<span class="glyphicon glyphicon-menu-right"></span>
+
+            </div>
+
+            <form action="{:url('about/update')}" name="aboutForm" method="post" enctype="multipart/form-data">
+
+            <div style="width:100%; height:75%">
+
+              <textarea id="editor" name="content" autofocus>{$about_story.content}</textarea>
+
+                <!-- <div style="float:left; width:49%">
+
+                    <div class="img-box">
+
+                        <span class="glyphicon glyphicon-edit"></span>
+
+                        <input type='file' class="upl" name="image1" accept="image/*" onclick="ChangeImages()">
+
+                        <img class="preview" name="image1" src="__UPLOAD__{$about_story.image_left_top}"/>
+
+                    </div><br><br>
+
+                </div>
+
+                <div style="float:right; width:49%">
+
+                    <div class="img-box">
+
+                        <span class="glyphicon glyphicon-edit"></span>
+
+                        <input type='file' class="upl" name="image2" accept="image/*" onclick="ChangeImages()">
+
+                        <img class="preview" name="image2" src="__UPLOAD__{$about_story.image_right_top}"/>
+
+                    </div><br><br>
+
+                    <div class="img-box">
+
+                        <span class="glyphicon glyphicon-edit"></span>
+
+                        <input type='file' class="upl" name="image3" accept="image/*" onclick="ChangeImages()">
+
+                        <img class="preview" name="image3" src="__UPLOAD__{$about_story.image_right_bottom}"/>
+
+                    </div>
+
+                </div> -->
+
+            </div>
+
+            <div style="font-size:18px; margin-top:5%; margin-bottom:10px;">
+                <!-- 地圖資訊 -->
+                {$frontend_menu['about']['second_menu']->about_map->name}<span style="font-size:16px" class="glyphicon glyphicon-menu-right"></span>
+            </div>
+            <div class="infobox">
+                <label>code：</label>
+                <textarea name="mapurl" rows="6">{$about_story.mapurl}</textarea>
+            </div>
+            <span class="herinneren-use">請開啟google地圖，搜尋要嵌入的地址，點擊分享>嵌入地圖>複製HTML，然後貼入上方輸入區</span>
+
+            <a class="button aboutButton" onclick="aboutForm.submit();">儲存</a>
+
+            </form>
+
+        </div>
+
+    </div>
+
+{/block}
+
+{block name="ownJS"}
+
+    <script>
+
+    $(function () {
+
+        $(".upl").on("change", function (){
+
+            var name = $(this).attr('name');
+
+            preview(this, name);
+
+        })
+
+
+
+        function preview(input, name) {
+
+            if (input.files && input.files[0]) {
+
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+
+                    $('.preview[name='+name+']').attr('src', e.target.result);
+
+                }
+
+                reader.readAsDataURL(input.files[0]);
+
+            }
+
+        }
+
+    });
+
+    </script>
+
+    <script charset="utf-8" src="__PUBLIC__/js/kindeditor/kindeditor.js"></script>
+
+    <script charset="utf-8" src="__PUBLIC__/js/kindeditor/lang/zh_TW.js"></script>
+
+    <script>
+
+        var editor;
+
+        KindEditor.ready(function(K) {
+
+                editor = K.create('#editor', {
+
+                        afterBlur: function(){this.sync();},
+
+                        langType : 'zh_TW',
+
+                        items:['source', '|', 'hr', 'forecolor', 'fontsize', 'bold', 'italic', 'underline', '|',
+                        'image', 'link', 'unlink','|',
+                        'justifyleft', 'justifycenter', 'justifyright'],
+
+                        width:'100%',
+
+                        height:'500px',
+
+                        resizeType:0
+
+                });
+
+        });
+
+    </script>
+
+{/block}
+

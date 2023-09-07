@@ -1,0 +1,1331 @@
+{extend name="Public/aside" /}
+
+{block name="title"}{$parent_title.title} - 分類主題館{/block}
+
+{block name="css"}
+
+    <link rel="stylesheet" href="__PUBLIC__/css/datepicker.css">
+
+    <style type="text/css">
+        #open,
+        #close{
+            margin-top: 4px;
+            margin-left: 10px;
+            margin-right: 5px;
+            cursor: pointer; 
+        }
+
+        .frame{
+            padding:10px 20px;
+            border: 1.5px #9D9D9D solid;
+            margin: 0px auto;
+            margin-top: 10px;
+            width: 99%
+        }
+
+        .frame li{
+            display: inline;
+        }
+
+        .frame .add{
+            color:#fff;
+            font-size:20px;
+            text-align:center;
+            background:#333;
+            padding:10px;
+            border-radius:100px;
+            cursor:pointer
+        }
+
+        .frame .edit{
+            font-size:25px;
+            display: inline-block;
+            margin-left:1%;
+            cursor:pointer;
+            position: relative;
+        }
+
+        .change-title{
+            position: absolute;
+            border: 2px solid rgb(157, 157, 157);
+            background: rgb(255, 255, 255);
+            padding: 5px;
+            width: 150px;
+            margin-top:-5px;
+            margin-left: 30px;
+            z-index: 999;
+        }
+
+        .change-title input {
+            border: 1px solid #000000;
+        }
+
+        /* 新增商品區塊 */
+        .typeinfo_add-item{
+            position: fixed;
+            background: #fff;
+            padding:20px;
+            width: 800px;
+            /*height:450px;*/
+            z-index:999;
+            top:calc(50% - 450px / 2);
+            left:calc(40% - 400px / 2);
+        }
+
+        .typeinfo_add-item .img-box{
+            position:relative;
+            border: 1px solid #333;
+            width:100%;
+            height:200px;
+            margin:0px
+        }
+
+        .typeinfo_add-item .button{
+            right:15px;
+            bottom:15px;
+            position:absolute;
+        }
+
+        .formblock{
+            display:inline-block;
+            width:45%;
+            margin: 0 2%;
+        }
+
+        /* 編輯 */
+        .edit-item{
+            position: absolute;
+            border: 2px solid #9D9D9D;
+            background: #fff;
+            z-index: 5;
+            padding: 10px;
+            left: -10px;
+            font-size: 16px;
+            width: 120px;
+        }
+        .edit-item .switch{
+            display:inline-flex;
+            margin-top: 10px;
+        }
+
+        table, table tr , table td, table th{
+            border: none;
+            border-bottom: none;
+            border-left: none;
+        }
+        .datepicker th.switch{
+            display:table-cell;
+            margin-top: 0;
+        }
+
+        /*表格設定*/
+        .info{
+            margin: 10px auto;
+            margin-bottom: 10px;
+            margin-top: -1.5px;
+            width: 99.02%;
+
+        }
+
+        .info td{
+            position:relative;
+            border-bottom: 2px #9D9D9D solid;
+        }
+
+        .info tr:nth-child(1) td{
+            background: #E0E0E0;
+            border: 2px #9D9D9D solid;
+        }
+
+        .info td:nth-child(1){
+            width: 5%;
+            text-align: center;
+        }
+
+        .info td:nth-child(2){
+            width: 10%;
+            text-align: center;
+        }
+
+        .info td:nth-child(3){
+            width: 5%;
+            text-align: center;
+        }
+
+        .info td:nth-child(4){
+            width: 17.5%;
+            text-align: left;
+        }
+
+        .info td:nth-child(5){
+            width: 17.5%;
+            text-align: center;
+        }
+
+        .info td:nth-child(6){
+            width: 10%;
+            text-align: right;
+        }
+
+        .info td:nth-child(7){
+            width: 15%;
+            text-align: left;
+        }
+
+        .info td:nth-child(8){
+            width: 15%;
+            text-align: left;
+        }
+
+        .info td:nth-child(9){
+            width: 5%;
+            text-align: center;
+        }
+
+
+
+        .switch{
+            display:inline-flex;
+            margin-top: 5px;
+        }
+        .glyphicon-edit{
+            position:relative
+        }
+        .upl{
+            top:0;
+            right:0;
+            z-index: 2999;
+        }
+
+        .glyphicon-picture{
+            position:absolute;
+            top: calc(50% - 8px);
+            z-index: 0;
+            cursor: pointer;
+        }
+        .preview{
+            max-height: 100%;
+            max-width: 100%;
+            z-index: 1;
+        }
+
+
+
+        @media (max-width: 1366px){
+            .info td font{ display: none }
+            .info td br{ display: block }
+        }
+
+        .add_span{
+            font-size: 16px;
+            position: relative;
+            top: -5px;
+        }
+
+    </style>
+
+{/block}
+
+{block name="content"}
+
+    <iframe id="boxFormIframe" name="boxFormIframe" style="display: none;"></iframe>
+
+    <div id="block" onclick="CloseAdd('.typeinfo_add-item')"></div>
+
+
+
+     <!-- 新增修改商品 -->
+
+    <div class="typeinfo_add-item none" style="top: 5%;width:800px" id="Box">
+
+        <form name="boxForm" :action="action" method="post" target="boxFormIframe" enctype="multipart/form-data">
+
+			<div class="formblock">
+
+				<!-- <div class="img-box">
+
+					<span style="font-size:30px;" class="glyphicon glyphicon-picture"></span>
+
+					<input type='file' class="upl" ref="img" name="image" accept="image/*" @change="previewImg">
+
+					<img class="preview" :src="src"/>
+
+				</div>
+
+				<br> -->
+
+				<div style="padding:10px 0px;">
+
+					<!-- <p style="font-size:12px">建議大小：90*365</p> -->
+
+					<p>本類名稱：
+
+						<input v-model="title" name="title" type="text" style="width:215px; border:none; border-bottom:1px solid #000000" value="女性保健">
+
+					</p>
+
+					<div style="font-size:12px; margin-left:45px; margin-top:20px">
+
+						<p>開始日期　<input type="text" id="start" v-model="start"></p>
+
+						<p><a @click="noTimeLimit">沒有結束日期</a></p>
+
+						<p>結束日期　<input type="text" id="end" v-model="end"></p>
+
+					</div>
+
+					<input type="hidden" name="end" v-model="endTime">
+
+					<input type="hidden" name="start" v-model="startTime">
+
+					<input type="hidden" name="id" v-model="id">
+
+					<input type="hidden" name="parent_id" value="{$parent_title.id}">
+
+				</div>
+
+                <p>本類SEO設定(EX:健康食品,我愛念書)10組內
+
+                            <textarea style="width:80%;height:100px;" type="text" name="webtype_keywords"  v-model="webtype_keywords"></textarea></p>
+
+			</div>
+
+			<div class="formblock">
+
+				<p>本類描述(隱藏資訊)200字內
+
+					<textarea style="width:80%;height:250px;" type="text" name="webtype_description" v-model="webtype_description"></textarea></p>
+
+			</div>
+
+			<a class="button" @click="formSubmit">儲存</a>
+
+        </form> 
+
+    </div>
+
+    <!-- 新增修改商品結束 -->
+
+
+
+    <div id="content">
+
+        <p id="title">分類主題館 > {$parent_title.title}</p>
+
+        <div id="item-title" onclick="Show('.title')">{$parent_title.title}</div>
+
+        <!-- 更改標題 -->
+
+        <form style="display:inline-block;" action="{:url('product/update')}" name="productForm" method="post" enctype="multipart/form-data">            
+
+        <div class="change-title title none">
+
+            <p style="margin-bottom:5px">主題館名稱</p>
+
+            <input id="item-name" name="title" type="text" style="width:100%; margin-bottom:10px" value="{$parent_title.title}" autofocus>
+
+            <input name="id" type="hidden" value="{$parent_title.id}">
+
+            <div style="text-align:right">
+
+                <a class="button" onclick="productForm.submit();" style="display:unset; border:1px solid #000000; padding:0px 5px">儲存</a>
+
+                <a class="button" onclick="Show('.title')" style="display:unset; border:1px solid #000000; padding:0px 5px">取消</a>
+
+            </div>
+
+        </div>
+
+        <!-- 更改標題 結束 -->
+
+        </form>
+
+        <div style="display: inline-flex; margin-left: 30px;" id="radioDiv">
+
+            首頁顯示：
+
+            <input type="radio" name="show-btn" id="open" value="1">
+
+            <label for="open" style="font-weight:normal; cursor:pointer">開啟</label>
+
+            <input type="radio" name="show-btn" id="close" value="0">
+
+            <label for="close" style="font-weight:normal; cursor:pointer">隱藏</label>
+
+            <input type="radio" name="show-btn" id="r_close" value="2">
+
+            <label for="r_close" style="font-weight:normal; cursor:pointer">關閉</label>
+
+        </div>
+
+        <div class="frame">
+
+            <ul style="padding:0; font-size:20px; margin-bottom:0px;">
+
+                <li><a href="{:url('product/index', ['id' => $parent_title.id])}">廣告群組</a></li>
+
+                <li style="margin-left:40px;"><a style="text-decoration: underline;" href="#">分類別列表</a></li>
+
+            </ul>
+
+        </div>
+
+
+
+        <!--新增與編輯-->
+
+        <div class="frame">
+
+            <span class="glyphicon glyphicon-plus add" onclick="newBlock();"><span class="add_span">新增類別</span></span>
+
+            <span class="glyphicon glyphicon-plus add" onclick="location.href='{:url(\'productinfo/allcreate\', [\'prev_id\' => $parent_title.id])}';"><span class="add_span">新增商品</span></span>
+
+            <div class="edit" onclick="Show('.edit-item')">編輯 <span class="glyphicon glyphicon-triangle-bottom"></span>
+
+                <!-- 編輯開始 -->
+                <div class="edit-item none">
+                    <a onclick="multiOnline();">
+                        <font>開啟&nbsp;</font>
+                        <label class="switch" name="0">
+
+                            <input type="checkbox" disabled checked><span class="slider round"></span>
+                        </label>
+                    </a>
+
+                    <br>
+                    <a onclick="multiHide();">
+                        <font>隱藏&nbsp;</font>
+                        <label class="switch" name="0">
+                            <input type="checkbox" disabled><span class="slider round"></span>
+                        </label>
+                    </a>
+
+                    <br>
+                    <a onclick="multiOffline();">
+                        <font>關閉&nbsp;</font>
+                        <label class="switch" name="0">
+                            <input type="checkbox" disabled><span class="slider round"></span>
+                        </label>
+                    </a>
+
+                    <br>
+                    <hr style="border-top: 1px solid #333; margin:10px 0px">
+                    <a onclick="multiDelete();">
+                        刪除 <span style="margin-left: 15px;" class="glyphicon glyphicon-trash"></span>
+                    </a>
+                </div>
+                <!-- 編輯結束 -->
+            </div>
+
+        </div>
+
+		
+
+        <!--表格 開始-->
+
+        <table class="info" style="border: 2px #9D9D9D solid;">
+
+            <tr>
+
+                <td><input type="checkbox" class="activityCheckboxAll" onclick="$('.info input[class=TypeinfoCheckbox]').prop('checked', ($(this).is(':checked')?true:false))"style="width:100%; cursor:pointer;"></td>
+
+                <td>排序</td>
+
+                <td>開關</td>
+
+                <td>名稱</td>
+
+                <!-- <td>圖片</td> -->
+
+                <td>商品數量</td>
+
+                <td>開始時間</td>
+
+                <td>結束時間</td>
+
+                <td>刪除</td>
+
+            </tr>
+
+            {volist name="typeinfo" id="vo" empty="沒有數據"}
+
+            <tr id="typeinfo_{$vo.id}">
+
+                <td><input type="checkbox" class = "TypeinfoCheckbox" alt="{$vo.id}"></td>
+
+                <td><input type="number" v-model = "order_id"></td>
+
+                <td>
+
+                    <!--label class="switch">
+
+                        <input type="checkbox"id="online">
+
+                        <span class="slider round"></span>
+
+                    </label-->
+
+
+
+                    
+
+
+
+                    <select id="{$vo.id}" onchange="getval(this)">
+
+                        {switch name="vo.online"}
+
+                            {case value="1"}
+
+                                <option value="1" selected>開啟</option>
+
+                                <option value="0">隱藏</option>
+
+                                <option value="2">關閉</option>
+
+                            {/case}
+
+                            {case value="2"}
+
+                                <option value="1">開啟</option>
+
+                                <option value="0">隱藏</option>
+
+                                <option value="2" selected>關閉</option>
+
+                            
+
+                            {/case}
+
+                            {default /}
+
+                                <option value="1">開啟</option>
+
+                                <option value="0" selected>隱藏</option>
+
+                                <option value="2">關閉</option>
+
+                        {/switch}
+
+                        
+
+                    </select>
+
+
+
+                </td>
+
+                <td>
+
+                    <!--a href="{:url('productinfo/index', ['parent_id' => $vo.id])}">{{title}}</a-->
+
+					<a href="{:url('branch/index', ['id' => $vo.id])}">{{title}}</a>
+
+                    <span class="glyphicon glyphicon-edit" @click="openBox"></span>
+
+                </td>
+
+                <!-- <td @click="openBox">
+
+                    <span style="font-size:20px; position: absolute;top:45%; left:45%; z-index:0" class="glyphicon glyphicon-picture"></span>
+
+                    <img style="position: relative; max-height:150px;" class="preview" :src="src"/>
+
+                </td> -->
+
+                <td>{{product_num}}</td>
+
+                <td>{{startFormat}}</td>
+
+                <td>{{endFormat}}</td>
+
+                <td><span class="glyphicon glyphicon-trash" onclick="location.href = '{:url('typeinfo/delete')}?id={$vo.id}'"></span></td>
+
+            </tr>
+
+            {/volist}
+
+        </table>
+
+        <!--表格 結束-->
+
+    </div>
+
+{/block}
+
+{block name="ownJS"}
+
+    <script src="__PUBLIC__/js/action.js"></script>
+
+    <script src="__PUBLIC__/js/moment.min.js"></script>
+
+    <script src="__PUBLIC__/js/bootstrap-datepicker.js"></script>
+
+    <script>
+
+        $(function() {
+
+            $(document).click(function() {
+
+                $('.title').fadeOut();
+
+                $('.edit-item').fadeOut();
+
+            })
+
+            $('#item-title').click(function(event) {
+
+                event.stopPropagation();
+
+                $('.edit-item').fadeOut();
+
+            })
+
+            $('.change-title').click(function(event) {
+
+                event.stopPropagation();
+
+                $('.edit-item').fadeOut();
+
+            })
+
+            $('.edit').click(function(event) {
+
+                event.stopPropagation();
+
+                $('.title').fadeOut();
+
+            })
+
+        });
+
+
+
+        $('#boxFormIframe').load(function () {
+
+            var uploadStatus = $(this).contents().find('h1').text();
+            if(uploadStatus != ''){
+	            if(uploadStatus == "上傳成功"){
+
+	                alert("上傳成功");
+
+	                if(BoxVM.caller == 'new'){
+
+	                    location.reload();
+
+	                }else{
+
+	                    BoxVM.updateCallerData();
+
+	                }
+
+	            }else{
+
+	                alert("上傳失敗");
+
+	                console.log($(this).contents().find('body').text());
+
+	            }
+	        }
+
+        });
+
+
+
+        function cellCtrl(data) {
+
+            $.ajax({
+
+                url: "{:url('product/cellCtrl')}",
+
+                type: 'POST',
+
+                dataType: 'json',
+
+                data: data,
+
+                success: function(response) {
+
+                    if(response.status){
+
+                        alert('更改成功');
+
+                    }else{
+
+                        alert('更改失敗');
+
+                        console.log(response.message);
+
+                    }
+
+                },
+
+                error: function(xhr) {
+
+                    alert('更改失敗');
+
+                    console.log(xhr);
+
+                }
+
+            });
+
+        }
+
+
+
+        Vue.prototype.blockCtrl = function (blockData) {
+
+            $.ajax({
+
+                url: "{:url('typeinfo/cellCtrl')}",
+
+                type: 'POST',
+
+                dataType: 'json',
+
+                data: blockData,
+
+                success: function(response) {
+
+                    if(response.status){
+
+                        //alert('留言成功');
+
+                    }else{
+
+                        alert('更改失敗');
+
+                        console.log(response.message);
+
+                    }
+
+                },
+
+                error: function(xhr) {
+
+                    alert('更改失敗');
+
+                    console.log(xhr);
+
+                }
+
+            });
+
+        };
+
+        
+
+        var Box = {
+
+            id: 0, title: '', start: '',
+
+            end: '', src: '', action: '',
+
+            caller: null
+
+        }
+
+        var BoxVM = new Vue({
+
+            el: '#Box', 
+
+            data: Box,
+
+            computed: {
+
+                startTime: function () {
+
+                    console.log(this.start);
+
+                    return moment(this.start, 'YYYY-MM-DD').unix();
+
+                },
+
+                endTime: function () {
+
+                    console.log(this.end);                    
+
+                    return moment(this.end, 'YYYY-MM-DD').unix();
+
+                }
+
+            },
+
+            methods: {
+
+                formSubmit: function () {
+
+                    document.boxForm.submit();
+
+                },
+
+                previewImg: function () {
+
+                    console.log(this.$refs.img.files);
+
+                    var reader = new FileReader();
+
+                    reader.onload = function (e) {
+
+                        Box.src = e.target.result;
+
+                    }
+
+                    reader.readAsDataURL(this.$refs.img.files[0]);
+
+                },
+
+                updateCallerData: function () {
+
+                    this.caller.src = this.src;
+
+                    this.caller.title = this.title;
+
+                    this.caller.start = this.start;
+
+                    this.caller.end = this.end;
+
+                    CloseAdd('.typeinfo_add-item');
+
+                },
+
+                noTimeLimit: function () {
+
+                    //this.start = '1970-01-01';
+
+                    this.end = '1970-01-01';
+
+                }
+
+            }
+
+        });
+
+
+
+        function getval(sel)
+
+        {
+
+            $.ajax({
+
+                    url: "{:url('typeinfo/update')}",
+
+                    type: 'POST',
+
+                    dataType: 'json',
+
+                    data: {
+
+                        
+
+                        id: sel.id,
+
+                        online: sel.value
+
+                    },
+
+                    success: function(response) {
+
+                        if(response.status){
+
+                            //alert('留言成功');
+
+                        }else{
+
+                            alert('更改失敗');
+
+                            console.log(response.message);
+
+                        }
+
+                    },
+
+                    error: function(xhr) {
+
+                        //alert('更改失敗');
+
+                        console.log(xhr);
+
+                    }
+
+                });
+
+
+
+        }
+
+
+
+        {volist name="typeinfo" id="vo" empty=""}
+
+
+
+
+
+        $('#info_sel_{$vo.id}').on('change', function() {
+
+            alert( this.value );
+
+        });
+
+
+
+            var typeinfo_{$vo.id} = {
+
+                id: "{$vo.id}",
+
+                title: "{$vo.title}",
+
+                order_id: "{$vo.order_id}",
+
+                start: "{$vo.start|date='Y-m-d',###}",
+
+                end: "{$vo.end|date='Y-m-d',###}",
+
+                src: "__UPLOAD__{$vo.pic}",
+
+                product_num: "{$vo.product_num}",
+
+            	webtype_keywords:"{$vo.webtype_keywords}",
+
+         		webtype_description:"{$vo.webtype_description}",
+
+                action: "{:url('typeinfo/update')}"
+
+            }
+
+            //alert(online);
+
+            var typeinfo_{$vo.id}_VM = new Vue({
+
+                el: '#typeinfo_{$vo.id}',
+
+                data: typeinfo_{$vo.id},
+
+                watch: {
+
+                    order_id: function () {
+
+                        blockData = {
+
+                            id: this.id,
+
+                            order_id: this.order_id
+
+                        }
+
+                        this.blockCtrl(blockData);
+
+                    }
+
+                },
+
+                computed: {
+
+                    startFormat: function () {
+
+                        if (this.start == '1970-01-01'){
+
+                            return '沒有設定時間';
+
+                        }else{
+
+                            return this.start;
+
+                        }
+
+                    },
+
+                    endFormat: function () {
+
+                        if (this.end == '1970-01-01'){
+
+                            return '沒有設定時間';
+
+                        }else{
+
+                            return this.end;
+
+                        }
+
+                    }
+
+                },
+
+                methods: {
+
+                    openBox: function () {
+
+                        BoxVM.id = this.id;
+
+                        BoxVM.title = this.title;
+
+                        BoxVM.src = this.src;
+
+                        BoxVM.start = this.start;
+
+                        BoxVM.end = this.end;
+
+                        BoxVM.webtype_keywords = this.webtype_keywords;
+
+                        BoxVM.webtype_description = this.webtype_description;
+
+                        BoxVM.action = this.action;
+
+                        BoxVM.caller = this;
+
+                        ShowAdd('.typeinfo_add-item');
+
+                    }
+
+                }
+
+            });
+
+        {/volist}
+
+
+
+        function newBlock(){
+
+            BoxVM.id = "";
+
+            BoxVM.title = "";
+
+            BoxVM.src = "";
+
+            BoxVM.start = "1970-01-01";
+
+            BoxVM.end = "1970-01-01";
+
+            BoxVM.action = "{:url('Typeinfo/create')}";
+
+            BoxVM.caller = "new";
+
+            ShowAdd('.typeinfo_add-item');
+
+        }
+
+
+
+        function getMultiId() {
+
+            var multiIdArray = [];
+
+            $('.TypeinfoCheckbox').each(function () {
+
+                if($(this).prop("checked")){
+
+                    multiIdArray.push($(this).attr('alt'));
+
+                    $(this).prop("checked", false);
+
+                }
+
+            });
+
+            return multiIdArray;
+
+        }
+
+
+
+        function multiDelete() {
+
+            var form = document.createElement("form");
+
+            form.action = "{:url('Typeinfo/multiDelete')}";
+
+            form.method = "post";
+
+
+
+            multiId = document.createElement("input");
+
+            multiId.value = JSON.stringify(getMultiId());
+
+            multiId.name = "id";
+
+
+
+            form.appendChild(multiId);
+
+            document.body.appendChild(form);
+
+            form.submit();
+
+            $('.activityCheckboxAll').each(function () {
+
+            if($(this).prop("checked")){
+
+                $(this).prop("checked", false);
+
+            }
+
+        });
+
+        }
+
+
+
+        function multiOnline() {
+
+            var multiIdArray = getMultiId();
+
+            // multiIdArray.forEach(function(element) {
+
+            //     eval('typeinfo_' + element + '.online = true;');
+
+            // });
+
+            // $('.activityCheckboxAll').each(function () {
+
+            // if($(this).prop("checked")){
+
+            //     $(this).prop("checked", false);
+
+            // }
+
+            // });
+
+            multiChange(multiIdArray,1,'開啟');
+
+        }
+
+        function multiHide() {
+
+            var multiIdArray = getMultiId();
+
+            multiChange(multiIdArray,0,'隱藏');
+
+        }
+
+
+
+        function multiOffline() {
+
+            var multiIdArray = getMultiId();
+
+            //     multiIdArray.forEach(function(element) {
+
+            //         eval('typeinfo_' + element + '.online = false;');
+
+            //     });
+
+            //     $('.activityCheckboxAll').each(function () {
+
+            //     if($(this).prop("checked")){
+
+            //         $(this).prop("checked", false);
+
+            //     }
+
+            // });
+
+            multiChange(multiIdArray,2,'關閉');
+
+        }
+
+        function multiChange(multiIdArray,value,option){
+
+            var check = 0;
+
+            // console.log(multiIdArray);
+
+            for(var i=0; i<multiIdArray.length;i++){
+
+                $.ajax({
+
+                    url: "{:url('typeinfo/update')}",
+
+                    type: 'POST',
+
+                    dataType: 'json',
+
+                    data: {
+
+                        
+
+                        id: multiIdArray[i],
+
+                        online: value
+
+                    },
+
+                    success: function(response) {
+
+                        // console.log(multiIdArray[i]);
+
+                        if(response.status){
+
+                            
+
+                        }else{
+
+                            check += 1;
+
+                        }
+
+                    },
+
+                    error: function(xhr) {
+
+                        //alert('更改失敗');
+
+                        // console.log(xhr);
+
+                        check += 1;
+
+                    }
+
+                });
+
+            }
+
+
+
+            if(check ==0){
+
+                for(var i=0; i<multiIdArray.length;i++){
+
+                    var selector = "#" + multiIdArray[i];
+
+                    // console.log(selector);
+
+                    $(selector).children().each(function(){
+
+                        if ($(this).text()==option){
+
+                            //jQuery給法
+
+                            $(this).attr("selected", "true");
+
+                        }
+
+                    });
+
+                }
+
+                alert('修改成功');
+
+            }else{
+
+                alert('修改失敗');
+
+            }
+
+        }
+
+
+
+        var nowTemp = new Date();
+
+        var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
+
+        var checkin = $('#start').datepicker({
+
+            format: 'yyyy-mm-dd',
+
+        }).on('changeDate', function(ev) {
+
+            if (ev.date.valueOf() > checkout.date.valueOf()) {
+
+                var newDate = new Date(ev.date)
+
+                newDate.setDate(newDate.getDate() + 1);
+
+                checkout.setValue(newDate);
+
+            }
+
+            checkin.hide();
+
+            $('#end')[0].focus();
+
+        }).data('datepicker');
+
+        
+
+        var checkout = $('#end').datepicker({
+
+            format: 'yyyy-mm-dd',
+
+            onRender: function(date) {
+
+                return date.valueOf() < checkin.date.valueOf() ? 'disabled' : '';
+
+            }
+
+        }).on('changeDate', function(ev) {
+
+            BoxVM.start = $('#start').val();
+
+            BoxVM.end = $('#end').val();
+
+            checkout.hide();
+
+        }).data('datepicker');
+
+
+
+        switch(+"{$parent_title.online}"){
+
+            case 0 :
+
+                $('#close').click();break;
+
+            case 1 :
+
+                $('#open').click();break;
+
+            case 2 :
+
+                $('#r_close').click();break;
+
+        }
+
+
+
+
+
+
+
+        $("#radioDiv :radio").change(function ()
+
+            {               
+
+                 var value = $(this).val();
+
+                 var data = {
+
+                     id: "{$parent_title.id}",
+
+                     online: value
+
+                 };
+
+                 cellCtrl(data);         
+
+            }
+
+        );
+
+        function openList() {
+
+            $('#productListli').click();
+
+        }
+
+
+
+
+
+
+
+
+
+    </script>
+
+{/block}

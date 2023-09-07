@@ -1,0 +1,261 @@
+<section class="container max-wideVersion productPublic">
+<div id="itemBox" class="memberInforBox">
+
+    <div class="paddingSpacing">
+        <div class="pack">
+            <div class="memberTop">
+                <div class="title">
+                    <h3>{$_POST['title']}</h3>
+                </div>
+                <!-- <div class="orderBtnBox">
+                    <a href=""></a>
+                    <a class="active" href=""></a>
+                    <a href=""></a>
+                </div> -->
+            </div>
+            <div class="memberMiddle">
+                <div class="orderDetailsBox shoppingCartBox">
+
+                    <div class="row">
+                    	<div class="col-12">
+                            <!-- <a href="">同會員資料</a> -->
+                            {if condition="($user.name != '')"}
+                                <div>
+                                    <a class="send_btn" onclick="assign_memeber_data_ex();">同會員資料</a>
+                                </div>
+                            {/if}
+                        </div>
+                        <div class="form-group col-sm-6 col-12">
+                            <label class="col-form-label">報名學校(ex: XX 國小) *</label><br><span class="smallText">必填</span>
+							
+							<div class="row mb-3">
+							  <div class="col-sm-6 col-6">
+								<select  id="area" class="ui fluid selection dropdown no label use-btn" >
+									<option value="">選擇地區</option>
+									{volist name="city" id="vo"}
+										<option value="{$vo.Name}">{$vo.Name}</option>
+									{/volist}
+								</select>
+							  </div>
+							  <div class="col-sm-6 col-6">
+								<select id="type" class="ui fluid selection dropdown no label use-btn" >
+									<option value="">選擇年級</option>
+									<!-- <option value="幼稚園">幼稚園</option> -->
+									<option value="國小">國小</option>
+									<option value="國中">國中</option>
+									<option value="高中">高中</option>
+								</select>
+							  </div>
+							</div>
+							<input type="text" name="examinee_school" id="examinee_school" class="form-control" value="{$_POST['examinee_school']}">
+							<div id="examinee_school_option" style="position: absolute;
+																    background: #f0f1f2;
+																    border: 1px solid #ced4da;
+																    border-radius: 2px;
+																    width: 90%;
+																    z-index: 99;
+																    height: 300px;
+																	overflow-y: scroll;
+																    display: none">
+							</div>
+							<!-- <select name="examinee_school" id="examinee_school" class="ui fluid selection dropdown no label use-btn">
+								<option value="">請先選擇地區及年級</option>
+							</select> -->
+                        </div>
+
+                        <div class="form-group col-sm-6 col-12">
+                            <label class="col-form-label">報名班級(ex: 三年四班) *</label><br><span class="smallText">必填</span>
+                            <input type="text" class="form-control " placeholder="請輸入報名班級" id="examinee_class" name="examinee_class" value="{$_POST['examinee_class']}">
+                        </div>
+                        <div class="form-group col-sm-6 col-12">
+                            <label class="col-form-label">比賽學生姓名 *</label><br> 
+                            <span class="smallText">必填</span>
+                            <input type="text" class="form-control " placeholder="請輸入比賽學生姓名" id="examinee_name" name="examinee_name" value="{$_POST['examinee_name']}">
+                        </div>
+                        <div class="form-group col-sm-6 col-12">
+                            <label class="col-form-label">比賽學生身份證號碼 *</label><br>
+							<span class="smallText">必填-應試時須與淮考證核對用 *</span>
+                            <input type="text" class="form-control " placeholder="請輸入身份證號碼" id="examinee_id" name="examinee_id" value="{$_POST['examinee_id']}">
+                        </div>
+                        <?php /*
+                        <div class="form-group col-sm-6 col-12">
+                            <label class="col-form-label">比賽學生生日(ex: 0850505)</label><br>
+							<span class="smallText">必填-查詢密碼 *</span>
+                            <input type="text" class="form-control " placeholder="請輸入生日" id="examinee_birthday" name="examinee_birthday" value="{$_POST['examinee_birthday']}">
+                        </div>
+                        */?>
+						<div class="form-group col-sm-6 col-12">
+                            <label class="col-form-label">家長姓名 *</label><br>
+							<span class="smallText">必填</span>
+                            <input type="text" class="form-control " placeholder="請輸入家長姓名" id="parents_name" name="parents_name" value="{$_POST['parents_name']}">
+                        </div>
+
+                        <div class="form-group col-sm-6 col-12">
+                            <label class="col-form-label">家長聯絡手機(ex: 09XXXXXXXX) *</label><br>
+							<span class="smallText">屆時以簡訊發送考試相關訊息，請務必填寫 *</span>
+                            <input type="text" class="form-control " placeholder="請輸入家長聯絡手機" id="parents_phone" name="parents_phone" value="{$_POST['parents_phone']}">
+                        </div>
+                        <div class="form-group col-sm-6 col-12">
+                            <label class="col-form-label">家長聯絡email</label><br>
+                            <span class="smallText">*屆時會發送考試相關訊息</span>
+                            <input type="email" class="form-control " placeholder="請輸入家長聯絡email" id="parents_mail" name="parents_mail" value="{$_POST['parents_mail']}">
+                        </div>
+                        <div class="form-group col-sm-6 col-12">
+                            <label class="col-form-label">家長聯絡室內電話(ex: 04XXXXXXX)</label><br>
+							<span class="smallText"></span>
+                            <input type="text" class="form-control " placeholder="請輸入家長室內電話" id="parents_tel" name="parents_tel" value="{$_POST['parents_tel']}">
+                        </div>
+						<div class="form-group col-sm-6 col-12">
+                            <label class="col-form-label">通訊地址</label><br>
+							<!-- <span class="smallText">*郵寄單字本用</span> -->
+							<span class="smallText"></span>
+                            <input type="text" class="form-control " placeholder="請輸入家長通訊地址" id="parents_add" name="parents_add" value="{$_POST['parents_add']}">
+                        </div>
+                    </div>
+
+					<input type="hidden" id="type_id" value="{$_POST['type_id']}">
+					<input type="hidden" id="type_product_id" value="{$_POST['type_product_id']}">
+					<input type="hidden" id="current_num" value="{$_POST['current_num']}">
+
+                </div>
+            </div>
+            <div class="memberBottom">
+                <div>
+                    <p>其他規定<br>
+						{$consent}
+					</p>
+                </div>
+            </div>
+        </div>
+	</div>
+
+</div>
+</section>								
+
+ <div id="bg">
+
+      <div id="pay">
+
+          <a id="post_exinfo" class="btn btn-success btn-sm text-white send_clr arrow" >確認</a>
+
+      </div>
+
+ </div>
+<script>
+	function assign_memeber_data_ex(){
+        $('#parents_name').val(`{$user.name}`);
+        $('#parents_add').val(`{$home}`);
+        $('#parents_phone').val(`{$user.phone}`);
+        $('#parents_tel').val(`{$user.tele}`);
+        $('#parents_mail').val(`{$user.email}`);
+    }
+
+
+	$('#post_exinfo').click(function () {
+		var ne = '';
+		ne = checkEmpty($('#examinee_school').val(),'報名學校請勿空白',ne);
+		ne = checkEmpty($('#examinee_class').val(),'報名班級請勿空白',ne);
+		ne = checkEmpty($('#examinee_name').val(),'學生姓名請勿空白',ne);
+		// ne = checkEmpty($('#examinee_birthday').val(),'學生生日請勿空白',ne);
+		ne = checkEmpty($('#parents_name').val(),'家長姓名請勿空白',ne);
+		ne = checkEmpty($('#parents_phone').val(),'聯絡手機請勿空白',ne);
+		ne = checkEmpty($('#parents_mail').val(),'聯絡email請勿空白',ne);
+		// ne = checkEmpty($('#parents_add').val(),'通訊地址請勿空白',ne);
+		ne = checkPhone($('#parents_phone').val(),'手機格式錯誤',ne);
+		// ne = checkBirthday($('#examinee_birthday').val(),'生日格式錯誤',ne);
+		
+		if(ne == ''){
+			var ck = checkID($('#examinee_id').val());
+			if(ck){
+				if("{$_POST['method']}" == 'edit'){ // 編輯
+					edit_exinfo();
+				}else if("{$_POST['method']}" == 'new'){ // 新增
+					get_exinfo();
+				}
+			}else{
+				alert('身分證格式錯誤');
+			}
+		}else{
+			alert(ne);
+		}
+	});
+
+	$('#area').change(function() {
+		var a = $('#area').val();
+		var t = $('#type').val(); 
+		change_school(a,t);
+	});
+	$('#type').change(function() {
+	    var a = $('#area').val();
+		var t = $('#type').val();
+		change_school(a,t);
+	});
+
+	function change_school(a,t){
+		if(a != '' && t !=''){
+			$.ajax({
+				type: "POST",
+				url: "{:url('cart/school_ajax')}", 
+				cache: false,
+				data: { 
+					a: a,
+					t: t,
+				},
+				success: function(data) {
+					$('#examinee_school_option').html(data);
+					$('#examinee_school_option').show();
+					$('#examinee_school_option option').off('click');
+					$('#examinee_school_option option').on('click', function(){auto_input_examinee_school(this)});
+				},
+				error: function() {
+					alert('錯誤');
+				},
+			});
+		}
+	}
+	$('form[name="cartform"] input:not(#examinee_school)').on('focus',function(){
+		$('#examinee_school_option').hide();
+	})
+	$('#examinee_school').on('change',function(){
+		$('#examinee_school_option').hide();
+	})
+	function auto_input_examinee_school(item){
+		$('#examinee_school').val($(item).attr('value'));
+		$('#examinee_school_option').hide();
+	}
+
+	// 自動勾選
+	if('{$_POST["area"]}'){
+		$('#area option[value="{$_POST["area"]}"]').attr('selected','selected');
+	}
+	if('{$_POST["stype"]}'){
+		$('#type option[value="{$_POST["stype"]}"]').attr('selected','selected');
+	}
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

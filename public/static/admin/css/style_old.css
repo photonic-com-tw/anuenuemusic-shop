@@ -1,0 +1,1397 @@
+html,body{
+
+    font-family:微軟正黑體;
+
+    cursor: default;
+
+}
+
+/* 側邊選單 */
+
+#aside{
+
+    border:none;
+
+    height: 100%;
+
+    width:150px;
+
+
+
+    position: fixed;
+
+    top:0;
+
+    left:0;
+
+}
+
+input, textarea{
+
+    outline: none;
+
+}
+
+
+
+
+
+/* 內容共用設定 */
+
+.content{
+
+    width:calc(100% - 150px);
+
+    height: 80%;
+
+
+
+    position: absolute;
+
+    right:0;
+
+}
+
+.content .title{
+
+    padding:15px 30px;
+
+    font-size:22px;
+
+    border-bottom:1px #9D9D9D solid;
+
+}
+
+.content div input{
+
+    border:1px #000000 solid;
+
+    padding:0 5px;
+
+}
+
+.content button{
+
+    background: #E0E0E0;
+
+    border:1px #000000 solid;
+
+}
+
+.content button:hover{
+
+    background: #BEBEBE;
+
+}
+
+.none{
+
+    display: none;
+
+}
+
+.glyphicon-trash,
+
+.glyphicon-edit{
+
+    cursor: pointer;
+
+}
+
+a{
+
+    cursor: pointer;
+
+}
+
+/* 內容共用設定結束 */
+
+
+
+
+
+/* 庫存警示開始 */
+
+.stock-table {
+
+    margin-top:25px;
+
+    
+
+    width: 100%;
+
+    height: 100%;
+
+    table-layout: fixed;
+
+    border-collapse: collapse;
+
+    border: 2px #9D9D9D solid;
+
+}
+
+.stock-table th{
+
+    padding: 5px;
+
+    border-left:2px #9D9D9D solid;
+
+    border-bottom:2px #9D9D9D solid;
+
+    cursor: pointer;
+
+}
+
+.stock-table td{
+
+    padding: 5px;    
+
+    border-bottom:2px #9D9D9D solid;
+
+}
+
+.stock-table th:nth-child(1){
+
+    border-left:none;
+
+}
+
+  
+
+  
+
+.stock-table th:nth-child(1) { width: 200px; cursor: default; }
+
+.stock-table th:nth-child(2) { width: 160px; cursor: default; }
+
+.stock-table th:nth-child(3) { width: 600px; cursor: default; }
+
+.stock-table th:nth-child(4),
+
+.stock-table td:nth-child(4) { width: 200px; text-align: right; }
+
+.stock-table th:nth-child(5),
+
+.stock-table td:nth-child(5) { width: 140px; text-align: right; }
+
+.stock-table th:nth-child(6),
+
+.stock-table td:nth-child(6) { width: 140px; text-align: right; }
+
+.stock-table th:nth-child(7),
+
+.stock-table td:nth-child(7) { width: 140px; text-align: right; }
+
+.stock-table th:nth-child(8),
+
+.stock-table td:nth-child(8) { width: 140px; text-align: right; }
+
+
+
+.stock-table td:nth-child(1),
+
+.stock-table td:nth-child(4) { word-break:break-all; }
+
+
+
+.stock-table td:nth-child(4),
+
+.stock-table td:nth-child(5),
+
+.stock-table td:nth-child(6),
+
+.stock-table td:nth-child(7),
+
+.stock-table td:nth-child(8) { padding-right:19px }
+
+  
+
+.stock-table thead {
+
+    background-color:#E0E0E0;
+
+}
+
+.stock-table thead tr {
+
+    display: block;
+
+    position: relative;
+
+}
+
+.stock-table tbody {
+
+    display: block;
+
+    overflow: auto;
+
+    width: 100%;
+
+    height: 100%;
+
+}
+
+.stock-table thead tr th span{
+
+    font-size:14px;
+
+    padding-left:1px;
+
+}
+
+
+
+
+
+/* 捲軸樣式 */
+
+.stock-table tbody::-webkit-scrollbar {
+
+    width: .5em;
+
+}
+
+.stock-table tbody::-webkit-scrollbar-track {
+
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+
+}
+
+.stock-table tbody::-webkit-scrollbar-thumb {
+
+  background-color: darkgrey;
+
+  outline: 1px solid slategrey;
+
+}
+
+.wrap-outer {
+
+    margin-left: calc(100vw - 100%);
+
+}
+
+/* 庫存警示結束 */
+
+
+
+
+
+
+
+/* 首頁總覽開始 */
+
+/* 開關設定 */
+
+.switch {
+
+  position: relative;
+
+  display: inline-block;
+
+  width: 45px;
+
+  height: 24px;
+
+}
+
+.switch input {display:none;}
+
+.slider {
+
+  position: absolute;
+
+  cursor: pointer;
+
+  top: 0;
+
+  left: 0;
+
+  right: 0;
+
+  bottom: 0;
+
+  background-color: #ccc;
+
+  -webkit-transition: .4s;
+
+  transition: .4s;
+
+  border:2px solid black;
+
+}
+
+.slider:before {
+
+  position: absolute;
+
+  content: "";
+
+  height: 18px;
+
+  width: 18px;
+
+  left:2px;
+
+  bottom: 1px;
+
+  background-color: white;
+
+  -webkit-transition: .4s;
+
+  transition: .4s;
+
+}
+
+input:checked + .slider {
+
+  background-color: #00C200;
+
+}
+
+input:focus + .slider {
+
+  box-shadow: 0 0 1px #00C200;
+
+}
+
+input:checked + .slider:before {
+
+  -webkit-transform: translateX(21px);
+
+  -ms-transform: translateX(21px);
+
+  transform: translateX(21px);
+
+}
+
+/* Rounded sliders */
+
+.slider.round {
+
+  border-radius: 34px;
+
+}
+
+.slider.round:before {
+
+  border-radius: 50%;
+
+}
+
+/* 開關設定結束 */
+
+
+
+.indexview{
+
+    margin:0px auto;
+
+    border:2px #9D9D9D solid;
+
+}
+
+.indexview td{
+
+    padding:5px;
+
+    border:2px #9D9D9D solid;
+
+    position: relative;
+
+}
+
+.indexview td:nth-child(1){
+
+    width:100px
+
+}
+
+.indexview td:nth-child(2){
+
+    width:57px
+
+}
+
+.indexview td:nth-child(3){
+
+    width:533px;
+
+    border-right:none;
+
+}   
+
+.indexview td:nth-child(4){
+
+    width:70px;
+
+    border-left:none;
+
+    border-right:none;
+
+}
+
+.indexview td:nth-child(5){
+
+    width:100px;
+
+    border-left:none;
+
+}
+
+.indexview td div{
+
+    border:2px solid #000000;
+
+    
+
+    text-align: center;
+
+    font-size:14px;
+
+
+
+    position: relative;
+
+    margin:10px;
+
+    padding:1px;
+
+
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+}
+
+.indexview td div span{
+    /*position: absolute;*/
+    right: 0;
+    cursor: pointer;
+}
+
+.indexview td div input{
+
+    text-align:left;
+
+    border:none;
+
+    border-bottom:1px solid #000000;
+
+}
+
+.indexview td div textarea{
+
+    width:100%;
+
+    height:100%;
+
+    border:none;
+
+    resize: none
+
+}
+
+.iconbox{
+
+    list-style: none;
+
+    padding:0px
+
+}
+
+.iconbox li{
+
+    margin:5px;
+
+}
+
+.iconbox li img{
+
+    width:40px;
+
+}
+
+
+
+/* 更換資訊 */
+#block,
+#block_block{ 
+    position: fixed; 
+    top:0; 
+    left:0; 
+    height:100%; 
+    width:100%; 
+    background-color:#000000; 
+    opacity: .5;
+    z-index:998;
+}
+#block{
+    visibility: hidden;
+}
+#block_block{
+    display: none;
+}
+
+/* 共用區域設定 */
+
+.send-btn{
+
+    background: #E0E0E0;
+
+    border: 1px #000000 solid;
+
+    
+
+    position: absolute;
+
+    bottom: 0;
+
+    right: 0;
+
+    margin:2%;
+
+}
+
+.send-btn:hover{    
+
+    background: #BEBEBE;
+
+}
+
+.glyphicon-remove-sign{
+
+    font-size:22px;
+
+    position:absolute;
+
+    right:0;
+
+    cursor:pointer;
+
+    padding:5px;
+
+    opacity: .8;
+
+}
+
+.glyphicon-remove-sign:hover{
+
+    opacity: 1;
+
+}
+
+.infobox{
+
+    position: absolute;
+
+    padding: 5px;
+
+    width: 70%;
+
+    border: 2px solid #000000;
+
+    text-align:center
+
+}
+
+.infobox input{
+
+    width:calc(100% - 50px);
+
+    border:none;
+
+    border-bottom:1px solid #000000;
+
+}      
+
+
+
+/* 更換一張圖片 */
+
+#change-image-box{ 
+
+    position: fixed; 
+
+    top:calc(50% - 250px ); 
+
+    left:calc(50% - 250px ); 
+
+    width: 500px;
+
+    height: 500px;
+
+    background-color:white; 
+
+    z-index:999; 
+
+    /*visibility: hidden; */
+
+}
+
+#change-image-box .upl{
+
+    position: absolute;
+
+    width: 100%;
+
+    height: 100%;
+
+    z-index: 1;
+
+    opacity:0;
+
+    cursor:pointer;
+
+}
+
+#change-image-box .image-box {
+
+    position: absolute;
+
+    top: 5%;
+
+    left: 15%;
+
+    width: 70%;
+
+    height: calc(100% - 200px);
+
+    background-color: #fff;
+
+    text-align: center;
+
+    border: 2px solid #000000;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+}
+
+#change-image-box p{
+
+    display: block;
+
+    position: absolute;
+
+    bottom: 140px;
+
+    left: 15%;
+
+} 
+
+/* 更換多張圖片 */
+
+#change-group-box{ 
+
+    position: fixed; 
+
+    top:calc(50% - 300px); 
+
+    left:calc(50% - 350px); 
+
+    width: 700px;
+
+    height: 600px;
+
+    background-color:white; 
+
+    z-index:999;
+
+}
+
+#change-group-box .upl1{
+
+    position: absolute;
+
+    width: 100%;
+
+    height: 100%;
+
+    z-index: 1;
+
+    opacity:0;
+
+    cursor:pointer;
+
+}
+
+#change-group-box .image-box {
+
+    position: absolute;
+
+    top: 5%;
+
+    left: 15%;
+
+    width: 70%;
+
+    height: 55%;
+
+    background-color: #fff;
+
+    text-align: center;
+
+    border: 2px solid #000000;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+}
+
+#change-group-box .sm-group-box {
+
+    margin:0px 2px;
+
+    width:70%;
+
+    height:80px;
+
+    position:absolute;
+
+    bottom:155px;
+
+    left:15%;
+
+}    
+
+#change-group-box .sm-image-box {
+
+    margin:0px -2px;
+
+    width: 20%;
+
+    height: 100%;
+
+    background-color: #fff;
+
+    border: 2px solid #000000;
+
+    display: inline-flex;
+
+    align-items: flex-end;
+
+    justify-content: center;
+
+    cursor: pointer;
+
+}
+
+#change-group-box .sm-image-box img{
+
+    max-width:100%;
+
+    max-height:100%;
+
+} 
+
+#change-group-box p{
+
+    display: block;
+
+    position: absolute;
+
+    bottom: 120px;
+
+    left: 15%;
+
+}
+
+/* 更換資訊 */
+
+#change-info-box{ 
+
+    position: fixed; 
+
+    top:calc(50% - 150px); 
+
+    left:calc(50% - 250px); 
+
+    width:500px; 
+
+    height:300px; 
+
+    background-color:white; 
+
+    z-index:999; 
+
+    /*visibility: hidden; */
+
+}
+
+#change-info-box form{
+
+    position: relative;
+
+    top:8%;
+
+}
+
+#change-info-box .infobox{
+
+    position: relative;
+
+    left:15%;
+
+    padding: 5px;
+
+    margin:4% 0;
+
+    width: 70%;
+
+    border: 2px solid #000000;
+
+    text-align:left
+
+}
+
+#change-info-box .infobox input{
+
+    width:calc(100% - 70px);
+
+    border:none;
+
+    border-bottom:1px solid #000000;
+
+}
+
+/* 限時搶購 */
+
+#change-limit-box{ 
+
+    position: fixed; 
+
+    top:calc(50% - 200px); 
+
+    left:calc(50% - 305px); 
+
+    width: 610px;
+
+    height: 400px;
+
+    background-color:white; 
+
+    z-index:999; 
+
+    /*visibility: hidden; */
+
+    padding:50px;
+
+}
+
+#change-limit-box form{
+
+    margin-left:70px 
+
+}
+
+#change-limit-box label{
+
+    margin-right:5px;
+
+}    
+
+#change-limit-box form input{
+
+    border:none;
+
+    border-bottom:1px solid #000000;
+
+}
+
+/* 其他商品 */
+#mask #block{
+    visibility: initial;
+}
+#change-product-box{ 
+
+    position: fixed; 
+
+    top:calc(50% - 125px); 
+
+    left:calc(50% - 305px); 
+
+    width: 610px;
+
+    height: 250px;
+
+    background-color:white; 
+
+    z-index:999; 
+
+    /*visibility: hidden; */
+
+    padding:50px;
+
+}
+
+#change-product-box label{
+
+    margin-right:5px;
+
+}    
+
+#change-product-box form input{
+
+    border:none;
+
+    border-bottom:1px solid #000000;
+
+}
+
+/* 推薦圖文 */
+
+#change-imgtext-box{ 
+
+    position: fixed; 
+
+    top:calc(50% - 300px ); 
+
+    left:calc(50% - 250px ); 
+
+    width: 500px;
+
+    height: 600px;
+
+    background-color:white; 
+
+    z-index:999; 
+
+    /*visibility: hidden; */
+
+}
+
+#change-imgtext-box .upl{
+
+    position: absolute;
+
+    width: 100%;
+
+    height: 100%;
+
+    z-index: 1;
+
+    opacity:0;
+
+    cursor:pointer;
+
+}
+
+#change-imgtext-box .image-box {
+
+    position: relative;
+
+    margin-top: 5%;
+
+    left: 15%;
+
+    width: 70%;
+
+    height: 250px;
+
+    background-color: #fff;
+
+    text-align: center;
+
+    border: 2px solid #000000;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+}
+
+#change-imgtext-box p{
+
+    position: relative;
+
+    display: block;
+
+    left: 15%;
+
+    margin-top:5px;
+
+} 
+
+/* 文字編輯器 */
+
+#change-text-box{ 
+
+    position: fixed; 
+
+    top:calc(50% - 250px ); 
+
+    left:calc(50% - 250px ); 
+
+    width: 500px;
+
+    /*height: 500px;*/
+
+    background-color:white; 
+
+    z-index:999; 
+
+    /* visibility: hidden; */ 
+
+}
+
+#change-text-box textarea{ 
+
+    border: 2px #000000 solid;
+
+    resize: none;
+
+    height: 300px;
+
+    width: 300px;
+
+    margin: 100px;
+
+}    
+
+/* 更換資訊結束 */
+
+/* 首頁總覽結束 */
+
+
+
+
+
+/* 關於我們開始 */
+
+.about{
+
+    height: 100%;
+
+    width: 60%;
+
+    margin: 20px auto;
+
+    padding:5%;
+
+
+
+    border:2px #9D9D9D solid;
+
+    position: relative;
+
+}
+
+.about .upl{
+
+    position: absolute;
+
+    width: 100%;
+
+    height: 100%;
+
+    z-index: 1;
+
+    opacity:0;
+
+    cursor:pointer;
+
+}
+
+.about .image-box {
+
+    position: relative;
+
+    width:100%;
+
+    height:48%;
+
+    background-color: #fff;
+
+    text-align: center;
+
+    border: 2px solid #000000;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+}
+
+.about .image-box span{
+
+    position: absolute;
+
+    right: 0;
+
+    cursor: pointer;
+
+}
+
+.about textarea{
+
+    width:100%;
+
+    height:48%;
+
+    resize: none;
+
+    border: 2px solid #000000;
+
+}    
+
+.about .infobox{
+
+    position: relative;
+
+    padding: 5px;
+
+    width: 100%;
+
+    border: 2px solid #000000;
+
+}
+
+.about .infobox input{
+
+    text-align: left;
+
+    border:none;
+
+    border-bottom: 1px #000000 solid;
+
+}
+
+/*關於我們結束*/
+
+
+
+/*廣告群組開始*/
+
+.ad-group,
+
+.ad-group tr td{
+
+    border: 2px  solid #9D9D9D;
+
+}
+
+
+
+.ad-group{
+
+    margin-left: 10px;
+
+    margin-bottom: 10px;
+
+    width:99%;
+
+}
+
+
+
+.ad-group div{
+
+    position: relative;
+
+    border: 2px solid #000000;
+
+    display: inline-block;
+
+}
+
+
+
+.ad-group .upl{
+
+    width:100%;
+
+    height:100%;
+
+    opacity: 0;
+
+}
+
+
+
+.ad-group td{
+
+    padding:20px;
+
+}
+
+.ad-group .glyphicon-edit{
+
+    position: absolute;
+
+    right:0px;
+
+    z-index: 1;
+
+}
+
+.ad-group .urlbox{
+
+    border:none;
+
+    float:right;
+
+    margin-top:10px;
+
+    margin-left:20px;
+
+    width:68%
+
+}
+
+
+
+.ad-group .infobox{
+
+    position:relative;
+
+    width:100%;
+
+}
+
+
+
+@media (max-width:1919px){
+
+    .ad-group .ad-title{ width:10px; }
+
+    .ad-group .urlbox{width:100%;}    
+
+    .ad-group td{ text-align: center }
+
+}
+
+/* 廣告群組結束 */
+
+
+
+
+
+/* 子分館細項開始 */
+
+.item-info,
+
+.item-info tr td{
+
+    border: 2px  solid #9D9D9D;
+
+}
+
+.item-info{
+
+    margin: 10px;
+
+    margin-bottom: 10px;
+
+    margin-top:-2px;
+
+    width:99%;
+
+}
+
+.item-info td{
+
+    padding:5px 10px;
+
+}
+
+
+
+.item-info tr:nth-child(1) td{
+
+    background:#E0E0E0;
+
+    border: 2px  solid #9D9D9D;
+
+}
+
+
+
+
+
+.item-info tr td button{
+
+    background: #E0E0E0;
+
+    border: 1px #000000 solid;
+
+}
+
+
+
+.item-info tr td button:hover{
+
+    background: #BEBEBE;
+
+}
+
+
+
+.edit-item{
+
+    position: absolute;
+
+    border: 2px solid #9D9D9D;
+
+    background: #fff;
+
+    z-index: 1;
+
+    padding: 10px;
+
+    left: 8.5%;
+
+    font-size:16px;
+
+}
+
+
+
+@media (max-width:1440px){
+
+    .edit-item{left:9.5%;}
+
+}
+
+
+
+@media (max-width:1366px){
+
+    .item-info tr td font{ display: none }    
+
+    .item-info tr td br{ display: block }    
+
+}
+
+
+
+@media (max-width:1280px){
+
+    .edit-item{left:10%;}
+
+}
+
+
+
+@media (max-width:1024px){
+
+    .edit-item{left:11%;}
+
+}
+
+/* 子分館細項結束 */
+

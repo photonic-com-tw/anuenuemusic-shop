@@ -1,0 +1,40 @@
+{extend name="Public/mainTpl" /}
+{block name="title"}{$lang_menu['會員登入']} | {$seo[0]['title']}{/block}
+{block name="css"}
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css"> -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+  <style>
+    .jumbotron {
+        background-color: #fffbed;
+    }
+    .grid_2{
+      display: none;
+    }
+  </style>
+{/block}
+
+{block name="content"}
+  {if condition = "$main eq null "}
+    <div class="jumbotron text-center border border-warning">
+      <h1>{$lang_menu['內容有誤']}</h1>
+      <p>{$lang_menu['如果有任何問題，請來電由客服人員幫您處理']}：{$Service_Tel}</p>
+    	<a onclick="history.back()">{$lang_menu['回上一頁']}</a>
+    </div>
+  {else/}
+    <div class="jumbotron text-center border border-warning">
+      <h1>{$lang_menu['請查看此信箱之信件，進行下一步程序']}：<a class="text-danger">{$main}</a></h1>
+      <p>{$lang_menu['如果有任何問題，請來電由客服人員幫您處理']}：<a class="text-secondary">{$Service_Tel}</a></p>
+    	<a onclick="history.back()">{$lang_menu['回上一頁']}</a>
+    </div>
+  {/if}
+{/block}
+
+{block name="ownJS"}
+  <script>
+  	$('.LoginTab').addClass('thispage');
+  </script>
+{/block}

@@ -1,0 +1,134 @@
+{extend name="Public/mainTpl" /}
+{block name="title"}報名資料查詢 | {$seo[0]['title']}{/block}
+{block name="css"}{/block}
+{block name="content"}
+                <section class="container max-wideVersion directoryRow">
+                    <ul class="clearfix">
+                        <li><a href="{$MAIN_WEB_LAN}/">首頁</a><i class="icon-right"></i></li>
+                        <li><a href="{:url('Orderform/tracking_registration')}">報名資料查詢</a></li>
+                    </ul>
+                </section>
+                <section class="container max-wideVersion productPublic member_nofooterimg examination">
+                    <!-- /////////////////////////////////////////// -->
+                    <!-- /////////////////////////////////////////// -->
+                    <!-- /////////////////////////////////////////// -->
+                    <div id="itemBox" class="memberInforBox">
+                        <div id="rightContentBox" class="innerPageBox memberContentBox">
+                            <div class="paddingSpacing">
+                                <div class="pack">
+                                    <div class="memberTop">
+                                        <div class="title">
+                                            <h3>報名資料查詢</h3>
+                                        </div>
+                                        <div class="orderBtnBox">
+                                            <a data-toggle="modal" data-target="#processModel" style="float: right;">操作說明</a>
+                                        </div>
+                                    </div>
+									<div class="container">
+                                        <div class="row">
+                                            <!-- <img class="col-8 offset-2" src= "/public/static/index/image/derding/track.png";>  -->
+                                        </div>
+                                        <div class="row">
+                                            <form class="col-8 offset-2" id="s" method="post" action="{:url('Orderform/tracking_view')}" >
+                                                <div class="memberMiddle">
+                                                    <div class="form-group">
+                                                        <input type="text"  id="id_card" name="id_card" class="form-control"   placeholder="請輸入身分證" ><br>
+                                                        <!-- <input type="text"  id="password"  name="password"class="form-control"   placeholder="請輸入生日" ><br> -->
+                                                        <a class="inquireBtn d-block  examinee">查詢<i class="icon-right"></i></a>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+									</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- processModel start-->
+                    <div class="modal fade " id="processModel" tabindex="-1" role="dialog" aria-labelledby="processModelTitle" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content ">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="processModelTitle">操作說明</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <!-- <img src="__PUBLIC__/img/process_img_01.png" alt=""> -->
+                                    <p>{$g_process}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- processModel end-->
+
+                    <!-- /////////////////////////////////////////// -->
+                    <!-- /////////////////////////////////////////// -->
+                    <!-- /////////////////////////////////////////// -->
+					<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+					  <div class="modal-dialog" role="document">
+						<div class="modal-content">
+						  <div class="modal-header">
+							<h5 class="modal-title" id="exampleModalLabel">填寫報名資料</h5>
+							<button type="button" class="close eeeeeee" data-dismiss="modal" aria-label="Close">
+							  <span aria-hidden="true">&times;</span>
+							</button>
+						  </div>
+						  <div class="modal-body" id="boxModel">
+							...
+						  </div>
+						  <div class="modal-footer">
+
+						  </div>
+						</div>
+					  </div>
+					</div>
+                </section>
+{/block}
+{block name="ownJS"}
+    <!-- phone member menu -->
+    <script src="__PUBLIC__/js/memberToggle.js"></script>
+    <script src="/public/static/index/js/check_input.js"></script>
+	<script>
+    $('.examinee').click(function () {
+        var t = $("#id_card").val();
+		var t = $("#password").val();
+		var ne = '';
+
+		ne = checkEmpty($('#id_card').val(),'請輸入身分證或准考證',ne);
+		ne = checkEmpty($('#password').val(),'請輸入生日',ne);
+		
+		
+		if(ne == ''){
+			$('#s').submit();
+		}else{
+			alert(ne);
+		}
+		
+		/*
+		$.ajax({
+			url: "{:url('Login/track')}",
+			type: 'POST',
+			data: {
+				id:t,
+			},			
+			success: function(re) {
+				//$('#exampleModal').modal('show');
+				
+				$('#boxModel').html(re);
+			}
+		});*/
+
+
+    });	
+	
+	</script>
+
+
+{/block}
+
+
+{block name="angularJs"}
+{/block}
+

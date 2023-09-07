@@ -1,0 +1,430 @@
+{extend name="Public/aside" /}
+{block name="title"}行銷管理區 > 加價購設定{/block}
+{block name="css"}
+    <link rel="stylesheet" type="text/css" href="__PUBLIC__/css/daterangepicker.css" />
+    <style type="text/css">
+
+        .frame{
+            padding:10px 20px;
+            border: 1.5px #9D9D9D solid;
+            margin: 0px auto;
+            margin-top: 10px;
+            width: 99%
+        }
+        .frame li{
+            display: inline;
+        }
+        .frame .add_act{
+            color:#fff;
+            font-size:20px;
+            text-align:center;
+            background:#333;
+            padding:10px;
+            border-radius:100px;
+        }
+        .frame .edit{
+            font-size:25px;
+            display: inline-block;
+            margin-left:5%;
+            cursor:pointer
+        }
+
+        table{
+            border:none
+        }
+        /* 表格設定 */
+        .info{
+            width:99%;
+            margin:0px auto;
+            margin-top:-2px;
+        }
+        .info tr:nth-child(1) td {
+            background: #E0E0E0;
+            border: 2px #9D9D9D solid;
+            padding-right: 5px;
+        }
+        .info td:nth-child(1){
+            width:5%;                
+            text-align: center;
+        }
+        .info td:nth-child(2){
+            width:11%;
+            text-align: center;
+        }
+        .info td:nth-child(3){
+            width:19%;                
+            text-align: center;
+        }
+        .info td:nth-child(4){
+            width:20%;
+            text-align: center;
+        }
+        .info td:nth-child(5){
+            width:20%;                
+            text-align: center;
+        }
+        .info td:nth-child(6){
+            width:5%;                
+            text-align: center;
+        }
+        .info td:nth-child(7){
+            width:5%;
+            text-align: center;
+        }
+        .info td:nth-child(8){
+            width:5%;
+            text-align: center;
+        }
+
+        a.button.active{
+            background-color: #717171;
+            color: #fff;
+        }
+        /* 編輯 */
+        .edit-item{
+            position: absolute;
+            border: 2px solid #9D9D9D;
+            background: #fff;
+            z-index: 5;
+            padding: 10px;
+            left: calc(5% + 55px);
+            font-size: 16px;
+        }
+        .edit-item .switch{
+            display:inline-flex;
+            margin-top: 10px;
+        }
+    </style>
+{/block}
+{block name="content"}
+    <div id="content">
+        <p id="title" onclick="javascript:location.href='index.html'" style="cursor:pointer;">
+            行銷管理區 > 加價購設定
+                <span ng-bind="contCtrl.model.search"></span>
+        </p>
+        <div style="padding:10px 30px;">
+            <form action="{:url('Addprice/index')}" name="searchForm" method="get" style="display: inline-block;">
+                <input type="text" name="searchKey" style="text-align:center" placeholder="請輸入名稱、地址" ng-model="contCtrl.searchKey">
+                <input type="hidden" name="type" style="text-align:center" value="keyword">
+                <a class="button" onclick="searchForm.submit();">搜尋</a>
+
+                <div style="visibility: hidden;">
+                    <input id="pre" type="radio" name="searchtype" value="3">
+                    <input id="now" type="radio" name="searchtype"  value="2">
+                    <input id="passed" type="radio" name="searchtype"  value="1">
+                    <input id="nouse" type="radio" name="searchtype"  value="0">
+                </div>
+            </form>
+            <div style="float: right;">
+                <a class="button pull-right" ng-click="contCtrl.searchTime()">搜尋</a>
+                <input id="searchTimeInput" class="date pull-right" type="text" style="width: 220px;"/>
+            </div>
+        </div>
+
+        <!--新增與編輯-->
+        <div class="frame">
+            <a data-toggle="modal" data-target="#addModal"><span class="glyphicon glyphicon-plus add_act"></span></a>
+            <div class="edit" onclick="Show('.edit-item')">編輯 <span class="glyphicon glyphicon-triangle-bottom"></span></div>
+            <!-- 編輯開始 -->
+            <div class="edit-item none">
+                <a ng-click="contCtrl.multiOnline();">
+                    <font>上架&nbsp;</font>
+                    <label class="switch" name="0">
+                        <input type="checkbox" disabled checked><span class="slider round"></span>
+                    </label>
+                </a>
+                <br>
+                <a ng-click="contCtrl.multiOffline();">
+                    <font>下架&nbsp;</font>
+                    <label class="switch" name="0">
+                        <input type="checkbox" disabled><span class="slider round"></span>
+                    </label>
+                </a>
+                <br>
+                <hr style="border-top: 1px solid #333; margin:10px 0px">
+                <a ng-click="contCtrl.multiDelete();">
+                    刪除 <span style="margin-left: 15px;" class="glyphicon glyphicon-trash"></span>
+                </a>
+            </div>
+            <!-- 編輯結束 -->
+        </div>
+
+        <!-- <div class="frame">
+            <a class="button searchtype0" onclick="timeTypeSerch('nouse')">全部</a>
+            <a class="button searchtype3" onclick="timeTypeSerch('pre')">預排</a>
+            <a class="button searchtype2" onclick="timeTypeSerch('now')">當期</a>
+            <a class="button searchtype1" onclick="timeTypeSerch('passed')">過往</a>
+        </div> -->
+
+        <!--表格 開始-->
+        <table class="info" style="border:1.5px #9D9D9D solid">
+            <tr>
+                <td><input type="checkbox" class="activityCheckboxAll" onclick="$('.info input[class=actCheckbox]').prop('checked', ($(this).is(':checked')?true:false))"style="width:100%; cursor:pointer;"></td>
+                <td style="cursor:pointer">上下架</td>
+                <td>加價購名稱</td>
+                <td>開始日期</td>
+                <td>結束日期</td>
+                <td>商品數</td>
+                <td>刪除</td>
+            </tr>
+
+            <tr ng-repeat="item in contCtrl.model.actList" id="act_<%item.id%>">
+                <td><input type="checkbox" class="actCheckbox" alt="<%item%>"></td>
+                <td>
+                    <label class="switch">
+                        <input ng-model="item.online" type="checkbox" ng-change="contCtrl.onlineChange(item)">
+                        <span class="slider round"></span>
+                    </label>
+                </td>
+                <td><a href="/admin/addprice/edit/id/<%item.id%>.html"><%item.title%></a></td>
+                <td><%item.start_time%></td>
+                <td><%item.end_time%></td>                    
+                <td><%item.count%></td>                                     
+                <td><span class="glyphicon glyphicon-trash" ng-click="contCtrl.doDel(item)"></span></td>                    
+            </tr>
+        </table>
+        <!--表格 結束-->
+    </div>
+
+    <div class="modal fade in" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addModalLabel" style="display: inline-block;">新增加價購</h5>
+                    <button type="button" class="close eeeeeee" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body row" id="boxModel">
+                    <div class="form-group col-sm-6 col-12">
+                        <label class="col-form-label">名稱</label>
+                        <input type="text" class="form-control " value=""  ng-model="contCtrl.addModel.title">
+                    </div>
+                    <div class="form-group col-sm-6 col-12">
+                        <label class="col-form-label">優惠折扣</label>
+                        <input type="text" class="form-control " value=""  ng-model="contCtrl.addModel.discount">
+                        <span style="color:red;">如希望加價購商品打85折，請輸入0.85</span>
+                    </div>
+                    <div class="form-group col-sm-6 col-12">
+                        <label class="col-form-label">開始時間</label>
+                        <input type="date" class="form-control start_time" value=""  ng-model="contCtrl.addModel.start_time">
+                    </div>
+                    <div class="form-group col-sm-6 col-12">
+                        <label class="col-form-label">結束時間</label> <input type="checkbox" style="margin-left:70px" id="noEndTime" ng-model="contCtrl.addModel.noEndTime"><label for="noEndTime">沒有結束日期</label>
+                        <input type="date" class="form-control end_time" value=""  ng-model="contCtrl.addModel.end_time" ng-style="{'display': contCtrl.addModel.noEndTime ? 'none' : 'inline-block' }">
+                    </div>
+                    <div class="form-group col-sm-12 col-12">
+                        <label class="col-form-label">加價購說明</label>
+                        <textarea rows="5" class="form-control" ng-model="contCtrl.addModel.description"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a class="btn btn-success btn-sm" ng-click="contCtrl.do_add()">新增</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{/block}
+{block name="ownJS"}
+    <script type="text/javascript" src="__PUBLIC__/js/moment.min.js"></script>  
+    <script type="text/javascript" src="__PUBLIC__/js/daterangepicker.js"></script>
+    <script src="__PUBLIC__/js/action.js"></script>
+    
+    <script>
+       $("input#searchTimeInput").daterangepicker({locale: {format: 'YYYY-MM-DD'}});
+
+        function timeTypeSerch(timeType){
+            $('#'+timeType).click();
+            searchForm.submit();
+        }
+        $('.searchtype{$searchtype}').addClass('active');
+    </script>
+
+    <script type="text/javascript" src="__PUBLIC__/js/angular/angular-1.4.4/angular.js"></script>
+    <script>
+    ///////////////
+    //   Angular
+    ///////////////
+    var app = angular.module('app',[]);
+    app.config(function($interpolateProvider){
+        $interpolateProvider.startSymbol('<%');
+        $interpolateProvider.endSymbol('%>');
+    });
+
+    app.controller('ContentController',['$http',function($http){
+        
+        var self = this;
+        self.model = {};
+        self.addModel = {};
+        self.addModel.noEndTime = false;
+
+        self.getList = function(searchdata){
+            searchdata['searchtype'] = self.searchtype;
+
+            $http({
+                method : "POST",
+                url : "/admin/addprice/getList.html",
+                data: searchdata,
+            }).success(function(data){
+                self.model.search = data.search;
+                self.model.actList = data.actList;
+                for(var prop in self.model.actList){
+                    if (self.model.actList[prop]['online'] == 1){
+                        self.model.actList[prop]['online'] = true;
+                    }else{
+                        self.model.actList[prop]['online'] = false;
+                    }
+                }
+            }).error(function(){
+
+            })//error
+        }
+
+        //抓取分類ID
+        var Request = new Object();  
+        request = GetRequest();
+        
+        function GetRequest() {      
+             var url = location.search; 
+             var theRequest = new Object();      
+             if (url.indexOf("?") != -1) {       
+                var str = url.substr(1);         
+                strs = str.split("&");       
+                for(var i = 0; i < strs.length; i++) {       
+                   theRequest[strs[i].split("=")[0]]=decodeURI(strs[i].split("=")[1]);       
+                }        
+             }       
+             return theRequest;      
+        }
+        self.searchKey = request.searchKey;
+        self.searchtype = request.searchtype;
+        self.getList({'searchKey': self.searchKey, 'type':'keyword'});
+
+        self.doDel = function(item){
+            if(!confirm('刪除將會連同展覽商品紀錄一併刪除，確認刪除？')){
+                return;
+            }
+
+            $.ajax({
+                method : "post",
+                url : "/admin/addprice/doDel",
+                data: item,
+            }).success(function(resp){
+                if(resp.code==1){
+                    self.getList({'searchKey': self.searchKey, 'type':'keyword'});
+                }else{
+                    alert(resp.msg);
+                }
+            }).error(function(){
+            })//error
+        }
+
+        self.searchTime =function () {
+            $('a.button').removeClass('active');
+            self.timeRange = $('#searchTimeInput').val().split(" - ");
+            self.getList({'start': self.timeRange[0], 'end':self.timeRange[1],'type':'date'});
+        }
+
+        self.onlineChange = function(item){
+            $.ajax({
+                method : "post",
+                url : "/admin/addprice/changeOnline",
+                data: item,
+            }).success(function(resp){
+                if(resp.code==1){
+                }else{
+                    alert(resp.msg);
+                }
+            }).error(function(){
+            })//error
+        }//self.onlineChange
+
+        self.multiOnline  =function () {
+            var multiIdArray = self.getMultiId();
+            for(var i=0;i<multiIdArray.length;i++){
+                multiId = JSON.parse(multiIdArray[i]);
+                multiId['online'] = true;
+                self.onlineChange(multiId);
+            }
+            alert("修改成功");
+            location.reload();
+        }
+
+        self.multiOffline= function () {
+            var multiIdArray = self.getMultiId();
+            for(var i=0;i<multiIdArray.length;i++){
+                multiId = JSON.parse(multiIdArray[i]);
+                multiId['online'] = false;
+                self.onlineChange(multiId);
+            }
+            alert("修改成功");
+            location.reload();
+        }
+
+        self.multiDelete= function () {
+            var multiIdArray = self.getMultiId();
+
+            if(multiIdArray.length==0){
+                alert("請勾選展覽");
+                return;
+            }
+
+            if(!confirm('刪除將會連同展覽商品紀錄一併刪除，確認刪除？')){
+                return;
+            }
+
+            for(var i=0;i<multiIdArray.length;i++){
+                multiId = JSON.parse(multiIdArray[i]);
+                $.ajax({
+                    method : "post",
+                    url : "/admin/addprice/doDel",
+                    data: multiId,
+                }).success(function(data){
+                }).error(function(){
+                })//error
+            }
+            location.reload();
+        }
+
+        self.getMultiId =function() {
+            var multiIdArray = [];
+            $('.actCheckbox').each(function () {
+                if($(this).prop("checked")){
+                    multiIdArray.push($(this).attr('alt'));
+                    $(this).prop("checked", false);
+                }
+            });
+            $('.activityCheckboxAll').prop('checked',false);
+            return multiIdArray;
+        }
+
+        self.do_add =function () {
+            if(!self.addModel.title){alert('請輸入標題');return;}
+            if(!self.addModel.discount){alert('請輸入優惠折扣');return;}
+            if(self.addModel.discount>1 || self.addModel.discount<0){alert('優惠折扣請輸入0~1之間的數',{duration:1500});return;}
+            if(!self.addModel.start_time){alert('請選擇開始時間');return;}
+            if(!self.addModel.end_time && !self.addModel.noEndTime){alert('請選擇結束時間');return;}
+
+            var postData = Object.assign({}, self.addModel);
+            postData['start_time'] = $('input.start_time').val();
+            postData['end_time'] = $('input.end_time').val();
+            $.ajax({
+                method : "POST",
+                url : "/admin/addprice/doCreate.html",
+                data: postData,
+            }).success(function(resp){
+                if(resp.code==1){
+                    self.getList({'searchKey': self.searchKey, 'type':'keyword'});
+                    $('#addModal .close').click();
+                }else{
+                    alert(resp.msg);
+                }
+            }).error(function(){
+            })//error
+        }
+
+    }])//app.controller()
+    </script>
+
+    
+{/block}

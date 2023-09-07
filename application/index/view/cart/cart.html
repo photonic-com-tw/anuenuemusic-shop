@@ -1,0 +1,1031 @@
+{extend name="Public/mainTpl" /}
+{block name="title"}{$lang_menu['購物車']} | {$seo[0]['title']}{/block}
+{block name="css"}
+    <style>
+        .modal{
+            overflow: scroll !important;
+        }
+    
+        #contWrap {
+            width: 100%;
+        }
+
+        .orderTable.table td.examinee_top{
+            padding: 0px;
+        }
+        .orderTable.table-rwd.proIntro td.examinee_top:before{
+            display: none;
+        }
+        .orderTable .examinee_table.table-rwd tr{
+            padding: 0px;
+        }
+        .examinee_table.orderTable{
+            width:  100%;
+            border-collapse: inherit;
+            border-spacing: 0px;
+            word-break: break-all;
+        }
+        @media only screen and (min-width: 1281px){
+            .examinee_table th:nth-of-type(1){width: 1%;}
+            .examinee_table th:nth-of-type(2){width: 5%;}
+            .examinee_table th:nth-of-type(3){width: 5%;}
+            .examinee_table th:nth-of-type(4){width: 8%;}
+            .examinee_table th:nth-of-type(5){width: 7%;}
+            .examinee_table th:nth-of-type(6){width: 8%;}
+            .examinee_table th:nth-of-type(7){width: 8%;}
+            .examinee_table th:nth-of-type(8){width: 13%;}
+            .examinee_table th:nth-of-type(9){width: 8%;}
+            .examinee_table th:nth-of-type(10){width: 13%;}
+            .examinee_table th:nth-of-type(11){width: 1%;}
+        }
+        @media only screen and (max-width: 1280px){
+            .orderTable.table-rwd.proIntro td:before{
+                width: auto;
+            }
+        }
+
+        .add_prod img{
+            width:80px;height:80px;
+        }
+        .add_prod>div{
+            width: calc(100% - 80px);
+        }
+        .add_prod span.btn{
+            font-size: 14px;
+            line-height: 14px;
+            padding: 5px;
+        }
+        .lineThrough{
+            text-decoration: line-through;
+        }
+        .num{
+            color: #ff4300;
+        }
+
+        .reg_prod_area .form-group.col-12>label{
+            width: auto;
+        }
+    </style>
+
+{/block}
+{block name="mycode"}
+<script>
+////////////////////////////////////////
+//　SCRIPT
+////////////////////////////////////////
+$(function() {
+    var mdwBtn = $('.modalBtn');
+    mdwBtn.on('click', function(e) {
+        e.preventDefault();
+        var setMdw = $(this),
+            setHref = setMdw.attr('href');
+            console.log(setHref)
+        if(setHref != undefined && setHref != ""){
+            $('#boxModel').html('<iframe id="contWrap"></iframe></div>');
+            $('#contWrap').attr('src', setHref);
+        }
+    });
+});
+</script>
+{/block}
+
+{block name="flulid_content"}
+    <!-- <section class="container max-wideVersion directoryRow">
+        <ul class="clearfix">
+            <li><a href="{$MAIN_WEB_LAN}/">首頁</a><i class="icon-right"></i></li>
+            <li><a href="{:url('Cart/cart')}">{$lang_menu['購物車']}</a></li>
+        </ul>
+    </section> -->
+    <div class="d-flex justify-content-center">
+        <div class="w-100 bg_anuenue bg_pic d-flex justify-content-center">
+            <section class="reg_prod_area box_show bg_white max-wideVersion productPublic">
+                <div class="pt_sxsmal pb_ssmal">
+                    <h3 class="page_title">
+                        {$lang_menu['購物車']}
+                    </h3>
+                </div>
+                <div class="row">
+                    <div class="col-12 text-center mb-3">
+                        <span class="other_login color_gray"><span>{$lang_menu['購買商品']}</span></span>
+                    </div>
+                </div>
+
+                <div class="memberMiddle">
+                    <div class="orderDetailsBox shoppingCartBox">
+
+                        {if condition="$control_register==1"}
+                            <a class="process_btn" data-toggle="modal" data-target="#descriptionContModel">{$lang_menu['報名流程說明']}</a>
+                        {/if}
+
+                        <form name="cartform" action="{:url('cart/buy')}" method="post">    
+                            <table class="orderTable table table-striped table-bordered table-rwd proIntro">
+                                <thead>
+                                    <tr class="tr-only-hide">
+                                        <th>{$lang_menu['圖片']}</th>
+                                        <th>{$lang_menu['品名']}</th>
+                                        <!-- <th>{$lang_menu['產品編號']}</th> -->
+                                        <th style="width: 100px">{$lang_menu['數量']}</th>
+                                        <th style="width: 75px">{$lang_menu['單價']}</th>
+                                        <th style="width: 75px">{$lang_menu['總價']}</th>
+                                        <th style="width: 50px">{$lang_menu['刪除']}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {volist name="cartData" id="vo" empty=""}
+                                        <!-- 商品資料 -->
+                                        <tr class="exam_tr">
+                                            <td data-th="{$lang_menu['圖片']}">
+                                                <div class="smallProImg" style="background-image: url(__PUBLIC__{$vo.info_pic1}); position: relative;">
+                                                    {if condition="empty($Front_name['網紅列表']) AND substr($vo.key_type,0,3)== 'kol'"}
+                                                        <span class="prod_tag kol_tag">{$lang_menu['網紅推薦']}</span>
+                                                    {/if}
+                                                    {if condition="empty($Front_name['加價購設定']) AND substr($vo.key_type,0,3)== 'add'"}
+                                                        <span class="prod_tag add_tag">{$lang_menu['加價購']}</span>
+                                                    {/if}
+                                                </div>
+                                            </td>
+                                            <td data-th="{$lang_menu['品名']}">
+                                                <span class="productNameBox" tabindex="0" data-toggle="tooltip" title="{$vo.info_title} - {$vo.type_title}">
+                                                    <span class="productName" style="pointer-events: none;" disabled>
+                                                        {$vo.info_title}
+                                                        {if condition="$vo.type_title != ''"}
+                                                            - {$vo.type_title}
+                                                        {/if}
+                                                    </span>
+                                                    {if condition="($ecpay_card==1||$tspg_card==1) && $card_pay_set==1 && $vo.card_pay==0"}
+                                                        <span class="productName" style="pointer-events: none; color:red" disabled>&nbsp;&nbsp;{$lang_menu['不可以刷卡']}</span>
+                                                    {/if}
+                                                </span>
+                                                {if condition="$control_register==1 && $vo.is_registrable==1"}
+                                                    <a  class="btn btn-success btn-sm text-white examinee"  type_id="{$vo.type_id}"  type_product_id="{$vo.type_product_id}" data-toggle="modal" data-target="#model" title="{$vo.info_title} - {$vo.type_title}" >{$lang_menu['填寫報名資料']}</a>
+                                                {/if}
+                                            </td>
+                                            <!-- <td data-th="{$lang_menu['產品編號']}">{$vo.type_product_id}</td> -->
+                                            <td data-th="{$lang_menu['數量']}">
+                                                <input type="number" id="examinee_{$vo.type_id}_num" class="form-control" min="1" value="{$vo.num}" onchange="cartCtrl(this, '{$vo.type_id}', 'assign'); if($(this).val()==0)$(this).parent().parent().parent().hide();">
+                                            </td>
+                                            <td data-th="{$lang_menu['單價']}">$<span>{$vo.countPrice}</span></td>
+                                            <td data-th="{$lang_menu['總價']}">$<span id="cart_tol_{$vo.type_id}" value="{$vo.countPrice}">{$vo.countPrice * $vo.num}</span></td>
+                                            <!-- id="cart_tol_{$vo.type_id}" -->
+                                            <td data-th="{$lang_menu['刪除']}">
+                                                <a class="deleteBtn" onclick="deleteCtrl(this, '{$vo.type_id}');"><i class="icon-bin"></i></a>
+                                            </td>
+                                        </tr>
+
+                                        {if condition="$control_register==1 AND $vo.is_registrable==1"}
+                                        <!-- 考生資料 -->
+                                        <tr class="examinee_tr">
+                                            <td colspan="7" class="examinee_top">
+                                                <table class="orderTable table-striped table-bordered table-rwd examinee_table">
+                                                    <thead>
+                                                        <tr class="tr-only-hide">
+                                                            <th><small>序號</small></th>
+                                                            <th><small>報名<br>學校</small></th>
+                                                            <th><small>報名<br>班級</small></th>
+                                                            <th><small>學生姓名</small></th>
+                                                            <th><small>身份證</small></th>
+                                                            <!-- <th><small>學生生日</small></th> -->
+                                                            <th><small>家長姓名</small></th>
+                                                            <th><small>聯絡手機</small></th>
+                                                            <th><small>email</small></th>
+                                                            <th><small>室內電話</small></th>
+                                                            <th><small>通訊地址</small></th>
+                                                            <th><small>刪除</small></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="examinee_{$vo.type_id}" class="current_num" current_num="0">
+                                                        {$exinfo[$vo.type_id]??''}
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                        {/if}
+                                    
+                                    {/volist}
+                                </tbody>
+                            </table>
+
+                            
+                            <br>
+                            <br>
+                            <!-- /////////////// -->
+                            <div class="row pt_xsmal">
+                                <div class="col-12 text-center mb-3">
+                                    <span class="other_login color_gray"><span>{$lang_menu['付款方式']}</span></span>
+                                </div>
+                            </div>
+                            <div>
+                                <!-- <h3>選擇付款方式</h3> -->
+                                {if condition="$lang_menu['貨到付款']"}
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" id="contactChoice1" name="pay_way" value="{$lang_menu['貨到付款']}" onchange="$('#credit-card').addClass('d-none')">
+                                    <label class="form-check-label" for="contactChoice1">{$lang_menu['貨到付款']}</label>
+                                </div>
+                                {/if}
+                                {if condition="$lang_menu['ATM轉帳\\匯款']"}
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" id="contactChoice2" name="pay_way" value="{$lang_menu['ATM轉帳\\匯款']}" onchange="$('#credit-card').addClass('d-none')">
+                                    <label class="form-check-label" for="contactChoice2">{$lang_menu['ATM轉帳\\匯款']}</label>
+                                </div>
+                                {/if}
+                                {if condition="($ecpay_card==1) && $card_pay ==1"}
+                                    {if condition="$lang_menu['綠界刷卡(一次付清)']"}
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" id="contactChoice3" name="pay_way" value="{$lang_menu['綠界刷卡(一次付清)']}" onchange="$('#credit-card').removeClass('d-none')">
+                                            <label class="form-check-label" for="contactChoice3">{$lang_menu['綠界刷卡(一次付清)']}</label>
+                                        </div>
+                                    {/if}
+
+                                    {if condition="$lang_menu['綠界刷卡(分期付款)']"}
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" id="contactChoice4" name="pay_way" value="{$lang_menu['綠界刷卡(分期付款)']}" onchange="$('#credit-card').removeClass('d-none')">
+                                            <label class="form-check-label" for="contactChoice4">{$lang_menu['綠界刷卡(分期付款)']}</label>
+                                        </div>
+                                    {/if}
+                                {/if}
+
+                                {if condition="$lang_menu['Paypal']"}
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" id="contactChoice5" name="pay_way" value="{$lang_menu['Paypal']}" onchange="$('#credit-card').removeClass('d-none')">
+                                        <label class="form-check-label" for="contactChoice5">{$lang_menu['Paypal']}</label>
+                                    </div>
+                                {/if}
+
+                                {if condition="$lang_menu['微信支付']"}
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" id="contactChoice6" name="pay_way" value="{$lang_menu['微信支付']}" onchange="$('#credit-card').removeClass('d-none')">
+                                        <label class="form-check-label" for="contactChoice6">{$lang_menu['微信支付']}</label>
+                                    </div>
+                                {/if}
+
+                                {if condition="($ecpay_card==1 && $card_pay ==1 ) || 
+                                                $lang_menu['Paypal'] || 
+                                                $lang_menu['支付寶'] || $lang_menu['微信支付']"}
+                                    <div id="credit-card" class="">
+                                        <p>{$lang_menu['如果刷卡失敗請至會員後臺→訂單查詢內「補單」']}</p>
+                                    </div>
+                                {/if}
+                                {if condition="($ecpay_card==1||$tspg_card==1) && $card_pay ==0"/}
+                                    <p>{$lang_menu['此筆訂單包含不可刷卡之商品，請勿使用刷卡功能']}</p>
+                                {/if}
+                            </div>
+                            <!-- /////////////// -->
+                            <br>
+                            <br>
+                            <div class="row pt_xsmal">
+                                <div class="col-12 text-center mb-3">
+                                    <span class="other_login color_gray"><span>{$lang_menu['配送方式']}</span></span>
+                                </div>
+                            </div>
+                            <div id="shipping_div">
+                                <!-- <h3>{$lang_menu['配送方式']}</h3> -->
+                                <div class="form-check form-check-inline" v-for="item in type_decode">
+                                    <input class="form-check-input" type="radio" :id="'label_send_way_'+item.id" name="send_way" :value="item.id" :label="item.name" v-model="send_way">
+                                    <label class="form-check-label" :for="'label_send_way_'+item.id" v-text="item.name"></label>
+                                </div>
+                            </div> 
+
+                            <br>
+                            <br>
+                            <div class="row pt_xsmal">
+                                <div class="col-12 text-center mb-3">
+                                    <span class="other_login color_gray"><span>{$lang_menu['訂單資料']}</span></span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <!-- <a href="">{$lang_menu['同會員資料']}</a> -->
+                                    {if condition="($user.name != '')"}
+                                        <div class="mb-2">
+                                            <a class="send_btn" onclick="assign_memeber_data()">{$lang_menu['同會員資料']}</a>
+                                        </div>
+                                    {/if}
+                                </div>
+                                <div class="form-group col-12 mb-0">
+                                    <label class="col-form-label">{$lang_menu['姓名']}</label><span class="smallText">{$lang_menu['必填']}</span>
+                                </div>
+                                <div class="form-group col-12">
+                                    <input type="text" class="form-control " placeholder="" id="transport_location_name" name="transport_location_name">
+                                </div>
+
+                                <div class="form-group col-12 mb-0">
+                                    <label class="col-form-label">{$lang_menu['電子郵件']}</label><span class="smallText">{$lang_menu['必填']}</span>
+                                </div>
+                                <div class="form-group col-12">
+                                    <input type="text" class="form-control " placeholder="" id="transport_email" name="transport_email">
+                                </div>
+                                <div class="form-group col-12 mb-0">
+                                    <label class="col-form-label">{$lang_menu['手機號碼']}</label>
+                                    <span class="smallText">{$lang_menu['必填']}</span>
+                                </div>
+                                <div class="form-group col-12">
+                                    <input type="text" class="form-control " placeholder="" id="transport_location_phone" name="transport_location_phone">
+                                </div>
+                                <div class="form-group col-12 mb-0">
+                                    <label class="col-form-label">{$lang_menu['聯絡電話']}</label>
+                                </div>
+                                <div class="form-group col-12">
+                                    <input type="text" class="form-control " placeholder="" id="transport_location_tele" name="transport_location_tele">
+                                </div>
+                                <div id="transport_location_div" class="w-100">
+                                    <div class="form-group col-12 mb-0">
+                                        <label class="col-form-label">{$lang_menu['地址']}</label><span class="smallText">{$lang_menu['必填']}</span>&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <button type="button" style="display:none" class="btn btn-success text-white mart_btn" onclick="open_page('https://emap.pcsc.com.tw/')" id="logistic_711">{$lang_menu['查看7-11門市']}</button>
+                                        <button type="button" style="display:none" class="btn btn-success text-white mart_btn" onclick="open_page('https://www.family.com.tw/marketing/inquiry.aspx')" id="logistic_family">{$lang_menu['查看全家門市']}</button>
+                                        <button type="button" style="display:none" class="btn btn-danger text-white mart_btn" onclick="open_page('https://www.hilife.com.tw/storeInquiry_street.aspx')" id="logistic_hilife">{$lang_menu['查看萊爾富門市']}</button>
+                                        <button type="button" style="display:none" class="btn btn-danger text-white mart_btn" onclick="open_page('https://www.okmart.com.tw/convenient_shopSearch')" id="logistic_ok">{$lang_menu['查看OK門市']}</button>
+                                        <span id="mart_note" class="smallText">{$lang_menu['請點選按鈕，自行將門市資訊填入地址及備註欄位']}</span>
+                                    </div>
+                                    <div class="form-group col-12">
+                                        <input type="text" class="form-control" placeholder="{$lang_menu['請輸入地址']}" id="transport_location" name="addrC">
+                                    </div>
+                                </div>
+                                <!-- ///////////////////////////////////////////////////////////////////////////////////// -->
+                                <!-- ///////////////////////////////////////////////////////////////////////////////////// -->
+                                <!-- ///////////////////////////////////////////////////////////////////////////////////// -->
+                                <!-- ///////////////////////////////////////////////////////////////////////////////////// -->
+                                <!-- <font style="color:red">*</font>希望送達時間:<input type="radio" value="下午五點前" name="delivery"/>下午五點前/<input  type="radio" value="晚上五點後" name="delivery"/>晚上五點後 -->
+                                <input class="use-form-control" type="hidden" name="id" value="{$user.id}"/>
+                                <input class="use-form-control" type="hidden" id="discount" name="discount" value=""/>
+                                <input class="use-form-control" type="hidden" id="point" name="point" value=""/>
+                                <input class="use-form-control" type="hidden" id="directcoupon_code" name="directcoupon_code" value=""/>
+                                <!-- <input type="hidden" id="email" name="email" value="{$user.email}"/> -->
+                                <!-- ///////////////////////////////////////////////////////////////////////////////////// -->
+                                <!-- ///////////////////////////////////////////////////////////////////////////////////// -->
+                                <!-- ///////////////////////////////////////////////////////////////////////////////////// -->
+                            </div>
+
+                            <hr>
+                            <div class="row">
+                                <div class="col-12">
+                                    <h3>{$lang_menu['如需統編請登錄']}</h3>
+                                </div>
+                                <div class="form-group col-12 mb-0">
+                                    <label class="col-form-label">{$lang_menu['統一編號']}</label>
+                                </div>
+                                <div class="form-group col-12">
+                                    <input type="text" class="form-control " placeholder="" name="uniform_numbers">
+                                </div>
+                                <div class="form-group col-12 mb-0">
+                                    <label class="col-form-label">{$lang_menu['公司抬頭']}</label>
+                                </div>
+                                <div class="form-group col-12">
+                                    <input type="text" class="form-control " placeholder="" name="company_title">
+                                </div>
+                                <div class="form-group col-12 mb-0">
+                                    <label>{$lang_menu['備註']}</label>
+                                </div>
+                                <div class="form-group col-12">
+                                    <textarea class="form-control rounded-0" rows="5" name="transport_location_textarea" placeholder="{$lang_menu['其他購買需求都可以填寫在這裡']}"></textarea>
+                                </div>
+                            </div>
+                            <hr>
+                            <div>
+                                <h3>{$lang_menu['購物條款']}</h3>
+                                <p class="precautionsText">{$consent_shopping}</p>
+                                <br>
+                                <div class="form-check">
+                                    <input id="defaultCheck1" class="form-check-input" type="checkbox" value="" name="tygwtk">
+                                    <label class="form-check-label" for="defaultCheck1">
+                                        <span class="terms">{$lang_menu['同意購物條款(*必勾選)']}</span>
+                                    </label>
+                                </div>
+                                <span class="smallText">※{$lang_menu['請您再次確認以上購買資料是否無誤，並勾選「同意購物條款」後再按"確定送出"']}</span>
+                            </div>
+                            <hr>
+                            <div>
+                                <h3>{$lang_menu['其他資訊']}</h3>
+                                {$consent_other}
+                            </div>
+                            <hr>
+
+                            {neq name="$cartCount" value="0"}
+                                <!-- <button type="button" class="btn btn-primary" ng-click="contCtrl.getdiscount()">選擇優惠AJAX</button> -->
+                                <a  class=" modalBtn getdiscountBtn" id="getdiscount" data-toggle="modal" data-target="#model">{$lang_menu['選擇優惠，前往購買']}</a>
+                            {/neq}
+                        </form>
+                    </div>
+                </div>
+                <div class="memberBottom pb_xsmal">
+                    <div>
+                        {$consent_other}
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+{/block}
+
+{block name="Modal"}
+    <!-- Modal -->
+    <div class="modal fade" id="model" tabindex="-1" role="dialog" aria-labelledby="modelTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modelTitle">{$lang_menu['選擇優惠方式']}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="boxModel">
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /////////////////////////////////////////// -->
+
+    <!-- descriptionContModel start-->
+    <div class="modal fade " id="descriptionContModel" tabindex="-1" role="dialog" aria-labelledby="descriptionContModelTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content ">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="descriptionContModelTitle">{$lang_menu['報名流程說明']}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>{$consent.examination}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- descriptionContModel end-->
+{/block}
+
+
+{block name="ownJS"}
+<!-- ////////////////////////////////////////////////////// -->
+<script>
+    // 預設選擇地一個付款方式
+    $('[name="pay_way"]:first').prop('checked', 'checked');
+
+    function shaveEllipsis(h) {
+        // shave(".productName", h, {
+        //     classname: "classname",
+        //     character: '......'
+        // });
+    };
+
+    $(window).on("resize", function() {
+        var width1281 = Modernizr.mq('(min-width: 1281px)');
+        if (width1281) {
+            shaveEllipsis(80);
+        } else {
+            shaveEllipsis(20);
+        }
+    }).resize();
+</script>
+<script>
+$(function() {
+    $('[data-toggle="tooltip"]').tooltip()
+})
+</script>
+<!-- ////////////////////////////////////////////////////////////////// -->
+<!-- phone member menu -->
+<script src="__PUBLIC__/js/memberToggle.js"></script>
+<script src="/public/static/index/js/check_input.js"></script>
+<script type="text/javascript" src="/public/static/admin/js/vue.min.js"></script>
+<!-- ////////////////////////////////////////////////////////////////// -->
+<!-- ////////////////////////////////////////////////////////////////// -->
+<!-- ////////////////////////////////////////////////////////////////// -->
+<!-- ////////////////////////////////////////////////////////////////// -->
+
+<script>
+    function assign_memeber_data(){
+        $('#transport_location_name').val(`{$user.name}`);
+        $('#transport_location').val(`{$home}`);
+        $('#transport_location_phone').val(`{$user.phone}`);
+        $('#transport_location_tele').val(`{$user.tele}`);
+        $('#transport_email').val(`{$user.email}`);
+    }
+    
+    function deleteCtrl($this, $product_id) {
+        cartCtrl($this, $product_id, 'delete');
+        /*$($this).parent().parent().parent().hide();*/
+        $($this).parent().parent().hide();
+
+    }
+    function cartCtrl($this, $product_id, $cmd) {
+        $.ajax({
+            url: "{:url('Cart/cartCtrl')}",
+            type: 'POST',
+            datatype: 'json',
+            data: {
+                cmd: $cmd,
+                num: $($this).val(),
+                product_id: $product_id
+            },
+            error: function (xhr) {
+                alert('失敗');
+                console.error(xhr);
+            },
+            success: function (response) {
+                console.log(response)
+                if (response.status) {
+                    //alert('加入成功');
+                    $('#cartCount').text(response.message);
+                    $('#cart_tol_'+$product_id).empty();
+                    $('#cart_tol_'+$product_id).append($('#cart_tol_'+$product_id).attr('value')*response.num);
+
+                } else {
+                    if(response.message){
+                        alert(response.message);
+                    }else{
+                        alert('加入失敗');
+                    }
+                    console.error(response.message);
+                }
+            }
+        });
+
+
+    }
+
+    $('#getdiscount').click(function () {
+
+        send_way_id = $('input[name="send_way"]:checked').val();
+        send_way = $('input[name="send_way"]:checked').attr('label');
+        // if( $('input[name="pay_way"]:checked').val() == '貨到付款' && send_way == '宅配'){lat=lat+'<p>宅配無法使用貨到付款</p>'}
+        
+        var lat='';
+        var ch=$('#defaultCheck1').prop("checked");
+        if($('#transport_location_name').val()==''){lat=lat+"<p>{$lang_menu['請輸入']}{$lang_menu['姓名']}</p>"}
+        if($('#transport_location').val()=='' && send_way!="{$lang_menu['到店取貨']}"){lat=lat+"<p>{$lang_menu['請輸入']}{$lang_menu['地址']}</p>"}
+        if($('#transport_location_phone').val()==''){
+            lat=lat+"<p>{$lang_menu['請輸入']}:{$lang_menu['手機號碼']}</p>";
+        }else{
+            {if condition="$subDeparment=='A'"}
+                if(!$('#transport_location_phone').val().match(/^09[0-9]{8}$/)){lat=lat+"<p>{$lang_menu['請輸入09開頭的10位手機號碼']}</p>"}
+            {/if}//
+        }
+        
+        if(ch ==false){lat=lat+"<p>{$lang_menu['未勾選購買須知']}</p>"}
+
+        {volist name="cartData" id="vo" empty=""}
+            {if condition="$control_register== 1 AND $vo.is_registrable==1"}
+                if($("#examinee_{$vo.type_id}_num").val() > $(".exinfo_{$vo.type_id}").length){
+                    lat +="<p>{$vo.info_title} - {$vo.type_title}, {$lang_menu['報名者數量有誤']}</p>";
+                }
+            {/if}
+        {/volist}
+
+        if(lat !=''){
+            // alert(lat);
+            $(this).attr('href', "");
+            $('#boxModel').html(lat)
+            $('#modelTitle').html("{$lang_menu['發生錯誤']}")
+            return;
+        }else{
+            $('#modelTitle').html("{$lang_menu['選擇優惠方式']}")
+            $(this).attr('href', "{:url('Cart/getdiscount')}?id={$user.id}&send_way="+send_way_id);
+
+            // $(this).attr('href', "{:url('Cart/getdiscount')}?id={$user.id}&payment="
+            //     + $('#pay_way').val()
+            //     + "&transport=" + $('input[name=send_way]:checked').val()
+            //     + "&transport_location=" + $('#transport_location').val()
+            //     + "&transport_location_name=" + $('#transport_location_name').val()
+            //     + "&transport_location_phone=" + $('#transport_location_phone').val()
+            //     + "&transport_location_delivery" + $('input[name="delivery"]:checked').val()
+            //     + "&discount=" + $('#discount').val()
+            //     + "&point=" + $('#point').val()
+            // );
+
+        }
+
+    });
+
+    function getOrder($discountData) {
+        console.log($discountData)
+        $('#discount').val($discountData['discount']);
+        $('#point').val($discountData['point']);
+        $('#directcoupon_code').val($discountData['directcoupon_code']);
+        
+        console.log($('#discount').val());
+        console.log($('#point').val());
+        console.log($('#directcoupon_code').val());
+
+
+        pay_way = $('input[name="pay_way"]:checked').val()
+        send_way = $('input[name="send_way"]:checked').attr('label');
+        if( (pay_way == "{$lang_menu['綠界刷卡(一次付清)']}" || pay_way == "{$lang_menu['綠界刷卡(分期付款)']}") &&  '0' == '{$card_pay}' ){
+            alert("{$lang_menu['此筆訂單包含不可刷卡之商品，請勿使用刷卡功能']}")
+        }else{
+            
+            if( "{$ecpay_logistic}"=="1" && ["{$lang_menu['全家取貨']}","{$lang_menu['7-11取貨']}","{$lang_menu['萊爾富取貨']}"].indexOf( send_way ) != -1){
+                cartform_obj = new FormData(cartform);
+
+                var Order_Data = {
+                        "pay_way" : cartform_obj.get('pay_way'),
+                        "send_way" : cartform_obj.get('send_way'),
+                        "transport_location_name" : cartform_obj.get('transport_location_name'),
+                        "transport_email" : cartform_obj.get('transport_email'),
+                        "transport_location_phone" : cartform_obj.get('transport_location_phone'),
+                        "transport_location_tele" : cartform_obj.get('transport_location_tele'),
+                        "addrC" :  cartform_obj.get('addrC'),
+                        "id" : cartform_obj.get('id'),
+                        "discount" :cartform_obj.get('discount'),
+                        "point" : cartform_obj.get('point'),
+                        "directcoupon_code" : cartform_obj.get('directcoupon_code'),
+                        "uniform_numbers" : cartform_obj.get('uniform_numbers'),
+                        "company_title" : cartform_obj.get('company_title'),
+                        "transport_location_textarea" : cartform_obj.get('transport_location_textarea'),
+                    }
+
+                Order_Data = JSON.stringify(Order_Data);
+                location.href = "{:url('Cart/selectPlace')}?Order_Data="+Order_Data; //跳至綠界畫面選擇門市
+            }else{
+                cartform.submit();
+            }
+        }
+    }
+
+</script>
+
+<!-- 報名資訊相關功能 -->
+<script type="text/javascript">
+    $( document ).ready(function() {
+        initial_table();
+    });
+    function initial_table(){
+        $('.current_num').each(function(index,item){
+            // console.log(item);
+            var itemlist = $(item).children('tr')
+            var length = itemlist.length;
+            if(length>0){
+                $(item).attr('current_num', itemlist.last().attr('current_num') );
+            }else{
+                $(item).attr('current_num', 0);
+            }
+
+            //插入編號
+            for (var i = 0; i < itemlist.length; i++) {
+                $($(itemlist[i]).children()[0]).children('.no_num').html(i+1);
+            }
+
+        });
+
+        // 插入刪除監聽事件
+        add_remove_event();
+    }
+
+    $('.examinee').click(function () {
+        var t = $(this);
+        var title=t.attr("title");
+        var type_id = t.attr("type_id");
+        var type_product_id = t.attr("type_product_id");
+        var current_num = parseInt($('#examinee_'+t.attr("type_id")).attr('current_num'));
+        // console.log(current_num);
+        $('#modelTitle').html("{$lang_menu['填寫報名資料']}")
+        //t.attr('href', "{:url('Cart/examinee')}");
+
+        $.ajax({
+            url: "{:url('Cart/examinee')}",
+            type: 'POST',
+            data: {
+                title:title,
+                type_id:type_id,
+                type_product_id:type_product_id,
+                current_num:current_num,
+
+                area                :"",
+                stype               :"",
+                examinee_school     :"",
+                examinee_class      :"",
+                examinee_name       :"",
+                examinee_id         :"",
+                // examinee_birthday   :"",
+                parents_name        :"",
+                parents_phone       :"",
+                parents_mail        :"",
+                parents_tel         :"",
+                parents_add         :"",
+                method              :'new',
+            },          
+            success: function(re) {
+                $('#boxModel').html(re);
+            }
+        }); 
+    });
+
+    function edit_data(item){
+        $('tr').removeClass('edit_this');
+
+        var tr = $(item).parent().parent();
+        tr.addClass('edit_this');
+        var examinee_btn = tr.parent().parent().parent().parent().prev('.exam_tr').children().children('.examinee');
+        // console.log(tr);
+        console.log(examinee_btn);
+        // console.log(product_tr);
+
+        data = {
+            title               :examinee_btn.attr("title"),
+            type_id             :examinee_btn.attr("type_id"),
+            type_product_id     :examinee_btn.attr("type_product_id"),
+            current_num         :tr.attr('current_num'),
+            area                :tr.children('.d_examinee_school').children('input').attr('area'),
+            stype               :tr.children('.d_examinee_school').children('input').attr('stype'),
+            examinee_school     :tr.children('.d_examinee_school').children('input').attr('value'),
+            examinee_class      :tr.children('.d_examinee_class').children('input').attr('value'),
+            examinee_name       :tr.children('.d_examinee_name').children('input').attr('value'),
+            examinee_id         :tr.children('.d_examinee_id').children('input').attr('value'),
+            // examinee_birthday    :tr.children('.d_examinee_birthday').children('input').attr('value'),
+            parents_name        :tr.children('.d_parents_name').children('input').attr('value'),
+            parents_phone       :tr.children('.d_parents_phone').children('input').attr('value'),
+            parents_mail        :tr.children('.d_parents_mail').children('input').attr('value'),
+            parents_tel         :tr.children('.d_parents_tel').children('input').attr('value'),
+            parents_add         :tr.children('.d_parents_add').children('input').attr('value'),
+            method              :'edit',
+        }
+        // console.log(data);
+
+        $('#modelLabel').html("{$lang_menu['修改報名資料']}");
+
+        $.ajax({
+            url: "{:url('Cart/examinee')}",
+            type: 'POST',
+            data: data,          
+            success: function(re) {
+                $('#boxModel').html(re);
+            }
+        }); 
+    }
+
+    function get_exinfo(){
+        /*
+        console.log($('#examinee_school').val());
+        console.log($('#examinee_class').val());
+        console.log($('#examinee_name').val());
+        console.log($('#examinee_id').val());
+        console.log($('#type_id').val());
+        console.log($(".exinfo_"+$('#type_id').val()).length);
+        console.log($( "#examinee_"+$('#type_id').val()+"_num").val());
+        */
+        var enter_num  = $(".exinfo_"+$('#type_id').val()).length;//要進入報名數量 fatfat
+        var max_limit = $( "#examinee_"+$('#type_id').val()+"_num").val();//報名者上限  fatfat
+        var current_num = parseInt( $( "#examinee_"+$('#type_id').val()).attr('current_num') ) + 1;//不重複流水號
+        $('#examinee_'+$('#type_id').val()).attr('current_num', current_num); //更新流水號
+
+        var aim = $('#type_id').val();
+        
+        
+        if(max_limit >= (enter_num+1)){
+            var show = "<tr class='exinfo_"+$('#type_id').val()+"' current_num='"+ current_num +"'>";
+            show += "<td data-th='序號'><small class='no_num'></small></td>";
+            
+            show += "<td data-th='報名學校' class='d_examinee_school'><input type='hidden' name='exinfo["+aim+"]["+current_num+"][examinee_school]' value='"+$('#examinee_school').val()+"' area='"+$('#area').val()+"' stype='"+$('#type').val()+"'/><small>"+$('#examinee_school').val()+"</small></td>";
+            
+            show += "<td data-th='報名班級' class='d_examinee_class'><input type='hidden' name='exinfo["+aim+"]["+current_num+"][examinee_class]' value='"+$('#examinee_class').val()+"'/><small>"+$('#examinee_class').val()+"</small></td>";
+            
+            show += "<td data-th='學生姓名' class='d_examinee_name'><input type='hidden' name='exinfo["+aim+"]["+current_num+"][examinee_name]' value='"+$('#examinee_name').val()+"'/><a onclick='edit_data(this)' data-toggle='modal' data-target='#model'><small>"+$('#examinee_name').val()+"</a></small></td>";
+            
+            show += "<td data-th='身份證' class='d_examinee_id'><input type='hidden' name='exinfo["+aim+"]["+current_num+"][examinee_id]' value='"+$('#examinee_id').val()+"'/><small>"+$('#examinee_id').val()+"</small></td>";
+
+            // show += "<td data-th='學生生日' class='d_examinee_birthday'><input type='hidden' name='exinfo["+aim+"]["+current_num+"][examinee_birthday]' value='"+$('#examinee_birthday').val()+"'/><small>"+$('#examinee_birthday').val()+"</small></td>";
+                        
+            show += "<td data-th='家長姓名' class='d_parents_name'><input type='hidden' name='exinfo["+aim+"]["+current_num+"][parents_name]' value='"+$('#parents_name').val()+"'/><small>"+$('#parents_name').val()+"</small></td>";
+            
+            show += "<td data-th='聯絡手機' class='d_parents_phone'><input type='hidden' name='exinfo["+aim+"]["+current_num+"][parents_phone]' value='"+$('#parents_phone').val()+"'/><small>"+$('#parents_phone').val()+"</small></td>";
+            
+            show += "<td data-th='email' class='d_parents_mail'><input type='hidden' name='exinfo["+aim+"]["+current_num+"][parents_mail]' value='"+$('#parents_mail').val()+"'/><small>"+$('#parents_mail').val()+"</small></td>";
+            
+            show += "<td data-th='室內電話' class='d_parents_tel'><input type='hidden' name='exinfo["+aim+"]["+current_num+"][parents_tel]' value='"+$('#parents_tel').val()+"'/><small>"+$('#parents_tel').val()+"</small></td>";
+
+            show += "<td data-th='通訊地址' class='d_parents_add'><input type='hidden' name='exinfo["+aim+"]["+current_num+"][parents_add]' value='"+$('#parents_add').val()+"'/><small>"+$('#parents_add').val()+"</small></td>";            
+
+            show += "<td data-th='刪除' class='d_delete'><input type='hidden' name='exinfo["+aim+"]["+current_num+"][type_product_id]' value='"+$('#type_product_id').val()+"'/><input type='hidden' name='exinfo["+aim+"]["+current_num+"][parent_id]' value='"+$('#alt3').val()+"'/><a class='remove_ex' aim='"+$('#type_id').val()+"'>刪除</a></td>";
+                        
+            show += "</tr>";
+            $( "#examinee_"+aim).append(show);
+            
+            $.ajax({
+                url: "{:url('Cart/examinee_session')}",
+                type: 'POST',
+                data: {
+                    key:aim,
+                    html:$( "#examinee_"+aim).html(),
+                },          
+                success: function(re) {
+                    // window.location.reload();
+                    initial_table();
+                }
+            });
+        }else{
+            alert("{$lang_menu['此區達到上限']}");
+        }
+
+        /**受到 ng.js 影響**/
+        $(".eeeeeee").trigger("click");
+        $("#model").removeClass("show");
+        $("#model").css("display","none");
+        $(".modal-backdrop").remove();
+        $(".modal-open").removeClass("modal-open");   
+    }
+
+    function edit_exinfo(){
+        var aim = $('#type_id').val();
+        var current_num = $('#current_num').val();
+
+        var show = "<td data-th='序號'><small class='no_num'></small></td>";
+        
+        show += "<td data-th='報名學校' class='d_examinee_school'><input type='hidden' name='exinfo["+aim+"]["+current_num+"][examinee_school]' value='"+$('#examinee_school').val()+"' area='"+$('#area').val()+"' stype='"+$('#type').val()+"'/><small>"+$('#examinee_school').val()+"</small></td>";
+        
+        show += "<td data-th='報名班級' class='d_examinee_class'><input type='hidden' name='exinfo["+aim+"]["+current_num+"][examinee_class]' value='"+$('#examinee_class').val()+"'/><small>"+$('#examinee_class').val()+"</small></td>";
+        
+        show += "<td data-th='學生姓名' class='d_examinee_name'><input type='hidden' name='exinfo["+aim+"]["+current_num+"][examinee_name]' value='"+$('#examinee_name').val()+"'/><a onclick='edit_data(this)' data-toggle='modal' data-target='#model'><small>"+$('#examinee_name').val()+"</a></small></td>";
+        
+        show += "<td data-th='身份證' class='d_examinee_id'><input type='hidden' name='exinfo["+aim+"]["+current_num+"][examinee_id]' value='"+$('#examinee_id').val()+"'/><small>"+$('#examinee_id').val()+"</small></td>";
+
+        // show += "<td data-th='學生生日' class='d_examinee_birthday'><input type='hidden' name='exinfo["+aim+"]["+current_num+"][examinee_birthday]' value='"+$('#examinee_birthday').val()+"'/><small>"+$('#examinee_birthday').val()+"</small></td>";
+                    
+        show += "<td data-th='家長姓名' class='d_parents_name'><input type='hidden' name='exinfo["+aim+"]["+current_num+"][parents_name]' value='"+$('#parents_name').val()+"'/><small>"+$('#parents_name').val()+"</small></td>";
+        
+        show += "<td data-th='聯絡手機' class='d_parents_phone'><input type='hidden' name='exinfo["+aim+"]["+current_num+"][parents_phone]' value='"+$('#parents_phone').val()+"'/><small>"+$('#parents_phone').val()+"</small></td>";
+        
+        show += "<td data-th='email' class='d_parents_mail'><input type='hidden' name='exinfo["+aim+"]["+current_num+"][parents_mail]' value='"+$('#parents_mail').val()+"'/><small>"+$('#parents_mail').val()+"</small></td>";
+        
+        show += "<td data-th='室內電話' class='d_parents_tel'><input type='hidden' name='exinfo["+aim+"]["+current_num+"][parents_tel]' value='"+$('#parents_tel').val()+"'/><small>"+$('#parents_tel').val()+"</small></td>";
+
+        show += "<td data-th='通訊地址' class='d_parents_add'><input type='hidden' name='exinfo["+aim+"]["+current_num+"][parents_add]' value='"+$('#parents_add').val()+"'/><small>"+$('#parents_add').val()+"</small></td>";            
+
+        show += "<td data-th='刪除' class='d_delete'><input type='hidden' name='exinfo["+aim+"]["+current_num+"][type_product_id]' value='"+$('#type_product_id').val()+"'/><input type='hidden' name='exinfo["+aim+"]["+current_num+"][parent_id]' value='"+$('#alt3').val()+"'/><a class='remove_ex' aim='"+$('#type_id').val()+"'>刪除</a></td>";
+
+        $("tr.edit_this").html(show);
+        
+        $.ajax({
+            url: "{:url('Cart/examinee_session')}",
+            type: 'POST',
+            data: {
+                key:aim,
+                html:$( "#examinee_"+aim).html(),
+            },          
+            success: function(re) {
+                // window.location.reload();
+                initial_table();
+            }
+        });
+
+        $('tr').removeClass('edit_this');
+
+        /**受到 ng.js 影響**/
+        $(".eeeeeee").trigger("click");
+        $("#model").removeClass("show");
+        $("#model").css("display","none");
+        $(".modal-backdrop").remove();
+        $(".modal-open").removeClass("modal-open");
+    }
+    
+    //刪除考生資料事件監聽
+    function add_remove_event(){
+        $(".remove_ex").off("click");
+        $('.remove_ex').click(function () {
+            var t = $(this);
+            console.log(t);
+            
+            var x = t.attr('aim');
+
+            console.log(t.parent().parent()[0]);
+            t.parent().parent('.exinfo_'+x).remove();
+            
+            $.ajax({
+                url: "{:url('Cart/examinee_session')}",
+                type: 'POST',
+                data: {
+                    key:x,
+                    html:''+$( "#examinee_"+x).html(),
+                },
+                success:function(data){
+                    initial_table();
+                },
+            });
+        });
+    }
+
+    function remove_ex(x){
+        $('.exinfo_'+x).remove();
+        $.ajax({
+            url: "{:url('Cart/examinee_session')}",
+            type: 'POST',
+            data: {
+                key:x,
+                html:''+$( "#examinee_"+x).html(),
+            },
+            success:function(data){
+                initial_table();
+            },         
+        });
+    }
+</script>
+
+<!-- 運費功能 -->
+<script type="text/javascript">
+    var shippingData = {
+            type: '{$shipping|json_encode}',
+            send_way: 0,
+        }
+    var maskVM = new Vue({
+        el: '#shipping_div', 
+        data: shippingData,
+        computed: {
+            type_decode: function(){
+                return JSON.parse(this.type);
+            }
+        },
+        methods: {
+            
+        },
+    });
+    /* 初始化勾選運費 */
+    var shipping_type = JSON.parse(maskVM.type);
+    maskVM.send_way = shipping_type[0]['id'];
+    show_mart_btn(shipping_type[0]['name']);
+
+
+    $( document ).ready(function() {
+        if($('input[name="send_way"]:checked').attr('label')=="{$lang_menu['到店取貨']}"){
+            $('#transport_location_div').hide();
+        }
+
+        /* 改變運費事件 */
+        $('input[name=send_way]').on('click', function () {
+            send_way = $('input[name="send_way"]:checked').attr('label');
+            console.log(send_way);
+            if( send_way == "{$lang_menu['到店取貨']}" ){
+                $('#transport_location_div').hide();
+                $('#transport_location').val("{$lang_menu['到店取貨']}");
+            }else{
+                $('#transport_location_div').show();
+            }
+
+            show_mart_btn(send_way);
+        });
+    });
+
+    /* 顯示超商查詢按鈕 */
+    function show_mart_btn(send_way){
+        $('.mart_btn').hide();
+        $('#mart_note').hide();
+        if("{$ecpay_logistic}"=="0"){
+            if(send_way == "{$lang_menu['7-11取貨']}"){
+                $('#logistic_711').show();
+                $('#mart_note').show();
+            }else if(send_way == "{$lang_menu['全家取貨']}"){
+                $('#logistic_family').show();
+                $('#mart_note').show();
+            }else if(send_way == "{$lang_menu['萊爾富取貨']}"){
+                $('#logistic_hilife').show();
+                $('#mart_note').show();
+            }
+        }
+        if(send_way == "{$lang_menu['OKmart取貨']}"){
+            $('#logistic_hilife').show();
+            $('#mart_note').show();
+        }
+    }
+
+    function open_page(url){
+        window.open(url)
+    }
+</script>
+
+<!-- 加價購功能 -->
+<script type="">
+    function addprice_to_cart(cart_id){
+        $.ajax({
+            url: "{:url('Cart/cartCtrl')}",
+            type: 'POST',
+            datatype: 'json',
+            data: {
+                cmd: 'increase',
+                num: 1,
+                product_id: cart_id
+            },
+            error: function (xhr) {
+                alert("{$lang_menu['發生錯誤']}");
+                console.error(xhr);
+            },
+            success: function (response) {
+                // console.log(response)
+                if (response.status) {
+                        alert("{$lang_menu['操作成功']}");
+                        location.reload();
+                    
+                }else {
+                    if(response.message == "{$lang_menu['庫存不足']}" || response.message == "{$lang_menu['內容有誤']}" || response.message == "{$lang_menu['超出加價購數量上限']}"){
+                        alert(response.message);
+                    }else{
+                        alert("{$lang_menu['發生錯誤']}");
+                    }
+                    // console.error(response.message);
+                }
+
+            }
+
+        });
+    }
+</script>
+{/block}
+
+{block name="angularJs"}
+{/block}
+

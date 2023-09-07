@@ -1,0 +1,347 @@
+{extend name="Public/aside" /}
+{block name="title"}{$rowData.number} - 會員管理{/block}
+{block name="css"}
+    <style>
+        .w-100{
+            width: 100%;
+        }
+        .back{
+            border:1px solid #333;
+            background:#E0E0E0;
+            padding:0px 10px;
+            padding-top:4px;
+            color:#333;
+            margin-left:10px
+        }
+
+        .back:hover{
+            background: #BEBEBE;
+        }
+        
+        table, tr, td{
+            position: relative;
+            border: 2px solid #9D9D9D;
+        }
+        table{
+            margin:10px auto;
+            width:80%;
+        }
+        td{
+            padding:10px;
+        }
+        .change{
+            float:right;
+        }
+        @media (max-width:1440px){
+            table{width:90%;}
+        }
+        @media (max-width:1280px){
+            table{width:95%;}
+        }
+        @media (max-width:1024px){
+            .change{float:left;}
+        }
+
+        .inquiry{
+            margin:10px 0px;
+        }
+        .inquiry td{
+            padding:10px;
+        }
+        .inquiry tr:nth-child(1) td{
+            text-align: left;
+            border: 2px solid #9D9D9D;
+            background:#E0E0E0;
+        }
+        .inquiry tr:nth-child(1) td:nth-child(7){
+            text-align: center;
+        }
+        .inquiry td input{
+            width:89%;
+        }
+        .inquiry td{
+            border:none;
+        }
+        .inquiry td:nth-child(1) input{
+            width:100%;
+        }            
+        .inquiry td:nth-child(1),
+        .inquiry td:nth-child(1) input{
+            text-align: left;
+        }
+        .inquiry td:nth-child(7){
+            text-align: center;
+        }
+    </style>
+{/block}
+{block name="content"}
+    <div class="content">
+        <p class="title">會員管理 > {$rowData.number}</p>
+        <a class="back" href="{:url('Index/index')}">
+            <span style="font-size:18px; color:#333" class="glyphicon glyphicon-arrow-left"></span>
+        </a>
+        <!--
+            <button style="position:absolute; right:10px">
+                刪除
+            </button>
+        -->
+        <form action="{:url('index/updateMember')}" name="editForm" method="post"  enctype="multipart/form-data">
+            <input type="hidden" name="id" value="{$rowData.id}">
+            <table>
+                <tr>
+                    <td>推薦者</td>
+                    <td>{if condition="$rowData.up_user"}{$rowData.up_user.name}{/if}</td>
+                    <td></td>
+                    <td colspan="3"></td>
+                    <td></td>
+                    <td></td>
+                    <td colspan="2">
+                    </td>
+                </tr>
+                <tr>
+                    <td>會員編號</td>
+                    <td>{$rowData.number}</td>
+                    <td>近期修改日期</td>
+                    <td colspan="3">{$rowData.update_time}</td>
+                    <td>申請日期</td>
+                    <td>{$rowData.createtime|date='Y-m-d',###}</td>
+                    <td colspan="2">
+                        <input type="radio" name="status" value="0" id="待核"
+                        {eq name="$rowData.status" value="0"} checked {/eq}
+                        > <label for="待核">待核</label>
+                        <input type="radio" name="status" value="1" id="通過"
+                        {eq name="$rowData.status" value="1"} checked {/eq}
+                        > <label for="通過">通過</label>
+                        <input type="radio" name="status" value="2" id="黑名單"
+                        {eq name="$rowData.status" value="2"} checked {/eq}
+                        > <label for="黑名單">黑名單</label>
+    					<input type="radio" name="status" value="3" id="停用"
+                        {eq name="$rowData.status" value="3"} checked {/eq}
+                        > <label for="停用">停用</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>會員姓名</td>
+                    <td><input type="text" value="{$rowData.name}" name="name" class="w-100"></td>
+                    <td>會員帳號</td>
+                    <td colspan="3">
+                        <input type="text" value="{$rowData.email}" name="email" placeholder="請填入email" class="">
+                        <a href="mailto:{$rowData.email}">寄信</a>
+                    </td>
+                    <td>會員密碼</td>
+                    <td><input type="password" id="newPwd" placeholder="新密碼"><button class="change" id="changePwd">修改</button></td>
+                    <td>生日</td>
+                    <td><input type="date" value="{$rowData.birthday}" name="birthday" class="w-100"></td>
+                </tr>
+                <tr>
+                    <td>聯絡地址</td>
+                    <td colspan="5"><input type="text" value="{$rowData.home}" name="F_S_NH_Address" class="w-100"></td>
+                    <td>會員手機</td>
+                    <td><input type="text" value="{$rowData.phone}" name="phone" class="w-100"></td>
+                    <td>聯絡電話</td>
+                    <td><input type="text" value="{$rowData.tele}" name="tele" class="w-100"></td>
+                </tr>
+                <tr>
+                    <td colspan="10" align="center"><button>修改會員資料</button></td>
+                </tr>
+                <tr>
+                    <td>完成訂單</td>
+                    <td>{$rowData.complete}</td>
+                    <td>取消訂單</td>
+                    <td>{$rowData.cancel}</td>
+                    <td>退貨</td>
+                    <td>{$rowData.return}</td>
+                    <td>總消費金額</td>
+                    <td>{$rowData.totalcom}</td>
+                    <td>紅利點數</td>
+                    <td>{$rowData.point}</td>
+                </tr>
+                <!--
+                <tr style="border-top:none; border-bottom:none;">
+                    <td colspan="10" style="padding:2% 10px; border-top:none; border-bottom:none;">
+                        <font style="margin-left:10px">客戶優惠券</font>
+                        <div style="float:right; margin-right:10px"><input type="date"> <input type="date"></div>
+                        <div class="listTable">
+                            <table class="inquiry" style="width:calc(100% + 4px); margin:-2">
+                                <tr>
+                                    <td>分店</td>
+                                    <td>登入日期</td>
+                                    <td>使用期限</td>
+                                    <td>優惠券代碼</td>
+                                    <td>使用狀況</td>
+                                    <td>可否轉移</td>
+                                    <td>取消資格</td>
+                                </tr>
+                                <tr>
+                                    <td>A分店</td>
+                                    <td>2017.05.31</td>
+                                    <td>2019.05.31</td>
+                                    <td><a>A123456789</a></td>
+                                    <td>未使用</td>
+                                    <td>可以</td>
+                                    <td><span class="glyphicon glyphicon-trash"></span></td>
+                                </tr>
+                            </table>
+                            <div style="position:absolute; bottom:1%; right:1%;">
+                                <spam class="glyphicon glyphicon-menu-left" style="cursor:pointer"></spam>
+                                <input type="tel" value="1" style="border:none; width:40px; text-align:center">
+                                <spam class="glyphicon glyphicon-menu-right" style="cursor:pointer"></spam>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                -->
+                <tr style="border-top:none; border-bottom:none;">
+                    <td colspan="10" style="padding:2% 10px; border-top:none; border-bottom:none;">
+                        <font style="margin-left:10px">客戶購買紀錄</font>
+                        <!--
+                        <div style="float:right; margin-right:10px"><input type="date"> <input type="date"></div>
+                        -->
+                        <div class="listTable">
+                            <table class="inquiry" style="width:calc(100% + 4px); margin:-2">
+                                <tr>
+                                    <td>分店</td>
+                                    <td>下單日期</td>
+                                    <td>訂單狀態</td>
+                                    <td>訂單編號</td>
+                                    <td>總金額</td>
+                                    <td>獲得紅利點數</td>
+                                    <td>取消訂單</td>
+                                </tr>
+                                {volist 
+                                    name="rowData['order']" id="vo" 
+                                    empty="<tr><td colspan='7' style='text-align: center;'><h2>沒有數據</h2></td></tr>"
+                                }
+                                <tr>
+                                    <td>{$vo.subDepartment}</td>
+                                    <td>{$vo.create_time|date='Y-m-d',###}</td>
+                                    <td>{$vo.status}</td>
+                                    <td><a href="{:url('OrderCtrl/show', ['id' => $vo['id']])}">{$vo.order_number}</a></td>
+                                    <td>{$vo.total}</td>
+                                    <td>{$vo.add_point}</td>
+                                    <td>
+                                        <span class="glyphicon glyphicon-trash" onclick="operateCancel({$vo.id})"></span>
+                                    </td>
+                                </tr>
+                                {/volist}
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+    			
+    			<tr style="border-top:none; border-bottom:none;">
+                    <td colspan="10" style="padding:2% 10px; border-top:none; border-bottom:none;">
+                        <font style="margin-left:10px">客戶商品註冊紀錄</font>
+                        <!--
+                        <div style="float:right; margin-right:10px"><input type="date"> <input type="date"></div>
+                        -->
+                        <div class="listTable">
+                            <table class="inquiry" style="width:calc(100% + 4px); margin:-2">
+                                <tr>
+                                    <td>註冊日期</td>
+                                    <td>商品名稱</td>
+                                    <td>機身碼</td>
+                                    <td>購買日期</td>
+                                    <td>發票號碼</td>
+                                </tr>
+                                {volist 
+                                    name="reg_product" id="vo" 
+                                    empty="<tr><td colspan='5' style='text-align: center;'><h2>沒有數據</h2></td></tr>"
+                                }
+                                <tr>
+                                    <td>{$vo.regtime}</td>
+    								<td>{$vo.product_name}</td>
+                                    <td>{$vo.product_code}</td>
+    								<td>{$vo.buytime}</td>
+    								<td>{$vo.tax_ID_number}</td>
+    							
+                                </tr>
+                                {/volist}
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+{/block}
+{block name="ownJS"}
+    <script>
+        /*更改密碼*/
+        $('#changePwd').click(function (e){
+            e.preventDefault();
+            $.confirm({
+                type: 'red',
+                backgroundDismiss: true,
+                title: '更改密碼',
+                content: '此功能會強制更改用戶之密碼',
+                buttons: {
+                    sure: {
+                        text: '確定更改', // With spaces and symbols
+                        action: function () {
+                            $newPwd = $('#newPwd').val();
+                            if($newPwd == ''){
+                                $.alert('新密碼不得為空');
+                                return;
+                            }
+                            $.ajax({
+                                url: "{:url('Index/changePassword')}",
+                                type: 'POST',
+                                dataType: 'json',
+                                data:{
+                                    id: '{$rowData.id}',
+                                    password: $newPwd
+                                },
+                                success: function(response) {
+                                    $.alert(response.msg);
+                                    $('#newPwd').val('');
+                                },
+                                error: function(xhr) {
+                                    alert('更改失敗');
+                                    console.log(xhr);
+                                }
+                            });
+                        }
+                    },
+                    cancel: {
+                        text: '取消'
+                    }
+                }
+            });
+        });
+        /*更改帳號狀態*/
+        $('input[name=status]:radio').change(function () {
+            $.ajax({
+                url: "{:url('Index/multiupdate')}",
+                type: 'POST',
+                dataType: 'json',
+                data:{
+                    id: '[{$rowData.id}]',
+                    column: 'status',
+                    value: $(this).val(),   
+                },
+                success: function(response) {
+                    $.alert(response.msg);
+                    $('#newPwd').val('');
+                },
+                error: function(xhr) {
+                    $.alert('更改失敗');
+                    console.log(xhr);
+                }
+            });
+        });
+
+        /*取消訂單*/
+        function operateCancel($id) {
+            var form = document.createElement("form");
+            form.action = "{:url('OrderCtrl/changeStatus2Cancel')}";
+            form.method = "post";
+            id = document.createElement("input");
+            id.value = $id;
+            id.name = "id";
+            form.appendChild(id);
+            document.body.appendChild(form);
+            form.submit();
+        }
+    </script>
+{/block}

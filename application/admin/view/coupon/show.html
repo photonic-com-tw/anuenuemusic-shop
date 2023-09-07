@@ -1,0 +1,257 @@
+{extend name="Public/aside" /}
+{block name="title"}優惠券資訊 - 優惠券管理{/block}
+{block name="cssChange"}
+    <link rel="stylesheet" href="__PUBLIC__/css/style_old.css">
+{/block}
+{block name="css"}
+    <style>
+        .back{
+            border:1px solid #333;
+            background:#E0E0E0;
+            padding:0px 10px;
+            padding-top:4px;
+            color:#333;
+            margin-left:10px
+        }
+
+        .back:hover{
+            background: #BEBEBE;
+        }
+        
+        table, tr, td{
+            position: relative;
+            border: 2px solid #9D9D9D;
+        }
+        table{
+            margin:10px auto;
+            width:99%;
+        }
+        td{
+            padding:5%;
+            border: none;
+        }
+        .inquiry{
+            margin:10px 0px;
+        }
+        .inquiry td{
+            padding:10px;
+        }
+        .inquiry tr:nth-child(1) td{
+            text-align: left;
+            border: 2px solid #9D9D9D;
+            background:#E0E0E0;
+        }
+        .inquiry tr:nth-child(1) td:nth-child(5){
+            text-align: center;
+        }
+        .inquiry td,
+        .inquiry td input{
+            text-align: left;
+        }        
+        .inquiry td:nth-child(1),
+        .inquiry td:nth-child(1) input{
+            text-align: left;
+        }
+        .inquiry td:nth-child(1){
+            width: 30%;
+        }
+        .inquiry td:nth-child(2){
+            width: 16%;
+        }
+        .inquiry td:nth-child(3){
+            width: 16%;
+        }
+        .inquiry td:nth-child(4){
+            width: 16%;
+        }
+        .inquiry td:nth-child(5){
+            width: 16%;
+        }
+        .inquiry td:nth-child(6){
+            width: 6%;
+        }
+
+        #setting ,#setting li{
+            list-style: none;
+            display:-webkit-box;
+        }
+        #setting{
+            padding:0px;
+            margin-top:10px;
+            margin-bottom:-2px;
+        }
+        #setting li{
+            border: 2px solid #9D9D9D;
+            margin-right:5px;
+        }
+        #setting li a{
+            padding:10px 5px;
+            color: #333;
+            display: -webkit-box;
+        }
+
+        .nav-tabs>li.active>a, .nav-tabs>li.active>a:focus, .nav-tabs>li.active>a:hover {
+            color: #333;
+            cursor: default;
+            background: #E0E0E0;
+            border: 2px solid #333;
+        }
+        .nav-tabs>li>a {
+            color: #333;
+            margin-right: 2px;
+            border: 2px solid #333;
+            line-height: 1.42857143;
+        }
+        .nav-tabs>li {
+            float: left;
+            margin-bottom: -2px;
+        }
+        .nav>li>a:focus, .nav>li>a:hover {
+            text-decoration: none;
+            background-color: #E0E0E0;
+        }
+        .nav-tabs>li>a:hover {
+            border-color: 2px solid #333;
+        }
+        .nav-tabs>li>a:hover {
+            border-color: #333;
+        }
+        .preview {
+            max-width: 100%;
+            max-height: 100%;
+            position: relative;
+            vertical-align: middle;            
+        }
+        .editerView img{
+            max-width: 100% !important;
+        }
+    </style>
+{/block}
+{block name="content"}
+    <div class="content">
+        <p class="title">優惠券管理 > 優惠券資訊</p>
+        <a class="back" href="{:url('Coupon/index')}">
+            <span style="font-size:18px; color:#333" class="glyphicon glyphicon-arrow-left"></span>
+        </a>
+        &nbsp;&nbsp;&nbsp;&nbsp;{$singleData.type}
+        <table>
+            <td>
+                <div style="margin: 0px auto; display: inline-flex;">
+                    <div style="width:500px; height:360px; border:2px solid #333; float:left; margin-right:10%; text-align:center;">
+                        <img class="preview" name="image" src="__UPLOAD__{$singleData.pic}"/>
+                    </div>
+                    <div style="float:left">
+                        <br>
+                        <div style="border-bottom:1px solid #333; margin-bottom:10px">
+                            商品名稱：{$singleData.title}
+                        </div><br>
+                        <div style="border-bottom:1px solid #333; margin-bottom:10px">
+                            品號：{$singleData.number}
+                        </div><br>
+                        <!-- <div style="border-bottom:1px solid #333; margin-bottom:10px">
+                            價錢：{$singleData.price}
+                        </div><br> -->
+                        <div style="border-bottom:1px solid #333; margin-bottom:10px">
+                            領取上限：{$singleData.limit_num}張
+                        </div><br>
+                        <div style="border-bottom:1px solid #333; margin-bottom:10px; position:relative; width:480px">
+                            簡介<br><br>
+                            <div class="editerView">
+                                {$singleData.content}
+                            </div><br>
+                        </div>
+                    </div>
+                </div>
+            </td>
+            <tr style="border-bottom:none">
+                <td style="border-bottom:none">
+                    <div style="margin: 0px auto;">
+                        優惠券設定
+                        <br>
+                        <table class="inquiry">
+                            <tr>
+                                <td>時間</td>
+                                <td>折扣方式</td>
+                                <td>使用限制</td>
+                                <td>可否轉移</td>
+                                <td>生產張數</td>
+                                <td rowspan="2" style="background:transparent"></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p>開始日期：{$singleData.start|date='Y-m-d',###}</p>
+                                    <p>結束日期：{$singleData.end|date='Y-m-d',###}</p>
+                                </td>
+                                <td><p>折扣{$singleData.discount}元</p></td>
+                                <td><p>滿{$singleData.coupon_condition}元</p></td>
+                                <td><p>{$singleData.transfer}</p></td>
+                                <td>{$singleData.num}張</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align:center"><span class="glyphicon glyphicon-arrow-right"></span></td>
+                                <td style="text-align:center"><span class="glyphicon glyphicon-arrow-right"></span></td>
+                                <td style="text-align:center"><span class="glyphicon glyphicon-arrow-right"></span></td>
+                                <td style="text-align:center"><span class="glyphicon glyphicon-arrow-right"></span></td>
+                                <td style="text-align:center"><span class="glyphicon glyphicon-arrow-right"></span></td>
+                                <td style="text-align:center"></td>
+                            </tr>
+                        </table>
+                        <table class="inquiry">
+                            <tr>
+                                <td style="border-bottom:none; padding-top:0px;">
+                                    <div style="margin: 0px auto;">
+                                        範圍：{$singleData.area} &nbsp;&nbsp;&nbsp;&nbsp;
+                                        {$singleData.area_id}
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                        <p style="margin-top:30px">
+                            發行張數：{$singleData.num}　
+                            已登入張數：{$singleData.sellCount}　
+                            已回饋張數：{$singleData.useCount}
+                            <button style="float:right;margin-right:15px"
+                             onclick="location.href = '{:url('Coupon/dumpUsedExcel', ['id' => $singleData.id])}'"
+                            >表格匯出</button>
+                        </p>
+                        <table class="inquiry">
+                            <tr>
+                                <td>優惠券代碼</td>
+                                <td>登入日期</span></td>
+                                <td>登入會員</td>
+                                <td>使用日期</span></td>
+                                <td>結束日期</span></td>
+                            </tr>
+                            {volist name="singleData.pool" id="vo" empty="
+                                <tr><td colspan='5'><h2>沒有數據</h2></td></tr>
+                            "}                            
+                                <tr>
+                                    <td>{$vo.number}</td>
+                                    <td>{$vo.login_time|date='Y-m-d',###}</td>
+                                    <td>{$vo.owner.number}</td>
+                                    {if condition="$vo.use_time"}
+                                        <td>{$vo.use_time|date='Y-m-d',###}</td>
+                                    {else/}
+                                        <td>未使用</td>
+                                    {/if}
+                                    <td>{$singleData.end|date='Y-m-d',###}</td>
+                                </tr>
+                            {/volist}
+                        </table>
+                    </div>
+                    {eq name="singleData.type" value='實體卷'"}
+                        <button id="submitButton" 
+                         style="position: absolute; left: 45%; margin-top: 20px; font-size: 22px; padding: 5px 20px;"
+                         onclick="location.href = '{:url('Coupon/dumpPoolExcel', ['id' => $singleData.id])}'"
+                        >輸出Excel</button>
+                    {/eq}
+                </td>
+            </tr>
+            {neq name="singleData.type" value='實體卷'"}
+                {include file="coupon/virtual" /}
+            {/neq}
+        </table>
+    </div>
+{/block}
+{block name="ownJS"}
+{/block}

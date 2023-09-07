@@ -1,0 +1,94 @@
+{extend name="Public/aside" /}
+{block name="title"}參數設定區 - 點數設定{/block}
+{block name="css"}
+    <style type="text/css">
+        table {
+            margin: 30px;
+            width: 450px;
+        }
+        table td {
+            padding: 10px;
+        }
+        table tr:nth-child(3) td,
+        table tr:nth-child(4) td,
+        table tr:nth-child(5) td,
+        table tr:nth-child(6) td {
+            border:none;
+        }            
+    </style>
+{/block}
+{block name="content"}
+    <div id="content">
+        <p id="title">參數設定區 > 點數設定</p>
+        <center>
+            <form action="{:url('Admin/point_set_update')}" method="post">                    
+                <table>
+                    <tr>
+                        <td colspan="2">點數設定</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">點數回饋設定：
+                            <input name="value1" type="text" value="{$admin}" placeholder="滿多少">元送一點
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="2" id="treeMV">
+                            點數適用分館：<br>
+                            <span v-for="product in tree_list" style="margin-right: 10px;">
+                                <input type="checkbox" name="use_product[]" :value="product.id" :id="'product_'+product.id" v-model="use_product">
+                                <label :for="'product_'+product.id" v-text="product.title"></label>
+                            </span>
+
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="2" style="text-align:right"><button>確認</button></td>
+                    </tr>                
+                </table>
+            </form>
+
+        </center>
+    </div>
+{/block}
+{block name="ownJS"}
+<script>
+    Vue.use(Toasted);
+
+    var tree_data = {
+        tree_list: [
+            /*參考資料格式*/
+            {'title':"分館", 'product_num':5, 'id':'', 'order_id':0, 'content':[/*下一層內容*/]},
+        ],
+        use_product: [],
+    }
+    tree_data.use_product = JSON.parse('{$use_product}');
+
+    function get_tree_data(){
+        $.ajax({
+            url: "/admin/layertree/get_product_tree.html", //請求的url地址
+            dataType: "json", //返回格式為json
+            type: "GET", //請求方式
+            success: function(req) {
+                // console.log(req)
+                tree_data['tree_list'] = req;
+            },
+            error: function() {
+                //請求出錯處理
+            }
+        });
+    }
+    get_tree_data();
+
+    var treeMV = new Vue({
+        el: '#treeMV',
+        data: tree_data,
+        computed: {
+
+        },
+        methods: {
+        }
+    });
+</script>
+{/block}

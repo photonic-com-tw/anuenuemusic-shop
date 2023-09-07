@@ -1,0 +1,252 @@
+{extend name="Public/aside" /}
+
+{block name="title"}參數設定區 > 系統信管理{/block}
+
+{block name="css"}
+    <style type="text/css">
+        .systemEmailLink {
+            border: 1px solid #000000;
+            padding: 10px;
+            margin: 10px;
+            font-size: 16px;
+        }
+
+        #change-text-box {
+            display: block;
+            position: fixed;
+            top: calc(50% - 250px );
+            left: calc(50% - 250px );
+            width: 500px;
+            background-color: white;
+            z-index: 999;
+        }
+
+        .glyphicon-remove-sign {
+            font-size: 22px;
+            position: absolute;
+            right: 0;
+            cursor: pointer;
+            padding: 5px;
+            opacity: .8;
+        }
+
+        .send-btn {
+            background: #E0E0E0;
+            border: 1px #000000 solid;
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            margin: 2%;
+        }
+
+        div {
+            display: block;
+        }
+    </style>
+{/block}
+
+{block name="content"}
+    <div id="mask">
+        <div id="block" v-if="visibility" @click="setHidden"></div>
+    </div>
+
+    <!-- 文字編輯器 -->
+    <div id="changeTextBox">
+        <div v-show="visibility" id="change-text-box"> 
+            <span class="glyphicon glyphicon-remove-sign" @click="setHidden"></span>
+            <input type="hidden" v-model="content">
+            <input type="hidden" id="editor">
+            <button class="send-btn" @click="ajaxSubmit">儲存</button>
+        </div>
+    </div>
+
+    <div id="content">
+        <p id="title">參數設定區 > 系統信管理</p>
+        <div id="systemEmailView" style="margin:50px">
+            <a class="systemEmailLink" @click="openBox(1)">註冊成功信</a>
+
+            {if condition="empty($close_function['客戶來函'])"}
+                <a class="systemEmailLink" @click="openBox(2)">回函成功信</a>
+            {/if}
+            <a class="systemEmailLink" @click="openBox(3)">訂購成功信</a>
+            <a class="systemEmailLink" @click="openBox(4)">忘記密碼信</a>
+            <a class="systemEmailLink" @click="openBox(5)">訂單取消信</a>
+            <a class="systemEmailLink" @click="openBox(6)">商品詢問信</a>
+        </div>
+
+    </div>
+
+{/block}
+
+{block name="ownJS"}
+    <script charset="utf-8" src="__PUBLIC__/js/kindeditor/kindeditor.js"></script>
+    <script charset="utf-8" src="__PUBLIC__/js/kindeditor/lang/zh_TW.js"></script>
+    <script>
+        var editor;
+        KindEditor.ready(function(K) {
+                editor = K.create('#editor', {
+                        afterBlur: function(){this.sync();},
+                        langType : 'zh_TW',
+                        items:['link','|','forecolor'],
+                        width:'100%',
+                        height:'500px',
+                        resizeType:0
+                });
+        });
+    </script>
+    <script>
+        Vue.prototype.blockCtrl = function (blockData) {
+            $.ajax({
+                url: "{:url('Admin/system_email_update')}",
+                type: 'POST',
+                dataType: 'json',
+                data: blockData,
+                success: function(response) {
+                    if(response.msg =='更新成功'){
+                        alert('更新成功');
+                        changeTextBoxVM.updateCallerData();
+                        maskVM.setHidden();
+                    }else{
+                        alert('更新失敗');
+                        console.log(response.message);
+                    }
+                },
+                error: function(xhr) {
+                    alert('更新失敗');
+                    console.log(xhr);
+                }
+            });
+
+        };
+
+        var mask = {
+            visibility:　false
+        }
+        var maskVM = new Vue({
+            el: '#mask', 
+            data: mask,
+            methods: {
+                setHidden: function () {
+                    this.visibility = false;
+                    changeTextBox.visibility = false;
+                }
+            }
+        });
+
+        var changeTextBox = {
+            number: 0,
+            content: '',
+            visibility:　false,
+            caller: null
+        }
+        var changeTextBoxVM = new Vue({
+            el: '#changeTextBox', 
+            data: changeTextBox,
+            watch: {
+                content: function (val) {
+                    editor.html(val);
+                }
+            },
+            methods: {
+                setHidden: function () {
+                    maskVM.setHidden();
+                },
+                ajaxSubmit: function () {
+                    editor.sync();
+                    this.content = editor.html();
+                    var Data = {id: 1}
+                    switch (this.number) {
+                        case 1:
+                            Data.column = 'signup_complete';
+                            break;
+                        case 2:
+                            Data.column = 'contact_complete';
+                            break;
+                        case 3:
+                            Data.column = 'order_complete';
+                            break;
+                        case 4:
+                            Data.column = 'forget_password';
+                            break;
+                        case 5:
+                            Data.column = 'order_cancel';
+                            break;
+                        case 6:
+                            Data.column = 'product_qa';
+                            break;
+                        default:
+                            break;
+                    }
+                    Data.value = this.content.replace(/\n/g, '');
+
+                    this.blockCtrl(Data);
+                },
+                updateCallerData: function () {
+                    content_num = 'content'+this.number;
+                    this.caller[content_num] = this.content;
+                }
+            }
+        });
+
+		///////andy/////多行文字串//////
+		function heredoc(fn) {
+			return fn.toString().replace(/[\\]/g,"") + '\n'
+		}
+
+		var tmpl = [];
+     	tmpl[0] = heredoc(function(){
+			/*{$system_email.signup_complete|addslashes}*/
+		});
+		tmpl[1] = heredoc(function(){
+			/*{$system_email.contact_complete|addslashes}*/
+		});
+		tmpl[2] = heredoc(function(){
+			/*{$system_email.order_complete|addslashes}*/
+		});
+        tmpl[3] = heredoc(function(){
+            /*{$system_email.forget_password|addslashes}*/
+        });
+        tmpl[4] = heredoc(function(){
+            /*{$system_email.order_cancel|addslashes}*/
+        });
+        tmpl[5] = heredoc(function(){
+            /*{$system_email.product_qa|addslashes}*/
+        });
+
+		for(var i=0; i<tmpl.length; i++){
+			tmpl[i] = tmpl[i].split('*');
+			delete tmpl[i][0];
+			var lastnum = tmpl[i].length -1;
+			delete tmpl[i][lastnum];
+		}
+		/////////////////////////////////////////////
+
+        var systemEmailModel = {};
+        for(var i=0; i<tmpl.length; i++){
+            content_num = 'content' + (i+1);
+            systemEmailModel[content_num] = tmpl[i].join('');
+        }
+
+        var systemEmailVM = new Vue({
+            el: "#systemEmailView",
+            data: systemEmailModel,
+            methods:{
+                openBox: function (number) {
+                    content_num = 'content'+number;
+                    changeTextBox.content = this[content_num];
+
+                    changeTextBox.number = number;
+                    changeTextBox.visibility = true;
+                    changeTextBox.caller = this;
+                    maskVM.visibility = true;
+                }
+            }
+        });
+
+        function openList() {
+            $('#backstageListli').click();
+        }
+
+    </script>
+
+{/block}

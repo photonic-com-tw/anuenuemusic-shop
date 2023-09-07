@@ -1,0 +1,300 @@
+{extend name="Public/aside" /}
+
+{block name="title"}銷售明細{/block}
+
+{block name="css"}
+    <style type="text/css">
+        .container{
+            width: 100% !important;
+        }
+        #content{
+            width: calc(100% - 170px);
+        }
+        .frame{
+            padding:10px 20px;
+            border: 1.5px #9D9D9D solid;
+            margin: 0px auto;
+            margin-top: 10px;
+            width: 99%
+        }
+        .type_btn{
+            margin: 10px;
+        }
+        .type_btn a{
+            padding: 5px 10px;
+            color: #000;
+            border: 1px solid #9D9D9D;
+        }
+        .type_btn a.active, 
+        .type_btn a:hover{
+            text-decoration: none;
+            background-color: #9D9D9D;
+            border: 1px solid gray;
+            color: #fff;
+        }
+
+        /* 表格設定 */
+        td, th{
+            text-align: center;
+        }
+        table th{
+            cursor: default;
+        }
+        table{
+            width:99%;
+            margin:0px auto;
+            margin-top:-2px;
+        }
+        .kolTable th, 
+        .tableListA tr:nth-child(1) td {
+            background: #E0E0E0;
+            border: 2px #9D9D9D solid;
+            padding-right: 5px;
+        }
+        .tableListA td:nth-child(1){
+            width:5%;
+        }
+        .tableListA td:nth-child(2), 
+        .tableListA td:nth-child(3), 
+        .tableListA td:nth-child(4),
+        .tableListA td:nth-child(6),
+        .tableListA td:nth-child(7),
+        .tableListA td:nth-child(8),
+        .tableListA td:nth-child(9),
+        .tableListA td:nth-child(10){
+            width:8%;
+        }
+        .tableListA td:nth-child(5){
+            width:20%;
+        }
+
+        .tableListA table.productTable{
+            border: none;
+        }
+        .productTable img{
+            max-width: 100px;
+        }
+        .tableListA .productTable tr td{
+            background: #fff;
+            border: none;
+            width: 20%;
+        }
+        .kolTable{
+            width: 70%;
+            margin-top: 20px; 
+        }
+        .kolTable td, .kolTable th{
+            width: 100px !important;
+        }
+
+        .printBtn{
+            margin: 20px 0px;
+            padding: 5px 20px;
+            font-size: 18px;
+            background-color: #E0E0E0;
+            border: 2px #9D9D9D solid;
+        }
+        .printBtn:hover{
+            background-color: #9D9D9D;
+            border: 2px gray solid;
+        }
+
+        /* 列印相關設定 */
+        @page{
+            margin: 0;
+            size:auto;
+        }
+        @media print{
+            a[href]:after {
+                content: none !important;
+            } 
+            .noprint{
+               display:none
+            }
+            .kolTable th, 
+            .tableListA tr:nth-child(1) td {
+                background: #E0E0E0 !important;
+                border: 2px #9D9D9D solid !important;
+                padding-right: 5px;
+            }
+            .tableListA .productTable tr td{
+                background: #fff !important;
+                border: none !important;
+                width: 20% !important;
+            }
+            .type_btn a.active, 
+            .type_btn a:hover{
+                text-decoration: none;
+                background-color: #9D9D9D !important;
+                border: 1px solid gray !important;
+                color: #fff !important;
+            }
+        }
+    </style>
+{/block}
+
+{block name="content"}
+    <div id="content">
+        <p id="title">
+            {$kol.kol_name} >銷售明細>第 {$period} 期
+        </p>
+
+        <!--查看類型-->
+        <div class="frame">
+            <span class="type_btn"><a href="/admin/kol/salelist.html?id={$kol.id}&type=0">未結算</a></span>
+            <span class="type_btn"><a href="/admin/kol/salelist.html?id={$kol.id}&type=1" :class="['{$need_confirm}' =='true' ? 'active' : '']">結算中</a></span>
+            <span class="type_btn"><a href="/admin/kol/salelist.html?id={$kol.id}&type=2" :class="['{$need_confirm}' =='false' ? 'active' : '']">己結算</a></span>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                <h4 style="margin:0.5%;">
+                    第{$period}期&nbsp;&nbsp;{{ timestamp_to_date(period_sale_one.s_period) }}~{{ timestamp_to_date(period_sale_one.e_period) }}
+                    {if condition="$need_confirm=='false'"}
+                        &nbsp;&nbsp;確認時間：{$confirm_sale.create_time|date='Y-m-d H:i',###}
+                    {/if}
+                </h4>
+                <table class="kolTable">
+                    <tr>
+                        <th>網紅名</th>
+                        <td>{$kol.kol_name}</td>
+                        <th>姓名</th>
+                        <td>{$kol.real_name}</td>
+                        <th>英文名</th>
+                        <td>{$kol.english_name}</td>
+                    </tr>
+                    <tr>
+                        <th>分類</th>
+                        <td>{$kol.category}</td>
+                        <th>電話</th>
+                        <td>{$kol.phone}</td>
+                        <th>手機</th>
+                        <td>{$kol.mobile}</td>
+                    </tr>
+                    <tr>
+                        <th>地址</th>
+                        <td colspan="3">{$kol.address}</td>
+                        <th>備註</th>
+                        <td>{$kol.address_memo}</td>
+                    </tr>
+                    <tr>
+                        <th>匯款銀行</th>
+                        <td colspan="2">{$kol.bank_name}</td>
+                        <th>匯款帳號</th>
+                        <td colspan="2">{$kol.bank_account}</td>
+                    </tr>
+                    <tr>
+                        <th>身份証</th>
+                        <td>{$kol.id_no}</td>
+                        <th>備註</th>
+                        <td colspan="3">{$kol.memo}</td>
+                    </tr>
+                </table>
+
+                <hr>
+
+                <h4 style="margin:0.5%;text-align: right;">本單總金額：{{ period_sale_one.total }}</h4>
+                <!--銷售表格 開始-->
+                <table class="tableListA">
+                    <tr>
+                        <td>序號</td>
+                        <td>日期</td>
+                        <td>訂單編號</td>
+                        <td>客戶名</td>
+                        <td>寄送地</td>
+                        <td>商品名</td>
+                        <td>商品圖</td>
+                        <td>單價</td>
+                        <td>數量</td>
+                        <td>總價</td>
+                    </tr>
+                    <tr v-for="(item, index) in orderform">
+                        <td>{{ index+1 }}</td>
+                        <td>{{ timestamp_to_date(item.create_time) }}</td>
+                        <td>{{ item.order_number }}</td>
+                        <td>{{ item.user_name }}</td>
+                        <td>{{ item.transport_location }}</td>
+                        <td colspan="5" style="padding: 0px">
+                            <table class="productTable">
+                                <tr v-for="(product) in product_decode(item.product)" v-if="product.key_type=='kol{$kol.id}'">
+                                    <td><a target="_blank" :href="'https://'+product.url">{{ product.name }}</a></td>
+                                    <td><img :src="'https://'+product.url2"></td>
+                                    <td>{{ product.price }}</td>
+                                    <td>{{ product.num }}</td>
+                                    <td>{{ product.total }}</td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+                <h4 style="margin:0.5%;text-align: right;">本單總金額：{{ period_sale_one.total }}</h4>
+                <div class="col-12 text-center">
+                    <input class="printBtn noprint" type="button" value="確認本單" @click="confirm_period()" v-if="'{$need_confirm}'=='true'">
+                    <input class="printBtn noprint" type="button" value="列印明細" @click="print_page()">
+                </div>
+            </div>
+        </div>
+    </div>
+{/block}
+
+{block name="ownJS"}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js"></script>
+    <script type="text/javascript">
+        var content_data = {    
+                                period_sale: {$period_sale|json_encode},
+                                orderform: {$orderform|json_encode},
+                            }
+
+        var content = new Vue({
+            el: '#content', 
+            data: content_data,
+            computed: {
+                period_sale_one: function(){
+                    return this.period_sale[Object.keys(this.period_sale)[0]];
+                },
+
+            },
+            methods: {
+                timestamp_to_date : function(unix_timestamp){
+                    var a = new Date(unix_timestamp * 1000);
+                    return moment(a).format('YYYY-MM-DD')
+                },
+                product_decode : function(jstring){
+                    return JSON.parse(jstring);
+                },
+                print_page: function(){
+                    //获取要打印的Dom内容
+                    let newDomHtml = $('#content').html();
+                    window.document.body.innerHTML = newDomHtml;
+                    window.print();
+                    window.location.reload();   //解决打印之后按钮失效的问题，刷新页面
+                    return false;
+                },
+                confirm_period: function(){
+                    $.ajax({
+                        url: "{:url('kol/confirm_period')}",
+                        type: 'POST',
+                        datatype: 'json',
+                        data: {
+                            kol_id: '{$kol.id}',
+                            period: '{$period}',
+                        },
+                        error: function (xhr) {
+                            alert('失敗');
+                            console.error(xhr);
+                        },
+                        success: function (response) {
+                            if(response.code==1){
+                                alert('確認成功');
+                                window.location.reload();
+                            }else{
+                                alert('確認失敗：'+response.msg);
+                            }
+                        },
+                    });
+                },
+            }
+
+        });
+    </script>
+{/block}

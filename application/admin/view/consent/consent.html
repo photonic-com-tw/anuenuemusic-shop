@@ -1,0 +1,324 @@
+{extend name="Public/aside" /}
+
+{block name="title"}參數設定區 > 同意書{/block}
+
+{block name="css"}
+
+    <style type="text/css">
+
+        .consentLink {
+
+            border: 1px solid #000000;
+
+            padding: 10px;
+
+            margin: 10px;
+
+            font-size: 16px;
+
+        }
+
+        #change-text-box {
+
+            display: block;
+
+            position: fixed;
+
+            top: calc(50% - 250px );
+
+            left: calc(50% - 250px );
+
+            width: 500px;
+
+            background-color: white;
+
+            z-index: 999;
+
+        }
+
+        .glyphicon-remove-sign {
+
+            font-size: 22px;
+
+            position: absolute;
+
+            right: 0;
+
+            cursor: pointer;
+
+            padding: 5px;
+
+            opacity: .8;
+
+        }
+
+        .send-btn {
+
+            background: #E0E0E0;
+
+            border: 1px #000000 solid;
+
+            position: absolute;
+
+            bottom: 0;
+
+            right: 0;
+
+            margin: 2%;
+
+        }
+
+        div {
+
+            display: block;
+
+        }
+
+        #block {
+
+            position: fixed;
+
+            top: 0;
+
+            left: 0;
+
+            height: 100%;
+
+            width: 100%;
+
+            background-color: #000000;
+
+            opacity: .5;
+
+            z-index: 998;
+
+            visibility: visible;
+
+        }
+
+    </style>
+
+{/block}
+
+{block name="content"}
+
+    <div id="mask">
+        <div id="block" v-if="visibility" @click="setHidden"></div>
+    </div>
+
+    <!-- 文字編輯器 -->
+    <div id="changeTextBox">
+        <div v-show="visibility" id="change-text-box"> 
+            <span class="glyphicon glyphicon-remove-sign" @click="setHidden"></span>
+            <input type="hidden" v-model="content">
+            <input type="hidden" id="editor">
+            <button class="send-btn" @click="ajaxSubmit">儲存</button>
+        </div>
+    </div>
+
+    <div id="content">
+        <p id="title">參數設定區 > 同意書</p>
+        <div id="consentView" style="margin:50px">
+            <a class="consentLink" @click="openBox(1)">加入會員同意書</a>
+            <!--<a class="consentLink">非會員購物同意書</a>-->
+            <a class="consentLink" @click="openBox(2)">點數折扣同意書</a>
+            <a class="consentLink" @click="openBox(3)">優惠券使用同意書</a>
+            <a class="consentLink" @click="openBox(4)">購物條款</a>
+            <a class="consentLink" @click="openBox(5)">匯款資訊</a>
+            <a class="consentLink" @click="openBox(6)">隱私政策</a>
+        </div>
+    </div>
+
+{/block}
+
+{block name="ownJS"}
+
+    <script charset="utf-8" src="__PUBLIC__/js/kindeditor/kindeditor.js"></script>
+
+    <script charset="utf-8" src="__PUBLIC__/js/kindeditor/lang/zh_TW.js"></script>
+
+    <script>
+
+        var editor;
+
+        KindEditor.ready(function(K) {
+
+                editor = K.create('#editor', {
+
+                        afterBlur: function(){this.sync();},
+
+                        langType : 'zh_TW',
+
+                        items:['link'],
+
+                        width:'100%',
+
+                        height:'500px',
+
+                        resizeType:0
+
+                });
+
+        });
+
+    </script>
+
+    <script>
+        Vue.prototype.blockCtrl = function (blockData) {
+            $.ajax({
+                url: "{:url('Consent/cellCtrl')}",
+                type: 'POST',
+                dataType: 'json',
+                data: blockData,
+                success: function(response) {
+                    if(response.status){
+                        alert('更改成功');
+                        changeTextBoxVM.updateCallerData();
+                        maskVM.setHidden();
+                    }else{
+                        alert('更改失敗');
+                        console.log(response.message);
+                    }
+                },
+                error: function(xhr) {
+                    alert('更改失敗');
+                    console.log(xhr);
+                }
+            });
+        };
+
+        var mask = {
+            visibility:　false
+        }
+
+        var maskVM = new Vue({
+            el: '#mask', 
+            data: mask,
+            methods: {
+                setHidden: function () {
+                    this.visibility = false;
+                    changeTextBox.visibility = false;
+                }
+            }
+        });
+
+        var changeTextBox = {
+            number: 0,
+            content: '',
+            visibility:　false,
+            caller: null
+        }
+        var changeTextBoxVM = new Vue({
+            el: '#changeTextBox', 
+            data: changeTextBox,
+            watch: {
+                content: function (val) {
+                    editor.html(val);
+                }
+            },
+            methods: {
+                setHidden: function () {
+                    maskVM.setHidden();
+                },
+                ajaxSubmit: function () {
+                    editor.sync();
+                    this.content = editor.html();
+                    var Data = {id: 1}
+                    switch (this.number) {
+                        case 1:
+                            Data.member = this.content.replace(/\n/g, '');
+                            break;
+                        case 2:
+                            Data.point = this.content.replace(/\n/g, '');
+                            break;
+                        case 3:
+                            Data.coupon = this.content.replace(/\n/g, '');
+                            break;
+                        case 4:
+                            Data.shopping = this.content.replace(/\n/g, '');
+                            break;
+                        case 5:
+                            Data.other = this.content.replace(/\n/g, '');
+                            break;
+                        case 6:
+                            Data.privacy = this.content.replace(/\n/g, '');
+                            break;
+                        default:
+                            break;
+                    }
+                    this.blockCtrl(Data);
+                },
+
+                updateCallerData: function () {
+                    varible_content= 'content'+number
+                    this['caller'][varible_content] = this.content;
+                }
+            }
+        });
+
+		
+
+		///////andy/////多行文字串//////
+		function heredoc(fn) {
+			return fn.toString().replace(/[\\]/g,"") + '\n'
+		}
+		var tmpl = [];
+     	tmpl[0] = heredoc(function(){
+			/*{$consent.member|addslashes}*/
+		});
+		tmpl[1] = heredoc(function(){
+			/*{$consent.point|addslashes}*/
+		});
+		tmpl[2] = heredoc(function(){
+			/*{$consent.coupon|addslashes}*/
+		});
+        tmpl[3] = heredoc(function(){
+            /*{$consent.shopping|addslashes}*/
+        });
+        tmpl[4] = heredoc(function(){
+            /*{$consent.other|addslashes}*/
+        });
+        tmpl[5] = heredoc(function(){
+            /*{$consent.privacy|addslashes}*/
+        });
+
+		for(var i=0; i<tmpl.length; i++){
+			tmpl[i] = tmpl[i].split('*');
+			delete tmpl[i][0];
+			var lastnum = tmpl[i].length -1;
+			delete tmpl[i][lastnum];
+		}
+		/////////////////////////////////////////////
+
+		
+
+        var consentModel = {
+            content1: tmpl[0].join(''),
+            content2: tmpl[1].join(''),
+            content3: tmpl[2].join(''),
+            content4: tmpl[3].join(''),
+            content5: tmpl[4].join(''),
+            content6: tmpl[5].join(''),
+        }
+        var consentVM = new Vue({
+            el: "#consentView",
+            data: consentModel,
+            methods:{
+                openBox: function (number) {
+                    varible_content= 'content'+number
+                    changeTextBox.content = this[varible_content];
+
+                    changeTextBox.number = number;
+                    changeTextBox.visibility = true;
+                    changeTextBox.caller = this;
+                    maskVM.visibility = true;
+                }
+            }
+        });
+
+        function openList() {
+            $('#backstageListli').click();
+        }
+    </script>
+
+{/block}

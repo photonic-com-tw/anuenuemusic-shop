@@ -1,0 +1,170 @@
+{extend name="Public/aside" /}
+{block name="title"}新進訂單 - 訂單管理{/block}
+
+{block name="css"}{/block}
+
+{block name="content"}
+    <div class="content">
+        <p class="title" onclick="javascript:location.href='New.html'" style="cursor:pointer;">訂單管理 > 新進訂單</p>
+        <div style="padding:10px 20px; margin:10px; width:99%">
+            <form action="" name="searchForm" method="get" style="display:inline-block;">
+                <input type="text" name="searchKey" style="text-align:center" placeholder="訂單編號搜尋">
+                <button>搜尋</button>
+            </form>
+            <!--
+            <div style="float: right;">
+                <input type="date">
+                <input type="date">
+            </div>
+            -->
+        </div>
+        <div style="padding:15px 20px; border: 2px #9D9D9D solid; margin:0 10px; width:99%">
+            <a style="cursor:default; opacity:0;" href="">
+                <span class="glyphicon glyphicon-plus add"
+                      style="color:#fff; font-size:20px; text-align:center;
+                             background:#333; padding:10px; border-radius:100px;">
+                </span>
+            </a>
+            <!-- 多項編輯開始 -->
+            <div class="edit" style="font-size:25px; display: inline-block; margin-left:5%; cursor:pointer">
+                編輯
+                <span class="glyphicon glyphicon-triangle-bottom" style="font-size: 25px;"></span>
+            </div>
+            <div class="edit-item none">
+                <a onclick="multiOperate('Next');">
+                    <font>完成拋轉</font>
+                    <label style="display:inline-flex; margin-top: 10px;" class="switch" name="0">
+                        <input type="checkbox" checked readonly><span class="slider round"></span>
+                    </label>
+                </a>
+                <br>
+                <hr style="border-top: 1px solid #333; margin:10px 0px">
+                <a onclick="multiOperate('Cancel');">
+                    取消 <span style="margin-left: 15px;" class="glyphicon glyphicon-trash"></span>
+                </a>
+            </div>
+            <!-- 多項編輯結束 -->
+        </div>
+        <table class="item-info">
+            <tr>
+                <td style="width:5%">
+                    <input type="checkbox" class="activityCheckboxAll" onclick="$('.item-info input[class=orderCheckbox]').prop('checked', ($(this).is(':checked')?true:false))"style="width:100%; cursor:pointer;">
+                </td>
+                <td style="width:10%">會員編號</td>
+                <td style="width:10%; cursor:pointer">訂單日期<span class="glyphicon glyphicon-arrow-down"></td>
+                <td style="width:10%">訂單編號</td>
+                <td style="width:10%">會員姓名</td>
+                <td style="width:10%; cursor:pointer">金額<span class="glyphicon glyphicon-arrow-down"></td>
+                <!-- <td style="width:10%">購買商品</td> -->
+                <!-- <td style="width:10%">手機</td> -->
+                <td style="width:10%">付款方式</td>
+                <!-- <td style="width:10%">運送方式</td> -->
+                <td style="width:5%">取消訂單</td>
+            </tr>
+            {volist
+                name="rowDataItem" id="vo"
+                empty="<tr align='center'><td colspan='10'><h2>沒有數據</h2></td></tr>"
+            }
+                <tr>
+                    <td><input type="checkbox" class="orderCheckbox" alt="{$vo.id}"></td>
+                    <td><a href="{:url('OrderCtrl/show', ['id' => $vo['id']])}" style="color:{$vo.user.status|returnRed=2}">{$vo.user.number|default=$vo.id}</a></td>
+                    <td>{$vo.create_time|date='Y-m-d H:i',###}</td>
+                    <td><a href="{:url('OrderCtrl/show', ['id' => $vo['id']])}">{$vo.order_number}</a></td>
+                    <td><a href="{:url('OrderCtrl/show', ['id' => $vo['id']])}">{$vo.user.name}</a></td>
+                    <td>{$vo.total}</td>
+                    <!-- <td>
+                        {volist name="vo.product" id="product"}
+                            {$product.name}<br>
+                        {/volist}
+                    </td>
+                    <td>{$vo.user.phone}</td> -->
+                    <td>{$vo.payment}<br>
+                        {eq name="vo.receipts_state" value="1"}(已付款){/eq}
+                        {eq name="vo.receipts_state" value="0"}(未付款){/eq}
+                    </td>
+                    <!-- <td>{$vo.transport}</td> -->
+                    <td><span class="glyphicon glyphicon-trash" onclick="operateCancel({$vo.id})"></span></td>
+                </tr>
+            {/volist}
+        </table>
+        <div class="row text-center">
+            {$rowData->render()}
+        </div>
+    </div>
+    <!--
+    <div style="position:absolute; bottom:1%; left:50%;">
+        <spam class="glyphicon glyphicon-menu-left" style="cursor:pointer"></spam>
+        <input type="tel" value="1" style="border:none; width:40px; text-align:center"></input>
+        <spam class="glyphicon glyphicon-menu-right" style="cursor:pointer"></spam>
+    </div>
+    -->
+{/block}
+{block name="ownJS"}
+    <script>
+        $(function () {
+            // 新增
+            $('.add').click(function(){
+                if($('.add-item').is(':visible')==true){
+                    $('.add-item').hide();
+                }
+                else{
+                    $('.add-item').show();
+                }
+            })
+
+            // 編輯
+            $('.edit').click(function(){
+                if($('.edit-item').is(':visible')==true){
+                    $('.edit-item').hide();
+                }
+                else{
+                    $('.edit-item').show();
+                }
+            })
+        });
+
+        function multiOperate(Operate) {
+            var form = document.createElement("form");
+            form.action = Operate == 'Cancel' ? "{:url('OrderCtrl/multiCancel')}" :
+                                                "{:url('OrderCtrl/multiNext')}";
+            form.method = "post";
+            multiId = document.createElement("input");
+            multiId.value = JSON.stringify(getMultiId());
+            multiId.name = "idList";
+
+            form.appendChild(multiId);
+            document.body.appendChild(form);
+            form.submit();
+            $('.activityCheckboxAll').each(function () {
+                if($(this).prop("checked")){
+                    $(this).prop("checked", false);
+                }
+            });
+        }
+
+        function getMultiId() {
+            var multiIdArray = [];
+            $('.orderCheckbox').each(function () {
+                if($(this).prop("checked")){
+                    multiIdArray.push($(this).attr('alt'));
+                    $(this).prop("checked", false);
+                }
+            });
+
+            return multiIdArray;
+        }
+
+        function operateCancel($id) {
+            var form = document.createElement("form");
+            form.action = "{:url('OrderCtrl/changeStatus2Cancel')}";
+            form.method = "post";
+            id = document.createElement("input");
+            id.value = $id;
+            id.name = "id";
+            form.appendChild(id);
+            document.body.appendChild(form);
+            form.submit();
+        }
+    </script>
+{/block}
+

@@ -1,0 +1,191 @@
+{extend name="Public/mainTpl" /}
+
+{block name="title"}{$lang_menu['訂單列表']} - {$lang_menu['會員專區']} | {$seo[0]['title']}{/block}
+
+{block name="css"}{/block}
+
+{block name="flulid_content"}
+    <!-- <section class="container max-wideVersion directoryRow">
+        <ul class="clearfix">
+            <li><a href="{$MAIN_WEB_LAN}/">{$lang_menu['首頁']}</a><i class="icon-right"></i></li>
+            <li><a href="{:url('Member/member')}">{$lang_menu['會員專區']}</a><i class="icon-right"></i></li>
+            <li><a href="{:url('Orderform/orderform')}">{$lang_menu['訂單列表']}</a></li>
+        </ul>
+    </section> -->
+    <div class="d-flex justify-content-center">
+        <div class="w-100 bg_anuenue bg_pic d-flex justify-content-center">
+            <section class="reg_prod_area box_show bg_white max-wideVersion productPublic">
+                <div class="pt_sxsmal pb_ssmal">
+                    <h3 class="page_title">
+                        {$lang_menu['會員專區']}
+                        <span>{include file='Public/member_menu' /}</span>
+                    </h3>
+                </div>
+                <div class="row w-100">
+                    <div class="col-12 text-center mb-3">
+                        <span class="other_login color_gray"><span>{$lang_menu['訂單列表']}</span></span>
+                    </div>
+                    <div class="col-12 mb-2 memberContentBox">
+                        <div class="orderBtnBox">
+                            <!-- <a data-toggle="modal" data-target="#processModel">{$lang_menu['流程說明']}</a> -->
+                            <a class="active" href="{:url('Orderform/orderform')}">{$lang_menu['訂單狀態']}</a>
+                            <a href="{:url('Orderform/history')}">{$lang_menu['歷史紀錄']}</a>
+                        </div>
+                    </div>
+                    <table class="col-12 prodReg orderTable table table-striped table-bordered table-rwd">
+                        <thead>
+                            <tr class="tr-only-hide">
+                                <th><span>{$lang_menu['購買日期']}</span></th>
+                                <th><span>{$lang_menu['訂單編號']}</span></th>
+                                <th><span>{$lang_menu['總價']}</span></th>
+                                <th><span>{$lang_menu['付款方式']}</span></th>
+                                <th><span>{$lang_menu['出貨狀態']}</span></th>
+                                <th><span>{$lang_menu['收款狀態']}</span></th>
+                                <th>{$lang_menu['操作']}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {volist name="orderform" id="vo" empty=""}
+                            <form action="{:url('Cart/redirect3Next')}" method="post">
+                                <tr>
+                                    <td data-th="{$lang_menu['購買日期']}">{$vo.create_time|date='Y/m/d H:i:s', ###}</td>
+                                    <td data-th="{$lang_menu['訂單編號']}">
+                                        <a href="{:url('Orderform/orderform_c', ['id' => $vo['order_number']])}">{$vo.order_number}</a>
+                                    </td>
+                                    <td data-th="{$lang_menu['總價']}">{$dolar_mark}{$vo.total}</td>
+                                    <td data-th="{$lang_menu['付款方式']}">{$vo.payment}</td>
+                                    <td data-th="{$lang_menu['出貨狀態']}">{$vo.transport_state|TRANSPORT_STATE}</td>
+                                    <!-- ////////////////////////////////////////////////// -->
+
+                                    <td data-th="{$lang_menu['收款狀態']}">
+                                        {if condition="($vo.payment == $lang_menu['ATM轉帳\\匯款'])"}
+                                            {if condition="($vo.receipts_state == 1 || $vo.report_check_time neq '')" /}
+                                                {$vo.report}&nbsp;&nbsp;&nbsp;{$lang_menu['已確認']}
+                                            {else/}
+                                                {if condition="($vo.report == '')"}
+                                                    <div class="input-group transferBox">
+                                                        <div class="custom-file">
+                                                            <input type="text" class="form-control" placeholder="{$lang_menu['回報後五碼或姓名']}" id="pc_{$vo.id}" onfocus="javascript:this.parentElement.parentNode.className+=' write';" onblur="javascript:this.parentElement.parentNode.classList.remove('write');" style="font-size: 12px; padding: 0px;">
+                                                        </div>
+                                                        <div class="input-group-append" style="align-items: center">
+                                                            <button class="btn" type="button" alt="pc_{$vo.id}" onclick="setReportNumber(this);">{$lang_menu['確認']}</button>
+                                                        </div>
+                                                    </div>
+                                                {else/}
+                                                    {$vo.report}&nbsp;&nbsp;&nbsp;{$lang_menu['待確認']}
+                                                {/if}
+                                            {/if}
+                                        {else /}
+                                            {$vo.receipts_state|RECEIPTS_STATE}
+                                        {/if}
+                                    </td>
+
+                                    <!-- //////////// -->
+                                    <input type="hidden" name="id" value="{$vo.id}"/>
+                                    <input type="hidden" name="total" value="{$vo.total}"/>
+                                    <input type="hidden" name="order_number" value="{$vo.order_number}"/>
+                                    <input type="hidden" name="pay_way" value="{$vo.payment}"/>
+                                    <!-- //////////// -->
+                                    <td data-th="{$lang_menu['操作']}">
+                                        {if condition="($ecpay_card==1||$tspg_card==1) and $vo.status=='New'"}
+                                            {if condition=" (
+                                                                $vo.payment==$lang_menu['綠界刷卡(一次付清)'] || 
+                                                                $vo.payment==$lang_menu['綠界刷卡(分期付款)'] 
+                                                             || $vo.payment==$lang_menu['Paypal']
+                                                             || $vo.payment==$lang_menu['支付寶'] || $vo.payment==$lang_menu['微信支付']
+                                                            ) AND ($vo.receipts_state == '0')"}
+                                                <input type="submit" value="{$lang_menu['補單']}"></input>
+                                            {/if}
+                                        {/if}
+                                        {if condition="($vo.transport_state != 1 ) and $vo.status=='New'" /}
+                                            <a class="cancel" order_number="{$vo.order_number}">{$lang_menu['取消']}</a>
+                                        {/if}
+                                    </td>
+                                </tr>
+                            </form>
+                            {/volist}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="row paginationBox">
+                    <div class="col-12 boxCenter">
+                        {$page}
+                    </div>
+                </div>
+                <div class="memberBottom pb_xsmal">
+                    <div>
+                        {$consent_other}
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+{/block}
+
+{block name="Modal"}
+    <!-- processModel start-->
+    <div class="modal fade " id="processModel" tabindex="-1" role="dialog" aria-labelledby="processModelTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content ">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="processModelTitle">{$lang_menu['流程說明']}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <img src="__PUBLIC__/img/process_img_01.png" alt="">
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- processModel end-->
+{/block}
+
+{block name="ownJS"}
+    <script src="__PUBLIC__/js/memberToggle.js"></script>
+    <script>
+        function setReportNumber($this){
+            $.ajax({
+                url: "{:url('Orderform/setReportNumber')}",
+                type: 'POST',
+                dataType: 'json',
+                data:{
+                    id: $($this).attr('alt').split("_")[1],
+                    reportNumber: $("#" + $($this).attr('alt')).val()
+                },
+                success: function(response) {
+                    if(response.status){
+                        alert("{$lang_menu['操作成功']}");
+                        $($this).parent().html("{$lang_menu['待確認']}");
+                    }else{
+                        alert(response.message);
+                        console.log(response.message);
+                    }
+                },
+                error: function(xhr) {
+                    alert("{$lang_menu['發生錯誤']}");
+                    console.log(xhr);
+                }
+            });
+        }
+
+        $('.cancel').on('click', function(e){
+            $.ajax({
+                url: "{:url('Orderform/cancel')}",
+                type: "POST",
+                dataType: "json",
+                data: { order_number: $(this).attr('order_number') },
+                success: function (response) {
+                    alert(response.msg);
+                    location.href="/index/orderform/orderform.html"
+                },
+                error: function (xhr) {
+                    alert("{$lang_menu['發生錯誤']}");
+                    console.log(xhr);
+                },
+            });
+        });
+    </script>
+{/block}
+

@@ -1,0 +1,177 @@
+{extend name="Public/mainTpl" /}
+{block name="title"}{$lang_menu['優惠券專區']} - {$lang_menu['會員專區']} | {$seo[0]['title']}{/block}
+
+{block name="css"}
+{/block}
+
+{block name="content"}
+    <section class="container max-wideVersion directoryRow">
+        <ul class="clearfix">
+            <li><a >{$lang_menu['首頁']}</a><i class="icon-right"></i></li>
+            <li><a >{$lang_menu['會員專區']}</a><i class="icon-right"></i></li>
+            <li><a >{$lang_menu['優惠券專區']}</a></li>
+        </ul>
+    </section>
+    <section class="container max-wideVersion productPublic">
+        <!-- /////////////////////////////////////////// -->
+        <!-- /////////////////////////////////////////// -->
+        <!-- /////////////////////////////////////////// -->
+        <div id="itemBox" class="memberInforBox">
+            <div id="leftBox">
+                <!-- /////////////////////////////////////////// -->
+                {include file='Public/member_menu' /}
+                <!-- /////////////////////////////////////////// -->
+            </div>
+            <div id="rightContentBox" class="innerPageBox memberContentBox">
+                <div class="paddingSpacing">
+                    <div class="pack">
+                        <div class="memberTop">
+                            <div class="title">
+                                <h3>{$lang_menu['優惠券專區']}</h3>
+                            </div>
+                            <div class="orderBtnBox">
+                                <a data-toggle="modal" data-target="#descriptionContModel" ng-click="contCtrl.useDescription()">{$lang_menu['使用說明']}</a>
+                                <a class="active" href="{:url('Coupon/coupon')}">{$lang_menu['我的優惠券']}</a>
+                                <a href="{:url('Coupon/record')}">{$lang_menu['使用紀錄']}</a>
+                                <a href="{:url('Product/coupon')}">{$lang_menu['領取優惠券']}</a>
+                            </div>
+                        </div>
+                        <div class="memberMiddle">
+                            <div class="headingBox">
+                                <div class="titleBox">
+                                    <p class="title"><span>{$lang_menu['優惠券登錄']}</span></p>
+                                </div>
+                            </div>
+                            <div class="memberMiddle">
+                                <form id="coupon_key" name="couponForm" action="{:url('Coupon/getCouponByNumber')}" method="post" >
+                                <div class="form-group">
+                                    <label>{$lang_menu['序號']}</label>
+                                    <div class="d-flex">
+                                        <input type="text" class="form-control" name="number" aria-describedby="emailHelp" placeholder="{$lang_menu['請輸入優惠券序號(英文須留意大小寫)']}">
+                                        <a class="inquireBtn" onclick="couponForm.submit();">{$lang_menu['確認']}<i class="icon-right"></i></a>
+                                    </div>
+                                </div>
+                                </form>
+                            </div>
+                            <div class="couponBox">
+                                <h3 class="orderTitlt">{$lang_menu['我的優惠券']}</h3>
+                                <table class="orderTable table table-striped table-bordered table-rwd">
+                                    <thead>
+                                        <tr class="tr-only-hide">
+                                            <th>{$lang_menu['登錄日期']}</th>
+                                            <th>{$lang_menu['名稱']}</th>
+                                            <th>{$lang_menu['期限']}</th>
+                                            <th style="width: 200px;">{$lang_menu['優惠券轉移']}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {volist name="Coupons" id="vo" empty=""}
+                                        <tr>
+                                            <td data-th="{$lang_menu['登錄日期']}">{$vo.coupon_pool_login_time|date='Y-m-d',###}</td>
+                                            <td data-th="{$lang_menu['名稱']}"><a data-toggle="modal" data-target="#couponDescModel" ng-click="contCtrl.couponDesc({$vo.coupon_id})">{$vo.coupon_title}</a></td>
+                                            <td data-th="{$lang_menu['期限']}">{$vo.coupon_end|date='Y-m-d',###}</td>
+                                            <td data-th="{$lang_menu['優惠券轉移']}">
+                                                {if condition="$vo.coupon_transfer"}
+                                                    <form class="d-flex" name="coupon_key2_{$vo.coupon_pool_id}" action="{:url('Coupon/transforCoupon')}" method="post">
+                                                        <div>
+                                                            <input class="form-control" type="text" placeholder="{$lang_menu['會員編號']}" name="number"/>
+                                                            <input class="form-control" type="hidden" name="id" value="{$vo.coupon_pool_id}"/>
+                                                        </div>
+                                                        <a onclick="coupon_key2_{$vo.coupon_pool_id}.submit();">{$lang_menu['確認']}</a>
+                                                    </form>
+                                                {else /}
+                                                    <span>{$lang_menu['不可轉移']}</span>
+                                                {/if}
+                                            </td>
+                                        </tr>
+                                        {/volist}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="memberBottom">
+                            <div>
+                                {$consent_other}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- descriptionContModel start-->
+        <div class="modal fade " id="descriptionContModel" tabindex="-1" role="dialog" aria-labelledby="descriptionContModelTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content ">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="descriptionContModelTitle">{$lang_menu['使用說明']}</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- <img src="img/process_img_01.png" alt=""> -->
+                        <p>{$consent}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- descriptionContModel end-->
+        <!-- couponDescModel start -->
+        <div class="modal fade" id="couponDescModel" tabindex="-1" role="dialog" aria-labelledby="couponDescModelTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="couponDescModelTitle">{$lang_menu['優惠券']}</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" id="couponDesc"></div>
+                </div>
+            </div>
+        </div>
+        <!-- couponDescModel end -->
+        <!-- /////////////////////////////////////////// -->
+        <!-- /////////////////////////////////////////// -->
+        <!-- /////////////////////////////////////////// -->
+    </section>
+    <!-- modal-backdrop fade show -->
+{/block}
+
+{block name="ownJS"}
+    <script src="__PUBLIC__/js/memberToggle.js"></script>
+    <script>
+        $('#couponDescModel').on('show.bs.modal', function (e) {
+            $('#couponDescModel').addClass('disabled');
+            $('#couponDescModel').on('shown.bs.modal', function (e) {
+                $('#couponDescModel').removeClass('disabled');
+            })
+        })
+    </script>
+{/block}
+
+{block name="angularJs"}
+    self.couponDesc = function(id){
+        $http({
+            method : "POST",
+            url : "{:url('Coupon/description')}",
+            data: id,
+        }).success(function(data){
+            self.text = data.replace(/\n/g);
+            $('#couponDesc').html(self.text)
+        }).error(function(){
+        })//error
+    }//self.couponDesc
+
+    self.useDescription = function(){   
+        $http({
+            method : "GET",
+            url : "{:url('Coupon/teach')}",
+        }).success(function(data){
+            //console.log(data);
+            self.useDescription = data.coupon.replace(/\n/g);
+            console.log(self.useDescription);
+        }).error(function(){
+        })//error
+    }//self.couponDesc
+{/block}

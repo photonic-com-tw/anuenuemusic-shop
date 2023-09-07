@@ -1,0 +1,981 @@
+{extend name="Public/aside" /}
+{block name="title"}商品管理區 > 商品總覽{/block}
+{block name="css"}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.0/jquery-confirm.min.css">
+    <style type="text/css">
+        #open,
+        #close{
+            margin-top: 4px;
+            margin-left: 10px;
+            margin-right: 5px;
+            cursor: pointer;
+        }
+
+        .frame{
+            padding:10px 20px;
+            border: 1.5px #9D9D9D solid;
+            margin: 0px auto;
+            margin-top: 10px;
+            width: 99%
+        }
+
+        .frame li{
+            display: inline;
+        }
+
+        .frame .add{
+            color:#fff;
+            font-size:20px;
+            text-align:center;
+            background:#333;
+            padding:10px;
+            border-radius:100px;
+            cursor:pointer
+        }
+        .frame .addButton{
+            color:#fff;
+            font-size:20px;
+            text-align:center;
+            background:#333;
+            padding:10px;
+            border-radius:100px;
+            cursor:pointer
+        }
+        .frame .edit{
+            font-size:25px;
+            display: inline-block;
+            margin-left:5%;
+            cursor:pointer
+        }
+
+        /* 編輯 */
+        .edit-item{
+            position: absolute;
+            border: 2px solid #9D9D9D;
+            background: #fff;
+            z-index: 5;
+            padding: 10px;
+            left: calc(5% + 55px);
+            font-size: 16px;
+        }
+        .edit-item .switch{
+            display:inline-flex;
+            margin-top: 10px;
+        }
+        /* 更改數量 */
+        .change-amount{
+            position: fixed;
+            background: #fff;
+            padding:15px;
+            width: 280px;
+            height: 190px;
+            z-index:999;
+            top: calc(50% - 280px / 2);
+            left: calc(50% - 190px /2)
+        }
+        .change-amount p{
+            margin-left:30px;
+            font-size:14px;
+        }
+        .change-amount p input{
+            width:calc(100% - 60px);
+            text-align: right;
+        }
+        .change-amount .button{
+            right:15px;
+            bottom:15px;
+            position:absolute;
+        }
+
+        /*表格設定*/
+        table{
+            margin: 10px auto;
+            margin-bottom: 10px;
+            margin-top: -1.5px;
+            width: 99.02%;
+        }
+        td, th{
+            text-align: center;
+        }
+        td{
+            position:relative;
+        }
+        tr:nth-child(1) td{
+            background: #E0E0E0;
+            border: 2px #9D9D9D solid;
+            padding-right: 5px
+        }
+        .td-nth-child-1{
+            width: 3%;
+            text-align: center;
+        }
+        .td-nth-child-2{
+            width:5%;
+            text-align: center;
+        }
+        .td-nth-child-3{
+            width:4%;
+            text-align: center;
+        }
+        .td-nth-child-4{
+            width:10%;
+            padding: 0px; 
+            text-align: center;
+        }
+        .td-nth-child-5{
+            width:15%;
+        }
+        .td-nth-child-6{
+            width:10%;
+            text-align: center;
+        }
+        .td-nth-child-7{
+            width:10%;
+            text-align: right;
+            padding-right: 19px
+        }
+        .td-nth-child-8{
+            width:7%;
+            text-align: center;
+        }
+        .td-nth-child-9{
+            width:20%;
+            text-align: left;
+        }
+        .td-nth-child-10{
+            width:3%;
+        }
+        .
+        .td-nth-child-1){
+            width:5%;
+            text-align: center;
+        }
+        .td-nth-child-1){
+            width:5%;
+            text-align: center;
+        }
+
+        .switch{
+            display:inline-flex;
+            margin-top: 5px;
+        }
+        .glyphicon-edit{
+            position:relative
+        }
+        .upl{
+            top:0;
+            right:0;
+        }
+        .glyphicon-picture{
+            position:absolute;
+            top: calc(50% - 8px);
+            left: calc(50% - 8px);
+        }
+        .preview{
+            position:relative;
+            max-height: 100%;
+            max-width: 30%;
+            z-index: 1;
+        }
+
+        /* 狀態顏色 */
+        .color_green{
+            color:green;
+        }
+        .color_yellow{
+            color:#ffcc22;
+        }
+        .color_red{
+            color:red;
+        }
+    </style>
+{/block}
+{block name="content"}
+        <div id="block" onclick="CloseAdd('.change-amount')"></div>
+
+        <!-- 更改數量開始 -->
+        <div class="change-amount none" id="Box">
+            <p style="margin-left:0px; font-size:16px">庫存數量</p>
+            <p>增加數量 <input type="number" v-model="plus"></p>
+            <p>減少數量 <input type="number" v-model="minus"></p>
+            <!--
+            <p>數量修改 <input type="number" v-model=""></p>
+            -->
+            <a class="button" @click="ajaxSubmit">儲存</a>
+        </div>
+        <!-- 更改數量結束 -->
+
+        <div id="content">
+            <p id="title" style="cursor: pointer;" onclick="window.location.href='/admin/all/index'">
+                商品管理區 > 商品總覽
+
+                {neq name="searchKey" value=""}
+                    > 搜尋：{$searchKey}
+                {/neq}
+            </p>
+            
+            {if condition="empty($close_function['存放位置管理'])"}
+            <div style="padding:10px 30px;">
+                <form action="{:url('productinfo/ISBN_create')}" name="ISBN_create" method="post" style="display: inline-block;">
+                    <label for="ISBN">快速建立/修改商品：</label>
+                    <input type="text" name="ISBN" value="" style="text-align:center" placeholder="輸入條碼">
+                </form>
+                <!-- <p style="display:inline-block; margin-left:50px; margin-bottom:0px" id="limitCtrl">分館庫存警示
+                    <input type="number" v-model="limit" style="text-align:center; width: 80px;">
+                </p> -->
+            </div>
+            {/if}
+
+            <div style="padding:10px 30px;">
+                <form action="" name="searchForm" method="get" style="display: inline-block;">
+                    <select name="searchPrev" id="searchPrev">
+                        <option value="0">選擇分館</option>
+                        {$top_option_html}
+                    </select>
+                    <select name="searchBranch" id="searchBranch">
+                        <option value="0">選擇分類</option>
+                    </select>
+                    <input class="enter_search" type="text" name="searchKey" value="{$searchKey}" style="text-align:center;width: 300px;" placeholder="請輸入商品名稱/品號/條碼" />
+
+                    {if condition="empty($close_function['存放位置管理'])"}
+                        <select type="text" name="position_id">
+                            {if condition="-1 == $position_id"}
+                                <option value="" selected>請選擇庫存區</option>
+                            {else/}
+                                <option value="">請選擇庫存區</option>
+                            {/if}
+
+                            {volist name="position" id="vo"}
+                                {if condition="$vo.id == $position_id"}
+                                    <option value="{$vo.id}" selected>{$vo.name}</option>
+                                {else/}
+                                    <option value="{$vo.id}">{$vo.name}</option>
+                                {/if}
+                            {/volist}
+                        </select>
+                        <input class="enter_search" type="number" name="position_number" value="{$position_number}" style="text-align:center;width: 150px;" placeholder="請輸入庫存編碼" />
+                    {/if}
+
+                    {if condition="empty($close_function['標籤設定'])"}
+                        <!-- 人氣商品 -->
+                        <input type="checkbox" value="1" <?php if(!empty($_GET['ck']['hot_product'])) echo 'checked';?> id="hot_product" name="ck[hot_product]"> <label for="hot_product">{$tag[0]['name']}<label>&nbsp;&nbsp;
+
+                        <!-- 店長推薦 -->
+                        <input type="checkbox" value="1" <?php if(!empty($_GET['ck']['recommend_product'])) echo 'checked';?> id="recommend_product" name="ck[recommend_product]"> <label for="recommend_product">{$tag[1]['name']}<label>&nbsp;&nbsp;
+
+                        <!-- 即期良品 -->
+                        <input type="checkbox" value="1" <?php if(!empty($_GET['ck']['expiring_product'])) echo 'checked';?> id="expiring_product" name="ck[expiring_product]"> <label for="expiring_product">{$tag[2]['name']}<label>&nbsp;&nbsp;
+
+                        {if condition="$use_sepc_price == 1"}
+                            <!-- 特價商品 -->
+                            <input type="checkbox" value="1" <?php if(!empty($_GET['ck']['spe_price_product'])) echo 'checked';?> id="spe_price_product" name="ck[spe_price_product]"> <label for="spe_price_product">{$tag[3]['name']}<label>
+                        {/if}
+                    {/if}
+
+                    {if condition="empty($close_function['網紅列表'])"}
+                    <select name="kol_id">
+                        {if condition="-1 == $kol_id"}
+                            <option value="-1" selected>請選擇網紅</option>
+                        {else/}
+                            <option value="-1">請選擇網紅</option>
+                        {/if}
+
+                        {if condition="0 == $kol_id"}
+                            <option value="0" selected>無指派網紅</option>
+                        {else/}
+                            <option value="0">無指派網紅</option>
+                        {/if}
+
+                        {volist name="kol" id="vo"}
+                            {if condition="$vo.id == $kol_id"}
+                                <option value="{$vo.id}" selected>{$vo.kol_name}</option>
+                            {else/}
+                                <option value="{$vo.id}">{$vo.kol_name}</option>
+                            {/if}
+                        {/volist}
+                    </select>
+                    {/if}
+
+                    <a class="button" onclick="searchForm.submit();">搜尋</a>
+                    <a class="button" onclick="location.href='/admin/all/index?kol_id=-1'">清除搜尋</a>
+                </form>
+                <!-- <p style="display:inline-block; margin-left:50px; margin-bottom:0px" id="limitCtrl">分館庫存警示
+                    <input type="number" v-model="limit" style="text-align:center; width: 80px;">
+                </p> -->
+            </div>
+
+            <!--新增與編輯-->
+            <div class="frame">
+                <a href="{:url('productinfo/allcreate')}"><span class="glyphicon glyphicon-plus addButton"></span></a>
+                <div class="edit" onclick="Show('.edit-item')">編輯 <span class="glyphicon glyphicon-triangle-bottom"></span></div>
+                <!-- 編輯開始 -->
+                <div class="edit-item none">
+                    <a onclick="multiOnline();">
+                        <font>開啟&nbsp;</font>
+                        <label class="switch" name="0">
+                            <input type="checkbox" disabled checked><span class="slider round"></span>
+                        </label>
+                    </a><br>
+
+                    <a onclick="multiHide();">
+                        <font>隱藏&nbsp;</font>
+                        <label class="switch" name="0">
+                            <input type="checkbox" disabled><span class="slider round"></span>
+                        </label>
+                    </a><br>
+
+                    <a onclick="multiOffline();">
+                        <font>關閉&nbsp;</font>
+                        <label class="switch" name="0">
+                            <input type="checkbox" disabled><span class="slider round"></span>
+                        </label>
+                    </a><br>
+
+                    {if condition="$copy_product == 1"}
+                        <hr style="border-top: 1px solid #333; margin:10px 0px">
+                        <a onclick="multiCopy();">
+                            複製 <span style="margin-left: 15px;" class="glyphicon glyphicon-copy"></span>
+                        </a><br>
+                    {/if}
+
+                    <hr style="border-top: 1px solid #333; margin:10px 0px">
+                    <a onclick="multiDelete();">
+                        刪除 <span style="margin-left: 15px;" class="glyphicon glyphicon-trash"></span>
+                    </a>
+                </div>
+                <!-- 編輯結束 -->
+            </div>
+
+            <!--表格 開始-->
+            <table class="tableA" style="margin-top:-2px">
+                <tr>
+                    <td class="td-nth-child-1"><input type="checkbox" class="activityCheckboxAll" onclick="$('.tableA input[class=productinfoCheckbox]').prop('checked', ($(this).is(':checked')?true:false))"style="width:100%; cursor:pointer;"></td>
+                    <td class="td-nth-child-2" style="cursor:pointer">上下架</td>
+                    <td class="td-nth-child-3">排序</td>
+                    <td class="td-nth-child-4">圖片</td>
+                    <td class="td-nth-child-5">商品名稱</td>
+                    <td class="td-nth-child-6">品號</td>
+
+                    {if condition="empty($close_function['網紅列表'])"}
+                    <td class="td-nth-child-6">所屬網紅</td>
+                    {/if}
+
+                    <td class="td-nth-child-7" style="cursor:pointer">售價</td>
+                    <!--td>庫存</td-->
+
+                    {if condition="empty($close_function['標籤設定'])"}
+                        <td class="td-nth-child-8">首頁設定</td>
+                    {/if}
+
+                    <!-- <td>最後修改時間</td> -->
+                    <td class="td-nth-child-9">階層位置</td>
+                    <td class="td-nth-child-10">前台<br>查看</td>
+
+                    {if condition="$control_register==1"}
+                        <td class="td-nth-child-10">查看報名狀況</td>
+                    {/if}
+
+                    <td class="td-nth-child-11">刪除</td>
+                </tr>
+                {volist name="productinfoItem" id="vo" empty="沒有數據"}
+                <tr id="productinfo_{$vo.id}">
+                    <td class="td-nth-child-1"><input type="checkbox" class="productinfoCheckbox" alt="{$vo.id}"></td>
+                    <td class="td-nth-child-2">
+                        <!--label class="switch" style="display:inline-flex; margin-top: 5px;">
+                            <input type="checkbox" v-model="online">
+                            <span class="slider round"></span>
+                        </label-->
+
+                        <select id="{$vo.id}" onchange="getval(this)" class='
+                                                                        {switch name="vo.online"}
+                                                                            {case value="1"}
+                                                                                color_green
+                                                                            {/case}
+                                                                            {case value="0"}
+                                                                                color_yellow
+                                                                            {/case}
+                                                                            {case value="2"}
+                                                                                color_red
+                                                                            {/case}
+                                                                        {/switch}
+                                                                        '>
+                            {switch name="vo.online"}
+                                {case value="1"}
+                                    <option class="color_green" value="1" selected>開啟</option>
+                                    <option class="color_yellow" value="0">隱藏</option>
+                                    <option class="color_red" value="2">關閉</option>
+                                {/case}
+                                {case value="2"}
+                                    <option class="color_green" value="1">開啟</option>
+                                    <option class="color_yellow" value="0">隱藏</option>
+                                    <option class="color_red" value="2" selected>關閉</option>
+                                
+                                {/case}
+                                {default /}
+                                    <option class="color_green" value="1">開啟</option>
+                                    <option class="color_yellow" value="0" selected>隱藏</option>
+                                    <option class="color_red" value="2">關閉</option>
+                            {/switch}
+                            
+                        </select>
+                    </td>
+                    <td>
+                        <input type="number" v-model="po_order_id" style="width:100%;" v-if="prev_id!=0 || branch_id!=0" @blur="change_order('po_order_id')"> <!-- 分館、分類排序 -->
+                        <input type="number" v-model="order_id" style="width:100%;" v-if=" prev_id==0 && branch_id==0" @blur="change_order('order_id')"> <!-- productinfo排序 -->
+                    </td>
+                    <td class="td-nth-child-4">
+                        <span class="glyphicon glyphicon-picture"></span>
+                        <!--
+                            <input type='file' class="upl" name="1" accept="image/*" onclick="ChangeImages()">
+                        -->
+                        <img class="preview" :src="src"/>
+                    </td>
+                    <td><a href="{:url('productinfo/edit', ['id' => $vo.id])}">{{title}}</a></td>
+                    <td>{{product_id}}</td>
+
+                    {if condition="empty($close_function['網紅列表'])"}
+                    <td>{{kol_name}}</td>
+                    {/if}
+
+                    <td class="td-nth-child-7">
+                        <div v-if="has_price" v-for="item in items">
+                            {{item.price}}-{{item.count}}
+                        </div>
+                        <div v-if="!has_price">無</div>
+                    </td>
+                    <!--td>
+                        <div v-if="has_price" v-for="item in items">
+                            <a @click="openBox(item)">{{item.title}}</a>
+                            <div style="float:right; text-align:right">
+                                {{item.num}}/{{item.total}}<br>
+                            </div>
+                        </div>
+                        <div v-if="!has_price">詢價類商品</div>
+                    </td-->
+                    {if condition="empty($close_function['標籤設定'])"}
+                        <td class="td-nth-child-8">
+                            <input type="checkbox" v-model="hot_product"> {$tag[0]['name']}<br>         <!--人氣商品--->
+                            <input type="checkbox" v-model="recommend_product"> {$tag[1]['name']}<br>   <!--店長推薦--->
+                            <input type="checkbox" v-model="expiring_product"> {$tag[2]['name']}<br>    <!--即期良品--->
+                                {if condition="$use_sepc_price == 1"}
+                                    <input type="checkbox" v-model="spe_price_product"> {$tag[3]['name']}       <!--特價商品--->
+                                {/if}
+                        </td>
+                    {/if}
+
+                    <!-- <td>{{updatetime}}</td> -->
+                    <td class="td-nth-child-9">{$vo['show_array']}</td>
+                    <td><a href="/index/product/productinfo.html?id={$vo.id}" target="_blank">查看</a></td>
+
+                    {if condition="$control_register==1"}
+                        <td><!-- 查看報名狀況 --><a href="/admin/examination/examination_room/id/{$vo.id}.html" target="_blank">查看</a></td>
+                    {/if}
+
+                    <td><span class="glyphicon glyphicon-trash" onclick="deleteproduct('{$vo.id}')"></span></td>
+                </tr>
+                {/volist}
+            </table>
+            <!--表格 結束-->
+            <div class="row text-center">
+                {$productinfo->render()}
+            </div>
+        </div>
+    </body>
+{/block}
+{block name="ownJS"}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.0/jquery-confirm.min.js"></script>
+    <script src="__PUBLIC__/js/action.js"></script>
+
+    <script>
+
+    $(function() {
+        $(document).click(function() {
+            $('.edit-item').fadeOut();
+        })
+        $('.edit').click(function(event) {
+            event.stopPropagation();
+        })
+
+
+        // 選擇分館自動更新分類
+        $('#searchPrev').on('change', function(){
+            prev_id =  $('#searchPrev').val();
+            get_next_option(prev_id);
+        })
+
+        // 自動勾選階層搜尋
+        var searchPrev = "{$searchPrev}";
+        var searchBranch = "{$searchBranch}";
+        $('#searchPrev option[value="'+searchPrev+'"]').attr('selected', 'selected');
+        if(searchPrev){
+            get_next_option(searchPrev, searchBranch);
+        };
+    });
+    function get_next_option(prev_id, branch_id=''){
+        $.ajax({
+            url: "{:url('All/layer_option')}?prev_id="+prev_id,
+            type: 'GET',
+            dataType: 'json',
+            success: function(response) {
+                $('#searchBranch').html(response);
+                $('#searchBranch option[value="'+branch_id+'"]').attr('selected', 'selected');
+            },
+            error: function(xhr) {
+            },
+        });
+    }
+
+    Vue.prototype.blockCtrl = function (blockData) {
+        $.ajax({
+            url: "{:url('productinfo/cellCtrl')}",
+            type: 'POST',
+            dataType: 'json',
+            data: blockData,
+            success: function(response) {
+                if(response.status){
+                    location.reload();
+                }else{
+                    alert('更改失敗');
+                    console.log(response.message);
+                }
+            },
+            error: function(xhr) {
+                alert('更改失敗');
+                console.log(xhr);
+            }
+        });
+    };
+
+    Vue.prototype.cellCtrlFromType = function (blockData) {
+        $.ajax({
+            url: "{:url('productinfo/cellCtrlFromType')}",
+            type: 'POST',
+            dataType: 'json',
+            data: blockData,
+            success: function(response) {
+                if(response.status){
+                    alert('更改成功');
+                    BoxVM.updateCallerData();
+                }else{
+                    alert('更改失敗');
+                    console.log(response.message);
+                }
+            },
+            error: function(xhr) {
+                alert('更改失敗');
+                console.log(xhr);
+            }
+        });
+    };
+
+    Vue.prototype.removeToIndexADV = function (blockData) {
+        $.ajax({
+            url: "{:url('productinfo/removeToIndexADV')}",
+            type: 'POST',
+            dataType: 'json',
+            data: blockData,
+            success: function(response) {
+                if(response.status){
+                    //alert('留言成功');
+                }else{
+                    alert('更改失敗');
+                    console.log(response.message);
+                }
+            },
+            error: function(xhr) {
+                alert('更改失敗');
+                console.log(xhr);
+            }
+        });
+    };
+
+    Vue.prototype.addToIndexADV = function (blockData) {
+        var checkboxStatus = false;
+        $.ajax({
+            url: "{:url('productinfo/addToIndexADV')}",
+            type: 'POST',
+            async: false,
+            dataType: 'json',
+            data: blockData,
+            success: function(response) {
+                if(response.status){
+                    //alert('留言成功');
+                    checkboxStatus = true;
+                    if(response.message == 'alreadyFull'){
+                        alert('已經滿十個了，請取消一部分商品');
+                        checkboxStatus = false;
+                    }
+                }else{
+                    alert('更改失敗');
+                    checkboxStatus = false;
+                    console.log(response.message);
+                }
+            },
+            error: function(xhr) {
+                alert('更改失敗');
+                checkboxStatus = false;
+                console.log(xhr);
+            }
+        });
+        return checkboxStatus;
+    };
+
+    var Box = {
+        id: 0,
+        total: 0,
+        num: 0,
+        plus: 0,
+        minus: 0,
+        caller: null
+    }
+    var BoxVM = new Vue({
+        el: '#Box',
+        data: Box,
+        computed: {
+            calculatedNum: function () {
+                return parseInt(this.num) + parseInt(this.plus) - parseInt(this.minus);
+            },
+            calculatedTotal: function () {
+                return parseInt(this.total) + parseInt(this.plus) - parseInt(this.minus);
+            }
+        },
+        methods: {
+            ajaxSubmit: function () {
+                var Data = {
+                    id: this.id,
+                    num: this.calculatedNum,
+                    total: this.calculatedTotal
+                }
+                this.cellCtrlFromType(Data);
+            },
+            updateCallerData: function () {
+                this.caller.num = this.calculatedNum;
+                this.caller.total = this.calculatedTotal;
+                this.plus = 0;
+                this.minus = 0;
+                CloseAdd('.change-amount');
+            }
+        }
+    });
+    function getval(sel)
+        {
+            $.ajax({
+                    url: "{:url('productinfo/cellCtrl')}",
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        
+                        id: sel.id,
+                        online: sel.value
+                    },
+                    success: function(response) {
+                        if(response.status){
+                            // alert('更改成功');
+                            if(sel.value == 1){
+                                color = 'color_green';
+                            }else if(sel.value == 0){
+                                color = "color_yellow";
+                            }else if(sel.value == 2){
+                                color = 'color_red';
+                            }else{
+                                color = "";
+                            }
+                            $(sel).attr('class', color);
+                        }else{
+                            alert('更改失敗');
+                            console.log(response.message);
+                        }
+                    },
+                    error: function(xhr) {
+                        //alert('更改失敗');
+                        console.log(xhr);
+                    }
+                });
+
+        }
+    {volist name="productinfoItem" id="vo" empty=""}
+        var productinfo_{$vo.id} = {
+            id: "{$vo.id}",
+            order_id: "{$vo.order_id}",
+            po_order_id: "{$vo.po_order_id}",
+            prev_id: "{$searchPrev}",
+            branch_id: "{$searchBranch}",
+            title: "{$vo.title}",
+            product_id: "{$vo.product_id}",
+            kol_name: "{$vo.kol_name}",
+            src: '__UPLOAD__{if condition="count($vo.pic)>0"}{$vo.pic.0}{/if}',
+            expiring_product: +"{$vo.expiring_product}",
+            hot_product: +"{$vo.hot_product}",
+            recommend_product: +"{$vo.recommend_product}",
+			spe_price_product: +"{$vo.spe_price_product}",
+            has_price: +"{$vo.has_price}",
+            updatetime: "{$vo.updatetime}",
+            items: {$vo.item},
+            //online: +"{$vo.online}",
+            expiring_productFlag: 1,
+            hot_productFlag: 1,
+            recommend_productFlag: 1,
+			spe_price_productFlag:1,
+        }
+        var productinfo_{$vo.id}_VM = new Vue({
+            el: '#productinfo_{$vo.id}',
+            data: productinfo_{$vo.id},
+            watch: {
+                expiring_product: function () {
+                    if(this.expiring_productFlag){
+                        blockData = {
+                            id: this.id,
+                            tableName: 'expiring_product'
+                        }
+                        if(this.expiring_product){
+                            if(!this.addToIndexADV(blockData)){
+                                this.expiring_productFlag = false;
+                                this.expiring_product = 0;
+                                this.expiring_productFlag = true;
+                            }
+                        }else{
+                            this.removeToIndexADV(blockData);
+                        }
+                    }
+                },
+                hot_product: function () {
+                    if(this.hot_productFlag){
+                        blockData = {
+                            id: this.id,
+                            tableName: 'hot_product'
+                        }
+                        if(this.hot_product){
+                            if(!this.addToIndexADV(blockData)){
+                                this.hot_productFlag = false;
+                                this.hot_product = 0;
+                                this.hot_productFlag = true;
+                            }
+                        }else{
+                            this.removeToIndexADV(blockData);
+                        }
+                    }
+                },
+                spe_price_product: function () {
+                    if(this.hot_productFlag){
+                        blockData = {
+                            id: this.id,
+                            tableName: 'spe_price_product'
+                        }
+                        if(this.spe_price_product){
+                            if(!this.addToIndexADV(blockData)){
+                                this.spe_price_productFlag = false;
+                                this.spe_price_product = 0;
+                                this.spe_price_productFlag = true;
+                            }
+                        }else{
+                            this.removeToIndexADV(blockData);
+                        }
+                    }
+                },
+				
+                recommend_product: function () {
+                    if(this.recommend_productFlag){
+                        blockData = {
+                            id: this.id,
+                            tableName: 'recommend_product'
+                        }
+                        if(this.recommend_product){
+                            if(!this.addToIndexADV(blockData)){
+                                this.recommend_productFlag = false;
+                                this.recommend_product = 0;
+                                this.recommend_productFlag = true;
+                            }
+                        }else{
+                            this.removeToIndexADV(blockData);
+                        }
+                    }
+                }
+            },
+            methods: {
+                openBox: function (item) {
+                    BoxVM.id = item.id;
+                    BoxVM.total = item.total;
+                    BoxVM.num = item.num;
+                    BoxVM.caller = item;
+                    ShowAdd('.change-amount');
+                },
+                change_order: function(type){
+                    blockData = { id: this.id };
+
+                    if(type=='po_order_id'){ // 更改商品在分館、分類的排序
+                        blockData.id = this.id;
+                        blockData.prev_id = this.prev_id;
+                        blockData.branch_id = this.branch_id;
+                        blockData.po_order_id = this.po_order_id;
+                    }else if(type=='order_id'){ // 更改productinfo本身排序
+                        blockData.order_id = this.order_id;
+                    }
+
+                    this.blockCtrl(blockData);
+                },
+            }
+        });
+    {/volist}
+
+    function getMultiId() {
+        var multiIdArray = [];
+        $('.productinfoCheckbox').each(function () {
+            if($(this).prop("checked")){
+                multiIdArray.push($(this).attr('alt'));
+                $(this).prop("checked", false);
+            }
+        });
+        return multiIdArray;
+    }
+
+    function multiDelete() {
+        if(!confirm('確定刪除？')){
+            return 0;
+        }
+
+        var form = document.createElement("form");
+        form.action = "{:url('productinfo/multiDelete')}";
+        form.method = "post";
+
+        multiId = document.createElement("input");
+        multiId.value = JSON.stringify(getMultiId());
+        multiId.name = "id";
+
+        form.appendChild(multiId);
+        document.body.appendChild(form);
+        form.submit();
+        $('.activityCheckboxAll').each(function () {
+            if($(this).prop("checked")){
+                $(this).prop("checked", false);
+            }
+        });
+    }
+
+    function multiOnline() {
+        var multiIdArray = getMultiId();
+        // multiIdArray.forEach(function(element) {
+        //     eval('productinfo_' + element + '.online = true;');
+        // });
+        // $('.activityCheckboxAll').each(function () {
+        //     if($(this).prop("checked")){
+        //         $(this).prop("checked", false);
+        //     }
+        // });
+        multiChange(multiIdArray,1,'開啟');
+    }
+    function multiHide() {
+        var multiIdArray = getMultiId();
+        multiChange(multiIdArray,0,'隱藏');
+    }
+
+    function multiOffline() {
+        var multiIdArray = getMultiId();
+        // multiIdArray.forEach(function(element) {
+        //     eval('productinfo_' + element + '.online = false;');
+        // });
+        // $('.activityCheckboxAll').each(function () {
+        //     if($(this).prop("checked")){
+        //         $(this).prop("checked", false);
+        //     }
+        // });
+        multiChange(multiIdArray,2,'關閉');
+    }
+
+    function multiChange(multiIdArray,value,option){
+        var check = 0;
+        // console.log(multiIdArray);
+        for(var i=0; i<multiIdArray.length;i++){
+
+            $.ajax({
+                    url: "{:url('productinfo/cellCtrl')}",
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        
+                        id: multiIdArray[i],
+                        online: value
+                    },
+                    success: function(response) {
+                        // console.log(multiIdArray[i]);
+                        if(response.status){
+                            
+                        }else{
+                            check += 1;
+                        }
+                    },
+                    error: function(xhr) {
+                        //alert('更改失敗');
+                        // console.log(xhr);
+                        check += 1;
+                    }
+                });
+        }
+
+        if(check ==0){
+            for(var i=0; i<multiIdArray.length;i++){
+                var selector = "#" + multiIdArray[i];
+                // console.log(selector);
+                $(selector).children().each(function(){
+                    if ($(this).text()==option){
+                        //jQuery給法
+                        $(this).attr("selected", "true");
+                    }
+                });
+            }
+            alert('修改成功');
+        }else{
+            alert('修改失敗');
+        }
+    }
+
+    function multiCopy() {
+        // console.log(JSON.stringify(getMultiId()));
+        location.href = "{:url('productinfo/copy')}?id=" + JSON.stringify(getMultiId());
+    }
+
+    function openList() {
+        $('#productListli').click();
+    }
+
+
+    $('input[name="ISBN"]').on('input',function(){
+        var ISBN =  $('input[name="ISBN"]').val();
+        
+        $.ajax({
+            url: "/admin/productinfo/input_isbn.html",
+            type: 'POST',
+            data: {
+                ISBN:ISBN
+            },
+            success: function(response) {
+                
+                if(response > 0){
+
+                    window.location = "/admin/productinfo/edit/id/"+response+".html";
+                }else{
+
+                    window.location = "/admin/productinfo/allcreate.html?ISBN="+ISBN;
+                }
+
+            },
+            error: function(xhr) {
+                console.log(xhr);
+            }
+        });
+    });
+    </script>
+
+    <script>
+        function deleteproduct(pro_id){
+            if(confirm('確定刪除？')){
+                location.href = "{:url('productinfo/delete')}?id="+pro_id;
+            }
+        }
+
+        $('.enter_search').on('keyup', function (e) {
+            if (e.key === 'Enter' || e.keyCode === 13) {
+                searchForm.submit();
+            }
+        });
+    </script>
+{/block}

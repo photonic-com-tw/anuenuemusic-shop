@@ -1,0 +1,412 @@
+{extend name="Public/mainTpl" /}
+
+{block name="title"}{$lang_menu['基本資料']} - {$lang_menu['會員專區']} | {$seo[0]['title']}{/block}
+
+{block name="css"}
+<style>
+    .hide{
+        display: none;
+    }
+</style>
+{/block}
+
+{block name="flulid_content"}
+    <!-- <section class="container max-wideVersion directoryRow">
+        <ul class="clearfix">
+            <li><a href="{$MAIN_WEB_LAN}/">{$lang_menu['首頁']}</a><i class="icon-right"></i></li>
+            <li><a href="{:url('Member/member')}">{$lang_menu['會員專區']}</a><i class="icon-right"></i></li>
+            <li><a href="{:url('Member/member')}">{$lang_menu['基本資料']}</a></li>
+        </ul>
+    </section> -->
+    <div class="d-flex justify-content-center">
+        <div class="w-100 bg_anuenue bg_pic d-flex justify-content-center">
+            <section class="reg_prod_area box_show bg_white max-wideVersion productPublic">
+                <div class="pt_sxsmal pb_ssmal">
+                    <h3 class="page_title">
+                        {$lang_menu['會員專區']}
+                        <span>{include file='Public/member_menu' /}</span>
+                    </h3>
+                </div>
+
+                <div class="row w-100">
+                    <div class="col-12 pb_ssmal text-center">
+                        <span class="other_login color_gray"><span>{$lang_menu['帳號設定']}</span></span>
+                    </div>
+                    <div class="form-group col-12">
+                        <label for="" class="col-form-label">{$lang_menu['會員編號']}</label>
+                        <input type="text" class="form-control "  placeholder="{$lang_menu['會員編號']}" value="{$userD.number}" readonly>
+                        <!-- add class => form-control-plaintext -->
+                    </div>
+                    <div class="form-group col-12">
+                        <label for="" class="col-form-label">{$lang_menu['會員帳號']}</label>
+                        <input type="text" class="form-control "  placeholder="{$lang_menu['會員帳號']}" value="{$userD.email}" readonly>
+                    </div>
+                </div>
+                <div id="oldpw" class="row">
+                    <div class="form-group col-12">
+                        <label for="oldpassword" class="col-form-label">{$lang_menu['密碼']}</label>
+                        <input type="password" class="form-control " id="oldpassword" placeholder="{$lang_menu['如欲修改密碼，請先填入舊密碼']}">
+                    </div>
+                    <div class="form-group col-12 justify-content-end">
+                        <a class="use-btn" onclick="chpwd();">{$lang_menu['修改密碼']}</a>
+                    </div>
+                </div>
+                <div class="hide" id="resetpw">
+                    <form id="setpwform" action="{:url('Member/chpwd')}" method="post">
+                        <input type="hidden" name="id" value="{$userD.id}"/>
+                        <!-- /// -->
+                        <div class="row">
+                            <div class="form-group col-12">
+                                <label for="" class="col-form-label">{$lang_menu['新密碼']}</label>
+                                <input type="password" class="form-control "  placeholder="{$lang_menu['密碼需包含英文及數字']}" name="passwordA">
+                            </div>
+                            <div class="form-group col-12">
+                                <label for="" class="col-form-label">{$lang_menu['密碼再確認']}</label>
+                                <input type="password" class="form-control "  placeholder="" name="passwordB">
+                            </div>
+                            <div class="form-group col-12 justify-content-end">
+                                <a class="use-btn" onclick="document.getElementById('setpwform').submit();">{$lang_menu['修改密碼']}</a>
+                            </div>
+                        </div>
+                        <!-- /// -->
+                    </form>
+                </div>
+
+                <div class="pt_smal" id="resetdata">
+                    <div class="row">
+                        <div class="col-12 pb_ssmal text-center">
+                            <span class="other_login color_gray"><span>{$lang_menu['基本資料']}</span></span>
+                        </div>
+                    </div>
+                    <form id="setdataform" action="{:url('Member/chdata')}" method="post">
+                        <input type="hidden" name="id" value="{$userD.id}"/>
+                        {if condition="$VipDiscount == 1"}
+                        <div class="row">
+                            <div class="form-group col-12">
+                                <h4>{$lang_menu['會員等級']}：
+                                    {if condition="$userD.vip_id==0"}
+                                        {$lang_menu['無']}
+                                    {else/}
+                                        {$userD.vip_name}
+                                    {/if}
+                                </h4>
+                            </div>
+                        </div>
+                        {/if}
+                        <div class="row">
+                            <div class="form-group col-6">
+                                <label for="" class="col-form-label">{$lang_menu['姓名']}</label>
+                                <input type="text" class="form-control" name="name" value="{$userD.name}">
+                            </div>
+                            <div class="form-group col-6">
+                                <label for="" class="col-form-label">{$lang_menu['生日']}</label>
+                                <input type="date" name="birthday" class="form-control" value="{$userD.birthday|date='Y-m-d',###}" readonly />
+                            </div>                                
+                            <div class="form-group col-12">
+                                <label for="" class="col-form-label">{$lang_menu['聯絡地址']}</label>
+                                <div class="row addressBox w-100">
+                                    {if condition="$subDeparment=='A'"}
+                                        <div class="col-sm-6 use-mb">
+                                            <div class="row use-row">
+                                                <div class="col-md-4 col-6 use-col">
+                                                    <select name="F_I_CNo" id="myCity" class="ui fluid selection dropdown no label use-btn">
+                                                        {if condition = "$userD.F_I_CNo eq null"}
+                                                            <option value="">{$lang_menu['請選擇縣市']}</option>
+                                                            {volist name="city" id="vo"}
+                                                                <option value="{$vo.AutoNo}">{$vo.Name}</option>
+                                                            {/volist}
+                                                        {else/}
+                                                            <option value="{$userD.F_I_CNo}">{$userD.F_I_CNo_Name}</option>
+                                                            {volist name="city" id="vo"}
+                                                                <option value="{$vo.AutoNo}">{$vo.Name}</option>
+                                                            {/volist}
+                                                        {/if}
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-4 col-6 use-col">
+                                                    <select name="F_I_TNo" id="myTown" class="ui fluid selection dropdown no label use-btn">
+                                                        {if condition = "$userD.F_I_TNo eq null"}
+                                                            <option value="">{$lang_menu['請選擇區']}</option>
+                                                        {else/}
+                                                            <option value="{$userD.F_I_TNo}">{$userD.F_I_TNo_Name}</option>
+                                                        {/if}
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-4 col-12 use-col">
+                                                    <input type="text" class="form-control" placeholder="{$lang_menu['郵遞區號']}" id="myZip" name="F_S_NH_Zip" size="5" readonly="ture">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {/if}
+
+                                    {if condition="$subDeparment=='A'"}
+                                        <div class="col-sm-6 use-mb">
+                                    {else /}
+                                        <div class="col-sm-12 use-mb">
+                                    {/if}
+                                        {if condition = "$userD.F_I_CNo eq null"}
+                                            <input type="text" class="form-control" Name="F_S_NH_Address" value="{$userD.home}"/>
+                                        {else/}
+                                            <input type="text" class="form-control" Name="F_S_NH_Address" value="{$userD.F_S_NH_Address}"/>
+                                        {/if}
+                                    </div>
+                                    <!-- //////////////////////////////////// -->
+                                </div>
+                            </div>
+                            <div class="form-group col-12">
+                                <label for="" class="col-form-label">{$lang_menu['手機號碼']}</label>
+                                <input type="text" class="form-control" name="phone" value="{$userD.phone}">
+                            </div>
+                            <!-- <div class="form-group col-12">
+                                <label for="" class="col-form-label">{$lang_menu['聯絡電話']}</label>
+                                <input type="text" class="form-control" name="tele" value="{$userD.tele}">
+                            </div> -->
+                            <input type="hidden" class="form-control" placeholder="" name="tele" value="{$userD.tele}">
+
+                            <div class="form-group col-12 justify-content-end">
+                                <a class="use-btn"  onclick="javascript:document.getElementById('setdataform').submit();">{$lang_menu['送出資料']}</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                {if condition="($FB_appID && $user.FB_id =='') || ($client_id && $user.line_id =='') || ($Google_appId && $user.gmail =='') || $user.phone==''"/}
+                    <div class="col-12 pt_smal text-center">
+                        <span class="other_login color_gray"><span>{$lang_menu['其他登入方式']}</span></span>
+                    </div>
+                    <div class="col-12 bindingBox pb_ssmal">
+                        <div>
+                            <div class="top">
+                                <span>{$lang_menu['商城帳號綁定第三方帳號，可直接登入商城網站']}</span>
+                            </div>
+                            <div class="row use-row">
+                                {if condition="$FB_appID and ($user.FB_id =='' and $user.email!='')" /}
+                                    <div class="col-xl-3 col-4 use-col">
+                                        <img src="__PUBLIC__/img/icon_facebook-en.png" alt="FB開通" onclick="open_FB();">
+                                    </div>
+                                {/if}
+                                {if condition="$client_id and ($user.line_id =='' and $user.email!='')" /}
+                                    <div class="col-xl-3 col-4 use-col">
+                                        <img src="__PUBLIC__/img/icon_line-en.png" alt="line開通" onclick="open_line();">
+                                    </div>
+                                {/if}
+                                {if condition="($Google_appId and $user.gmail =='' and $user.email!='')" /}
+                                    <div class="col-xl-3 col-4 use-col">
+                                        <img src="__PUBLIC__/img/icon_google.png" alt="Google開通" onclick="GoogleLogin(1);">
+                                    </div>
+                                {/if}
+                            </div>
+                        </div>
+                    </div>
+                {/if}
+                {if condition="($user.email == '' and $user.line_id =='' and $user.FB_id =='')"}
+                    <div id='Binding'>
+                        <div class="top">
+                            <span>{$lang_menu['綁定商城會員']}：</span>
+                            <a class="bindingBtn use-btn" type="button" value="綁定商城帳號" onclick="ck_number('gmail');" >{$lang_menu['會員帳號']}</a>
+                        </div>
+                    </div>
+                    <div id="ck_number_gmail" style="display:none">
+                        <div class="row">
+                            <div class="form-group col-12">
+                                <label for="" class="col-form-label">{$lang_menu['會員帳號']}</label>
+                                <input type="text" class="form-control" type="email" id="ck_id">
+                            </div>
+                            <div class="form-group col-12">
+                                <label for="" class="col-form-label">{$lang_menu['密碼']}</label>
+                                <input class="form-control" type="password" id="ck_pw">
+                            </div>
+                            <div class="form-group col-12 justify-content-end">
+                                <a class="use-btn send_btn" href="" style="text-align:center;" onclick="javascript:ck_number2('gmail');">{$lang_menu['確認']}</a>
+                            </div>
+                        </div>
+                    </div>
+                {elseif condition="($user.email == '' and $user.gmail =='' and $user.FB_id =='')" /}
+                    <div id='Binding'>
+                        <div class="top">
+                            <span>{$lang_menu['綁定商城會員']}：</span>
+                            <a class="bindingBtn use-btn" type="button" value="綁定商城帳號" onclick="ck_number('line');" >{$lang_menu['會員帳號']}</a>
+                        </div>
+                    </div>
+                    <div id="ck_number_line" style="display:none">
+                        <div class="row">
+                            <div class="form-group col-12">
+                                <label for="" class="col-form-label">{$lang_menu['會員帳號']}</label>
+                                <input type="text" class="form-control" type="email" id="ck_id">
+                            </div>
+                            <div class="form-group col-12">
+                                <label for="" class="col-form-label">{$lang_menu['密碼']}</label>
+                                <input class="form-control" type="password" id="ck_pw">
+                            </div>
+                            <div class="form-group col-12 justify-content-end">
+                                <a class="use-btn send_btn" href="" style="text-align:center;" onclick="javascript:ck_number2('line_id');">{$lang_menu['確認']}</a>
+                            </div>
+                        </div>
+                    </div>
+                {elseif condition="($user.email == '' and $user.gmail =='' and $user.line_id =='')" /}
+                    <div id='Binding' class="bindingBox">
+                        <div class="top">
+                            <span>{$lang_menu['綁定商城會員']}：</span>
+                            <a class="bindingBtn use-btn" type="button" value="綁定商城帳號" onclick="ck_number('FB');" >{$lang_menu['會員帳號']}</a>
+                        </div>
+                    </div>
+                    <div id="ck_number_FB" style="display:none">
+                        <div class="row">
+                            <div class="form-group col-12">
+                                <label for="" class="col-form-label">{$lang_menu['會員帳號']}</label>
+                                <input type="text" class="form-control" type="email" id="ck_id">
+                            </div>
+                            <div class="form-group col-12">
+                                <label for="" class="col-form-label">{$lang_menu['密碼']}</label>
+                                <input class="form-control" type="password" id="ck_pw">
+                            </div>
+                            <div class="form-group col-12 justify-content-end">
+                                <a class="use-btn send_btn" href="" style="text-align:center;" onclick="javascript:ck_number2('FB_id');">{$lang_menu['確認']}</a>
+                            </div>
+                        </div>
+                    </div>
+                {/if}
+            </section>
+        </div>
+    </div>
+{/block}
+
+{block name="ownJS"}
+    <script src="__PUBLIC__/js/memberToggle.js"></script>
+    <!-- <script src="__PUBLIC__/js/timeSelect.js"></script> -->
+    {if condition="$subDeparment=='A'"}
+        <script type="text/javascript">
+            var CNo= $('#myCity').val();
+            if(CNo != ''){
+                $.ajax({
+                    type: "POST",
+                    url: "{:url('Login/Town_ajax')}",//{:url('Member/Town_ajax')}
+                    cache: false,
+                    data:{CNo : CNo},
+                    error: function(){
+                        alert("{$lang_menu['發生錯誤']}");
+                    },
+                    success: function(data){
+                        $('#myTown').html('<option value="{$userD.F_I_TNo}">{$userD.F_I_TNo_Name}</option>'+data);
+                        //$('#myZip').val("");//避免重新選擇縣市後郵遞區號還存在，所以在重新選擇縣市後郵遞區號欄位清空
+                    }
+                });
+
+                var TNo= $('#myTown').val();
+                $.ajax({
+                    type: "POST",
+                    url: "{:url('Login/ZIP_ajax')}",//{:url('Member/Zip_ajax')}
+                    cache: false,
+                    data:{TNo:TNo},
+                    error: function(){
+                        alert("{$lang_menu['發生錯誤']}");
+                    },
+                    success: function(data){
+                        $('#myZip').val(data);
+                    }
+                });
+            }
+
+            //利用jQuery的ajax把縣市編號(CNo)傳到Town_ajax.php把相對應的區域名稱回傳後印到選擇區域(鄉鎮)下拉選單
+            $('#myCity').change(function(){
+                var CNo= $('#myCity').val();           
+                $.ajax({
+                    type: "POST",
+                    url: "{:url('Login/Town_ajax')}",//{:url('Member/Town_ajax')}
+                    cache: false,
+                    data:{CNo : CNo},
+                    error: function(){
+                        alert("{$lang_menu['發生錯誤']}");
+                    },
+                    success: function(data){
+                        $('#myTown').html("<option value=\"\">{$lang_menu['請選擇區']}</option>"+data);
+                        $('#myZip').val("");//避免重新選擇縣市後郵遞區號還存在，所以在重新選擇縣市後郵遞區號欄位清空
+                    }
+                });
+            });
+
+            //利用jQuery的ajax把縣市編號(CNo)傳到Town_ajax.php把相對應的區域名稱回傳後印到選擇區域(鄉鎮)下拉選單
+            $('#myTown').change(function(){
+                var TNo= $('#myTown').val();
+                $.ajax({
+                    type: "POST",
+                    url: "{:url('Login/ZIP_ajax')}",//{:url('Member/Zip_ajax')}
+                    cache: false,
+                    data:{TNo:TNo},
+                    error: function(){
+                        alert("{$lang_menu['發生錯誤']}");
+                    },
+                    success: function(data){
+                        $('#myZip').val(data);
+                    }
+                });
+            });
+        </script>
+    {/if}
+    <script>  
+        function chpwd(){
+            $.ajax({
+                url: "{:url('Ajax/chpwd')}",
+                type: 'POST',
+                datatype: 'json',
+                data: {
+                    id: {$userD.id},
+                    pwd: $('#oldpassword').val()
+                },
+                error: function(xhr) {
+                    alert("{$lang_menu['發生錯誤']}");
+                },
+                success: function(response) {
+                    if(response['status']){
+                        alert("{$lang_menu['請輸入']}{$lang_menu['新密碼']}");
+                        $('#resetpw').removeClass('hide');
+                        $('#oldpw').addClass('hide');
+                    }else{
+                        alert("{$lang_menu['內容有誤']}");
+                    }
+                }
+            });
+        }
+
+        function open_line(){
+            var URL = 'https://access.line.me/oauth2/v2.1/authorize?';
+            URL += 'response_type=code';
+            URL += '&client_id={$client_id}';//胖胖
+            //URL += '&client_id=1563726394';//傳訊光
+            URL += '&redirect_uri=https://{$_SERVER["HTTP_HOST"]}/index/Linglogin/open';
+            URL += '&state=abcdASDFe';
+            URL += '&scope=openid%20profile';
+            window.location.href = URL;
+        }
+
+        //使用自己客製化的按鈕來登入
+        function open_FB() {
+            FB.login(function (response) {
+                //debug用
+                console.log(response);
+                if (response.status === 'connected') {
+                    //user已登入FB
+                    //抓userID
+                    let FB_ID = response["authResponse"]["userID"];
+                    console.log("userID:" + FB_ID);
+                    $.post("{:url('Login/FB_open')}", { U3: FB_ID,ig:FB_ID} , function(result){
+                        console.log(result);
+                        if(result == true){
+                            alert("{$lang_menu['操作成功']}");
+                            Del_FB_App();
+                            location.href="{:url('Login/Logout')}";
+                        }else{
+                            alert(result);
+                            location.href="{:url('member/member')}";
+                        }
+                    });                      
+                } else {
+                    // user FB取消授權
+                    alert("{$lang_menu['發生錯誤']}");
+                    // alert("Facebook帳號無法登入");
+                }
+            }, { scope: 'public_profile,email' });
+        }
+    </script>
+{/block}
+

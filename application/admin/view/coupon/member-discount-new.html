@@ -1,0 +1,480 @@
+{extend name="Public/aside" /}
+{block name="title"}新增優惠券 - 優惠券管理{/block}
+{block name="cssChange"}
+    <link rel="stylesheet" href="__PUBLIC__/css/style_old.css">
+{/block}
+{block name="css"}
+    <style>
+        .back{
+            border:1px solid #333;
+            background:#E0E0E0;
+            padding:0px 10px;
+            padding-top:4px;
+            color:#333;
+            margin-left:10px
+        }
+
+        .back:hover{
+            background: #BEBEBE;
+        }
+        
+        table, tr, td{
+            position: relative;
+            border: 2px solid #9D9D9D;
+        }
+        table{
+            margin:10px auto;
+            width:99%;
+        }
+        td{
+            padding:5%;
+            border: none;
+        }
+        .inquiry{
+            margin:10px 0px;
+        }
+        .inquiry td{
+            padding:10px;
+        }
+        .inquiry tr:nth-child(1) td{
+            text-align: left;
+            border: 2px solid #9D9D9D;
+            background:#E0E0E0;
+        }
+        .inquiry tr:nth-child(1) td:nth-child(5){
+            text-align: center;
+        }
+        .inquiry td,
+        .inquiry td input{
+            text-align: left;
+        }        
+        .inquiry td:nth-child(1),
+        .inquiry td:nth-child(1) input{
+            text-align: left;
+        }
+        .inquiry td:nth-child(1){
+            width: 30%;
+        }
+        .inquiry td:nth-child(2){
+            width: 16%;
+        }
+        .inquiry td:nth-child(3){
+            width: 16%;
+        }
+        .inquiry td:nth-child(4){
+            width: 16%;
+        }
+        .inquiry td:nth-child(5){
+            width: 16%;
+        }
+        .inquiry td:nth-child(6){
+            width: 6%;
+        }
+
+        #setting ,#setting li{
+            list-style: none;
+            display:-webkit-box;
+        }
+        #setting{
+            padding:0px;
+            margin-top:10px;
+            margin-bottom:-2px;
+        }
+        #setting li{
+            border: 2px solid #9D9D9D;
+            margin-right:5px;
+        }
+        #setting li a{
+            padding:10px 5px;
+            color: #333;
+            display: -webkit-box;
+        }
+
+        .nav-tabs>li.active>a, .nav-tabs>li.active>a:focus, .nav-tabs>li.active>a:hover {
+            color: #333;
+            cursor: default;
+            background: #E0E0E0;
+            border: 2px solid #333;
+        }
+        .nav-tabs>li>a {
+            color: #333;
+            margin-right: 2px;
+            border: 2px solid #333;
+            line-height: 1.42857143;
+        }
+        .nav-tabs>li {
+            float: left;
+            margin-bottom: -2px;
+        }
+        .nav>li>a:focus, .nav>li>a:hover {
+            text-decoration: none;
+            background-color: #E0E0E0;
+        }
+        .nav-tabs>li>a:hover {
+            border-color: 2px solid #333;
+        }
+        .nav-tabs>li>a:hover {
+            border-color: #333;
+        }
+
+        .upl {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .preview {
+            max-width: 100%;
+            max-height: 100%;
+            position: relative;
+            vertical-align: middle;            
+        }
+
+        .image-box{
+            text-align: center;
+            font-size: 14px;
+            position: relative;
+            padding: 5px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            width:500px; 
+            height:360px; 
+            border:2px solid #333; 
+            float:left; 
+            margin-right:10%;
+        }
+    </style>
+{/block}
+{block name="content"}
+    <div class="content">
+        <p class="title">優惠券管理 > 新增優惠券</p>
+        <a class="back" href="{:url('Coupon/index')}">
+            <span style="font-size:18px; color:#333" class="glyphicon glyphicon-arrow-left"></span>
+        </a>
+        <form name="productinfoForm" action="{:url('Coupon/doCreate')}" method="post" enctype="multipart/form-data">            
+        &nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" name="type" value="0" checked>虛擬
+        &nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" name="type" value="1">實體
+        <table>
+            <tr>
+                <td>
+                    <div style="margin: 0px auto; display: inline-flex;">
+                        <div class="image-box">
+                            <input type='file' ref="img" class="upl" name="image" accept="image/*">
+                            <img class="preview" name="image"/>
+                        </div>
+                        <div style="float:left">
+                            <br>
+                            <div style="border-bottom:1px solid #333; margin-bottom:10px">
+                                商品名稱：<input type="text" name="title" style="border:none" >
+                            </div>
+                            <br>
+                            <div style="border-bottom:1px solid #333; margin-bottom:10px">
+                                品號：自動編碼，會在生成商品時產生並替換此字。
+                            </div>
+                            <br>
+                            <!-- <div style="border-bottom:1px solid #333; margin-bottom:10px">
+                                價錢：<input type="number" name="price" style="border:none">
+                            </div> -->
+                            <div style="border-bottom:1px solid #333; margin-bottom:10px">
+                                領取上限：<input type="number" name="limit_num" value="5" style="border:none">張
+                            </div>
+                            <input type="hidden" name="price" value="0">
+                            <br>
+                            <div style="border-bottom:1px solid #333; margin-bottom:10px; position:relative; height:110px; width:480px">
+                                簡介：<br><textarea name="content" id="editor"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr style="border-bottom:none">
+                <td style="border-bottom:none">
+                    <div style="margin: 0px auto;">
+                        優惠券設定
+                        <br>
+                        <table class="inquiry">
+                            <tr>
+                                <td>時間</td>
+                                <td>折扣方式</td>
+                                <td>使用限制</td>
+                                <td>可否轉移</td>
+                                <td>生產張數</td>
+                                <td rowspan="2" style="background:transparent">
+                                    
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p>開始日期　<input type="date" name="start" style="width:70%"></p>
+                                    <p>結束日期　<input type="date" name="end" style="width:70%"></p>
+                                </td>
+                                <td>
+                                    <p>
+                                        折扣 <input type="number" name="discount" style="width:50%"> 元
+                                    </p>
+                                </td>
+                                <td>
+                                    <p>滿 <input type="number" name="coupon_condition" style="width:50%"> 元</p>
+                                </td>
+                                <td>
+                                    <p><input type="radio" name="transfer" value="1"> 可以轉移</p>
+                                    <p><input type="radio" name="transfer" value="0"> 不可以轉移</p>
+                                </td>
+                                <td>
+                                    <p><input type="number" name="num" style="width:50%"> 張</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="text-align:center"><span class="glyphicon glyphicon-arrow-right"></span></td>
+                                <td style="text-align:center"><span class="glyphicon glyphicon-arrow-right"></span></td>
+                                <td style="text-align:center"><span class="glyphicon glyphicon-arrow-right"></span></td>
+                                <td style="text-align:center"><span class="glyphicon glyphicon-arrow-right"></span></td>
+                                <td style="text-align:center"><span class="glyphicon glyphicon-arrow-right"></span></td>
+                                <td style="text-align:center"></td>
+                            </tr>
+                        </table>
+                    </div>
+                </td>
+            </tr>
+            <tr style="border-top:none">
+                <td style="border-bottom:none; padding-top:0px;">
+                    <div style="margin: 0px auto;">
+                        範圍設定
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        <input type="radio" name="area" value="0" checked>全體
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        <input type="radio" name="area" value="1">單一商品
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        <select id="areaSelect" name="area_id">
+                            {volist name="productinfo" id="vo"}
+                                <option value="{$vo.id}">{$vo.title}</option>
+                            {/volist}
+                        </select>
+                    </div>
+                </td>
+            </tr>
+            <tr style="border-top:none">
+                <td style="padding:0px; padding-bottom:100px; border-top:none">
+                    <!-- <ul class="nav nav-tabs realType">
+                        <li class="active"><a data-toggle="tab" href="#intro">商品介紹</a></li>
+                        <li><a data-toggle="tab" href="#attributes">商品屬性</a></li>
+                        <li><a data-toggle="tab" href="#order">訂購須知</a></li>
+                        <li><a data-toggle="tab" href="#pay">付款方式</a></li>
+                    </ul> -->
+                    <!-- <div class="tab-content realType">
+                        <div id="intro" class="tab-pane fade in active" style="border-top:2px solid #333; padding:20px">
+                            <input type="radio" value="1" name="text1_online" checked id="show"> <label for="show">顯示</label>
+                            <input type="radio" value="0" name="text1_online" style="margin-left:5px" id="close"> <label for="close">隱藏</label>
+                            <br><br>
+                            <button type=button style="margin-left:5px" onclick="cellGetFromDefault(1)">載入預設訊息</button>
+                            <button type=button style="margin-left:5px" onclick="cellCtrlFromDefault(1)">儲存預設訊息</button>
+                            <br><br>
+                            <textarea name="text1" id="editor1" style="width:100%; height:500px;"></textarea>
+                        </div>
+                        <div id="attributes" class="tab-pane fade" style="border-top:2px solid #333; padding:20px">
+                            <input type="radio" value="1" name="text2_online" checked id="show"> <label for="show">顯示</label>
+                            <input type="radio" value="0" name="text2_online" style="margin-left:5px" id="close"> <label for="close">隱藏</label>
+                            <br><br>
+                            <button type=button style="margin-left:5px" onclick="cellGetFromDefault(2)">載入預設訊息</button>
+                            <button type=button style="margin-left:5px" onclick="cellCtrlFromDefault(2)">儲存預設訊息</button>
+                            <br><br>
+                            <textarea name="text2" id="editor2" style="width:100%; height:500px;"></textarea>
+                        </div>
+                        <div id="order" class="tab-pane fade" style="border-top:2px solid #333; padding:20px">
+                            <input type="radio" value="1" name="text3_online" checked id="show"> <label for="show">顯示</label>
+                            <input type="radio" value="0" name="text3_online" style="margin-left:5px" id="close"> <label for="close">隱藏</label>
+                            <br><br>
+                            <button type=button style="margin-left:5px" onclick="cellGetFromDefault(3)">載入預設訊息</button>
+                            <button type=button style="margin-left:5px" onclick="cellCtrlFromDefault(3)">儲存預設訊息</button>
+                            <br><br>
+                            <textarea name="text3" id="editor3" style="width:100%; height:500px;"></textarea>
+                        </div>
+                        <div id="pay" class="tab-pane fade" style="border-top:2px solid #333; padding:20px">
+                            <input type="radio" value="1" name="text4_online" checked id="show"> <label for="show">顯示</label>
+                            <input type="radio" value="0" name="text4_online" style="margin-left:5px" id="close"> <label for="close">隱藏</label>
+                            <br><br>
+                            <button type=button style="margin-left:5px" onclick="cellGetFromDefault(4)">載入預設訊息</button>
+                            <button type=button style="margin-left:5px" onclick="cellCtrlFromDefault(4)">儲存預設訊息</button>
+                            <br><br>
+                            <textarea name="text4" id="editor4" style="width:100%; height:500px;"></textarea>
+                        </div>
+                    </div> -->
+                    <button id="submitButton" style="position: absolute; left: 45%; margin-top: 20px; font-size: 22px; padding: 5px 20px;"
+                            onclick="$('#block_block').show();">上架</button>
+                </td>
+            </tr>
+        </table>
+        </form>
+    </div>
+{/block}
+{block name="ownJS"}
+<script src="__PUBLIC__/js/action.js"></script>
+<script charset="utf-8" src="__PUBLIC__/js/kindeditor/kindeditor.js"></script>
+<script charset="utf-8" src="__PUBLIC__/js/kindeditor/lang/zh_TW.js"></script>
+<script>
+    var editor;
+    KindEditor.ready(function(K) {
+            editor = K.create('#editor', {
+                    afterBlur: function(){this.sync();},
+                    langType : 'zh_TW',
+                    items:['hr','|','emoticons','|','forecolor','bold', 'italic', 'underline','link', 'unlink',],
+                    width:'100%',
+                    height:'180px',
+                    resizeType:0
+            });
+    });
+    var editor1;
+    KindEditor.ready(function(K) {
+            editor1 = K.create('#editor1', {
+                    afterBlur: function(){this.sync();},
+                    langType : 'zh_TW',
+                    items:['hr', 'image'],
+                    width:'100%',
+                    height:'500px',
+                    resizeType:0
+            });
+    });
+    var editor2;
+    KindEditor.ready(function(K) {
+            editor2 = K.create('#editor2', {
+                    afterBlur: function(){this.sync();},
+                    langType : 'zh_TW',
+                    items:['hr', 'image'],
+                    width:'100%',
+                    height:'500px',
+                    resizeType:0
+            });
+    });
+    var editor3;
+    KindEditor.ready(function(K) {
+            editor3 = K.create('#editor3', {
+                    afterBlur: function(){this.sync();},
+                    langType : 'zh_TW',
+                    items:['hr', 'image'],
+                    width:'100%',
+                    height:'500px',
+                    resizeType:0
+            });
+    });
+    var editor4;
+    KindEditor.ready(function(K) {
+            editor4 = K.create('#editor4', {
+                    afterBlur: function(){this.sync();},
+                    langType : 'zh_TW',
+                    items:['hr', 'image'],
+                    width:'100%',
+                    height:'500px',
+                    resizeType:0
+            });
+    });
+</script>
+<script>
+    ChangeImage();
+
+    $('#areaSelect').hide();
+    $('input[type=radio][name=area]').change(function () {
+        if (this.value == 0) {
+            $('#areaSelect').hide();
+        }
+        else if (this.value == 1) {
+            $('#areaSelect').show();
+        }
+    });
+
+    $('.realType').show();
+    $('input[type=radio][name=type]').change(function() {
+        if (this.value == 0) {
+            $('.realType').show();
+        }
+        else if (this.value == 1) {
+            $('.realType').hide();
+        }
+    });
+
+    var cellCtrlFromDefault = function (textNumber) {
+        var Data = {id: 2};
+        switch (textNumber) {
+            case 1:
+                editor1.sync(); 
+                Data.text1 = editor1.html();
+                break;
+            case 2:
+                editor2.sync(); 
+                Data.text2 = editor2.html();
+                break;
+            case 3:
+                editor3.sync(); 
+                Data.text3 = editor3.html(); 
+                break;
+            case 4:
+                editor4.sync(); 
+                Data.text4 = editor4.html(); 
+                break;
+        }
+        $.ajax({
+            url: "{:url('Productinfo/cellCtrlFromDefault')}",
+            type: 'POST',
+            dataType: 'json',
+            data: Data,
+            success: function(response) {
+                if(response.status){
+                    alert('儲存成功');
+                }else{
+                    alert('儲存失敗');
+                    console.log(response.message);
+                }
+            },
+            error: function(xhr) {
+                alert('儲存失敗');
+                console.log(xhr);
+            }
+        });
+    };
+
+    var cellGetFromDefault = function (textNumber) {
+        $.ajax({
+            url: "{:url('productinfo/cellGetFromDefault')}",
+            type: 'POST',
+            dataType: 'json',
+            data: {
+                textNumber: 'text' + textNumber,
+                id: 2
+            },
+            success: function(response) {
+                if(response.status){
+                    switch (textNumber) {
+                        case 1:
+                            editor1.html(response.message);
+                            editor1.sync(); 
+                            break;
+                        case 2:
+                            editor2.html(response.message);
+                            editor2.sync(); 
+                            break;
+                        case 3:
+                            editor3.html(response.message);
+                            editor3.sync(); 
+                            break;
+                        case 4:
+                            editor4.html(response.message);
+                            editor4.sync(); 
+                            break;
+                    }
+                }else{
+                    alert('載入失敗');
+                    console.log(response.message);
+                }
+            },
+            error: function(xhr) {
+                alert('載入失敗');
+                console.log(xhr);
+            }
+        });
+    };
+</script>
+{/block}

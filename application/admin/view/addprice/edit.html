@@ -1,0 +1,500 @@
+{extend name="Public/aside" /}
+{block name="title"}行銷管理區 > 加價購設定-編輯{/block}
+
+{block name="css"}
+	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <style>
+        .back{
+            border:1px solid #333;
+            background:#E0E0E0;
+            padding:0px 10px;
+            padding-top:4px;
+            color:#333;
+            margin-left:10px
+        }
+        .img-box{
+            margin:0px
+        }
+        .sm-img-box{
+            width:85px;
+            height:85px;
+            display: inline-flex;
+            margin-top:6.5px
+        }
+        .info-div{
+            border-bottom:1px solid #000000;
+            margin-bottom:10px;
+            width:480px;
+            position:relative;
+        }
+        label{
+            font-weight: normal;
+            cursor: pointer;
+            margin:0px;
+        }
+        .glyphicon-plus{
+            color:#fff;
+            font-size:14px;
+            text-align:center;
+            background:#333;
+            padding:6px;
+            border-radius:100px;
+            cursor:pointer
+        }
+        /* 主體表格設置 */
+        table{
+            width:99%;
+            margin: 10px auto
+        }
+        table td{
+            padding:5%
+        }
+        /* 第一列設置 */
+        .sm-group{
+            float:left;
+            margin-left:10px;
+            margin-right:10%
+        }
+        .info-div textarea{
+            height:100px;
+            width:400px;
+            position:absolute;
+            margin-left:10px;
+            margin-top:2px
+        }
+        @media (max-width:1280px){
+            .sm-group{ margin-right:20 }
+            .setting{ margin:0px auto; display: flex;; }
+        }
+
+        /* 第二列設置 */
+        #setting{
+            margin:10px auto;
+            width:100%;
+        }
+        #setting, #setting tr, #setting td{
+            border:2px #9D9D9D solid
+        }
+        #setting td{
+            padding:1%
+        }
+        #setting td:nth-child(1){
+            background: #E0E0E0;
+            text-align: center;
+            width:10%;
+        }
+        .discount{
+            width:30%;
+            padding:0px 5px;
+            text-align: right;
+        }
+        .confirm{
+            position: absolute;
+            left: 45%;
+            margin-top: 20px;
+            font-size: 22px;
+            padding: 5px 20px;
+        }
+
+        .actForm .row{
+        	display: flex;
+		    flex-wrap: wrap;
+		    justify-content: space-evenly;
+        }
+        .actForm .info-div{
+        	width: 49%;
+        }
+    </style>
+{/block}
+
+{block name="content"}
+    <div id="content">
+        <p id="title">行銷管理區 > 加價購設定 > 編輯</p>
+        <a class="back" href="{:url('Addprice/index')}">
+            <span style="font-size:18px; color:#333" class="glyphicon glyphicon-arrow-left"></span>
+        </a>
+        <form class="actForm" name="actForm" method="post">
+	        <table>
+	            <!-- 第一列 -->
+	            <tr>
+	                <td>
+	                	<div class="row">
+	                        <div class="info-div">
+	                            名稱<span class="text-danger">*</span>：
+	                            <input type="text" ng-model="contCtrl.model.act.title" name="title" style="border:none"  placeholder="必填" class="w-c100">
+	                        </div>
+	                        <div class="info-div">
+	                            優惠折扣 <span class="text-danger">*</span>：
+	                            <input type="text" ng-model="contCtrl.model.act.discount" name="discount" style="border:none"  placeholder="必填">
+	                            <span style="color:red;">如希望加價購商品打85折，請輸入0.85</span>
+	                        </div>
+	                    </div>
+	                    <div class="row">
+	                        <div class="info-div">
+	                            開使時間 <span class="text-danger">*</span>：
+	                            <input type="date" ng-model="contCtrl.model.act.start_time" name="start_time" id="start_time" value="" placeholder="必填">
+	                        </div>
+	                        <div class="info-div">
+	                            結束時間 <span class="text-danger">*</span>：
+	                            <input type="date" ng-model="contCtrl.model.act.end_time" name="end_time" id="end_time" placeholder="必填" ng-style="{'display': contCtrl.model.act.noEndTime ? 'none' : 'inline-block' }">
+	                            <input type="checkbox" style="margin-left:10px" id="noEndTime" ng-model="contCtrl.model.act.noEndTime"><label for="noEndTime">沒有結束日期</label>
+	                        </div>
+	                    </div>
+	                    <div class="row" style="display: block;">
+		                    加價購說明：
+	                        <textarea rows="5" class="form-control" ng-model="contCtrl.model.act.description"></textarea>
+	                    </div>
+	                    <a class="button confirm" ng-click="contCtrl.doUpdate()">更新</a>
+	                </td>
+	            </tr>
+	        </table>
+        </form>
+
+
+        <div id="tabs">
+        	<ul>
+				<li><a href="#ruleProd" ng-click="contCtrl.change_tab('RuleProd')">條件商品</a></li>
+				<li><a href="#actProd" ng-click="contCtrl.change_tab('ActProd')">加價購商品</a></li>
+			</ul>
+			<div id="ruleProd">
+				<div class="container-fluid">
+					<div class="row">
+						<span ng-click="contCtrl.selectAllRuleProd()" class="text-primary"> 全選</span>
+					</div>
+					<div class="row">
+						<div ng-repeat="item in contCtrl.model.ruleProd" class="col-sm-2">
+							<div>
+								<div>
+									<input ng-model="item.select" type="checkbox">
+									<span onclick="$(this).prev('input').click()"><% item.pi_title%>-<% item.title%>&nbsp;售價:<% item.count%>元</span>
+								</div>
+								<div onclick="$(this).prev().children('input').click()">
+									<img src="/public/static/index<%item.pic1%>" style="width: 100%">
+								</div>
+							</div>
+						</div>
+					</div>
+					<br>
+					<div class="row">
+						<button ng-click="contCtrl.delProd()" class="btn btn-primary" style="width: 100%">刪除產品</button>	
+					</div>
+				</div>
+			</div>
+	        <div id="actProd">
+				<div class="container-fluid">
+					<div class="row">
+						<span ng-click="contCtrl.selectAllActProd()" class="text-primary"> 全選</span>
+					</div>
+					<div class="row">
+						<div ng-repeat="item in contCtrl.model.actProd" class="col-sm-2">
+							<div>
+								<div>
+									<input ng-model="item.select" type="checkbox">
+									<span onclick="$(this).prev('input').click()"><% item.pi_title%>-<% item.title%>&nbsp;售價:<% item.count%>元</span>
+								</div>
+								<div onclick="$(this).prev().children('input').click()">
+									<img src="/public/static/index<%item.pic1%>" style="width: 100%">
+								</div>
+								加購上限：<input style="width: 100%" ng-model="item.limit_num" ng-blur="contCtrl.save_limitNum(item.adpp_id, item.limit_num)"></th>
+							</div>
+						</div>
+					</div>
+					<br>
+					<div class="row">
+						<button ng-click="contCtrl.delProd()" class="btn btn-primary" style="width: 100%">刪除產品</button>	
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<br>
+        <div>
+    		<p ng-click="contCtrl.getList()" class="text-primary">商品設定重整</p>
+    		<p>
+				<span ng-show="contCtrl.showSeries"><% contCtrl.currCate %></span>
+				<span ng-show="contCtrl.showBreadcrumb"> / </span>
+				<span ng-show="contCtrl.showCate"><% contCtrl.catProd %> <span ng-click="contCtrl.selectAllProd()" class="text-primary"> 全選</span></span>
+			</p> 
+			<span ng-repeat="item in contCtrl.model.series"> 
+				<!--input ng-model = "item.select" type="checkbox" --> 
+				&emsp;
+				<span ng-click="contCtrl.getCate(item)"><% item.title %></span>
+			</span>
+			<span ng-repeat="item in contCtrl.model.cate2"> 
+				<!--input ng-model = "item.select" type="checkbox" --> 
+				&emsp;
+				<span ng-click="contCtrl.getCate2(item)"><% item.title %></span>
+			</span>
+			<span ng-repeat="item in contCtrl.model.cate"> 
+				<input ng-model = "item.select" type="checkbox" > 
+				<span ng-click="contCtrl.getCateProd(item)"><% item.title %></span>
+			</span>
+    		<div class="container-fluid">
+				<div class="row">
+					<div ng-repeat="item in contCtrl.model.cateProd" class="col-sm-2">
+						<div>
+							<div>
+								<input ng-model="item.select" type="checkbox">
+								<span onclick="$(this).prev('input').click()"><% item.pi_title%>-<% item.title%>&nbsp;售價:<% item.count%>元</span>
+							</div>
+							<div onclick="$(this).prev().children('input').click()">
+								<img src="/public/static/index<%item.pic1%>" width=200>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div><button class="btn btn-primary" ng-click="contCtrl.addProd()" style="width: 100%">添加產品</button></div>		
+    	</div>
+   	    <br><br> <br> <br> <br> <br> <br> 
+    </div>
+{/block}
+
+{block name="ownJS"}
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	<script>
+		$( function() {
+			$( "#tabs" ).tabs();
+		} );
+  	</script>
+
+  	<script type="text/javascript" src="__PUBLIC__/js/angular/angular-1.4.4/angular.js"></script>
+    <script>
+    ///////////////
+    //   Angular
+    ///////////////
+    Vue.use(Toasted);
+
+    var app = angular.module('app',[]);
+	app.config(function($interpolateProvider){
+		$interpolateProvider.startSymbol('<%');
+		$interpolateProvider.endSymbol('%>');
+	});
+	app.controller('ContentController',['$http',function($http){
+		var currUrl = window.location.pathname ;
+		var urlSplit= currUrl.split('/');
+		var actId 	= urlSplit[5].split('.');
+
+		var self = this;
+		self.actId 	= actId[0];
+		self.currentTab = 'RuleProd';
+		self.showSeries 		= false;
+		self.showCate 			= false; //Categories
+		self.showBreadcrumb 	= true;
+
+		self.model 				= {};
+		self.model.act			= {};
+		self.model.series 		= {};
+		self.model.cate 		= {};
+		self.model.cate2        = {};
+		self.model.cateProd 	= {};
+
+		self.getDetail = function(){
+			$http({
+				method : "post",
+				url : "{:url('Addprice/getDetail')}",
+				data: {actId:self.actId},
+			}).success(function(data){
+				self.model.act = data.actInfo;
+				self.model.act['start_time'] = new Date(self.model.act['start_time']);
+				self.model.act['end_time'] 	= new Date(self.model.act['end_time']);	
+				// console.log(self.model.act)
+
+				self.model.ruleProd = data.ruleProd; /*條件商品*/
+				self.model.actProd = data.actProd; /*活動商品*/
+				// console.log(self.model.actProd)
+			}).error(function(){
+			})//error
+		}//self.login
+		self.getDetail();
+
+		self.change_tab = function(tab){
+			self.getList();
+			self.currentTab = tab;
+		}
+
+		self.getList = function(){
+			self.showSeries 		= false;
+			self.showCate 			= false; //Categories
+			self.model.series 		= {};
+			self.model.cate 		= {};
+			self.model.cate2        = {};
+			self.model.cateProd 	= {};
+
+			$http({
+				method : "post",
+				url : "{:url('Product/getList')}",
+				//data: orderPost,
+			}).success(function(data){
+				// console.log(data); 
+				self.model.series = data.message;
+				// 
+			}).error(function(){
+			})//error
+		}//self.getList
+		self.getList();
+		self.getCate = function(item){
+			// console.log(seriesId);
+			self.showSeries = true;
+			self.model.series = {};
+			$http({
+				method : "post",
+				url : "{:url('Product/getCate')}",
+				data: {seriesId:item.id},
+			}).success(function(data){
+				data['first'] = true;
+                // console.log(data)
+				self.getCateProd(data);
+				self.model.cate2 = data.cate;
+				self.currCate = item.title;
+				for (var prop in self.model.series){
+					self.model.series[prop]['select'] = false;
+				}
+			}).error(function(){
+			})//error
+		}
+
+		self.getCate2 = function(item){
+			console.log(item.id);
+			self.showSeries = true;
+			self.model.series = {};
+			$http({
+				method : "post",
+				url : "{:url('Product/getCate2')}",
+				data: {seriesId:item.id},
+			}).success(function(data){
+				self.model.cate2 = data.cate;
+				if(!self.currCate){
+					self.currCate = item.title;
+				}else{
+					self.currCate = self.currCate +' / '+item.title;
+				}
+
+				if(data.getCateProd == 1){
+					self.model.cate2 = {};
+					//self.currCate = '';
+				}
+				self.getCateProd(data);
+			}).error(function(){
+			})//error
+		}
+
+		self.getCateProd = function (item){
+			// console.log(seriesId);
+			self.showCate 			= true; //Categories
+			self.model.cate = {};
+			$http({
+				method : "post",
+				url : "/admin/addprice/getAddable"+self.currentTab,
+				data: {cateId:item.seriesId, first:item.first, actId:self.actId},
+			}).success(function(data){
+				self.catProd = item.title;
+				for (var prop in self.model.cate){
+					self.model.cate[prop]['select'] = false;
+				}
+				self.model.cateProd = data.productinfo;	
+			}).error(function(){
+			})//error
+		}//self.getProd()
+
+		self.doUpdate = function(){
+			if(!self.model.act.title){Vue.toasted.show('請輸入標題',{duration:1500});return;}
+            if(!self.model.act.discount){Vue.toasted.show('請輸入優惠折扣',{duration:1500});return;}
+            if(self.model.act.discount>1 || self.model.act.discount<0){Vue.toasted.show('優惠折扣請輸入0~1之間的數',{duration:1500});return;}
+            if(!self.model.act.start_time){Vue.toasted.show('請選擇開始時間',{duration:1500});return;}
+            if(!self.model.act.end_time && !self.model.act.noEndTime){Vue.toasted.show('請選擇結束時間',{duration:1500});return;}
+
+            var postData = Object.assign({}, self.model.act);
+			postData['start_time'] 	= $('#start_time').val();
+			postData['end_time'] 	= $('#end_time').val();
+			console.log(postData);
+			$http({
+				method : "post",
+				url : "{:url('Addprice/doUpdate')}",
+				data: { act : postData },
+			}).success(function(data){
+				Vue.toasted.show(data.msg,{duration:1500});
+			}).error(function(){
+			})//error
+		}
+		self.addProd = function(){
+			$('#block_block').show();
+			$http({
+				method : "post",
+				url : "/admin/addprice/add"+self.currentTab,
+				data: { 
+					cateProd : self.model.cateProd,
+					actId : self.actId
+				},
+			}).success(function(data){
+				Vue.toasted.show(data.msg,{duration:1500});
+				self.getDetail();
+				self.getList();
+				$('#block_block').hide();
+			}).error(function(){
+				alert("網路異常");
+				$('#block_block').hide();
+			})//error
+		}
+
+		self.delProd = function(){
+			$('#block_block').show();
+			if(self.currentTab == 'RuleProd'){
+				targetProduct = self.model.ruleProd;
+			}else{
+				targetProduct = self.model.actProd;
+			}
+
+			$http({
+				method : "post",
+				url : "/admin/addprice/del"+self.currentTab,
+				data: {cateProd:targetProduct, actId:self.actId}
+			}).success(function(data){
+				if (data.status == 200){
+					Vue.toasted.show('商品已刪除',{duration:1500});
+					self.getDetail();
+					self.getList();
+				}else{
+					Vue.toasted.show('網路異常',{duration:1500});
+				}
+				$('#block_block').hide();
+			}).error(function(){
+				alert("網路異常");
+				$('#block_block').hide();
+			})//error
+		}
+
+		self.selectAllRuleProd = function(){
+			for(var prop in self.model.ruleProd){
+				self.model.ruleProd[prop]['select'] = true;
+			}
+		}
+		self.selectAllActProd = function(){
+			for(var prop in self.model.actProd){
+				self.model.actProd[prop]['select'] = true;
+			}
+		}
+
+		self.selectAllProd = function(){
+			for(var prop in self.model.cateProd){
+				self.model.cateProd[prop]['select'] = true;
+			}
+		}
+
+		self.save_limitNum = function(adpp_id, limit_num){
+            $.ajax({
+                url:"{:url('Addprice/updatelimitNum')}",              
+                method:"POST",
+                data:{
+                    adpp_id : adpp_id,
+                    limitNum: limit_num,
+                },
+                success:function(data){
+                	Vue.toasted.show(data.msg,{duration:1500});
+                }
+            });
+        }
+	}])//app.controller()
+	</script>
+
+{/block}

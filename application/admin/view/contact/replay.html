@@ -1,0 +1,499 @@
+{extend name="Public/aside" /}
+{block name="title"}客戶服務區 > 回函表{/block}
+{block name="css"}
+    <link rel="stylesheet" type="text/css" href="__PUBLIC__/css/daterangepicker.css" />
+
+    <style type="text/css">
+
+        .frame{
+            padding:10px 20px;
+            border: 1.5px #9D9D9D solid;
+            margin: 0px auto;
+            margin-top: 10px;
+            width: 99%
+        }
+
+        .frame li{
+            display: inline;
+        }
+
+        .frame .add{
+            color:#fff;
+            font-size:20px;
+            text-align:center;
+            background:#333;
+            padding:10px;
+            border-radius:100px;
+            opacity: 0;
+        }
+        .frame .edit{
+            font-size:25px;
+            display: inline-block;
+            margin-left:5%;
+            cursor:pointer
+        }
+        td .add{
+            color:#fff;
+            font-size:11px;
+            text-align:center;
+            background:#333;
+            padding:4px;
+            border-radius:100px;
+            cursor:pointer
+        }
+
+        table{
+            border:none
+        }
+
+        /* 新增分類區塊 */
+        .add-sort{
+            position: absolute;
+            background: #fff;
+            padding:20px;
+            width: 370px;
+            height:350px;
+            z-index:999;
+            top:calc(50% - 350px / 2);
+            left:calc(50% - 370px / 2);
+        }
+        .add-sort textarea{
+            width:100%;
+            height:80%;
+            padding:5px
+        }
+        .add-sort p{
+            margin-top:10px
+        }
+        .add-sort .button{
+            right:20px;
+            bottom:20px;
+            position:absolute;
+        }
+
+        /* 新增分類區塊 */
+        .change-replay{
+            position: absolute;
+            background: #fff;
+            padding:20px;
+            width: 500px;
+            z-index:999;
+            top:calc(50% - 600px / 2);
+            left:calc(50% - 400px / 2);
+        }
+        .change-replay table{
+            border:none;
+        }
+        .change-replay td{
+            padding:10px;
+        }
+        .change-replay td:nth-child(1){
+            text-align: left;
+            width:40%;
+        }
+        .change-replay tr:nth-child(6) td{
+            border-bottom: none
+        }
+        .change-replay tr:nth-child(1) td{
+            border:none;
+            border-bottom:2px #9D9D9D solid;
+            background: transparent;
+        }
+        .change-replay textarea{
+            width:100%;
+            height:200px;
+            margin:15px 0px
+        }
+        .change-replay .button{
+            right:20px;
+            bottom:15px;
+            position:absolute;
+        }
+
+        /* 編輯 */
+        .edit-item{
+            position: absolute;
+            border: 2px solid #9D9D9D;
+            background: #fff;
+            z-index: 5;
+            padding: 10px;
+            left: calc(5% + 55px);
+            font-size: 16px;
+            width:110px;
+            text-align: center
+        }
+
+        /* 表格設定 */
+        .info{
+            width:99%;
+            margin:0px auto;
+            margin-top:-2px;
+        }
+        .info td{
+            padding:10px
+        }
+        .info tr:nth-child(1) td {
+            background: #E0E0E0;
+            border: 2px #9D9D9D solid;
+            padding:5px;
+            padding-right: 5px;
+        }
+        .info td:nth-child(1){
+            width:5%;
+            text-align: center;
+        }
+        .info td:nth-child(2){
+            width:12.5%;
+            text-align: left;
+        }
+        .info td:nth-child(3){
+            width:15%;
+            text-align: left;
+        }
+        .info td:nth-child(4){
+            width:15%;
+            text-align: left;
+        }
+        .info td:nth-child(5){
+            width:15%;
+            text-align: left;
+        }
+        .info td:nth-child(6){
+            width:20%;
+            text-align: left;
+        }
+        .info td:nth-child(7){
+            width:12.5%;
+            text-align: left;
+        }
+        .info td:nth-child(8){
+            width:5%;
+            text-align: center;
+        }
+
+    </style>
+{/block}
+{block name="content"}
+    <div id="block" onclick="CloseAdd('.add-sort'); CloseAdd('.change-replay')"></div>
+
+    <!-- 新增分類開始 -->
+    <div class="add-sort none">
+        <div style="padding:10px 0px;">
+            <textarea id="contact_typeTextarea" autofocus>{$contact_type.contact_type}</textarea>
+            <p>注意：類別間用半形逗號區隔</p>
+        </div>
+        <a class="button" onclick="contact_type()">儲存</a>
+    </div>
+    <!-- 新增分類結束 -->
+
+    <!-- 修改回函表開始 -->
+    <div class="change-replay none" id="replayBoxView">
+        <div style="padding:10px 0px;">
+            <table>
+                <!-- 第一列 -->
+                <tr>
+                    <td>{{time}}</td>
+                    <td style="text-align:right">{{type}}</td>
+                </tr>
+
+                <!-- 第二列 -->
+                <tr>
+                    <td>{{name}}</td>
+                    <td>信箱：{{email}}</td>
+                </tr>
+                <!-- 第三列 -->
+                <tr>
+                    <td>手機：{{phone}}</td>
+                    <td>連絡電話：{{homephone}}</td>
+                </tr>
+                <!-- 第四列 -->
+                <tr>
+                    <td colspan="1">聯絡時間：{{freeTime}}</td>
+                    <td colspan="1" v-if="order_number">訂單編號：{{order_number}}</td>
+                </tr>
+                <!-- 第五列 -->
+                <tr>
+                    <td colspan="2">
+                        <textarea readonly v-model="content"></textarea>
+                    </td>
+                </tr>
+                <!-- 第六列 -->
+                <tr v-if="status">
+                    <td colspan="2">客服處理紀錄：<br>
+                        <textarea readonly v-model="remessage"></textarea>
+                    </td>
+                </tr>
+                <tr v-else>
+                    <td colspan="2">客服處理紀錄：<br>
+                        <textarea v-model="remessage"></textarea>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <a class="button" v-if="!status" onclick="CloseAdd('.change-replay')" style="right:100px">等待處理</a>
+        <a class="button" v-if="!status" @click="ajaxSubmit">處理完畢</a>
+    </div>
+    <!-- 修改回函表結束 -->
+
+    <div id="content">
+        <p id="title" onclick="javascript:location.href='index.html'" style="cursor:pointer;">
+            客戶服務區 > 回函表
+            {neq name="searchKey" value=""}
+                > 搜尋：{$searchKey}
+            {/neq}
+        </p>
+        <div style="padding:10px 30px;">
+            <form action="{:url('Contact/index')}" name="searchForm" method="get" style="display: inline-block;">
+                <input type="text" name="searchKey" style="text-align:center" placeholder="搜尋分類/姓名/電話/手機/信箱/訂單" style="width:300px" value="{$searchKey}">
+                <a class="button" onclick="searchForm.submit();">搜尋</a>
+            </form>
+            <div style="float: right;">
+                <a class="button pull-right" onclick="searchTime();">搜尋</a>
+                <input class="date pull-right" type="text" id="searchTimeInput" style="font-size:14px; width: 180px;"/>
+            </div>
+        </div>
+
+        <!--新增與編輯-->
+        <div class="frame">
+            <span class="glyphicon glyphicon-plus add"></span>
+            <div class="edit" onclick="Show('.edit-item')">編輯 <span class="glyphicon glyphicon-triangle-bottom"></span></div>
+            <!-- 編輯開始 -->
+            <div class="edit-item none">
+                <a onclick="multiDelete();">
+                    刪除 <span style="margin-left: 15px;" class="glyphicon glyphicon-trash"></span>
+                </a>
+            </div>
+            <!-- 編輯結束 -->
+        </div>
+
+        <!--表格 開始-->
+        <table class="info" style="border:1.5px #9D9D9D solid">
+            <tr>
+                <td><input type="checkbox" class="activityCheckboxAll" onclick="$('.info input[class=contact_logCheckbox]').prop('checked', ($(this).is(':checked')?true:false))"style="width:100%; cursor:pointer;"></td>
+                <td>日期</td>
+                <td>分類
+                    <span class="glyphicon glyphicon-plus add" onclick="ShowAdd('.add-sort')"></span>
+                </td>
+                <td>姓名</td>
+                <td>狀態</td>
+                <td>聯絡信箱</td>
+                <td>手機</td>
+                <td>刪除</td>
+            </tr>
+            {volist name="contact_log" id="vo" empty="沒有數據"}
+                <tr id="contact_log_{$vo.id}">
+                    <td><input type="checkbox" class="contact_logCheckbox" alt="{$vo.id}"></td>
+                    <td>{{time}}</td>
+                    <td><a @click="openBox">{{type}}<span v-if="order_number">：{{order_number}}</span></a></td>
+                    <td><a @click="openBox">{{name}}</a></td>
+                    <td><a @click="openBox">{{status ? '處理完畢' : '待處理'}}</a></td>
+                    <td><a @click="openBox">{{email}}</a></td>
+                    <td><a @click="openBox">{{phone}}</a></td>
+                    <td><span class="glyphicon glyphicon-trash" onclick="location.href = '{:url('Contact/delete')}?id={$vo.id}'"></span></td>
+                </tr>
+            {/volist}
+        </table>
+        <!--表格 結束-->
+        <div class="row text-center">
+            {$contact_log->render()}
+        </div>
+    </div>
+{/block}
+{block name="ownJS"}
+    <!-- Include Required Prerequisites -->
+    <script type="text/javascript" src="__PUBLIC__/js/moment.min.js"></script>
+    <!-- Include Date Range Picker -->
+    <script type="text/javascript" src="__PUBLIC__/js/daterangepicker.js"></script>
+    <script src="__PUBLIC__/js/action.js"></script>
+    <script>
+    $(function() {
+        $(document).click(function() {
+            $('.edit-item').fadeOut();
+        })
+        $('.edit').click(function(event) {
+            event.stopPropagation();
+        })
+    });
+    </script>
+    <script>
+        $("input.date").daterangepicker({locale: {format: 'YYYY-MM-DD'}});
+    </script>
+
+    <script>
+        function contact_type() {
+            $.ajax({
+                url: "{:url('contact/type')}",
+                type: 'POST',
+                data:{
+                    id: 1,
+                    contact_type: $('#contact_typeTextarea').val()
+                },
+                datatype: 'json',
+                error: function(xhr) {
+                    alert('Ajax request 發生錯誤');
+                },
+                success: function(response) {
+                    if(response.status){
+                        alert('更改成功');
+                        CloseAdd('.add-sort');
+                    }else{
+                        console.error(response);
+                    }
+                }
+            });
+        }
+        function contact_status(Data) {
+            $.ajax({
+                url: "{:url('contact/status')}",
+                type: 'POST',
+                data: Data,
+                datatype: 'json',
+                error: function(xhr) {
+                    alert('Ajax request 發生錯誤');
+                },
+                success: function(response) {
+                    if(response.status){
+                        replayBoxVM.status = 1;
+                        replayBoxVM.updateCallerData();
+                        alert('更改成功');
+                        CloseAdd('.change-replay');
+                    }else{
+                        console.error(response);
+                    }
+                }
+            });
+        }
+
+        var replayBoxModel = {
+            id: 0, name: '', phone: '', homephone: '', email: '',
+            type: '', freeTime: '', content: '',
+            status: 0, remessage: '', time: ''
+        }
+
+        var replayBoxVM = new Vue({
+            el: '#replayBoxView',
+            data: replayBoxModel,
+            methods: {
+                ajaxSubmit: function () {
+                    var Data = {
+                        id: this.id,
+                        status: 1,
+                        remessage: this.remessage.replace(/\n/g, '<br>')
+                    }
+                    contact_status(Data);
+                },
+                updateCallerData: function () {
+                    this.caller.status = this.status;
+                    this.caller.remessage = this.remessage;
+                }
+            }
+        });
+
+        ///////andy/////多行文字串//////
+        function heredoc(fn) {
+            return fn.toString().replace(/[\\]/g,"") + '\n'
+        }
+        /////////////////////////////////////////////
+
+        {volist name="contact_log" id="vo" empty=""}
+
+            var tmpl = '';
+            tmpl = heredoc(function(){
+                /*{$vo.content}*/
+            });
+            tmpl = tmpl.split('*');
+            delete tmpl[0];
+            var lastnum = tmpl.length -1;
+            delete tmpl[lastnum];
+
+            var contact_log_{$vo.id} = {
+                id: "{$vo.id}",
+                name: "{$vo.name}",
+                phone: "{$vo.phone}",
+                homephone: "{$vo.homephone}",
+                email: "{$vo.email}",
+                type: "{$vo.type}",
+                status: Number("{$vo.status}"),
+                freeTime: "{$vo.freeTime}",
+                content: tmpl.join(''),
+                remessage: "<?php echo preg_replace('/<br\\s*?\/??>/i','\n', $vo['remessage']); ?>",
+                time: "{$vo.time}",
+                order_number: "{$vo.order_number}",
+            }
+            var contact_log_{$vo.id}_VM = new Vue({
+                el: '#contact_log_{$vo.id}',
+                data: contact_log_{$vo.id},
+                methods: {
+                    openBox: function () {
+                        replayBoxVM.id = this.id;
+                        replayBoxVM.name = this.name;
+                        replayBoxVM.phone = this.phone;
+                        replayBoxVM.homephone = this.homephone;
+                        replayBoxVM.email = this.email;
+                        replayBoxVM.type = this.type;
+                        replayBoxVM.status = this.status;
+                        replayBoxVM.freeTime = this.freeTime;
+                        replayBoxVM.content = this.content;
+                        replayBoxVM.remessage = this.remessage;
+                        replayBoxVM.time = this.time;
+                        replayBoxVM.order_number = this.order_number;
+                        replayBoxVM.caller = this;
+                        ShowAdd('.change-replay')
+                    }
+                }
+            });
+        {/volist}
+
+        function multiDelete() {
+            var form = document.createElement("form");
+            form.action = "{:url('Contact/multiDelete')}";
+            form.method = "post";
+
+            multiId = document.createElement("input");
+            multiId.value = JSON.stringify(getMultiId());
+            multiId.name = "id";
+
+            form.appendChild(multiId);
+            document.body.appendChild(form);
+            form.submit();
+            $('.activityCheckboxAll').each(function () {
+            if($(this).prop("checked")){
+                $(this).prop("checked", false);
+            }
+        });
+        }
+
+        function getMultiId() {
+            var multiIdArray = [];
+            $('.contact_logCheckbox').each(function () {
+                if($(this).prop("checked")){
+                    multiIdArray.push($(this).attr('alt'));
+                    $(this).prop("checked", false);
+                }
+            });
+            return multiIdArray;
+        }
+
+        function searchTime() {
+            var form = document.createElement("form");
+            form.action = "{:url('Contact/searchTime')}";
+            form.method = "get";
+
+            $timeRange = $('#searchTimeInput').val().split(" - ");
+
+            start = document.createElement("input");
+            start.value = $timeRange[0];
+            start.name = "start";
+            form.appendChild(start);
+
+            end = document.createElement("input");
+            end.value = $timeRange[1];
+            end.name = "end";
+            form.appendChild(end);
+
+            document.body.appendChild(form);
+            form.submit();
+        }
+
+    </script>
+{/block}

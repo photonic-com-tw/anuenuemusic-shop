@@ -1,0 +1,137 @@
+{extend name="Public/aside" /}
+{block name="title"}後台{/block}
+{block name="cssChange"}
+    <link rel="stylesheet" href="__PUBLIC__/css/style_old.css">
+    <link rel="stylesheet" href="__PUBLIC__/css/style.css">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+{/block}
+{block name="css"}
+    <style>
+        .frame{
+            padding:10px 20px;
+            border: 1.5px #9D9D9D solid;
+            margin: 0px auto;
+            margin-top: 10px;
+            width: 99%
+        }
+        .edit{
+            cursor: pointer;
+            display: inline-block;
+            padding: 5px 10px;
+            background: #d8d8d8;
+        }
+        .preview{
+            max-width:100%;
+            max-height:100%;
+            position:relative;
+        }
+        .img-box{
+            height: 100px;
+            width: 200px;
+            margin:5px;
+            cursor:default;
+        }
+        .glyphicon-trash{
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-top: 1px solid black;
+        }
+        .row{
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .col-3{
+            width: 24%;
+            height: 200px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            border: 1px solid black;
+            margin: 5px; 
+            background: white;
+        }
+    </style>
+{/block}
+{block name="content"}
+    <div id="content">
+        <p id="title">
+            <span onclick="goback()" style="cursor:pointer;">首頁管理</span> > <span style="margin: 0;">{$tag[3]['name']}</span> <!-- 特價商品 -->
+        </p>
+
+        <div class="frame">
+            <div class="edit" onclick="save()">儲存排序</div><span>&nbsp;&nbsp;&nbsp;&nbsp;(請先用拖拉方式修改下方商品排序，再點擊儲存排序按鈕)</span>
+        </div>
+
+        <div class="tableListA container">
+            <div class="row">
+                {volist name="productInfo" id="vo" empty="沒有數據"}
+                <div class="col-3 ui-state-default" id="stronghold_{$vo.sp_id}" sp_id="{$vo.sp_id}" pname="{$vo.title}" del='0'>
+                    <div class="img-box">
+                        <p style="position:absolute;">700*475</p>
+                        <img class="preview" src="/public/static/index/{$vo.pic}"/>
+                    </div>
+                    <div style="width: 100%;text-align: center;">{$vo.title}</div>
+                    <!-- <div>
+                        排序：<input type="number" value="{$vo.orders}" />
+                        <span class="glyphicon glyphicon-trash" onclick="del('{$vo.sp_id}')"></span>
+                    </div> -->
+                    <span class="glyphicon glyphicon-trash" onclick="del_spe_product('{$vo.sp_id}')"></span>
+                </div>
+                {/volist}
+            </div>
+        </div>
+    </div>
+{/block}
+{block name="ownJS"}
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script>
+        $(function () {
+            $( ".row" ).sortable({
+                revert: true
+            });
+            $( ".row div.col-3" ).draggable({
+              connectToSortable: ".row",
+              // helper: "clone",
+              revert: "invalid"
+            });
+            $( ".row, div.col-3" ).disableSelection();
+        });
+
+        function save() {
+            items = $('div.col-3');
+
+            var sort_item = [];
+            for(var i=0; i<items.length;i++){
+                name = $(items[i]).attr('pname');
+                sp_id = $(items[i]).attr('sp_id');
+                del = $(items[i]).attr('del');
+                sort_item.push({'name':name, 'sp_id':sp_id ,'orders':i, 'del':del});
+            }
+            // console.log(sort_item);
+
+            $.ajax({
+                url: "{:url('index/updateSpePrice')}", //請求的url地址
+                dataType: "json", //返回格式為json
+                data: {data:sort_item}, //引數值
+                type: "POST", //請求方式
+                success: function(req) {
+                    alert("儲存成功");
+                },
+                error: function() {
+                    //請求出錯處理
+                }
+            });
+        }
+
+        function del_spe_product(sp_id) {
+            if(confirm("確定取消商品？")){
+                console.log('#stronghold_'+sp_id);
+                $('#stronghold_'+sp_id).attr('del', 1);
+                $('#stronghold_'+sp_id).hide();
+            }
+        }
+  </script>
+{/block}

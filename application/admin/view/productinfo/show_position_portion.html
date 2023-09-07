@@ -1,0 +1,73 @@
+{extend name="Public/aside" /}
+{block name="title"}商品庫存編碼{/block}
+{block name="css"}
+    <style type="text/css">
+		.back{
+            border:1px solid #333;
+            background:#E0E0E0;
+            padding:0px 10px;
+            padding-top:4px;
+            color:#333;
+            margin-left:10px
+        }
+        /*表格樣式*/
+        table{
+            margin-top:25px;
+            
+            /*width: 100%;*/
+            table-layout: fixed;
+            border-collapse: collapse;
+        }
+        table th:nth-child(1){
+            border-left:none;
+        }
+        table thead {
+            background-color:#E0E0E0;
+        }
+        table th:nth-child(1) { width: 200px; cursor: default; }
+        table th:nth-child(2) { width: 200px; cursor: default; }
+        table th:nth-child(3) { width: 200px; cursor: default; }
+
+    </style>
+{/block}
+{block name="content"}
+    <div id="content">
+        <p id="title">
+            商品庫存編碼
+            {neq name="searchName" value=""}
+                > {$searchName}
+            {/neq}
+        </p>
+		<a class="back" href="{:url('all/index')}">
+            <span style="font-size:18px; color:#333" class="glyphicon glyphicon-arrow-left"></span>
+        </a>
+		<a href="{:url('productinfo/edit',['id'=>$searchKey])}" class="back"> 查看商品內容 </a>
+        <div style="padding:10px 30px;">
+            <table>
+                <!-- 標題 -->
+                <thead>
+                    <tr>
+						<th>品項</th>
+                        <th>庫存編碼</th>
+						<th>數量</th>
+                    </tr>
+                </thead>
+                <!-- 內容 -->
+                <tbody>
+				 {volist name="show_list_spp" id="vo" empty=""}
+					<tr>
+						<td>{$vo['p_type']}</td>
+						<td>{$vo['position_code']}</td>
+						<td>{$vo['num']}</td>
+						
+					</tr>
+				 {/volist}
+                </tbody>
+            </table>
+        </div>
+		
+    </div>
+{/block}
+
+{block name="ownJS"}
+{/block}

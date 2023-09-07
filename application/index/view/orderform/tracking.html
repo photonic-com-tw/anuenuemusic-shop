@@ -1,0 +1,106 @@
+{extend name="Public/mainTpl" /}
+
+{block name="title"}{$lang_menu['訂單查詢']} {if condition="($user.name != '')"}- {$lang_menu['會員專區']}{/if} | {$seo[0]['title']}{/block}
+
+{block name="css"}{/block}
+
+{block name="content"}
+                <section class="container max-wideVersion directoryRow">
+                    <ul class="clearfix">
+                        <li><a href="{$MAIN_WEB_LAN}/">{$lang_menu['首頁']}</a><i class="icon-right"></i></li>
+                        {if condition="($user.name != '')"}
+                        <li><a href="{:url('Member/member')}">{$lang_menu['會員專區']}</a><i class="icon-right"></i></li>
+                        {/if}
+                        <li><a href="{:url('Orderform/orderform')}">{$lang_menu['訂單查詢']}</a></li>
+                    </ul>
+                </section>
+                <section class="container max-wideVersion productPublic">
+                    <!-- /////////////////////////////////////////// -->
+                    <!-- /////////////////////////////////////////// -->
+                    <!-- /////////////////////////////////////////// -->
+                    <div id="itemBox" class="memberInforBox">
+                        <div id="leftBox">
+                            <!-- /////////////////////////////////////////// -->
+                            {include file='Public/member_menu' /}
+                            <!-- /////////////////////////////////////////// -->
+                        </div>
+                        <div id="rightContentBox" class="innerPageBox memberContentBox">
+                            <div class="paddingSpacing">
+                                <div class="pack">
+                                    <div class="memberTop">
+                                        <div class="title">
+                                            <h3>{$lang_menu['訂單查詢']}</h3>
+                                        </div>
+                                        <div class="orderBtnBox">
+                                            <a data-toggle="modal" data-target="#processModel">{$lang_menu['流程說明']}</a>
+                                        </div>
+                                    </div>
+                                    <div class="memberMiddle">
+                                        <div class="form-group">
+                                            <label for="">{$lang_menu['請輸入訂單編號']}</label>
+                                            <div class="d-flex">
+                                                <input type="text" class="form-control" aria-describedby="emailHelp" placeholder="" ng-model="contCtrl.model.orderNum">
+                                                <a ng-click="contCtrl.orderTraking()" class="inquireBtn">{$lang_menu['查詢']}<i class="icon-right"></i></a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="memberBottom">
+                                        <div>
+                                            {$consent_other}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- processModel start-->
+                    <div class="modal fade " id="processModel" tabindex="-1" role="dialog" aria-labelledby="processModelTitle" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content ">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="processModelTitle">{$lang_menu['流程說明']}</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <img src="__PUBLIC__/img/process_img_01.png" alt="">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- processModel end-->
+
+                    <!-- /////////////////////////////////////////// -->
+                    <!-- /////////////////////////////////////////// -->
+                    <!-- /////////////////////////////////////////// -->
+                </section>
+{/block}
+
+{block name="ownJS"}
+    <!-- phone member menu -->
+    <script src="__PUBLIC__/js/memberToggle.js"></script>
+{/block}
+
+{block name="angularJs"}
+    self.model = {};
+    self.orderTraking = function(){
+        // alert(self.model.orderNum);
+        $http({
+            method : "post",
+            url : "/index/orderform/orderTracking/",
+            data: self.model,
+        }).success(function(data){
+            if (data.status == '200'){
+                if (data.info == ''){
+                    location.href = "/index/orderform/orderform_c/id/"+data.order_number+".html"
+                }else{
+                    alert(data.info);
+                }       
+            }else{
+                alert("{$lang_menu['內容有誤']}")
+            }
+        }).error(function(){
+        })//error
+    }//self.orderTraking
+{/block}

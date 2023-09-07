@@ -1,0 +1,104 @@
+/* latin-ext */
+@font-face {
+  font-family: 'Raleway';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Raleway'), local('Raleway-Regular'), url(https://fonts.gstatic.com/s/raleway/v13/1Ptug8zYS_SKggPNyCMIT5lu.woff2) format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Raleway';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Raleway'), local('Raleway-Regular'), url(https://fonts.gstatic.com/s/raleway/v13/1Ptug8zYS_SKggPNyC0ITw.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+#calenderMain {
+  position:absolute;
+  height:100%;
+  width:100%;
+  z-index:10000;
+  left:0;
+  top:0;
+  background:rgba(0, 0, 0, 0.5);
+}
+.main {
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  width:300px;
+  color:#636161;
+  background:#fff;
+font-family: 'Raleway', sans-serif;
+  text-align:center;
+  border-radius: 0rem;
+  letter-spacing:1px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  display:none;
+}
+.month {
+  text-align:center;
+  padding:10px;
+}
+.week {
+  display:inline-flex;
+  text-align:center;
+  padding:10px;
+}
+.week .wDay {
+  padding:10px;
+  margin:10px;
+  color:#636161;
+}
+.date {
+  //color:#636161;
+}
+#fillDate {
+  width:100%;
+  color:#636161;
+}
+#fillDate tr,td {
+  padding:10px;
+  color:#636161;
+}
+.date:hover {
+  background:white;
+  color:#007BFF;
+  font-weight:bold;
+  cursor:pointer;
+  
+}
+.date td:hover {
+  background:white;
+  color:#007BFF;
+  font-weight:bold;
+}
+.year,.month {
+  padding:5px;
+  cursor:pointer;
+}
+.yearDiv {
+  position:relative;
+  font-size:25px;
+  padding:10px;
+}
+.monthDiv {
+  position:relative;
+  font-size:20px;
+  padding:10px;
+}
+.left {
+  position:absolute;
+  left:10px;
+  cursor:pointer;
+}
+.right {
+  position:absolute;
+  right:10px;
+  cursor:pointer;
+}
+.wDay {
+  cursor:default;
+}

@@ -1,0 +1,1376 @@
+{extend name="Public/aside" /}
+{block name="title"}修改商品 - 分類主題館 > {/block}
+{block name="css"}
+        <style>
+            .opacity_5{
+                opacity: 0.5;
+            }
+            .back{
+                border:1px solid #333;
+                background:#E0E0E0;
+                padding:0px 10px;
+                padding-top:4px;
+                color:#333;
+                margin-left:10px
+            }
+            .img-box{
+                margin:0px
+            }
+            .sm-img-box{
+                width:85px;
+                height:85px;
+                display: inline-flex;
+                margin-top:6.5px
+            }
+            .preview{
+                max-width:100%;
+                max-height:100%;
+                position:relative;
+            }
+            .info-div{
+                border-bottom:1px solid #000000;
+                margin-bottom:10px;
+                width:480px;
+                position:relative;
+            }
+            label{
+                font-weight: normal;
+                cursor: pointer;
+                margin:0px;
+            }
+            .glyphicon-plus{
+                color:#fff;
+                font-size:14px;
+                text-align:center;
+                background:#333;
+                padding:6px;
+                border-radius:100px;
+                cursor:pointer
+            }
+
+            /* 主體表格設置 */
+            table{
+                width:99%;
+                margin: 10px auto
+            }
+            table td{
+                padding:5%
+
+            }
+
+            /* 第一列設置 */
+            .sm-group{
+                float:left;
+                margin-left:10px;
+                margin-right:10%
+            }
+            .info-div textarea{
+                height:100px;
+                width:400px;
+                position:absolute;
+                margin-left:10px;
+                margin-top:2px
+            }
+            @media (max-width:1280px){
+                .sm-group{ margin-right:20 }
+                .setting{ margin:0px auto; display: flex;; }
+            }
+
+            /* 第二列表格樣式設置 */
+            #inquiry {
+                width:100%;
+            }
+            #inquiry tr:nth-child(1) td {
+                background: #E0E0E0;
+                border: 2px #9D9D9D solid;
+                padding-right: 5px;
+            }
+            #inquiry tr:last-child td {
+                text-align: left;
+            }
+            #inquiry td{
+                width:14%;
+                text-align: center;
+                padding:1%;
+            }
+            #inquiry td:nth-child(6),
+            #inquiry td:nth-child(7){
+                width:10%;
+            }
+            #inquiry td:nth-child(8){
+                width:5%;
+            }
+            #inquiry input{
+                width:calc(100% - 20px);
+                padding:0px 5px;
+                text-align: right;
+            }
+            #inquiry td:nth-child(2) input{
+                text-align: left;
+                width:100%;
+            }
+
+            /* 第三列設置 */
+            .prod_description{
+                border-top:1.5px solid #9D9D9D;
+                padding:20px
+            }
+            .tab-content textarea{
+                border:1.5px solid #9D9D9D;
+                padding:5px;
+                margin-top:15px
+            }
+            .confirm{
+                position: absolute;
+                left: 45%;
+                margin-top: 20px;
+                font-size: 22px;
+                padding: 5px 20px;
+            }
+            /* 新增_第二列表格樣式設置 */
+            #exposure {
+                width:100%;
+            }
+            #exposure td{
+                width:14%;
+                text-align: center;
+                padding:1%;
+            }
+            #exposure tr:nth-child(1) td{
+                background: #E0E0E0;
+                padding-right: 5px;
+            }
+            #exposure input{
+                /*width:calc(100% - 20px);*/
+				width:250px;
+                padding:0px 5px;
+                text-align:center;
+            }
+            #exposure textarea{
+                width: 100%;
+            }
+            /* 第三列選單列 */
+            .nav{
+                margin-left: -2px;
+                margin-bottom: -1.5px;
+            }
+            .nav-tabs>li.active>a, .nav-tabs>li.active>a:focus, .nav-tabs>li.active>a:hover {
+                color: #000000;
+                cursor: default;
+                background: #E0E0E0;
+                border: 1.5px solid #9D9D9D;
+            }
+            .nav-tabs>li>a {
+                color: #000000;
+                margin-right: 2px;
+                border: 1.5px solid #9D9D9D;
+                line-height: 1.42857143;
+            }
+            .nav-tabs>li {
+                float: left;
+                margin-bottom: -2px;
+            }
+            .nav>li>a:focus, .nav>li>a:hover {
+                text-decoration: none;
+                background-color: #E0E0E0;
+            }
+            .nav-tabs>li>a:hover {
+                border-color: 1.5px solid #9D9D9D;
+            }
+            .nav-tabs>li>a:hover {
+                border-color: #9D9D9D;
+            }
+            div .ke-dialog-row .ke-code-type{
+                display:none ; important
+            }
+        </style>
+{/block}
+{block name="content"}
+
+
+    <div id="content">
+        <p id="title">
+            商品總覽 > {$productinfo.title} > 修改商品
+        </p>
+        <a class="back" href="{:url('all/index')}">
+            <span style="font-size:18px; color:#333" class="glyphicon glyphicon-arrow-left"></span>
+        </a>
+        {if condition="empty($close_function['存放位置管理'])"}
+		  <a href="{:url('productinfo/show_position_portion')}?searchKey={$productinfo.id}" class="back"> 查看商品庫存編碼 </a>
+        {/if}
+        <a href="/index/product/productinfo.html?id={$productinfo.id}" class="back" target="_blank"> 前台查看 </a>
+
+		<a onclick="deleteproduct()" class="back" style="position:absolute; right:10px"> 刪除 </a>
+        <form name="productinfoForm" action="{:url('productinfo/update')}" method="post" enctype="multipart/form-data">
+		<input name="id" type="hidden" value="{$productinfo.id}">
+		<input name="form_error" type="hidden" value="0">
+		<input type="hidden" name="final_array" value='{$productinfo.final_array}'/>
+        <table>
+            <!-- 第一列 -->
+            <tr>
+                <td>
+                    <div class="" style="margin: 0px;padding: 0px;">
+    					<!-- 階層 fat-->
+    					<div class="row">
+                            {if condition="empty($close_function['存放位置管理'])"}
+                                <div class="col-lg-6">
+    								<div class="info-div">
+                                        條碼：<input class="w-c100" name="ISBN" value="{$productinfo.ISBN}" type="text" style="border:none" >
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <span>
+                                        庫存編碼方式：
+                                        <?php if($productinfo['r_repeat'] == 1){ ?><input type="radio" name="r_repeat" value="1" checked id="repeat"><label for="repeat">一碼多品項</label> <?php } ?> 
+                                        <?php if($productinfo['r_repeat'] == 0){ ?><input type="radio" name="r_repeat" value="0" checked id="no_repeat"><label for="no_repeat">一碼一品項</label><br><?php } ?> 
+                                    </span>
+                                </div>
+                            {else /}
+                                <input type="radio" name="r_repeat" value="1" checked id="repeat" style="visibility: hidden;">
+                            {/if}
+    					
+    						<div class="col-lg-12">
+                                <input id="parent_id" type="hidden" value="0">
+                                <input id="branch_id" type="hidden" value="0">
+                                <input id="prev_id" type="hidden" value="0">
+    							選擇上架館/類別：<input type="button" value="添加" onclick="add_array()"></input>
+    							<select  id="product_select-" onchange="product_position('product_select','')">
+    							    <option value="0">請選擇階層</option>
+    							  
+                                    {volist name="product" id="vo"}
+                                        <option value="{$vo.id}">{$vo.title}</option>
+                                    {/volist}
+    							</select>
+    							<span id="branch_select"></span>
+    						</div>
+    						<div class="col-lg-12" id="show_array">
+    						</div>
+                            <p class="col-lg-12" style="color: red;">
+                                1.添加 類型>配件的下一子階層 才能於加價購畫面中顯示<br>
+                                2.勾選的第一個階層會作為商品詳細內容的路徑顯示<br>
+                                3.商品搜尋時勾選 類型>配件，則必須添加 類型>配件 才能被搜尋到，只添加類型>配件>某子階層搜尋時不會顯示
+                            </p>
+    					</div>
+    					<!-- 階層 fat-->
+
+                        <div class="row">
+                            <div id="changeGroupBox" class="col-lg-6">
+
+                                {if condition="$insert_edm == 1"}
+                                    <div class="info-div">
+                                        外崁EDM ID：<input name="out_ID" type="text" style="border:none" value="{$productinfo.out_ID}">
+                                    </div>
+                                {/if}
+                                
+                                <div class="img-box" style="width:360px; height:360px;">
+                                    <img v-if="check_type(src) == 'img'" :src="src" class="preview"/>
+                                    <video v-if="check_type(src) == 'video' && {$upload_film}==1" :src="src" class="preview"></video>
+    								{for start="0" end="$img_Quantity"}
+                                        {if condition="$upload_film == 1"}
+    									   <input type='file' ref="img{$i}" class="upl" name="image{$i}" v-show="show_index == {$i}" accept="image/*,video/*" @change="previewImg({$i})">
+                                        {else /}
+                                           <input type='file' ref="img{$i}" class="upl" name="image{$i}" v-show="show_index == {$i}" accept="image/*" @change="previewImg({$i})">
+                                        {/if}
+    								{/for}
+
+                                </div>
+                                <p style="color: red">{if condition="$upload_film == 1"}第一個檔案請上傳圖片，{/if}建議尺寸：600*600</p>
+                                <div class="col-lg-12" style="padding: 0px; margin-top:10px">
+                                    <?php $last=0;?>
+                                    {for start="0" end="$img_Quantity"}
+                                        <div class="img-box sm-img-box hi-{$i}" style="margin-top:0px; height:100px;align-items: start; margin-bottom: 5px;
+                                        <?php 
+                                            if($last!=$i)echo 'display: none;';
+                                            if(!empty($productinfo['pic'][$i]))$last = ($i+1) ?>" @click="switchSrc({$i})">
+                                            <img v-if="check_type(src{$i}) == 'img'" :src="src{$i}" class="preview" style='height: 71px;' />
+                                            <video v-if="check_type(src{$i}) == 'video' && {$upload_film}==1" :src="src{$i}" class="preview" style='height: 71px;'></video>
+                                            <span class="glyphicon glyphicon-trash preview" style="position: absolute;top: 80px;width: 100%;border-top: 1px black solid;
+                                                /*<?php 
+                                                if($last!=$i)echo 'display: none;';
+                                                if(!empty($productinfo['pic'][$i]))$last = ($i+1) 
+                                            ?>*/
+                                            " @click="delSrc({$i})"></span>
+                                        </div>
+
+                                    {/for}
+                                    {for start="0" end="$img_Quantity"}
+                                        <input type='hidden' v-model="delimg{$i}" name="delimg{$i}">
+                                    {/for}
+                                </div>
+                                <!-- <div class="sm-group" style="margin-right:0px;">
+    								<?php $last=0;?>
+    								{for start="0" end="$img_Quantity"}
+    									<div class="img-box sm-img-box hi-{$i}" style="margin-top:0px;
+    									<?php 
+    										if($last!=$i)echo 'display: none;';
+    										if(!empty($productinfo['pic'][$i]))$last = ($i+1) ?>" @mouseenter="switchSrc({$i})">
+    										<img :src="src{$i}" class="preview"/>
+    									</div><br>
+    								{/for}
+                                </div>
+                                <div class="sm-group" style="width:20px; margin-right:5%;">
+    								<?php $last=0;?>
+    								{for start="0" end="$img_Quantity"}
+    									<div class="img-box sm-img-box hi-{$i}" style="width:20px; margin-top:0px; padding:0px;
+    									<?php 
+    										if($last!=$i)echo 'display: none;';
+    										if(!empty($productinfo['pic'][$i]))$last = ($i+1) 
+    									?>
+    									" @click="delSrc({$i})">
+    										<span class="glyphicon glyphicon-trash preview"></span>
+    									</div>
+                                    <br>
+    								{/for}
+                                </div>
+    							{for start="0" end="$img_Quantity"}
+    								<input type='hidden' v-model="delimg{$i}" name="delimg{$i}">
+    							{/for} -->
+                            </div>
+                            <div class="col-lg-6">
+								{if condition="empty($close_function['網紅列表'])"}
+                                <div class="info-div">
+                                    指派網紅：<select name="kol_id" value="{$productinfo.kol_id}">
+                                                <option value="0">無</option>
+                                                {volist name="kol" id="vo"}
+                                                    {if condition="$vo.id == $productinfo.kol_id"}
+                                                        <option value="{$vo.id}" selected>{$vo.kol_name}</option>
+                                                    {else/}
+                                                        <option value="{$vo.id}">{$vo.kol_name}</option>
+                                                    {/if}
+                                                {/volist}
+                                             </select>
+                                    {if condition="$productinfo.kol_id != 0"}
+                                        <span style="position: relative;">
+                                            <input id="copy_input" type="button" value="複製網紅推廣網址" style="background: #fff;">
+                                            <input id="copy_url" type="text" value='{$_SERVER["HTTP_HOST"]}/index/product/productinfo.html?id={$productinfo.id}&kol={$productinfo.kol_id}' style="position: absolute; width: 50px; left: 0px; z-index: -99;">
+                                        </span>
+                                    {/if}
+                                </div>
+                                {/if}
+
+                                <div class="info-div">
+                                    商品名稱：<input class="w-c100" name="title" value="{$productinfo.title}" type="text" style="border:none" >
+                                </div>
+                                <div class="info-div">
+                                    品號：{$productinfo.product_id}
+                                    <!--自動編碼，會在生成商品時產生並替換此字。-->
+                                </div>
+								<div class="info-div">
+                                    {$property1}<input class="w-c100" name="Author" value="{$productinfo.Author}" type="text" style="border:none" >
+                                </div>
+								<!-- <div class="info-div">
+                                    {$property2}<input class="w-c100" name="house" value="{$productinfo.house}" type="text" style="border:none" >
+                                </div>
+								<div class="info-div">
+                                    {$property3}<input class="w-c100" name="house_date" value="{$productinfo.house_date}" type="text" style="border:none" >
+                                </div> -->
+
+                                {if condition="empty($close_function['商品描述設定'])"}
+                                <div class="info-div">
+                                    商品描述：
+                                    <select name="prodesc_select">
+                                        <option>請選擇</option>
+                                        {volist name="prodesc" id="vo"}
+                                            <option>{$vo.name}</option>
+                                        {/volist}
+                                    </select>
+                                    <input name="prodesc" value="{$productinfo.prodesc}" type="text" style="border:none">
+                                </div>
+                                {/if}
+                                
+                                <div class="info-div">
+                                    關鍵字：<input class="w-c100" name="keywords" value="{$productinfo.keywords}" type="text" style="border:none">
+                                </div>
+                                <div class="info-div" style="border-bottom:none">
+                                    隱藏描述詞：
+                                    <textarea style="border:1px solid #000; position:relative; margin-left:0; width:100%" name="display">{$productinfo.display}</textarea>
+                                </div>
+                                <p style="color: red">請用英文逗號","區隔關鍵字</p>
+                                <div class="info-div" style="height:110px;">
+                                    商品簡介：<br><textarea name="content" id="editor">{$productinfo.content}</textarea>
+                                </div>
+                                <!--
+                                    <div class="info-div" style="height:140px;">
+                                        注意簡介
+                                        <textarea></textarea>
+                                        <br>
+                                        <br>
+                                        <br>
+                                        <input type="radio" name="message" id="default" checked>
+                                        <label style="font-size:14px" for="default">預設訊息</label>
+                                        <br>
+                                        <input type="radio" name="message" id="customize">
+                                        <label style="font-size:14px" for="customize">自訂訊息</label>
+                                        <a class="button" style="position:absolute; right:3px; bottom:5px">儲存修改</a>
+                                    </div>
+                                -->
+                                <br><br><br><br><br>
+                                <div style="margin-bottom:10px" id="indexADV">
+                                    {if condition="empty($close_function['標籤設定'])"}
+                                        <!-- 人氣商品 -->
+                                        <input type="checkbox" id="fomus" v-model="hot_product">
+                                        <label for="fomus">{$tag[0]['name']}</label>
+
+                                        <!-- 店長推薦 -->
+                                        <input type="checkbox" style="margin-left:15px" id="recommend" v-model="recommend_product">
+                                        <label for="recommend">{$tag[1]['name']}</label>
+
+                                        <!-- 即期良品 -->
+                                        <input type="checkbox" style="margin-left:15px" id="expiring" v-model="expiring_product">
+                                        <label for="expiring">{$tag[2]['name']}</label>
+
+                                        {if condition="$use_sepc_price == 1"}
+                                            <!-- 特價商品 -->
+                                            <input type="checkbox" id="spe_price_product" v-model="spe_price_product">
+                                            <label for="spe_price_product">{$tag[3]['name']}</label>
+                                        {/if}
+                                        <p style="color: red">若廣告區已滿(在新增時他人操作導致已滿)<br>此商品將不會加入廣告區，但是一樣會新增成功</p>
+                                    {/if}
+
+                                    <input name="index_ADV_Json" type="hidden" v-model="index_ADV_Json">
+
+
+                                    <div class="info-div" style="border-bottom:none">
+                                        {if condition="$card_pay == 1"}
+                                            是否可刷卡：
+                                            <input type="radio" name="card_pay" id="card_pay_yes" value="1" v-model="card_pay">
+                                            <label for="card_pay_yes">可以</label v-model="recommend_product">
+                                            &nbsp;&nbsp;&nbsp;&nbsp;
+                                            <input type="radio" name="card_pay" id="card_pay_no"  value="0" v-model="card_pay">
+                                            <label for="card_pay_no">不可以</label>
+                                        {else /}
+                                            <input type="hidden" name="card_pay" id="card_pay_yes" v-model="card_pay">
+                                        {/if}
+                                    </div>
+
+                                    <div class="info-div" style="border-bottom:none">
+                                        {if condition="$control_register"}
+                                            是否需填寫報名資料：
+                                            <input type="radio" name="is_registrable" id="is_registrable_yes" value="1" v-model="is_registrable">
+                                            <label for="is_registrable_yes">需要</label v-model="recommend_product">
+                                            &nbsp;&nbsp;&nbsp;&nbsp;
+                                            <input type="radio" name="is_registrable" id="is_registrable_no"  value="0" v-model="is_registrable">
+                                            <label for="is_registrable_no">不需要</label>
+                                        {/if}
+                                        <div v-if="is_registrable==1">
+                                            <div class="info-div">報名截止時間：
+                                                <input name="expire_date" v-model="expire_date" type="datetime-local" style="border:none" :class="[expire_date== '1970-01-01T00:00'? 'opacity_5' : '']">
+                                                <span @click="set_null_time('expire_date')">無截止時間</span>
+                                            </div>
+                                            <div class="info-div">活動開始時間：
+                                                <input name="examinee_date" v-model="examinee_date" type="datetime-local" style="border:none" :class="[examinee_date== '1970-01-01T00:00'? 'opacity_5' : '']">
+                                                <span @click="set_null_time('examinee_date')">無開始時間</span>
+                                            </div>
+                                        </div>
+                                        <div v-if="is_registrable==0">
+                                            <input name="expire_date" value="1970-01-01 00:00:00" type="hidden" style="border:none">
+                                            <input name="examinee_date" value="1970-01-01 00:00:00" type="hidden" style="border:none">
+                                        </div>                                        
+                                    </div>
+                                </div>
+
+                                <div style="margin-bottom:10px" id="shipping_div">
+                                    {if condition="$product_shipping==1"}
+                                        請選擇商品限用運法：<br>
+                                        <input type="hidden" name="shipping_type" v-model="shipping_type">
+                                        <span v-for="item in shpping_decode" style="margin-right: 10px;">
+                                            <input type="checkbox" :id="'shipping'+item.id" :value="item" v-model="shipping_selected">
+                                            <label :for="'shipping'+item.id">{{item.name}}</label>
+                                        </span>
+                                        <p style="color: red;">若都無勾選，則視為允許全部運法</p>
+                                    {/if}
+
+                                    {if condition="empty($close_function['運費標籤管理'])"}
+                                        運費標籤：
+                                        {volist name="shipping_fee_tag" id="vo"}
+                                            <input type="radio" id="shipping_fee_tag_{$vo['id']}" name="shipping_fee_tag" value="{$vo['id']}" v-model="shipping_fee_tag">
+                                            <label for="shipping_fee_tag_{$vo['id']}">{$vo['name']}({$vo['price']}元)</label>
+                                            &nbsp;&nbsp;&nbsp;&nbsp;
+                                        {/volist}
+                                        {if condition="empty($close_function['加價購設定'])"}
+                                            <p style="color: red;">1.未勾選一律視為0元 2.加價購商品將不計算運費</p>
+                                        {/if}
+                                    {else/}
+                                        <input type="checkbox" name="shipping_fee_tag" v-model="shipping_fee_tag">
+                                    {/if}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <!-- 第一列結束 -->
+            <!-- 第二列 -->
+            <tr style="border-bottom:none" id="subProject">
+                <td style="border-bottom:none">
+                    <input name="has_price" type="hidden" v-model="has_price_Num">
+                    <input type="checkbox" id="inquiry-btn" v-model="has_price"><label for="inquiry-btn">售價功能開關</label>
+                    <font style="margin-left:90px">注意此功能關閉該商品不能設定品項、數量與金額，如需關閉再點擊一次按鈕即可。</font><br>
+                    <br>
+                    <div v-show="has_price">
+                        <div style="display: flex; color: red;">
+                            1.如果是要在加購頁面顯示之商品，麻煩品項請輸入2位數字(尺寸)或#開頭+6位英數(色碼)，才會正常顯示，色碼可
+                            <a href="https://www.ifreesite.com/color/" target="_blank">點此查詢</a>
+                        </div>
+                        <div style="display: flex; color: red;">
+                            <span>2.品項如有輸入底線(_)，前台會自動拆分品項成多組供消費者選擇，另外有幾點須特別注意：</span>
+                            <ul style="color: red;">
+                                <li>消費者組合後的品項如未被新增則無法加入購物車</li>
+                                <li>請確保所有品項所輸入的底線數量一致</li>
+                                <li>如有組合名稱重複的情況將導致消費者無法選擇到正確的品項</li>
+                            </ul>
+                        </div>
+                        <table id="inquiry">
+                            <tr>
+                                <td>市價</td>
+                                <td>品項</td>
+                                <!--<td>折數</td>-->
+                                <td>售價</td>
+                                {if condition="empty($close_function['庫存警示'])"}
+                                    <td>庫存數量</td>
+                                    <td>警示數量</td>
+                                {/if}
+
+                                {if condition="empty($close_function['存放位置管理'])"}
+                                    <td>存放位置</td>
+                                {/if}
+                                <td>對應圖片</td>
+                                <td>排序</td>
+                                <td>刪除</td>
+                            </tr>
+                            <tr v-for="(item, index) in items">
+                                <td><input type="number" v-model="item.price" @blur="check_zero(item)"> 元</td>
+                                <td>
+                                    {if condition="empty($close_function['價格組合設定'])"}
+                                    預設模組：
+    								<select class='' v-model="item.title" @change="ch_pos(index)">
+    									{volist name="discount" id="vo"}
+    										<option value="{$vo.id}" >{$vo.name}</option>
+    									{/volist}
+                                    </select>
+                                    {/if}
+    								<input type="text" v-model="item.title_name">
+    							</td>
+                                <td>
+                                    <input type="number" v-model="item.count" @blur="check_zero(item)"> 元
+                                </td>
+    							<!--td><input type="number" v-model="item.num"> </td>
+                                <!-<td>{{Math.ceil(item.price * (item.count/10))}} 元</td>-->
+
+                                {if condition="empty($close_function['庫存警示'])"}
+                                    <td>
+                                        {if condition="empty($close_function['存放位置管理'])"}
+                                            <p>實際庫存:<input type="number" style="  width: 100px;" v-model="item.num" @blur="position(item)"></p>
+                                            <p>線上可購買數量:<span v-text="item.online_num"></span></p>
+                                        {else /}
+                                            <p><input type="number" style="  width: 100px;" v-model="item.online_num" @blur="check_zero(item)"></p>
+                                        {/if}
+                                    </td>
+                                    <td><input type="number" style="  width: 100px;" v-model="item.limit_num" @blur="check_zero(item)"></td>
+                                {/if}
+
+                                {if condition="empty($close_function['存放位置管理'])"}
+                                <td>
+    								<select v-model="item.position" @change="position(item)" >
+    									{volist name="position" id="vo"}
+                                        <option value="{$vo.id}" >{$vo.name}</option>
+    									{/volist}
+                                    </select>
+    							</td>
+                                {/if}
+
+                                <td><input type="number" style="width: 100px;" v-model="item.pic_index"></span></td>
+                                <td><input type="number" style="width: 100px;" v-model="item.order_id"></span></td>
+                                <td><span class="glyphicon glyphicon-trash" @click="del(item)"></span></td>
+                            </tr>
+                            <tr>
+                                <td colspan="8">
+                                    <span class="glyphicon glyphicon-plus" @click="add">
+                                    </span>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </td>
+                <input name="subProjectJson" type="hidden" v-model="subProjectJson">
+                <input name="delProjectJson" type="hidden" v-model="delProjectJson">
+            </tr>
+            <!-- 第二列結束 -->
+            <!-- 第二列_新增 -->
+            <tr >
+                <td >
+                    <table id="exposure">
+                        <tr>
+                            <td colspan="1">推薦商品</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <p style="color: red">請輸入商品品號並使用英文逗號","區隔</p>
+                                <textarea class="chooseitemsid" name="pushitem">{$productinfo.pushitem}</textarea>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <!-- 第二列_新增結束 -->
+            <!-- 第三列 -->
+            <tr style="border-top:none">
+                <td style="padding:0px; padding-bottom:80px; border-top:none">
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a data-toggle="tab" href="#text1">琴款介紹</a></li>
+                        <li><a data-toggle="tab" href="#text2">琴款規格</a></li>
+                        <li><a data-toggle="tab" href="#text3">隨琴贈送</a></li>
+                        <li><a data-toggle="tab" href="#text4">訂購須知</a></li>
+                        <li><a data-toggle="tab" href="#text5">付款方式</a></li>
+                    </ul>
+                    <div class="tab-content" id="textCentent">
+                        <div id="text1" class="prod_description tab-pane fade in active">
+                            <input type="radio" value="1" name="text1_online"
+                            {eq name="productinfo.text1_online" value="1"}
+                                checked
+                            {/eq}
+                            id="show1"> <label for="show1">顯示</label>
+                            <input type="radio" value="0" name="text1_online"
+                            {eq name="productinfo.text1_online" value="0"}
+                                checked
+                            {/eq}
+                            style="margin-left:5px" id="close1"> <label for="close1">隱藏</label>
+                            <br><br>
+                            <a class="button" style="margin-left:5px" onclick="cellGetFromDefault(1)">載入預設訊息</a>
+                            <a class="button" style="margin-left:5px" onclick="cellCtrlFromDefault(1)">儲存預設訊息</a>
+                            <br><br>
+                            <textarea name="text1" id="editor1" style="width:100%; height:500px;">{$productinfo.text1}</textarea>
+                        </div>
+                        <div id="text2" class="prod_description tab-pane fade">
+                            <input type="radio" value="1" name="text2_online"
+                            {eq name="productinfo.text2_online" value="1"}
+                                checked
+                            {/eq}
+                            id="show2"> <label for="show2">顯示</label>
+                            <input type="radio" value="0" name="text2_online"
+                            {eq name="productinfo.text2_online" value="0"}
+                                checked
+                            {/eq}
+                            style="margin-left:5px" id="close2"> <label for="close2">隱藏</label>
+                            <br><br>
+                            <a class="button" style="margin-left:5px" onclick="cellGetFromDefault(2)">載入預設訊息</a>
+                            <a class="button" style="margin-left:5px" onclick="cellCtrlFromDefault(2)">儲存預設訊息</a>
+                            <br><br>
+                            <textarea name="text2" id="editor2" style="width:100%; height:500px;">{$productinfo.text2}</textarea>
+                        </div>
+                        <div id="text3" class="prod_description tab-pane fade">
+                            <input type="radio" value="1" name="text3_online"
+                            {eq name="productinfo.text3_online" value="1"}
+                                checked
+                            {/eq}
+                            id="show3"> <label for="show3">顯示</label>
+                            <input type="radio" value="0" name="text3_online"
+                            {eq name="productinfo.text3_online" value="0"}
+                                checked
+                            {/eq}
+                            style="margin-left:5px" id="close3"> <label for="close3">隱藏</label>
+                            <br><br>
+                            <a class="button" style="margin-left:5px" onclick="cellGetFromDefault(3)">載入預設訊息</a>
+                            <a class="button" style="margin-left:5px" onclick="cellCtrlFromDefault(3)">儲存預設訊息</a>
+                            <br><br>
+                            <textarea name="text3" id="editor3" style="width:100%; height:500px;">{$productinfo.text3}</textarea>
+                        </div>
+                        <div id="text4" class="prod_description tab-pane fade">
+                            <input type="radio" value="1" name="text4_online"
+                            {eq name="productinfo.text4_online" value="1"}
+                                checked
+                            {/eq}
+                            id="show4"> <label for="show4">顯示</label>
+                            <input type="radio" value="0" name="text4_online"
+                            {eq name="productinfo.text4_online" value="0"}
+                                checked
+                            {/eq}
+                            style="margin-left:5px" id="close4"> <label for="close4">隱藏</label>
+                            <br><br>
+                            <a class="button" style="margin-left:5px" onclick="cellGetFromDefault(4)">載入預設訊息</a>
+                            <a class="button" style="margin-left:5px" onclick="cellCtrlFromDefault(4)">儲存預設訊息</a>
+                            <br><br>
+                            <textarea name="text4" id="editor4" style="width:100%; height:500px;">{$productinfo.text4}</textarea>
+                        </div>
+                        <div id="text5" class="prod_description tab-pane fade">
+                            <input type="radio" value="1" name="text5_online"
+                            {eq name="productinfo.text5_online" value="1"}
+                                checked
+                            {/eq}
+                            id="show5"> <label for="show5">顯示</label>
+                            <input type="radio" value="0" name="text5_online"
+                            {eq name="productinfo.text5_online" value="0"}
+                                checked
+                            {/eq}
+                            style="margin-left:5px" id="close5"> <label for="close5">隱藏</label>
+                            <br><br>
+                            <a class="button" style="margin-left:5px" onclick="cellGetFromDefault(5)">載入預設訊息</a>
+                            <a class="button" style="margin-left:5px" onclick="cellCtrlFromDefault(5)">儲存預設訊息</a>
+                            <br><br>
+                            <textarea name="text5" id="editor5" style="width:100%; height:500px;">{$productinfo.text5}</textarea>
+                        </div>
+                        <a id="confirm" class="button confirm" onclick="productinfoForm_ck()">商品上架</a>
+                    </div>
+                </td>
+            </tr>
+            <!-- 第三列結束 -->
+        </table>
+        </form>
+    </div>
+
+
+{/block}
+{block name="ownJS"}
+<script charset="utf-8" src="__PUBLIC__/js/kindeditor/kindeditor.js"></script>
+<script charset="utf-8" src="__PUBLIC__/js/kindeditor/lang/zh_TW.js"></script>
+<script>
+	function productinfoForm_ck(){
+		
+		var final_array =  $('input[name="final_array"]').val();
+		var r_repeat =  $('input[name="r_repeat"]:checked').val();
+		var image0 = changeGroupBox.src0;
+        var title =  $('input[name="title"]').val();
+		var form_error = $("input[name='form_error']").val();
+		
+		if(final_array == '[]' || final_array == '{}' || final_array == '' ){
+			alert('至少一個階層');
+			return;
+		}
+		if(isNaN(r_repeat)){
+			alert('分配重複或是不重複序號位置');
+			return;
+		}
+		if(image0.length <= 3){
+            alert('請上傳至少一個照片');
+            return;
+        }
+
+        if(title == ''){
+            alert('請輸入商品名稱');
+            return;
+        }
+
+		$.when(subProjectVM.position()).done(function(f){
+            var form_error = $("input[name='form_error']").val();
+
+            if(form_error==0){
+                productinfoForm.submit();
+            }   
+        }); 
+	}
+
+	function add_array(){
+		var parent_id =  $('#parent_id').val();
+		var branch_id =  $('#branch_id').val();
+		var prev_id   =  $('#prev_id').val();
+        branch_id = branch_id=="0" ? parent_id : branch_id;
+		
+		if(parent_id==0 && prev_id==0){
+			alert('請選擇階層');
+			return;
+		}
+        if(parent_id==0){
+            alert('請至少選擇至第2階層');
+            return;
+        }
+        var final_array = $('input[name="final_array"]').val() ? $('input[name="final_array"]').val() : '[]';
+
+		if(final_array == '{}'){
+			final_array = [
+				{ 
+					"parent_id":parent_id,
+					"branch_id":branch_id,
+					"prev_id": $('#prev_id').val()
+				}
+			];
+			//final_array.push({'num': '0'}); 
+		}else{
+			final_array = JSON.parse(final_array);
+			final_array.push({ 
+					"parent_id":parent_id,
+					"branch_id":branch_id,
+					"prev_id": $('#prev_id').val()
+				}); 
+		}
+		
+		//JSON.parse()
+		
+		// $('input[name="final_array"]').val(JSON.stringify(final_array));
+        var final_array_string = '[';
+        for(var i=0;i<final_array.length;i++){
+            final_array_string += '{"prev_id":"'+final_array[i]['prev_id']+'","branch_id":"'+final_array[i]['branch_id']+'","parent_id":"'+final_array[i]['parent_id']+'"}'
+            if(i+1<final_array.length){
+                final_array_string += ','
+            }
+        }
+        final_array_string +=']'
+        $('input[name="final_array"]').val(final_array_string);
+        // console.log(final_array_string)
+        
+		
+		$('#parent_id').val(0),
+		$('#branch_id').val(0),
+		$('#prev_id').val(0)
+		$('#product_select-').val(0).trigger('change');
+		show_array();
+	}
+	
+	function show_array(){
+	
+		var final_array = $('input[name="final_array"]').val();
+		
+		$('#show_array').html("");
+		
+        $.ajax({
+            url: "{:url('productinfo/show_array')}",
+            type: 'POST',
+            data: {
+				array:final_array,
+				type:'text'
+			},
+            success: function(response) {
+
+				var array = JSON.parse(response);
+				
+				array.forEach(function(item,key){
+					
+				  $('#show_array').append("<p>"+item+"<a onclick='del_array("+key+")'> 移除</a>"+"</p>");
+				  
+				  if(key == 0)
+					$('#show_list').html(item+">");
+				});
+
+            },
+            error: function(xhr) {
+                console.log(xhr);
+            }
+        });
+	
+	}
+	function del_array(key){
+	
+		var final_array = $('input[name="final_array"]').val();
+		final_array = JSON.parse(final_array);
+		console.log(final_array);
+
+		var result = final_array.filter(function(item,ikey){
+		
+			return ikey != key;
+			
+		});
+
+		$('input[name="final_array"]').val(JSON.stringify(result));
+		
+		show_array();
+		
+	}
+	function product_position(type,next){
+
+		var value = $("select[id='"+type+'-'+next+"']").val();
+		//$("input[name='prev_id']").val(value);
+		
+        $.ajax({
+            url: "{:url('productinfo/position_select')}",
+            type: 'POST',
+            data: {
+				type:type,
+				value:value,
+				next:next
+			},
+            success: function(response) {
+				switch (type) {
+				  case "product_select":
+					//$('#'+type).html(response.trim());
+					$('#branch_select').html(response.trim());
+					
+					$("#parent_id").val(0);
+					$("#branch_id").val(0);
+					$("#prev_id").val(value);
+					break;
+				  default:
+
+					if(next ==1){
+						$("#branch_id").val(0);
+						$("#parent_id").val(value);
+					}else{
+						//$("#parent_id").val(0);
+						$("#branch_id").val(value);
+					}
+					next = parseInt(next)+1;
+					console.log('#'+type+'-'+next);
+					$('#'+type+'-'+next).html(response.trim());
+				  
+				}	
+            },
+            error: function(xhr) {
+                console.log(xhr);
+            }
+        });
+	}
+
+    var editor;
+    KindEditor.ready(function(K) {
+            editor = K.create('#editor', {
+                    afterBlur: function(){this.sync();},
+                    langType : 'zh_TW',
+                    items:['hr','|','emoticons','|','forecolor','bold', 'italic', 'underline','link', 'unlink',],
+                    width:'100%',
+                    height:'180px',
+                    resizeType:0
+            });
+    });
+    var editor1;
+    KindEditor.ready(function(K) { //插入影片功能 items裡加入 'code'
+            editor1 = K.create('#editor1', {
+                    afterBlur: function(){this.sync();},
+                    langType : 'zh_TW',
+                    items: [
+                        'source', '|', 'hr', 'forecolor', 'fontsize', 'bold', 'italic', 'underline', '|',
+                        'image', 'code', 'link', 'unlink','|',
+                        'justifyleft', 'justifycenter', 'justifyright','|','emoticons',
+                    ],
+                    width:'100%',
+                    height:'500px',
+                    resizeType:0
+            });
+    });
+    var editor2;
+    KindEditor.ready(function(K) {
+            editor2 = K.create('#editor2', {
+                    afterBlur: function(){this.sync();},
+                    langType : 'zh_TW',
+                    items: [
+                        'source', '|', 'hr', 'forecolor', 'fontsize', 'bold', 'italic', 'underline', '|',
+                        'image', 'link', 'unlink', '|',
+                        'justifyleft', 'justifycenter', 'justifyright','|','emoticons',
+                    ],
+                    width:'100%',
+                    height:'500px',
+                    resizeType:0
+            });
+    });
+    var editor3;
+    KindEditor.ready(function(K) {
+            editor3 = K.create('#editor3', {
+                    afterBlur: function(){this.sync();},
+                    langType : 'zh_TW',
+                    items: [
+                        'source', '|', 'hr', 'forecolor', 'fontsize', 'bold', 'italic', 'underline', '|',
+                        'image', 'link', 'unlink', '|',
+                        'justifyleft', 'justifycenter', 'justifyright','|','emoticons',
+                    ],
+                    width:'100%',
+                    height:'500px',
+                    resizeType:0
+            });
+    });
+    var editor4;
+    KindEditor.ready(function(K) {
+            editor4 = K.create('#editor4', {
+                    afterBlur: function(){this.sync();},
+                    langType : 'zh_TW',
+                    items: [
+                        'source', '|', 'hr', 'forecolor', 'fontsize', 'bold', 'italic', 'underline', '|',
+                        'image', 'link', 'unlink', '|',
+                        'justifyleft', 'justifycenter', 'justifyright','|','emoticons',
+                    ],
+                    width:'100%',
+                    height:'500px',
+                    resizeType:0
+            });
+    });
+    var editor5;
+    KindEditor.ready(function(K) {
+            editor5 = K.create('#editor5', {
+                    afterBlur: function(){this.sync();},
+                    langType : 'zh_TW',
+                    items: [
+                        'source', '|', 'hr', 'forecolor', 'fontsize', 'bold', 'italic', 'underline', '|',
+                        'image', 'link', 'unlink', '|',
+                        'justifyleft', 'justifycenter', 'justifyright','|','emoticons',
+                    ],
+                    width:'100%',
+                    height:'500px',
+                    resizeType:0
+            });
+    });
+</script>
+<script>
+    // 複製網紅推廣網址
+    Vue.use(Toasted);
+    var clipBoardContent = '{$_SERVER["HTTP_HOST"]}/index/product/productinfo.html?id={$productinfo.id}&kol={$productinfo.kol_id}';
+    $('#copy_input').on('click', function(e){
+        var copyText = $("#copy_url");
+        copyText.select();
+        document.execCommand("Copy");
+        Vue.toasted.show('複製成功',{duration:1500});
+    });
+    
+    var img_Quantity = Number("{$img_Quantity}"); /*限制上傳圖片數量*/
+    pic_num = Array(img_Quantity);
+    
+    /* 商品圖片Vue --------------------------------------*/
+    var changeGroupBox = {};
+    var pic_data = '{$productinfo.pic|json_encode}';
+    pic_data = pic_data ? JSON.parse(pic_data) : [];
+    // console.log(pic_data);
+    for (var i = 0; i < pic_num.length; i++) {
+        changeGroupBox['delimg' + i] = 0;
+
+        if(typeof(pic_data[i])!="undefined"){
+            if(pic_data[i]!=""){
+                changeGroupBox['src' + i] = '__UPLOAD__' + pic_data[i];
+                continue;
+            }
+        }
+        changeGroupBox['src' + i] = 'src' + i;
+    }
+    changeGroupBox['src'] = changeGroupBox['src0'];
+    changeGroupBox['show_index'] = 0;
+    var changeGroupBoxVM = new Vue({
+        el: '#changeGroupBox',
+        data: changeGroupBox,
+        methods: {
+            check_type: function(url){
+                // console.log(url);
+                if(url.split('.').length >=2){
+                    type = url.split('.')[1].substr(0,3).toLowerCase();
+                }else if(url.split(';').length >=2){
+                    var list = url.split(';')[0].split('/')
+                    type = list[list.length-1].toLowerCase();
+                }else{
+                    return 'img'
+                }
+
+                if(['png', 'jpg', 'jpeg', 'gif', 'tif'].indexOf(type) != -1){
+                    return 'img';
+                }else if(['mp4', 'wmv'].indexOf(type) != -1){
+                    return 'video';
+                }else{
+                    return 'img';
+                }
+            },
+            previewImg: function (number) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    changeGroupBox.src = e.target.result;
+                    changeGroupBox['src' + number] = e.target.result;
+                }
+				this['delimg' + number] = 0;
+                reader.readAsDataURL(this.$refs['img' + number].files[0]);
+                if(number < img_Quantity){
+                    $(".hi-" + (number+1)).css("display","");
+                }
+            },
+            switchSrc: function (number) {
+                this['src'] = this['src' + number];
+                this.show_index = number;
+            },
+            delSrc: function (number) {
+                this['src' + number] = 'src' + number;
+                this['delimg' + number] = 1;
+            }
+        }
+    });
+
+    /* 特價商品等選項勾選Vue --------------------------------------*/
+    var indexADV = {
+        recommend_product: +"{$productinfo.recommend_product}",
+        expiring_product: +"{$productinfo.expiring_product}",
+        hot_product: +"{$productinfo.hot_product}",
+		spe_price_product: +"{$productinfo.spe_price_product}",
+        card_pay : "{$productinfo.card_pay}",
+        is_registrable: "{$productinfo.is_registrable}",
+        expire_date: "{$productinfo.expire_date|date='Y-m-d',###}T{$productinfo.expire_date|date='H:i',###}",
+        examinee_date: "{$productinfo.examinee_date|date='Y-m-d',###}T{$productinfo.examinee_date|date='H:i',###}",
+    }
+    var indexADVVM = new Vue({
+        el: '#indexADV',
+        data: indexADV,
+        computed: {
+            index_ADV_Json: function () {
+                var index_ADV_Array = [
+					{
+                        tableName: 'spe_price_product',
+                        value: Number(this.spe_price_product)
+                    },
+                    {
+                        tableName: 'recommend_product',
+                        value: Number(this.recommend_product)
+                    },
+                    {
+                        tableName: 'expiring_product',
+                        value: Number(this.expiring_product)
+                    },
+                    {
+                        tableName: 'hot_product',
+                        value: Number(this.hot_product)
+                    }
+                ];
+                return JSON.stringify(index_ADV_Array);
+            }
+        },
+        methods: {
+            set_null_time: function(item){
+                this[item] = "1970-01-01T00:00";
+            }
+        }
+    });
+
+    /* 商品品項Vue --------------------------------------*/
+    var discount_data = '{$discount|json_encode}';
+    discount_data = discount_data ? JSON.parse(discount_data) : [];
+    var items_data = '{$productinfo.items}';
+    items_data = items_data ? JSON.parse(items_data) : [];
+    var subProject = {
+        items: items_data,
+        delitems: [],
+        has_price: {$productinfo.has_price},
+        discount_value : {},
+        discount_name : {},
+    }
+    for (var i = 0; i < discount_data.length; i++) {
+        x = discount_data[i];
+        subProject['discount_value'][x['id']] = x['number'];
+        subProject['discount_name'][x['id']] = x['name'];
+    }
+    var subProjectVM = new Vue({
+        el: '#subProject',
+        data: subProject,
+        computed: {
+            subProjectJson: function () {
+				this.items.map(element => {
+					// element.count = Math.ceil(element.price * this.discount_value[element.title]);
+					element.discount_id = element.title;
+					/*
+					if(element.num <= parseInt(element.old_num)){
+						element.num  = element.old_num;
+					}
+					*/
+					if(element.title_name == "" || !element.title_name)
+						element.title_name = this.discount_name[element.title];
+				});
+                return JSON.stringify(this.items);
+            },
+            delProjectJson: function () {
+                return JSON.stringify(this.delitems);
+            },
+            has_price_Num: function () {
+                return Number(this.has_price);
+            }
+        },
+        methods: {
+            check_zero: function(item){
+                if(item.price<0){
+                    alert('請輸入大於零的數');
+                    item.price = 0;
+                    return;
+                }
+                if(item.count<0){
+                    alert('請輸入大於零的數');
+                    item.count = 0;
+                    return;
+                }
+                if(item.limit_num<0){
+                    alert('請輸入大於零的數');
+                    item.limit_num = 0;
+                    return;
+                }
+                if(item.online_num<0){
+                    alert('請輸入大於零的數');
+                    item.online_num = 0;
+                    return;
+                }
+            },
+			position:function(item){
+				this.items.map(element => {
+					if(element.num <= parseInt(element.old_num)){
+						element.num  = element.old_num;
+					}
+				});
+			
+				var tmp = $("input[name='r_repeat']:checked").val();
+
+                var data = JSON.stringify(this.items);
+				if (typeof(tmp) == "undefined"){ 
+					alert('請選擇位置存放方式');
+                    $("input[name='form_error']").val(1);
+
+				}else{
+					return $.ajax({
+						url: "{:url('Productinfo/position_portion')}",
+						type: 'POST',
+						data:{ 
+							data:data,
+							repeat:tmp,
+						},
+						success: function(response) {
+							console.log(response);
+							if(response['alert'] != 'ok'){
+								if(!item){
+                                    alert(response['alert']);
+                                }
+								$("input[name='form_error']").val(response['form_error']);
+							}else{
+								$("input[name='form_error']").val(0);
+							}
+							//console.log(response);
+						},
+
+					});
+				}
+
+			},
+			ch_pos: function (index) {
+				var tmp = $("input[name='r_repeat']:checked").val();
+
+                this.items[index]['count'] = Math.round(this.items[index]['price'] * this.discount_value[this.items[index]['title']]);
+                this.items[index]['title_name'] = this.discount_name[this.items[index]['title']];
+
+                return JSON.stringify(this.items);
+			},
+            del: function (del_item) {
+                this.items = this.items.filter(function (item) {
+                    return item != del_item;
+                });
+                if(del_item.id){
+                    this.delitems.push(del_item.id);
+                }
+                //console.log(this.delitems);
+                //console.log(this.delProjectJson);
+            },
+            add: function () {
+                if( <?php echo empty($close_function['存放位置管理']) ?>0 ){
+                    this.items.push(
+                        {
+                            product_id: {$productinfo.id},
+    						discount_id:0,
+    						num: 0,
+                            limit_num: 10,
+    						old_num:0,
+                            total: 0,
+                            price: 0,
+                            count: 0,
+                            title: 0,
+    						title_name:0,
+                            pic_index: 1,
+    						position:0,
+                            order_id:0,
+                        }
+                    );
+                }else{
+                    this.items.push(
+                        {
+                            product_id: {$productinfo.id},
+                            discount_id:0,
+                            num: 0,
+                            limit_num: 10,
+                            old_num:0,
+                            total: 0,
+                            price: 0,
+                            count: 0,
+                            title: 0,
+                            title_name:0,
+                            pic_index: 1,
+                            position:1,
+                            order_id:0,
+                        }
+                    );
+                }
+            }
+        }
+    });
+
+    /* 商品說明頁籤功能 --------------------------------------*/
+    var cellCtrlFromDefault = function (textNumber) {
+        var Data = {id: 1};
+        editor = eval('editor' + textNumber);
+        Data['text' + textNumber] = editor.html();
+        $.ajax({
+            url: "{:url('Productinfo/cellCtrlFromDefault')}",
+            type: 'POST',
+            dataType: 'json',
+            data: Data,
+            success: function(response) {
+                if(response.status){
+                    alert('儲存成功');
+                }else{
+                    alert('儲存失敗');
+                    console.log(response.message);
+                }
+            },
+            error: function(xhr) {
+                alert('儲存失敗');
+                console.log(xhr);
+            }
+        });
+    };
+    var cellGetFromDefault = function (textNumber) {
+        $.ajax({
+            url: "{:url('productinfo/cellGetFromDefault')}",
+            type: 'POST',
+            dataType: 'json',
+            data: {
+                textNumber: 'text' + textNumber
+            },
+            success: function(response) {
+                if(response.status){
+                    editor = eval('editor' + textNumber);
+                    editor.html(response.message);
+                    editor.sync();
+                }else{
+                    alert('載入失敗');
+                    console.log(response.message);
+                }
+            },
+            error: function(xhr) {
+                alert('載入失敗');
+                console.log(xhr);
+            }
+        });
+    };
+</script>
+<script src='//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js'></script>
+<script>
+    $( document ).ready(function() {
+        show_array();
+        
+        var prodesc_select = $('select[name="prodesc_select"]');
+        prodesc_select.on('change', function(){ $('input[name="prodesc"').val(prodesc_select.val()) });
+    });
+
+    function deleteproduct(){
+        if(confirm('確定刪除？')){
+            location.href="{:url('productinfo/delete')}?id={$productinfo.id}";
+        }
+    }
+</script>
+<script type="text/javascript">
+    /* 商品關聯運費 */
+    var shipping_data = {
+        shipping : '{$shipping_fee|json_encode}',
+        shipping_selected: [],
+        shipping_fee_tag: '{$productinfo.shipping_fee_tag}',
+    }
+    var shippingVM = new Vue({
+        el: '#shipping_div',
+        data: shipping_data,
+        computed: {
+            shpping_decode: function(){
+                return JSON.parse(this.shipping);
+            },
+            shipping_type: function(){
+                var shipping_type = [];
+                var shipping_selected = this.shipping_selected
+                for (var i = 0; i < shipping_selected.length; i++) {
+                    shipping_type.push(shipping_selected[i].id);
+                }
+                return shipping_type.join(',');
+            }
+        },
+    });
+    /* 初始化勾選 */
+    var shipping_selected = '{$shipping_selected|json_encode}';
+    shippingVM.shipping_selected = JSON.parse(shipping_selected);
+</script>
+{/block}

@@ -1,0 +1,738 @@
+{extend name="Public/aside" /}
+{block name="title"}後台{/block}
+{block name="cssChange"}
+    <link rel="stylesheet" href="__PUBLIC__/css/style_old.css">
+    <link rel="stylesheet" href="__PUBLIC__/css/style.css">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+{/block}
+{block name="css"}
+    <link rel="stylesheet" href="__PUBLIC__/css/datepicker.css">
+    <style>
+        .tableListA .glyphicon:nth-of-type(1),
+        .tableListA .glyphicon:nth-of-type(2),
+        .tableListA .glyphicon:nth-of-type(3){
+            width: 15%;
+        }
+        .title input{
+            width: 150px;
+        }
+        /*時間選擇器*/
+        .datepicker-days table td, .datepicker-days table, .datepicker-days table th{
+            border:none;
+        }
+        .datepicker-days .switch {
+            position: initial;
+            display: table-cell;
+        }
+
+        /* 新增商品區塊 */
+        .formblock{
+            display: flex;
+            justify-content: space-around;
+        }
+        .typeinfo_add-item{
+            position: fixed;
+            background: #fff;
+            padding:20px;
+            width: 800px;
+            /*height:450px;*/
+            z-index:999;
+            top:calc(50% - 450px / 2);
+            left:calc(40% - 400px / 2);
+        }
+        .typeinfo_add-item .img-box{
+            position:relative;
+            border: 1px solid #333;
+            width:100%;
+            height:200px;
+            margin:0px
+        }
+        .typeinfo_add-item .button{
+            right:15px;
+            bottom:15px;
+            position:absolute;
+        }
+
+        .frame{
+            padding:10px 20px;
+            border: 1.5px #9D9D9D solid;
+            margin: 0px auto;
+            margin-top: 10px;
+            width: 99%
+        }
+        .frame ul{
+            list-style: none;
+            font-size: 15px;
+            display: block;
+            margin: 0;
+            padding: 0;
+        }
+        .edit{
+            cursor: pointer;
+            display: inline-block;
+            padding: 5px 10px;
+            background: #d8d8d8;
+            color: black;
+        }
+        .tableListA .glyphicon {
+            width: 25%;
+            display: flex;
+            justify-content: center;
+        }
+        .glyphicon-edit{
+            position: relative;
+        }
+        .glyphicon-trash{
+            border-right: black 1px solid;
+        }
+        .title{
+            display: inline-block;
+            width: calc(100% - 90px);
+        }
+        .btn_area{
+            border-top: 1px solid black;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 5px 0px 0px 0px;
+            margin-top: 10px;
+        }
+        .aside{
+            z-index: 99;
+            background: white;
+            overflow-x: hidden;
+        }
+        .view_frame{
+            width: 100%;
+            height: 85vh;
+            overflow: overlay;
+        }
+        .tableListA{
+            display: flex;
+        }
+        .masterlayer, .tableListA>.tree_column>.tree_row, .col{
+            margin: 5px;
+        }
+        .masterlayer{
+            background: #d4d4d4;
+        }
+        .masterlayer .active {
+            background: #7d7d7d70;
+        }
+        .masterlayer .active input{
+            border-color: #7d7d7d;
+        }
+        .masterlayer select{
+            color: #000;
+        }
+        .tree_row{
+            display: flex;
+            flex-direction: row;
+            background: #d4d4d4;
+        }
+        .col{
+            position: relative;
+            width: 275px;
+            padding: 10px;
+            /*display: flex;
+            flex-direction: row;*/
+            height: auto;
+            text-align: left;
+            border: 1px solid black;
+            background: white;
+            cursor: pointer;
+
+            display: flex;
+            flex-direction: column;
+            /*justify-content: space-between;*/
+        }
+        .col-6{
+            display: inline-block;
+            width: 50%;
+        }
+        .position_right{
+            position: absolute;
+            width: 90px;
+            top: 10px;
+            right: 0px;
+        }
+        .col.hd{
+            opacity: 0.5;
+        }
+        .col.cs{
+            opacity: 0.5;
+            border-color: red;
+        }
+    </style>
+{/block}
+{block name="content"}
+    <!-- 新增修改商品 -->
+    <div id="block" onclick="CloseAdd('.typeinfo_add-item')"></div>
+    <div class="typeinfo_add-item none" style="top: 5%;width:800px" id="Box">
+        <form name="boxForm" method="post" target="boxFormIframe" enctype="multipart/form-data">
+            <div class="formblock">
+                <!-- <div class="img-box">
+                    <span style="font-size:30px;" class="glyphicon glyphicon-picture"></span>
+                    <input type='file' class="upl" ref="img" name="image" accept="image/*" @change="previewImg">
+                    <img class="preview" :src="src"/>
+                </div>
+                <br> -->
+                <div style="padding:10px 0px;">
+                    <!-- <p style="font-size:12px">建議大小：90*365</p> -->
+                    <p>本類名稱：
+                        <input v-model="title" name="title" type="text" style="width:215px; border:none; border-bottom:1px solid #000000" value="女性保健">
+                    </p>
+                    <div style="font-size:12px; margin-left:45px; margin-top:20px">
+                        <p>開始日期　<input type="text" id="start" v-model="start"></p>
+                        <p><a @click="noTimeLimit">沒有結束日期</a></p>
+                        <p>結束日期　<input type="text" id="end" v-model="end"></p>
+                    </div>
+                    <input type="hidden" name="end" v-model="endTime">
+                    <input type="hidden" name="start" v-model="startTime">
+                    <input type="hidden" name="id" v-model="id">
+                    <input type="hidden" name="parent_id" v-model="parent_id">
+                    <input type="hidden" name="branch_id" v-model="branch_id">
+                </div>
+                <div style="padding:10px 0px;">
+                    <div>
+                        <span>狀態</span>
+                        <select v-model="online" name="online">
+                            <option value="1">開啟</option>
+                            <option value="0">隱藏</option>
+                            <option value="2">關閉</option>
+                        </select>
+                    </div>
+                    <div style=" margin-top:20px">
+                        排序：<input type="number" name="order_id" v-model="order_id">
+                        <br>
+                        <span>(排序越小越前面)</span>
+                    </div>
+                </div>
+            </div>
+            <div class="formblock">
+                <div style="width: 85%;">
+                    <p>本類SEO設定(EX:健康食品,我愛念書)10組內</p>
+                    <textarea style="width:100%;height:100px;" type="text" name="webtype_keywords"  v-model="webtype_keywords"></textarea>
+                </div>
+            </div>
+            <div class="formblock">
+                <div style="width: 85%;">
+                    <p>本類描述(隱藏資訊)200字內</p>
+                    <textarea style="width:100%;height:250px;" type="text" name="webtype_description" v-model="webtype_description"></textarea>
+                </div>
+            </div>
+            <a class="button" @click="formSubmit">儲存</a>
+        </form>
+    </div>
+    <!-- 新增修改商品結束 -->
+
+    <div id="content">
+        <p id="title">
+            <span onclick="goback()" style="cursor:pointer;">商品管理區</span> > <span style="margin: 0;">分館分類樹</span> <!-- 特價商品 -->
+        </p>
+
+        <div class="frame">
+            <ul class="item none">
+                <li>
+                    <div class="add-item none" style="position: relative; border: 2px solid rgb(157, 157, 157); background: rgb(255, 255, 255); padding: 5px; width: 150px; z-index: 990; text-align: left; display: none;">
+
+                        <p style="margin-bottom:5px">館名新增</p>
+                        <input class="newProductName" type="text" style="width:100%; margin-bottom:10px" autofocus="">
+
+                        <div style="text-align:right">
+                            <a class="button" onclick="add_masterlayer(this, 'index/product/product')" style="display:unset; border:1px solid #000000; padding:0px 5px">儲存</a>
+                            <a class="button" onclick="ShowList(this)" style="display:unset; border:1px solid #000000; padding:0px 5px">取消</a>
+                        </div>
+                    </div>
+                </li>
+                <!-- <li class="add"><a class="edit"><span class="glyphicon glyphicon-plus">新增館</span></a></li> -->
+            </ul>
+            <p class="" style="color: red;">
+                1.類型>配件 的 下一子階層會顯示於加價購畫面中，供消費者篩選商品使用，故若無啟用中的下一子階層，則消費者會直接跳過加價購頁面<br>
+                2.商品必須添加 類型>配件 的下一子階層 才能顯示於加價購頁面<br>
+                3.前兩階層將作為商品搜尋的選單顯示於前台
+            </p>
+        </div>
+
+        <div class="view_frame">
+            <div class="tableListA" id="treeMV">
+
+                <!-- 館 -->
+                <div class="tree_column masterlayer">
+                    <div :class="['col', item.online=='0'?'hd':'', item.online=='2'?'cs':'', openlayer==index?'active':'']"  v-for="(item, index) in tree_list" @click="changeOpenLayer(index)">
+                        <div>
+                            <p class="title"><input type="text" v-model="item.title" @blur="change_title(item.id, item.title)"></p><br>
+                            <span>總含本階層以下總數：{{count_all_product(item)}}&nbsp;</span>
+                            <span>本層數：{{item.product_num}}</span><br>
+                            <span>排序:</span><input type="number" v-model="item.order_id" @blur="change_order(item.id, item.order_id)">
+                            <span class="position_right">
+                                <span>狀態</span>
+                                <select v-model="item.online" name="online" @change="change_status(item.id,item.online)">
+                                    <option value="1">開啟</option>
+                                    <option value="0">隱藏</option>
+                                    <option value="2">關閉</option>
+                                </select>
+                            </span>
+                        </div>
+                        <div class="btn_area">
+                            <!-- <span class="glyphicon" @click="view_product(item.id)">
+                                <svg class="view_product" width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-eye" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                  <path fill-rule="evenodd" d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.134 13.134 0 0 0 1.66 2.043C4.12 11.332 5.88 12.5 8 12.5c2.12 0 3.879-1.168 5.168-2.457A13.134 13.134 0 0 0 14.828 8a13.133 13.133 0 0 0-1.66-2.043C11.879 4.668 10.119 3.5 8 3.5c-2.12 0-3.879 1.168-5.168 2.457A13.133 13.133 0 0 0 1.172 8z"/>
+                                  <path fill-rule="evenodd" d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/>
+                                </svg>
+                            </span> -->
+                            <!-- <span class="glyphicon glyphicon-edit" @click="change_page('/admin/product/index/id/'+item.id)"></span> -->
+                            <!-- <span class="glyphicon glyphicon-trash  productTrash" @click="del_maseter_layer(item.id)"></span> -->
+                            <!-- <span class="glyphicon glyphicon-plus addButton" @click="change_page('/admin/productinfo/allcreate/prev_id/'+item.id)">商品</span> -->
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                            <span class="glyphicon glyphicon-plus addButton" @click="open_master_box()">子階層</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 分類 -->
+                <div class="tree_column" v-if="tree_list[openlayer]">
+                    <!-- ////////一基本單位////////
+                        <div class="tree_row">
+                            <div class="col">
+                                <p>分類1-1</p>
+                            </div>
+                            <div class="tree_column"></div>
+                        </div>
+                    //////////////////////////////-->
+                    <!---------------------------------------------------->
+                    <tree_template v-for="(item, index) in tree_list[openlayer]['content']" :tree="item"></tree_template>
+                    <!---------------------------------------------------->
+                </div>
+            </div>
+        </div>
+    </div>
+
+{/block}
+{block name="ownJS"}
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+    <script src="__PUBLIC__/js/action.js"></script>
+    <script src="__PUBLIC__/js/moment.min.js"></script>
+    <script src="__PUBLIC__/js/bootstrap-datepicker.js"></script>
+    
+    <script type="text/javascript">
+        Vue.use(Toasted);
+
+        /* 分館、分類共用function */
+        var change_status_f = function (controller,id,online){
+            // console.log(id+':'+online);
+            $.ajax({
+                url: "/admin/"+controller+"/cellCtrl",
+                type: 'POST',
+                dataType: 'json',
+                data: {id: id, online: online},
+                success: function(response) {
+                    if(response.status){
+                        Vue.toasted.show('更改成功',{duration:1500});
+                    }else{
+                        Vue.toasted.show('更改失敗',{duration:1500});
+                        console.log(response.message);
+                    }
+                },
+                error: function(xhr) {
+                    Vue.toasted.show('更改失敗',{duration:1500});
+                    console.log(xhr);
+                }
+            });
+        }
+        var change_f = function (controller, data){
+            $.ajax({
+                url: "/admin/"+controller+"/update",
+                type: 'POST',
+                datatype: 'json',
+                data: data,
+                error: function (xhr) {
+                },
+                success: function (response) {
+                    Vue.toasted.show(response.msg,{duration:1500});
+                    get_tree_data();
+                }
+            });
+        }
+        var del_layer_f = function(controller,id){
+            if(confirm("確定刪除此階層？")){
+                $.ajax({
+                    url: "/admin/"+controller+"/delete?id="+id,
+                    type: 'GET',
+                    datatype: 'json',
+                    error: function (xhr) {
+                    },
+                    success: function (response) {
+                        Vue.toasted.show(response.msg,{duration:1500});
+                        get_tree_data();
+                    }
+                });
+            }
+        }
+    </script>
+    <script type="text/javascript">
+        var tree_data = {
+            tree_list: [
+                /*參考資料格式*/
+                {'name':"分館", 'product_num':5, 'id':'', 'order_id':0, 'content':[/*下一層內容*/]},
+            ],
+            openlayer:0,
+        }
+
+        function get_tree_data(){
+            $.ajax({
+                url: "{:url('layertree/get_product_tree')}", //請求的url地址
+                dataType: "json", //返回格式為json
+                type: "GET", //請求方式
+                success: function(req) {
+                    // console.log(req)
+                    tree_data['tree_list'] = req;
+                },
+                error: function() {
+                    //請求出錯處理
+                }
+            });
+        }
+        get_tree_data();
+
+        Vue.component('tree_template',{
+            template: `
+                <div class="tree_row">
+                    <div :class="['col', tree.online=='0'?'hd':'', tree.online=='2'?'cs':'']">
+                        <div>
+                            <p class="title"><input type="text" v-model="tree.title" @blur="change_title(tree.id, tree.title)"></p><br>
+                            <span>總含本階層以下總數：{{count_all_product(tree)}}&nbsp;</span>
+                            <span>本層數：{{tree.product_num}}</span><br>
+                            <span>排序:</span><input type="number" v-model="tree.order_id" @blur="change_order(tree.id, tree.order_id, tree.parent_id, tree.branch_id)">
+                            <span class="position_right">
+                                <span>狀態</span>
+                                <select v-model="tree.online" name="online" @change="change_status(tree.id,tree.online)">
+                                    <option value="1">開啟</option>
+                                    <option value="0">隱藏</option>
+                                    <option value="2">關閉</option>
+                                </select>
+                            </span>
+                        </div>
+                        <div class="btn_area">
+                            <span class="glyphicon" @click="view_product(tree.id)">
+                                <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-eye" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                  <path fill-rule="evenodd" d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.134 13.134 0 0 0 1.66 2.043C4.12 11.332 5.88 12.5 8 12.5c2.12 0 3.879-1.168 5.168-2.457A13.134 13.134 0 0 0 14.828 8a13.133 13.133 0 0 0-1.66-2.043C11.879 4.668 10.119 3.5 8 3.5c-2.12 0-3.879 1.168-5.168 2.457A13.133 13.133 0 0 0 1.172 8z"/>
+                                  <path fill-rule="evenodd" d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/>
+                                </svg>
+                            </span>
+                            <span class="glyphicon glyphicon-edit" @click="open_second_box(tree, 'edit')"></span>
+                            <span class="glyphicon glyphicon-trash" @click="del_second_layer(tree.id)"></span>
+                            <span class="glyphicon glyphicon-plus addButton" @click="open_second_box(tree, 'create', tree.id)" v-if="tree.branch_id==0 && tree.title=='配件'">子階層</span>
+                            <span class="glyphicon glyphicon-plus addButton" @click="create_second_product(tree.branch_id)">商品</span>
+                        </div>
+                    </div>
+                    <div class="tree_column" v-if="tree.content.length>0">
+                        <tree_template v-for="(item, index) in tree.content" :tree="item"></tree_template>
+                    </div>
+                </div>
+            `,
+            props: {
+                tree: Object
+            },
+            computed:{
+            },
+            methods:{
+                change_page: function(url){
+                    window.open(url);
+                },
+                open_second_box: function (item, type, branch_id = 0) {
+                    if(type=="create"){
+                        BoxVM.id = 0;
+                        BoxVM.title = '';
+                        BoxVM.src = '';
+                        BoxVM.start = '';
+                        BoxVM.end = '1970-01-01';
+                        BoxVM.webtype_keywords = '';
+                        BoxVM.webtype_description = '';
+                        BoxVM.caller = null;
+                        BoxVM.action = "{:url('Typeinfo/create')}";
+                        BoxVM.parent_id = treeMV.tree_list[treeMV.openlayer]['id'];
+                        BoxVM.branch_id = branch_id;
+                        BoxVM.online = 1;
+                        BoxVM.order_id = 0;
+                    }else if(type=="edit"){
+                        BoxVM.id = item.id;
+                        BoxVM.title = item.title;
+                        BoxVM.src = item.src;
+                        BoxVM.start = this.timestampToTime(item.start);
+                        BoxVM.end = this.timestampToTime(item.end);
+                        BoxVM.webtype_keywords = item.webtype_keywords;
+                        BoxVM.webtype_description = item.webtype_description;
+                        BoxVM.caller = item;
+                        BoxVM.action = "{:url('typeinfo/update')}";
+                        BoxVM.parent_id = treeMV.tree_list[treeMV.openlayer]['id'];
+                        BoxVM.branch_id = item.branch_id;
+                        BoxVM.online = item.online;
+                        BoxVM.order_id = item.order_id;
+                    }
+                    ShowAdd('.typeinfo_add-item');
+                },
+                del_second_layer: function(id){
+                    del_layer_f('typeinfo',id);
+                },
+                timestampToTime: function(timestamp) {
+                    var  date = new Date(timestamp * 1000);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
+                    var Y = date.getFullYear() + '-';
+                    var M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
+                    var D = this.pad(date.getDate(),2);
+                    // var h = this.pad(date.getHours(),2) + ':';
+                    // var m = this.pad(date.getMinutes(),2) + ':';
+                    // var s = this.pad(date.getSeconds(),2);
+                    // return Y+M+D+h+m+s;
+                    return Y+M+D;
+                },
+                pad: function(num, n) {
+                    // console.log(num+':'+n)
+                    if(n>num){
+                      return Array(n).join(0) + String(num)
+                    }else{
+                        return num;
+                    }
+                },
+                create_second_product: function(branch_id){
+                    console.log(branch_id);
+
+                    if(branch_id == 0){
+                        this.change_page('/admin/productinfo/allcreate/parent_id/'+this.tree.id)
+                    }else{
+                        this.change_page('/admin/productinfo/allcreate/branch_id/'+this.tree.id)
+                    }
+                },
+                change_status: function(id,online){
+                    change_status_f('typeinfo',id,online);
+                },
+                change_order: function(id,order,parent_id,branch_id){
+                    data = {
+                        id:id,
+                        order_id: order,
+                        parent_id: parent_id,
+                        branch_id: branch_id,
+                    };
+                    change_f('typeinfo',data);
+                },
+                change_title: function(id,title){
+                    data = {
+                        id:id,
+                        title: title,
+                    };
+                    change_f('typeinfo',data);
+                },
+                count_all_product: function(obj_list){
+                    num = obj_list['product_num'];
+                    for(var i=0; i<obj_list['content'].length; i++) {
+                        num = num + this.count_all_product(obj_list['content'][i])
+                    }
+                    return num;
+                },
+                view_product: function(id){
+                    window.open("{:url('All/index')}?searchBranch="+id);
+                },
+            }
+        })
+
+        // 館分類樹
+        var treeMV = new Vue({
+                el: '#treeMV',
+                data: tree_data,
+                computed: {
+                },
+                methods: {
+                    change_page: function(url){
+                        window.open(url);
+                    },
+                    changeOpenLayer: function (index) {
+                        this.openlayer = index;
+                    },
+                    del_maseter_layer: function(id){
+                        del_layer_f('product',id);
+                    },
+                    open_master_box: function () {
+                        BoxVM.id = 0;
+                        BoxVM.title = '';
+                        BoxVM.src = '';
+                        BoxVM.start = '';
+                        BoxVM.end = '1970-01-01';
+                        BoxVM.webtype_keywords = '';
+                        BoxVM.webtype_description = '';
+                        BoxVM.caller = null;
+                        BoxVM.action = "{:url('Typeinfo/create')}";
+                        BoxVM.parent_id = treeMV.tree_list[treeMV.openlayer]['id'];
+                        BoxVM.branch_id = 0;
+                        BoxVM.online = 1;
+                        BoxVM.order_id = 0;
+                        ShowAdd('.typeinfo_add-item');
+                    },
+                    change_status: function(id,online){
+                        change_status_f('product',id,online);
+                    },
+                    change_order: function(id,order){
+                        data = {
+                            id:id,
+                            order_id: order,
+                        };
+                        change_f('product',data);
+                    },
+                    change_title: function(id,title){
+                        data = {
+                            id:id,
+                            title: title,
+                        };
+                        change_f('product',data);
+                    },
+                    count_all_product(obj_list){
+                        num = obj_list['product_num'];
+                        for(var i=0; i<obj_list['content'].length; i++) {
+                            num = num + this.count_all_product(obj_list['content'][i])
+                        }
+                        return num;
+                    },
+                    view_product: function(id){
+                        window.open("{:url('All/index')}?searchPrev="+id);
+                    },
+                }
+            });
+
+        function add_masterlayer(item, type) {
+            var input = $(item).parent().prev();
+            if(input.val() == ''){
+                Vue.toasted.show('請輸入名稱',{duration:1500});
+                return
+            }
+
+            if(type.indexOf('product')>0){
+                var post_url =  "{:url('Product/create')}"
+            }else if(type.indexOf('distribution')>0){
+                var post_url = "{:url('stronghold/create')}"
+            }else{
+                Vue.toasted.show('新增有誤',{duration:1500});
+                return
+            }
+            $.ajax({
+                url: post_url,
+                type: 'POST',
+                datatype: 'json',
+                data: {
+                    title: input.val()
+                },
+                error: function(xhr) {
+                    console.error(xhr);
+                },
+                success: function(response) {
+                    if(response.status){
+                        //console.log(response);
+                        input.val('');
+                        get_tree_data();
+                    }else{
+                        console.error(response);
+                    }
+                }
+            });
+        }
+
+        // 編輯/新增分類
+        var Box = {
+            id: 0, parent_id: 0, branch_id: 0, title: '', start: '',
+            end: '', src: '', action: '',
+            caller: null, webtype_keywords: '', webtype_description:'', online: 0, order_id:0
+        }
+        var BoxVM = new Vue({
+            el: '#Box',
+            data: Box,
+            computed: {
+                startTime: function () {
+                    // console.log(this.start);
+                    return moment(this.start, 'YYYY-MM-DD').unix();
+                },
+                endTime: function () {
+                    // console.log(this.end);
+                    return moment(this.end, 'YYYY-MM-DD').unix();
+                }
+            },
+            methods: {
+                formSubmit: function () {
+                    var form_data = new FormData($('form[name="boxForm"]')[0]);
+                    post_data = {};
+                    for(var pair of form_data.entries()) {
+                       post_data[pair[0]] = pair[1]; 
+                    }
+                    console.log(post_data);
+
+                    $.ajax({
+                        url: this.action,
+                        type: 'POST',
+                        datatype: 'json',
+                        data: post_data,
+                        error: function(xhr) {
+                            console.error(xhr);
+                        },
+                        success: function(response) {
+                            if(response.code == 1){
+                                Vue.toasted.show(response.msg,{duration:1500});
+                                get_tree_data();
+                                CloseAdd('.typeinfo_add-item');
+                            }else{
+                                Vue.toasted.show(response.msg,{duration:1500});
+                            }
+                        }
+                    });
+
+                },
+                previewImg: function () {
+                    console.log(this.$refs.img.files);
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        Box.src = e.target.result;
+                    }
+                    reader.readAsDataURL(this.$refs.img.files[0]);
+                },
+                updateCallerData: function () {
+                    this.caller.src = this.src;
+                    this.caller.title = this.title;
+                    this.caller.start = this.start;
+                    this.caller.end = this.end;
+                    CloseAdd('.typeinfo_add-item');
+                },
+                noTimeLimit: function () {
+                    //this.start = '1970-01-01';
+                    this.end = '1970-01-01';
+                }
+            }
+        });
+
+        /* 時間選擇器 */
+        var nowTemp = new Date();
+        var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
+        var checkin = $('#start').datepicker({
+            format: 'yyyy-mm-dd',
+        }).on('changeDate', function(ev) {
+            if (ev.date.valueOf() > checkout.date.valueOf()) {
+                var newDate = new Date(ev.date)
+                newDate.setDate(newDate.getDate() + 1);
+                checkout.setValue(newDate);
+            }
+            checkin.hide();
+            $('#end')[0].focus();
+        }).data('datepicker');
+
+        var checkout = $('#end').datepicker({
+            format: 'yyyy-mm-dd',
+            onRender: function(date) {
+                return date.valueOf() < checkin.date.valueOf() ? 'disabled' : '';
+            }
+        }).on('changeDate', function(ev) {
+            BoxVM.start = $('#start').val();
+            BoxVM.end = $('#end').val();
+            checkout.hide();
+        }).data('datepicker');
+    </script>
+{/block}

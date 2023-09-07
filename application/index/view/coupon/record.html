@@ -1,0 +1,130 @@
+{extend name="Public/mainTpl" /}
+
+{block name="title"}{$lang_menu['優惠券專區']} - {$lang_menu['會員專區']} | {$seo[0]['title']}{/block}
+
+{block name="css"}{/block}
+
+{block name="content"}
+    <section class="container max-wideVersion directoryRow">
+        <ul class="clearfix">
+            <li><a >{$lang_menu['首頁']}</a><i class="icon-right"></i></li>
+            <li><a >{$lang_menu['會員專區']}</a><i class="icon-right"></i></li>
+            <li><a >{$lang_menu['優惠券專區']}</a></li>
+        </ul>
+    </section>
+    <section class="container max-wideVersion productPublic">
+        <!-- /////////////////////////////////////////// -->
+        <!-- /////////////////////////////////////////// -->
+        <!-- /////////////////////////////////////////// -->
+        <div id="itemBox" class="memberInforBox">
+            <div id="leftBox">
+                <!-- /////////////////////////////////////////// -->
+                {include file='Public/member_menu' /}
+                <!-- /////////////////////////////////////////// -->
+            </div>
+            <div id="rightContentBox" class="innerPageBox memberContentBox">
+                <div class="paddingSpacing">
+                    <div class="pack">
+                        <div class="memberTop">
+                            <div class="title">
+                                <h3>{$lang_menu['優惠券專區']}</h3>
+                            </div>
+                            <div class="orderBtnBox">
+                                <a data-toggle="modal" data-target="#descriptionContModel" ng-click="contCtrl.useDescription()">{$lang_menu['使用說明']}</a>
+                                <a href="{:url('Coupon/coupon')}">{$lang_menu['我的優惠券']}</a>
+                                <a class="active" href="{:url('Coupon/record')}">{$lang_menu['使用紀錄']}</a>
+                                <a href="{:url('Product/coupon')}">{$lang_menu['領取優惠券']}</a>
+                            </div>
+                        </div>
+                        <div class="memberMiddle">
+                            <div class="headingBox">
+                                <div class="titleBox">
+                                    <p class="title"><span>{$lang_menu['優惠券登錄']}</span></p>
+                                </div>
+
+                            </div>
+                            <div class="memberMiddle">
+                                <form id="coupon_key" name="couponForm" action="{:url('Coupon/getCouponByNumber')}" method="post" >
+                                <div class="form-group">
+                                    <label>{$lang_menu['序號']}</label>
+                                    <div class="d-flex">
+                                        <input type="text" class="form-control" name="number" aria-describedby="emailHelp" placeholder="{$lang_menu['請輸入優惠券序號(英文須留意大小寫)']}">
+                                        <a class="inquireBtn" onclick="couponForm.submit();">{$lang_menu['確認']}<i class="icon-right"></i></a>
+                                    </div>
+                                </div>
+                                </form>
+                            </div>
+                            <div class="couponBox">
+                                <h3 class="orderTitlt">{$lang_menu['使用紀錄']}</h3>
+                                <table class="orderTable table table-striped table-bordered table-rwd">
+                                    <thead>
+                                        <tr class="tr-only-hide">
+                                            <th style="width: 100px;">{$lang_menu['使用日期']}</th>
+                                            <th>{$lang_menu['優惠券面額']}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {volist name="Coupons" id="vo" empty="<tr><td class="text-center noData" colspan="4"></td></tr>" }
+                                        <tr>
+                                            <!-- <td data-th="使用日期">2019-06-27</td> -->
+                                            {if $vo.coupon_pool_use_time}
+                                                <td data-th="{$lang_menu['使用日期']}">{$vo.coupon_pool_use_time|date='Y-m-d',###}</td>
+                                            {else /}
+                                                <td data-th="{$lang_menu['使用日期']}">{$lang_menu['過期']}</td>
+                                            {/if}
+                                            <td data-th="{$lang_menu['優惠券面額']}">{$vo.coupon_title}</td>
+                                        </tr>
+                                        {/volist}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="memberBottom">
+                            <div>
+                                {$consent_other}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- descriptionContModel start-->
+        <div class="modal fade " id="descriptionContModel" tabindex="-1" role="dialog" aria-labelledby="descriptionContModelTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content ">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="descriptionContModelTitle">{$lang_menu['使用說明']}</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- <img src="img/process_img_01.png" alt=""> -->
+                        <p>{$consent}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /////////////////////////////////////////// -->
+        <!-- /////////////////////////////////////////// -->
+        <!-- /////////////////////////////////////////// -->
+    </section>
+{/block}
+
+{block name="ownJS"}
+    <script src="__PUBLIC__/js/memberToggle.js"></script>
+{/block}
+
+{block name="angularJs"}
+    self.useDescription = function(){   
+        $http({
+            method : "GET",
+            url : "{:url('Coupon/teach')}",
+        }).success(function(data){
+            //console.log(data);
+            self.useDescription = data.coupon.replace(/\n/g);
+            console.log(self.useDescription);
+        }).error(function(){
+        })//error
+    }//self.couponDesc
+{/block}

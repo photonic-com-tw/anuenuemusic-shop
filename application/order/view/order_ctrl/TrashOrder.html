@@ -1,0 +1,138 @@
+{extend name="Public/aside" /}
+{block name="title"}垃圾桶 - 完成訂單{/block}
+
+{block name="css"}{/block}
+
+{block name="content"}
+    <div class="content">
+        <p class="title" onclick="javascript:location.href='Trash.html'" style="cursor:pointer;">訂單管理 > 垃圾桶</p>
+        <div style="padding:10px 20px; margin:10px; width:99%">
+            <form action="" name="searchForm" method="get" style="display:inline-block;">
+                <input type="text" name="searchKey" style="text-align:center" placeholder="訂單編號搜尋">
+                <button>搜尋</button>
+            </form>
+            <!--
+            <div style="float: right;">
+                <input type="date">
+                <input type="date">
+            </div>
+            -->
+        </div>
+        <div style="padding:15px 20px; border: 2px #9D9D9D solid; margin:0 10px; width:99%; position:relative">
+            <a style="cursor:default; opacity:0;" href=""><span class="glyphicon glyphicon-plus add"
+                style="color:#fff; font-size:20px; text-align:center;
+                        background:#333; padding:10px; border-radius:100px;">
+            </span></a>
+            <div class="edit" style="font-size:25px; display: inline-block; margin-left:5%; cursor:pointer">
+                <a onclick="multiDelete();">
+                    刪除 <span style="margin-left: 15px;" class="glyphicon glyphicon-trash"></span>
+                </a>
+            </div>
+        </div>
+        <table class="item-info">
+            <tr>
+                <td style="width:5%">
+                    <input type="checkbox" class="activityCheckboxAll" onclick="$('.item-info input[class=orderCheckbox]').prop('checked', ($(this).is(':checked')?true:false))"style="width:100%; cursor:pointer;"></td>
+                <td style="width:10%">會員編號</td>
+                <td style="width:10%">訂單編號</td>
+                <td style="width:10%">會員姓名</td>
+                <td style="width:10%">移除原因</td>
+                <!-- <td style="width:10%">購買商品</td> -->
+                <!-- <td style="width:10%">手機</td> -->
+                <td style="width:10%">付款方式</td>
+                <!-- <td style="width:10%">運送方式</td> -->
+                <td style="width:5%">恢復訂單</td>
+                <td style="width:5%">完全刪除</td>
+            </tr>
+            {volist 
+                name="rowDataItem" id="vo" 
+                empty="<tr align='center'><td colspan='10'><h2>沒有數據</h2></td></tr>"
+            }
+                <tr>
+                    <td><input type="checkbox" class="orderCheckbox" alt="{$vo.id}"></td>
+                    <td><a href="{:url('OrderCtrl/show', ['id' => $vo['id']])}" style="color:{$vo.user.status|returnRed=2}">{$vo.user.number|default=$vo.id}</a></td>
+                    <td><a href="{:url('OrderCtrl/show', ['id' => $vo['id']])}">{$vo.order_number}</a></td>
+                    <td><a href="{:url('OrderCtrl/show', ['id' => $vo['id']])}">{$vo.user.name}</a></td>
+                    <td>
+                        {eq name="vo.status" value="Return"}退貨{/eq}
+                        {eq name="vo.status" value="Cancel"}取消{/eq}
+                    </td>
+                    <!-- <td>
+                        {volist name="vo.product" id="product"}
+                            {$product.name}<br>
+                        {/volist}     
+                    </td>                 
+                    <td>{$vo.user.phone}</td> -->
+                    <td>{$vo.payment}<br>
+                        {eq name="vo.receipts_state" value="1"}(已付款){/eq}
+                        {eq name="vo.receipts_state" value="0"}(未付款){/eq}
+                    </td>
+                    <!-- <td>{$vo.transport}</td> -->
+                    <td><span onclick="operateRestore({$vo.id})" style="cursor: pointer; ">恢復訂單</span></td>
+                    <td><span class="glyphicon glyphicon-trash" onclick="operateDelete({$vo.id})"></span></td>
+                </tr>
+            {/volist}
+        </table>
+        <div class="row text-center">
+            {$rowData->render()}
+        </div>
+    </div>
+{/block}
+{block name="ownJS"}
+    <script>
+        function multiDelete() {
+            var form = document.createElement("form");
+            form.action = "{:url('OrderCtrl/multiDelete')}";
+            form.method = "post";
+
+            multiId = document.createElement("input");
+            multiId.value = JSON.stringify(getMultiId());
+            multiId.name = "idList";
+
+            form.appendChild(multiId);
+            document.body.appendChild(form);
+            form.submit();
+            $('.activityCheckboxAll').each(function () {
+                if($(this).prop("checked")){
+                    $(this).prop("checked", false);
+                }
+            });
+        }
+
+        function getMultiId() {
+            var multiIdArray = [];
+            $('.orderCheckbox').each(function () {
+                if($(this).prop("checked")){
+                    multiIdArray.push($(this).attr('alt'));
+                    $(this).prop("checked", false);
+                }
+            });
+            return multiIdArray;
+        }
+
+        function operateDelete($id) {
+            var form = document.createElement("form");
+            form.action = "{:url('OrderCtrl/delete')}";
+            form.method = "post";
+            id = document.createElement("input");
+            id.value = $id;
+            id.name = "id";
+            form.appendChild(id);
+            document.body.appendChild(form);
+            form.submit();
+        }
+
+        function operateRestore($id) {
+            var form = document.createElement("form");
+            form.action = "{:url('OrderCtrl/changeStatus2Restore')}";
+            form.method = "post";
+            id = document.createElement("input");
+            id.value = $id;
+            id.name = "id";
+            form.appendChild(id);
+            document.body.appendChild(form);
+            form.submit();
+        }
+    </script>
+{/block}
+

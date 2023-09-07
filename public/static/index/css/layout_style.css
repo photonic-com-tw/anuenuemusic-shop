@@ -1,0 +1,678 @@
+.proItemBox .proItem div.textBox , .innerPageBox .owl-item .textBox{
+
+     cursor: pointer; 
+
+}
+
+
+
+.productListRow .owl-item .textBox{
+
+     cursor: pointer; 
+
+
+
+}
+
+/* --------------index --------------*/
+header{
+    background-color: #fff !important;
+}
+
+header nav {
+    background-color: #f7f9fa !important;
+}
+
+header nav.level-BC-3{
+    background-color: #f7f9fa !important;
+}
+
+.level-BC-2 {
+    background-color: #191919 !important;
+}
+
+header nav ul.menu-main>li>a{
+    color: #6c7073;
+}
+header nav li:hover {
+    background-color: #191919 !important;
+}
+header nav li.active{
+    background-color: #191919;
+}
+
+header nav ul.menu-main>li.active>a{
+    color: #fff;
+}
+
+header nav ul.menu-main>li:hover>a{
+    color: #fff;
+}
+
+header nav .navBtnBox a#right,header nav .navBtnBox a#left{
+    background-color: #191919 !important;
+}
+
+.m-top-12{
+    margin-top: 12px;
+}
+
+.lookUpAdRow .lookUpAd{
+    padding-bottom: 20%;
+}
+
+.productListRow .titleBox .leftBox:after {
+
+    border-color: #191919 transparent transparent transparent !important;
+
+    _border-color: #191919 #000000 #000000 #000000 !important;
+
+}
+
+.productListRow .owl-carousel.owl-drag .owl-item{
+
+    background-color: #fff !important;
+
+
+
+}
+
+.announcementRow .announcementTitle{
+
+    background-color: #191919 ;
+
+}
+
+.announcementRow .announcementBox a.more{
+
+    background-color: #191919;
+
+}
+
+.announcementRow #announcementCarousel{
+
+    border-top: 1px solid #191919;
+
+    border-bottom: 1px solid #191919;
+
+    /* background-color: #fff; */
+
+}
+
+.productListRow p.reciprocalBox span.num{
+
+    color:  #191919 ;
+
+}
+
+.productListRow .contentBox .item .textBox h3{
+
+    font-size: 1.25rem;
+
+    color: #777777;
+
+    font-weight: 300;
+
+}
+
+.productListRow span.offerPrice{
+
+    color: #191919;
+
+    font-weight: 500;
+
+}
+
+.productListRow span.offerPrice>span.price{
+
+    font-weight: 500;
+
+}
+
+.recommendRow .contentBox a.secondaryPro{
+
+    background-color: #fff;
+
+}
+
+
+
+.recommendRow .contentBox a.mainPro.level-BC-1{
+
+    background-color: #fff!important;
+
+}
+
+
+
+.recommendRow .contentBox a.mainPro div.proIntro h3{
+
+    border-left: 5px solid #191919!important;
+
+    color: #191919 !important;
+
+}
+
+
+
+.recommendRow .contentBox a.secondaryPro .proIntro span.amount{
+
+        color: #191919 !important;
+
+}
+
+
+
+.productBranchRow .productBox{
+
+    background-color: #fff;
+
+}
+
+.productBranchRow .productBox a.mainProImg{
+
+    background-color: #fff;
+
+}
+
+
+
+.productBranchNav.level-BC-3 {
+
+    background-color: #191919 !important;
+
+}
+
+.productBranchRow .productBranchNav .btnBox .right{
+
+    background-color: #191919 !important;
+
+}
+
+.productBranchRow .productBranchNav .btnBox .left{
+
+    background-color: #191919 !important;
+
+}
+
+
+
+.productBranchRow h2.chText a{
+
+    color: #191919;
+
+}
+
+.productBranchRow h2.chText:before, .productBranchRow h2.chText:after{
+
+    background: #191919;
+
+}
+
+
+
+a.goTop{
+
+    background-color: #191919;
+
+    padding: 1.2rem 0.25rem;
+
+}
+
+
+
+#desktopDownMenu .mainMenu a.title{
+
+    color: #fff;
+
+}
+
+
+
+.social-bar__mailbox {
+
+    background-color: #ff4300;
+
+}
+
+.social-bar__phone {
+
+    background-color: #ff7300;
+
+}
+
+/* --------------about --------------*/
+
+.aboutUsBox ul.tabNavBox li.active a span{
+
+    color: #191919;
+
+    border-bottom: 3px solid #191919;
+
+}
+
+.aboutUsBox .tabRow .tabContent div.content.contact{
+
+    background-color: #f0f1f2;
+
+}
+
+
+
+#contactUs div.content.contact span.submitBtn{
+
+    background-color: #191919;
+
+}
+
+
+
+/* --------------product --------------*/
+
+
+
+
+
+.proBrandZone .titleBrandBox .leftBox:after {
+
+
+
+    border-color: #191919 transparent transparent transparent !important;
+
+}
+
+.proItemBox .proItem>div{
+
+    background-color: #fff;
+
+}
+
+.innerPageBox .item .textBox h3,
+.proItemBox .proItem div.textBox h3{
+
+    font-size: 1.25rem;
+
+    color: #777777;
+
+    font-weight: 300;
+
+}
+
+
+
+.innerPageBox span.offerPrice{
+
+    color: #191919;
+
+    font-weight: 500;
+
+}
+
+
+
+.innerPageBox .owl-carousel.proImgCarousel.owl-drag .owl-item{
+
+    background-color: #fff;
+
+}
+
+.proPreparationBox a.sayButton{
+
+    background-color: #191919;
+
+    color: #fff;
+
+}
+
+
+
+.productIntroBox .couponBox a{
+
+    color: #fff;
+
+    border-color: #777;
+
+    background-color: #777;
+
+}
+
+
+
+.owl-carousel.suggest-owl-carousel .item h4{
+
+    font-weight: 300;
+
+}
+
+/* -------------- productinfo --------------*/
+
+
+
+#priceSelect.form-control{
+
+    padding: 10px 0px;
+
+    height: 45px;
+
+}
+
+.productIntroBox .couponBox a{
+
+
+
+}
+
+/* -------------- activity --------------*/
+
+.liveList{
+
+    background-color: #fff;
+
+    margin-bottom: 5px;
+
+    padding: 0px;
+
+}
+
+.liveStreamBox .contentBetween span.more span{
+
+    background-color: #191919;
+
+}
+
+
+
+/* -------------- experience --------------*/
+
+.activityGridItem .bgColor{
+
+    background-color: #fff;
+
+}
+
+.activityGridItem .moreBox a{
+
+    background-color: #191919;
+
+}
+
+.activityGridItem .content p{
+
+    font-weight: 300;
+
+}
+
+
+
+/* -------------- tracking --------------*/
+
+.memberInforBox .cartBox{
+
+    background-color: #fff;
+
+}
+
+.memberContentBox div.pack{
+
+    background-color: #fff;
+
+}
+
+
+
+.memberContentBox .orderBtnBox a{
+
+    background-color: #f0f1f2;
+
+}
+
+.form-control{
+
+    background-color: #f0f1f2;
+
+}
+
+.orderTable.table thead th{
+
+    background-color: #f0f1f2;
+
+
+
+}
+
+
+
+/* -------------- tracking --------------*/
+
+.memberInforBox .memberNumberBox{
+
+    background-color: #fff;
+
+}
+
+.memberInforBox .memberNumberBox .photo{
+
+    background-color: #f0f1f2;
+
+}
+
+#leftBox .icon-member{
+
+    color: #191919;
+
+}
+
+.memberInforBox .memberMwnu ul li a{
+
+    background-color: #fff;
+
+}
+
+.memberInforBox .cartBox:hover{
+
+    background-color: #333333;
+
+}
+
+#leftBox .cartBox:hover .icon-shopping_cart{
+
+    color: #fff;
+
+}
+
+.memberInforBox .cartBox:hover span.title{
+
+    color: #fff;
+
+}
+
+.ui.selection.dropdown{
+
+    background-color: #f0f1f2;
+
+}
+
+.form-control:disabled, .form-control[readonly]{
+
+    background-color: #f0f1f2;
+
+}
+
+.form-control:focus{
+
+    background-color: #f0f1f2;
+
+    color: #000;
+
+}
+
+/* ----------------------------------*/
+
+
+
+.directoryRow>ul {
+
+    border-bottom: 1px solid #dedede;
+
+}
+
+
+
+header nav ul .menu-sub{
+
+    background-color: #191919;
+
+}
+
+.productPublic .cardBox ul.navList li{
+
+    background-color: #fff;
+
+}
+
+.tabBox .tabcontent{
+
+    background-color: #fff;
+
+}
+
+.popularProBranch .recommendBox>div a{
+
+    background-color: #191919;
+
+    color: #fff;
+
+}
+
+@media (max-width: 991px){
+
+    .header .logoImgBox {
+
+        height: 60px;
+
+    }
+
+    #phoneMenu .menuTrigger{
+
+        height: 60px;
+
+    }
+
+    #phoneMenu .wrapper header {
+
+        margin: 0rem 0px;
+
+        /* padding: 1rem 0px; */
+
+    }  
+
+}
+
+
+
+.productPublic .cardBox ul.navList li:hover a{
+
+    color: #fff;
+
+}
+
+.productPublic .cardBox ul.navList li:hover{
+
+    background-color: #191919 !important;
+
+}
+
+
+
+@media (max-width: 1280px) {
+
+}
+
+
+
+@media (max-width: 1199px) {
+
+}
+
+
+
+@media screen and (min-width: 576px) and (max-width: 991px){
+
+}
+
+
+
+@media screen and (min-width: 768px) and (max-width: 1199px){
+
+}
+
+
+
+/***************andy***************/
+:root {
+    --dark_orange: #ff4300;
+    --orange: #ff7300;
+}
+
+.photonic-footer{
+    float: right;
+}
+footer p .photonic-footer,
+footer a.photonic{
+    color: #616161;
+}
+
+.rwd_edm .container{
+    max-width: 1100px;
+}
+
+.announcementRow #announcementCarousel span a{
+    display: inline-block;
+}
+
+.process_btn{
+    padding: 5px;
+    display: inline-block;
+    background-color: #ff4300;
+    color: #fff !important;
+    border-radius: 5px;
+    margin-bottom: 1rem;
+    float: right;
+
+}
+.process_btn:hover{
+    background-color: #d63800;
+}
+
+.prod_tag{
+    color: white;
+    padding: 2px 5px;
+    position: absolute;
+    right: -15px;
+    top: -10px;
+    font-weight: 800;
+}
+.kol_tag{
+    background: #ff44aa;
+}
+.add_tag{
+    background: #ff7300;
+}
+.activity .num{
+    color: #ff4300;
+}
+
+.productinfo .tabBox .tabcontent img{
+    width: 100% !important;
+}
+.productinfo .tabBox .tabcontent img.ke-img{
+    width: auto !important;
+}
+.love_btn{
+    color: #dc3545;
+    border: 1px solid #dc3545;
+}
+.love_btn.fill{
+    color: #ffffff;
+    background: #dc3545;
+}

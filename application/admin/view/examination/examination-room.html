@@ -1,0 +1,549 @@
+{extend name="Public/aside" /}
+
+{block name="title"}報名資料 > {$title.info_title}  {/block}
+
+{block name="css"}
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.0/jquery-confirm.min.css">
+
+    <style type="text/css">
+        #open,
+        #close{
+            margin-top: 4px;
+            margin-left: 10px;
+            margin-right: 5px;
+            cursor: pointer;
+        }
+        .frame{
+            padding:10px 20px;
+            border: 1.5px #9D9D9D solid;
+            margin: 0px auto;
+            margin-top: 10px;
+            width: 99%
+        }
+        .frame li{
+            display: inline;
+        }
+        .frame .add{
+            color:#fff;
+            font-size:20px;
+            text-align:center;
+            background:#333;
+            padding:10px;
+            border-radius:100px;
+            cursor:pointer
+        }
+        .frame .addButton{
+            color:#fff;
+            font-size:20px;
+            text-align:center;
+            background:#333;
+            padding:10px;
+            border-radius:100px;
+            cursor:pointer
+        }
+        .frame .edit{
+            font-size:25px;
+            display: inline-block;
+            margin-left:5%;
+            cursor:pointer
+        }
+
+        /*表格設定*/
+        table{
+            table-layout: fixed;
+            margin: 10px auto;
+            margin-bottom: 10px;
+            margin-top: -1.5px;
+            width: 99.02%;
+        }
+        td{
+            overflow-wrap: break-word;
+            position:relative;
+            text-align: center;
+        }
+        tr:nth-child(1) td{
+            background: #E0E0E0;
+            border: 2px #9D9D9D solid;
+            padding-right: 5px
+        }
+        td:nth-child(1){ width: 2%; }
+        td:nth-child(2){ width:10%; }
+        td:nth-child(3){ width:8%; }
+        td:nth-child(4){ width:10%; }
+        td:nth-child(5){ width:5%; }
+        td:nth-child(6){ width:5%; }
+        td:nth-child(7){ width:5%;}
+        td:nth-child(8){ width:3%; }
+        td:nth-child(9){ width:12%; }
+        td:nth-child(10){ width:7%; }
+        td:nth-child(11){ width:5%; }
+        td:nth-child(12){ width:5%; }
+        td:nth-child(13){ width:10%; }
+        td:nth-child(14){ width:3%; }
+        td:nth-child(15){ width:3%; }
+		td:nth-child(16){ width:10%; }
+        .switch{
+            display:inline-flex;
+            margin-top: 5px;
+        }
+        .glyphicon-edit{
+            position:relative
+        }
+        .upl{
+            top:0;
+            right:0;
+        }
+        .glyphicon-picture{
+            position:absolute;
+            top: calc(50% - 8px);
+            left: calc(50% - 8px);
+        }
+        .preview{
+            position:relative;
+            max-height: 100%;
+            max-width: 100%;
+            z-index: 1;
+        }
+    </style>
+{/block}
+
+{block name="content"}
+        <div id="content">
+            <p id="title">
+                報名資料 > {$title.info_title}
+            </p>
+
+            <div style="padding:10px 30px;">
+                <form action="" name="searchForm" method="get" style="display: inline-block;">   
+                    <input type="text" name="order_number" style="text-align:center" value="{$Think.get.order_number}" placeholder="訂單編號">
+					<select name="searchKey[]">
+						<option value="">課程/考場地點</option>
+						{volist name="this_exam_area" id="a"}				
+							<option value="{$a.id}" {$Think.get.searchKey.0|compare_return=$a.id,'selected'}>{$a.title}</option>
+						{/volist}
+					</select>
+					<input type="text" name="searchKey[]" style="text-align:center" value="{$Think.get.searchKey.1}" placeholder="報名學校">
+                    <input type="text" name="searchKey[]" style="text-align:center" value="{$Think.get.searchKey.2}" placeholder="考生關鍵字">	
+					<input type="date" name="searchKey[]" style="text-align:center" value="{$Think.get.searchKey.3}" placeholder="考生關鍵字">				
+					<select name="searchKey[]">
+						<option value="" {$Think.get.searchKey.4|compare_return='','selected'}>繳費狀態</option>
+						<option value="1" {$Think.get.searchKey.4|compare_return='1','selected'}>已繳費</option>
+						<option value="0" {$Think.get.searchKey.4|compare_return='0','selected'}>未繳費</option>
+					</select>					
+					<input type="text" name="searchKey[]" style="text-align:center" value="{$Think.get.searchKey.5}" placeholder="考試地點">	
+					<input type="text" name="searchKey[]" style="text-align:center" value="{$Think.get.searchKey.6}" placeholder="准考證號碼">			
+                    <a class="button" onclick="searchForm.submit();">搜尋</a>
+					<a class="button" href="{:url('examination/examination_room', ['id' => $id])}">清除</a>
+                </form>
+                <!-- <p style="display:inline-block; margin-left:50px; margin-bottom:0px" id="limitCtrl">分館庫存警示
+                    <input type="number" v-model="limit" style="text-align:center; width: 80px;">
+                </p> -->
+				<br>
+            </div>
+
+			{if condition="$user.edi_examination eq '1' "}
+			<div style="padding:10px 30px;">
+                <form action="{:url('Examination/excel',['id'=>$id])}" name="excelForm" method="get">
+					<input type="hidden" name="searchKey[]" value="{$Think.get.searchKey.0}">
+					<input type="hidden" name="searchKey[]" value="{$Think.get.searchKey.1}">
+					<input type="hidden" name="searchKey[]" value="{$Think.get.searchKey.2}">
+					<input type="hidden" name="searchKey[]" value="{$Think.get.searchKey.3}">
+					<input type="hidden" name="searchKey[]" value="{$Think.get.searchKey.4}">
+					<input type="hidden" name="searchKey[]" value="{$Think.get.searchKey.5}">
+					<input type="hidden" name="searchKey[]" value="{$Think.get.searchKey.6}">
+                </form>
+
+			<a class="btn btn-success btn-sm text-white mt-5" onclick="excelForm.submit();">匯出名單</a>
+			<!--a class="btn btn-success btn-sm text-white mt-5" href="{:url('Examination/examinee_ticket',['prod_id'=>$id])}">匯出名單</a-->
+			<a class="btn btn-success btn-sm text-white mt-5" href="{:url('Examination/examinee_ticket',['prod_id'=>$id])}">個別准考證生成</a>
+			<a class="btn btn-success btn-sm text-white mt-5" href="{:url('Examination/examinee_grade',['prod_id'=>$id])}">個別成績匯入生成</a>
+
+			</div>
+		        <form action="{:url('examination/Import',['id'=>$id])}" name="excelForm2" method="post"  enctype="multipart/form-data">
+                    <div class="frame">
+                        <input type="file" name="file" id="file_excel"/>
+                        <a class="button" onclick="newBlock();">匯入檔案</a>
+                </div>
+            </form>
+			{/if}
+
+            <!--新增與編輯-->
+            <div class="frame">
+                <div class="edit" onclick="multiDelete();"><a>刪除 <span class="glyphicon glyphicon-trash"></span></a></div>
+            </div>
+
+            <!--表格 開始-->
+            <table class="tableA" style="margin-top:-2px">
+                <tr>
+                    <td><input type="checkbox" class="activityCheckboxAll" onclick="$('.tableA input[class=productinfoCheckbox]').prop('checked', ($(this).is(':checked')?true:false))"style="width:100%; cursor:pointer;"></td>
+					<td>訂單編號</td>
+					<td>課程/考場地點</td>
+                    <td>報名學校</td>
+                    <td>報名班級</td>
+                    <td>學生姓名</td>
+					<td>報名日期</td>
+					<td>繳費狀況</td>
+					<td>備註</td>
+					<td>考試地點</td>
+					<td>教室</td>
+					<td>座位</td>
+					<td>淮考證</td>
+					<td>成績</td>
+					<td>落點</td>
+					<td>成績備註</td>
+                </tr>
+
+                {volist name="each_exam" id="vo" empty="沒有數據"}
+                <tr id="productinfo_{$vo.id}">
+                    <td><input type="checkbox" class="productinfoCheckbox" alt="{$vo.id}"></td>
+                    <td>{$vo.order_number}</td>
+					<td>{$vo.title}</td>
+                    <td>{$vo.examinee_school}</td>
+					<td>{$vo.examinee_class}</td>
+					<td><a class="personal" alt="{$vo.id}" data-toggle="modal" data-target="#exampleModal">{$vo.examinee_name}</a></td>
+					<td>{$vo.create_time|date='Y/m/d',###}</td>
+					<td>{$vo.receipts_state|RECEIPTS_STATE}</td>
+					<td>
+                        {if condition="$user.edi_examination eq '1' "}
+                            <input value="{$vo.examinee_note}" class="update_examinee" alt="{$vo.id}" col="examinee_note" />
+                        {else/}
+					       {$vo.examinee_note}
+                        {/if}
+                    </td>
+                    <td>
+    					{if condition="$vo.examinee_ticket eq '' and $user.edi_examination eq '1' "}
+                            <input value="{$vo.exam_school}" class="update_examinee" alt="{$vo.id}" col="exam_school"  size="10"/>
+    					{else/}
+                            {$vo.exam_school}
+    					{/if}
+                    </td>
+					<td>
+                        {if condition="$vo.examinee_ticket eq '' and $user.edi_examination eq '1' "}
+                            <input value="{$vo.examinee_room}" class="update_examinee" alt="{$vo.id}" col="examinee_room"   size="3" maxlength="2"/>
+					   {else/}
+                            {$vo.examinee_room}
+					   {/if}
+                    </td>
+					<td>
+                        {if condition="$vo.examinee_ticket eq '' and $user.edi_examination eq '1' "}
+                            <input value="{$vo.examinee_site}" class="update_examinee" alt="{$vo.id}" col="examinee_site"  size="3" maxlength="2"/>
+					   {else/}
+                            {$vo.examinee_site}
+                        {/if}
+                    </td>
+					<td>{$vo.examinee_ticket|default='未生成'}</td>
+					<td>
+                        {if condition="$vo.grade_show eq '0' and $user.edi_examination eq '1' "}
+                            <input value="{$vo.grade}" class="update_examinee" alt="{$vo.id}" col="grade"   size="3" maxlength="3"/>
+                        {else/}
+                            {$vo.grade}
+                        {/if}
+                    </td>
+					<td>
+                        {if condition="$vo.grade_show eq '0' and $user.edi_examination eq '1' "}
+                            <input value="{$vo.grade_point}" class="update_examinee" alt="{$vo.id}" col="grade_point"   size="3" maxlength="5"/>
+                        {else/}
+                            {$vo.grade_point}
+                        {/if}
+                    </td>
+					<td>
+                        {if condition="$vo.grade_show eq '0' and $user.edi_examination eq '1' "}
+                            <input value="{$vo.grade_note}" class="update_examinee" alt="{$vo.id}" col="grade_note"  size="10"/>
+                        {else/}
+                            {$vo.grade_note}
+                        {/if}
+                    </td>
+                </tr>
+                {/volist}
+            </table>
+            <!--表格 結束-->
+
+            <div class="row text-center">
+                <!-- $each_exam->render() -->
+            </div>
+
+        </div>
+
+        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel" style="display: inline-block;">填寫報名資料</h5>
+                        <button type="button" class="close eeeeeee" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" id="boxModel">
+                    ...
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+{/block}
+
+{block name="ownJS"}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.0/jquery-confirm.min.js"></script>
+    <script src="__PUBLIC__/js/action.js"></script>
+	<script src="__PUBLIC__/js/moment.min.js"></script>
+    <script src="/public/static/index/js/check_input.js"></script>
+    <script>
+        $('.personal').click(function () {
+            var t = $(this);
+    		var id=t.attr("alt");
+    		$.ajax({
+    			url: "{:url('Examination/personal')}",
+    			type: 'POST',
+    			data: {
+    				id:id,
+    			},			
+    			success: function(re) {
+    				$('#boxModel').html(re);
+    			}
+    		});	
+        });
+
+    	function update_exinfo(){
+       		var id = $('#alt').val();
+            var examinee_id = $('#examinee_id').val();
+    		var examinee_school = $('#examinee_school').val();
+    		var examinee_class = $('#examinee_class').val();
+    		var examinee_name = $('#examinee_name').val();
+    		var examinee_birthday = $('#examinee_birthday').val();
+    		var parents_name = $('#parents_name').val();
+    		var parents_phone = $('#parents_phone').val();
+    		var parents_mail = $('#parents_mail').val();
+    		var parents_add = $('#parents_add').val();
+    		var  parents_tel= $('#parents_tel').val();
+
+    		$.ajax({
+    			url: "{:url('Examination/personal_update')}",
+    			type: 'POST',
+    			data: {
+    				id:id,
+                    examinee_id:examinee_id,
+    				examinee_school:examinee_school,
+    				examinee_class:examinee_class,
+    				examinee_name:examinee_name,
+    				examinee_birthday:examinee_birthday,
+    				parents_name:parents_name,
+    				parents_phone:parents_phone,
+    				parents_mail:parents_mail,
+    				parents_add:parents_add,
+    				parents_tel:parents_tel,
+    			},			
+    			success: function(re) {
+    				if(re.status){
+    					$.alert('更改成功');
+    					window.location='';
+    				}else{
+    					$.alert('更改失敗');
+    					console.log(re.message);
+    				}
+    			},
+    			error: function(xhr) {
+    				$.alert('更改失敗');
+    				console.log(xhr);
+    			}
+    		});	
+    	}
+
+    	$('.update_examinee').blur(function() {
+    		var id = $(this).attr('alt');
+    		var ticket = $(this).val();
+    		var col = $(this).attr('col');
+
+    		$.ajax({
+    			url: "{:url('Examination/update_examinee')}",
+    			type: 'POST',
+    			dataType: 'json',
+    			data: {
+    				id:id,
+    				ticket:ticket,
+    				col:col
+    			},
+    			success: function(response) {
+    				if(response.status){
+    					//$.alert('更改成功');
+    					//window.location.reload();
+    				}else{
+    					$.alert('更改失敗');
+    					console.log(response.message);
+    				}
+    			},
+    			error: function(xhr) {
+    				$.alert('更改失敗');
+    				console.log(xhr);
+    			}
+    		});
+    		console.log(id);
+    		console.log(ticket);
+        })
+
+        Vue.prototype.blockCtrl = function (blockData) {
+            $.ajax({
+                url: "{:url('Examination/cellCtrl')}",
+                type: 'POST',
+                dataType: 'json',
+                data: blockData,
+                success: function(response) {
+                    if(response.status){
+                        //alert('留言成功');
+                    }else{
+                        alert('更改失敗');
+                        console.log(response.message);
+                    }
+                },
+                error: function(xhr) {
+                    alert('更改失敗');
+                    console.log(xhr);
+                }
+            });
+        };
+
+        Vue.prototype.cellCtrlFromType = function (blockData) {
+            $.ajax({
+                url: "{:url('Examination/cellCtrlFromType')}",
+                type: 'POST',
+                dataType: 'json',
+                data: blockData,
+                success: function(response) {
+                    if(response.status){
+                        alert('更改成功');
+                        BoxVM.updateCallerData();
+                    }else{
+                        alert('更改失敗');
+                        console.log(response.message);
+                    }
+                },
+                error: function(xhr) {
+                    alert('更改失敗');
+                    console.log(xhr);
+                }
+            });
+        };
+
+        Vue.prototype.removeToIndexADV = function (blockData) {
+            $.ajax({
+                url: "{:url('Examination/removeToIndexADV')}",
+                type: 'POST',
+                dataType: 'json',
+                data: blockData,
+                success: function(response) {
+                    if(response.status){
+                        //alert('留言成功');
+                    }else{
+                        alert('更改失敗');
+                        console.log(response.message);
+                    }
+                },
+                error: function(xhr) {
+                    alert('更改失敗');
+                    console.log(xhr);
+                }
+            });
+        };
+
+        Vue.prototype.addToIndexADV = function (blockData) {
+            var checkboxStatus = false;
+            $.ajax({
+                url: "{:url('Examination/addToIndexADV')}",
+                type: 'POST',
+                async: false,
+                dataType: 'json',
+                data: blockData,
+                success: function(response) {
+                    if(response.status){
+                        //alert('留言成功');
+                        checkboxStatus = true;
+                        if(response.message == 'alreadyFull'){
+                            alert('已經滿十個了，請取消一部分商品');
+                            checkboxStatus = false;
+                        }
+                    }else{
+                        alert('更改失敗');
+                        checkboxStatus = false;
+                        console.log(response.message);
+                    }
+                },
+                error: function(xhr) {
+                    alert('更改失敗');
+                    checkboxStatus = false;
+                    console.log(xhr);
+                }
+            });
+            return checkboxStatus;
+        };
+
+        function getval(sel)
+            {
+                $.ajax({
+                    url: "{:url('Examination/cellCtrl')}",
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        id: sel.id,
+                        online: sel.value
+                    },
+                    success: function(response) {
+                        if(response.status){
+                            alert('更改成功');
+                        }else{
+                            alert('更改失敗');
+                            console.log(response.message);
+                        }
+                    },
+                    error: function(xhr) {
+                        //alert('更改失敗');
+                        console.log(xhr);
+                    }
+                });
+            }
+
+        function getMultiId() {
+            var multiIdArray = [];
+            $('.productinfoCheckbox').each(function () {
+                if($(this).prop("checked")){
+                    multiIdArray.push($(this).attr('alt'));
+                    $(this).prop("checked", false);
+                }
+            });
+
+            return multiIdArray;
+        }
+
+        function multiDelete() {
+            if(confirm('確定刪除?')){
+                var form = document.createElement("form");
+                form.action = "{:url('Examination/multiDelete')}";
+                form.method = "post";
+                multiId = document.createElement("input");
+                multiId.value = JSON.stringify(getMultiId());
+                multiId.name = "id";
+
+                form.appendChild(multiId);
+                document.body.appendChild(form);
+                form.submit();
+                $('.activityCheckboxAll').each(function () {
+                    if($(this).prop("checked")){
+                        $(this).prop("checked", false);
+                    }
+                });
+            }
+        }
+
+        function newBlock(){
+            if($("#file_excel").val() != ''){
+               excelForm2.submit();
+            }else{
+                alert('請選擇檔案');
+            }
+        }
+
+    </script>
+
+{/block}
+

@@ -1,0 +1,176 @@
+{extend name="Public/mainTpl" /}
+{block name="title"}後台{/block}
+{block name="css"}{/block}
+{block name="content"}
+<div class="breadcrumbForOwn centerRow">
+    <p>連絡我們</p>
+</div>
+
+<div class="row">
+    <table class="centered highlight responsive-table">
+        <thead>
+            <tr>
+                <th>姓名</th>
+                <th>電話</th>
+                <th>EMAIL</th>
+                <th>詢問項目
+                    <a class="btn-floating waves-effect waves-light red" style="width:25px;height:25px;" onclick="$('#modaltype').modal('open');">
+                        <i class="material-icons" style="line-height:30px; position:relative; top:-2.5px;">add</i>
+                    </a>
+                </th>
+                <th>內容</th>
+                <th>時間</th>
+                <th>狀態</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {volist name="contact_log" id="vo" empty="$empty"}
+                <tr>
+                    <td onclick="$('#modal{$vo.id}').modal('open');">{$vo.name}</td>
+                    <td onclick="$('#modal{$vo.id}').modal('open');">{$vo.phone}</td>
+                    <td onclick="$('#modal{$vo.id}').modal('open');">{$vo.email}</td>
+                    <td onclick="$('#modal{$vo.id}').modal('open');">{$vo.type}</td>
+                    <td onclick="$('#modal{$vo.id}').modal('open');">{$vo.content}</td>
+                    <td onclick="$('#modal{$vo.id}').modal('open');">{$vo.time}</td>
+                    <td onclick="$('#modal{$vo.id}').modal('open');">
+                        {if condition="($vo.status == 0)"}
+                            未處理
+                        {else /}
+                            已處理
+                        {/if}
+                    </td>
+                    <td>
+                        <a class="btn-floating btn waves-effect waves-light grey" onclick="delimg({$vo.id})">
+                            <i class="material-icons">delete_forever</i>
+                        </a>
+                    </td>
+                </tr>
+            {/volist}
+        </tbody>
+    </table>
+</div>
+
+<div class="row center-align">
+     {$contact_log->render()}
+</div>
+
+<div id="modaltype" class="modal">
+    <div class="modal-content">
+        <h4>修改詢問項目</h4>
+        <form action="{:url('Contact/type')}" method="POST">
+            <div class="row">
+                <div class="col s12">
+                    <textarea name="contact_type" style="width:100%;height: 100px">{$contact_type.contact_type}</textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a class="waves-effect waves-light btn grey modal-close">放棄</a>
+                <button class="btn waves-effect waves-light" type="submit">
+                    修改<i class="material-icons right">send</i>
+                </button>
+            </div>
+            <input type="hidden" name="id" value="1">
+        </form>
+        <p>注意&nbsp;:&nbsp;類別間用&nbsp;,&nbsp;(逗號) 區隔及可</p>
+    </div>
+</div>
+
+<div id="modaldel" class="modal">
+    <div class="modal-content">
+        <h4>刪除提醒</h4>
+        <p></p>
+    </div>
+    <div class="modal-footer">
+        <a class="waves-effect waves-light btn grey modal-close">放棄</a>
+        <a class="waves-effect waves-light btn red" id="delButton">刪除</a>
+    </div>
+</div>
+
+{volist name="contact_log" id="vo" empty="$empty"}
+    <div id="modal{$vo.id}" class="modal">
+        <div class="modal-content">
+            <div class="row">
+                <div class="col s12 m12 l6">
+                    時間：{$vo.time}
+                </div>
+                <div class="col s12 m12 l6">
+                    主旨：{$vo.type}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col s12 m12 l6">
+                    名稱：{$vo.name}
+                </div>
+                <div class="col s12 m12 l6">
+                    連絡電話：{$vo.phone}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col s12">
+                    信箱：{$vo.email}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col s12">
+                    內容：
+                </div>
+            </div>
+            <div class="row">
+                <div class="col s12">
+                    {$vo.content}
+                </div>
+            </div>
+            {if condition="($vo.status == 0)"}
+                <form action="{:url('Contact/status','id='.$vo['id'])}" method="POST">
+                    <div class="row">
+                        <div class="col s12">
+                            <textarea name="remessage" id="textarea1" style="width:100%;height: 300px"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <a class="waves-effect waves-light btn grey modal-close">等待處理</a>
+                        <button class="btn waves-effect waves-light" type="submit">
+                            處理完畢<i class="material-icons right">send</i>
+                        </button>
+                    </div>
+                    <input type="hidden" name="id" value="{$vo.id}">
+                    <input type="hidden" name="status" value="1">
+                </form>
+            {else /}
+                <div class="row">
+                    <div class="col s12">
+                        {$vo.remessage}
+                    </div>
+                </div>
+            {/if}
+        </div>
+    </div>
+{/volist}
+{/block}
+{block name="ownJS"}
+<script>
+    /*let default page render($slideshow->render()) use materialize style*/
+    $('.pagination > .active').html('<a>'+$('.pagination > .active').html()+'</a>');
+    $('.pagination > .disabled').html('<a>'+$('.pagination > .disabled').html()+'</a>');
+    $('.pagination > li').addClass('waves-effect');
+    $('.pagination > li > a').first().html('<i class="material-icons">chevron_left</i>');
+    $('.pagination > li > a').last().html('<i class="material-icons">chevron_right</i>');
+
+    /*delete popup setting*/
+    $('.modal').modal({
+        dismissible: true, // Modal can be dismissed by clicking outside of the modal
+        opacity: .5, // Opacity of modal background
+        inDuration: 300, // Transition in duration
+        outDuration: 300, // Transition out duration
+        startingTop: '15%', // Starting top style attribute
+        endingTop: '20%', // Ending top style attribute
+    });
+    function delimg(id){
+        $('#modaldel > div > p').text('確定要刪除id為' + id + '的連絡記錄嗎？');
+        $('#modaldel').modal('open');
+        $('#delButton').attr('href', "{:url('Contact/delete')}?id=" + id);
+    }
+
+</script>
+{/block}

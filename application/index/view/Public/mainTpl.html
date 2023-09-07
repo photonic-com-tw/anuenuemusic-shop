@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="zh-Hans-TW" ng-app="app">
+    <head>
+        <!-- ///////////////////////////////////////////////////////////////////////////// -->
+        <!-- ///////////////////////////////////////////////////////////////////////////// -->
+        <!-- ///////////////////////////////////////////////////////////////////////////// -->
+        {$seo[0]['verification']}
+        {$seo[0]['trackgoogle']}
+        {$seo[0]['marketgoogle']}
+        {$seo[0]['marketyahoo']}
+        <meta charset="UTF-8">
+        <title>{block name="title"}{$seo[0]['title']}{/block}</title>
+        <meta name="Keywords" CONTENT="{block name='Keywords'}{$seo[0]['seokey']}{/block}" />
+        <meta name="description" lang="zh-Hant-TW" content="{block name='description'}{$seo[0]['descr']}{/block}">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2, user-scalable=0">
+        <meta property="og:site_name" name="application-name" content="{$seo[0]['fb_name']}" />
+        <meta property="og:type" content="website" />
+        <!--可選擇 還有其他的未標示 website blog article-->
+        <meta property="og:title" itemprop="name" content="{block name='ogtitle'}{$seo[0]['fb_title']}{/block}"> <!-- 可替代<meta name="title" content="" /> -->
+        <meta property="og:description" itemprop="description" lang="zh-Hant-TW" content="{block name='ogdescription'}{$seo[0]['fb_descr']}{/block}">
+        <meta property="og:url" itemprop="url" content="{block name='ogurl'}http://{$_SERVER['HTTP_HOST']}/{/block}">
+        <meta property="og:image" content="{block name='ogimage'}__PUBLIC__{$seo[0]['fb_img']}{/block}"> <!-- 可替代<link rel="image_src" href="thumbnail_image" / > -->
+        <meta property="og:locale" content="zh_TW">
+        <!--告知FB為繁體語言-->
+        <!--告知twitter-->
+        <meta name="twitter:card" content="summary">
+        <!--縮圖的意思-->
+        <meta name="twitter:title" content="{$seo[0]['twitter_name']}">
+        <meta name="twitter:description" content="{$seo[0]['twitter_descr']}">
+        <meta name="twitter:domain" content="{$seo[0]['twitter_title']}">
+        <meta name="google-signin-client_id" content="{$Google_appId}">
+        <!--favicon-->
+        <link rel="shortcut icon" href="__PUBLIC__/{$admin_info['favicon']}" />
+        <link rel="bookmark" href="__PUBLIC__/{$admin_info['favicon']}" />
+        <!-- ///////////////////////////////////////////////////////////////////////////// -->
+        <!-- ///////////////////////////////////////////////////////////////////////////// -->
+        <!-- ///////////////////////////////////////////////////////////////////////////// -->
+        <!-- RWD -->
+        <meta http-equiv="x-ua-compatible" content="ie=edge"><!-- [if lte IE 8] [if lte IE 9] -->
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="manifest" href="/public/manifest.json">
+        <link rel="stylesheet" href="__PUBLIC__/css/reset.css">
+        <!-- //////////////////////////////////////////////////////////////////////////////////////////// -->
+        <!-- //////////////////////////////////////////////////////////////////////////////////////////// -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <!-- //////////////////////////////////////////////////////////////////////////////////////////// -->
+        <!-- [if lte IE 8] [if lte IE 9] -->
+        <script src="//cdn.jsdelivr.net/gh/coliff/bootstrap-ie8/js/bootstrap-ie9.min.js"></script>
+        <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+        <script src="//cdn.jsdelivr.net/gh/coliff/bootstrap-ie8/js/bootstrap-ie8.min.js"></script>
+        <script src="//stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.js"></script>
+        <!-- //////////////////////////////////////////////////////////////////////////////////////////// -->
+        <link href="//fonts.googleapis.com/css?family=Noto+Sans+TC:100,300,400,500,700,900" rel="stylesheet">
+        <!-- //////////////////////////////////////////////////////////////////////////////////////////// -->
+        <link rel="stylesheet" type="text/css" href="__PUBLIC__/css/owl.carousel.min.css">
+        <link rel="stylesheet" type="text/css" href="__PUBLIC__/css/owl.theme.default.min.css">
+        <script type="text/javascript" src="__PUBLIC__/js/owl.carousel.min.js"></script>
+        <!-- //////////////////////////////////////////////////////////////////////////////////////////// -->
+        <script src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.js" type="text/javascript"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/shave/2.1.3/shave.min.js"></script>
+        <!-- //////////////////////////////////////////////////////////////////////////////////////////// -->
+        <link rel='stylesheet' href='//cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css'>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
+        <!-- //////////////////////////////////////////////////////////////////////////////////////////// -->
+        <!-- font-family: 'Open Sans', sans-serif; -->
+        <link href="//fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800&display=swap" rel="stylesheet">
+        <!-- //////////////////////////////////////////////////////////////////////////////////////////// -->
+        <!-- <link rel="stylesheet" href="__PUBLIC__/css/bootstrap-icons.css"> -->
+        <link rel="stylesheet" href="__PUBLIC__/css/iconstyle.css">
+        <link rel="stylesheet" href="__PUBLIC__/css/style.css">
+        <link rel="stylesheet" href="__PUBLIC__/css/phone.css">
+        <link rel="stylesheet" href="__PUBLIC__/css/layout_style.css">
+
+        <!-- contact verify -->
+        <link rel="stylesheet" type="text/css" href="/public/static/jq-plugin/verify/verify.css">
+        <script type="text/javascript" src="/public/static/jq-plugin/verify/verify.js"></script>
+        
+
+        <!-- anuenuemusic -->
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+        <script src="https://kit.fontawesome.com/9a2047a60f.js" crossorigin="anonymous"></script>
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="__PUBLIC__/anuenuemusic/css/bootstrap-icons.css">
+        <link rel="stylesheet" href="{$MAIN_WEB}/frontEndPackage/css/animate.css">
+        <link rel="stylesheet" href="{$MAIN_WEB}/frontEndPackage/css/RWD_eidtor_style.css">
+        <link rel="stylesheet" href="{$MAIN_WEB}/frontEndPackage/css/all.css">
+        <link rel="stylesheet" href="{$MAIN_WEB}/frontEndPackage/css/all_andy.css">
+        <!-- ///////////////////////////////////////////////////////////////////////////// -->
+        {block name="css"}{/block}
+        {block name="mycode"}{/block}
+        <style>
+            .navList li:hover{
+                cursor:pointer;
+            }
+            img.icon_pic{
+                width: 25px;
+            }
+            
+            .icon-star:before {
+                content: "\e90f";
+            }
+            .activeBtn{
+                background-color: #ff7300;
+                color: #fff;
+            }
+
+            .verification>div.cerify-code-panel{
+                display: flex;
+                align-items: center;
+                flex-direction: row-reverse;
+            }
+            .verification div.verify-code-area {
+                display: flex;
+                align-items: center;
+                position: relative;
+                justify-content: space-between;
+            }
+            .verification .verify-change-area{
+                margin-right: 10px;
+            }
+            .verification input.varify-input-code{
+              height: 30px;
+            }
+        </style>
+    </head>
+    <body class="anuenueshop" ng-controller="ContentController as contCtrl">
+        <div id="block" class="position-fixed w-100 h-100 bg-dark" style="opacity: 0.8; z-index:9999; display: none;"></div>
+        <div id="phoneMenu" class="page">
+            <!-- anuenuemusic選單 開始 -->
+                <!-- 選單menu -->
+                <nav class="navbar navbar-default navbar-mobile bootsnav">
+                    <div class="container w1400">
+                        <div class="navbar-header">
+                            <div class="logo">
+                                <a style="background: url('{$MAIN_WEB}/frontEndPackage/images/logo.svg') no-repeat;"
+                                   href="{$MAIN_WEB_LAN}/"></a>
+                            </div>
+                        </div>
+
+                        <!-- Collect the nav links, forms, and other content for toggling -->
+                        <div class="collapse navbar-collapse" id="navbar-menu">
+                            <ul class="nav navbar-nav" data-in="slideDown" data-out="slideUp">
+                                <li><a href="{$MAIN_WEB_LAN}/ukulele.html">{$lang_menu['烏克麗麗']}</a></li>
+                                <li><a href="{$MAIN_WEB_LAN}/guitar.html">{$lang_menu['木吉他']}</a></li>
+                                <li><a href="{$MAIN_WEB_LAN}/nylon_guitar.html">{$lang_menu['尼龍吉他']}</a></li>
+                                <li><a href="{$MAIN_WEB_LAN}/bass.html">{$lang_menu['貝斯']}</a></li>
+                                <li><a href="{$MAIN_WEB_LAN}/accessories.html">{$lang_menu['配件']}</a></li>
+                                <li><a href="{$MAIN_WEB_LAN}/musician.html">{$lang_menu['音樂人']}</a></li>
+                                <li><a href="{$MAIN_WEB_LAN}/dealer.html">{$lang_menu['經銷商']}</a></li>
+                                <li><a href="{$MAIN_WEB_LAN}/about.html">{$lang_menu['關於我們']}</a></li>
+                            </ul>
+                            <div class="lang-mobile justify-content-center">
+                                <a class="lang-btn shop-ch" href="{$MAIN_WEB}/ch">簡</a>
+                                <a class="lang-btn shop" href="{$MAIN_WEB}">繁</a>
+                                <a class="lang-btn shop-en" href="{$MAIN_WEB}/en">EN</a>
+                                <a class="lang-btn shop-jp" href="{$MAIN_WEB}/jp">JP</a>
+                            </div>
+                        </div>
+                        <!-- /.navbar-collapse -->
+                        <div class="r-btn-box ">
+                            <ul>
+                                <li class="lang-desk">
+                                    <a class="lang-btn shop-ch" href="{$MAIN_WEB}/ch">簡</a>
+                                    <a class="lang-btn shop" href="{$MAIN_WEB}">繁</a>
+                                    <a class="lang-btn shop-en" href="{$MAIN_WEB}/en">EN</a>
+                                    <a class="lang-btn shop-jp" href="{$MAIN_WEB}/jp">JP</a>
+                                </li>
+                                <li class="user-btn dropdown">
+                                    <a class="dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
+                                        aria-haspopup="true" aria-expanded="false">
+                                        <i class="fas fa-user-alt"></i>
+                                    </a>
+                                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                        {if condition="($user.name != '')"}
+                                            <!-- 已登入 -->
+                                            <a class="dropdown-item" href="{:url('Member/member')}">{$lang_menu['會員專區']}</a>
+                                        {else /}
+                                            <!-- 未登入 -->
+                                            <a class="dropdown-item" href="{:url('Login/login')}">{$lang_menu['會員登入']}</a>
+                                            <a class="dropdown-item" href="{:url('Login/signup')}">{$lang_menu['註冊會員']}</a>
+                                        {/if}
+
+                                        {empty name="$Front_name['註冊商品回函']"}
+                                        {if condition="($user.name != '')"}
+                                            <!-- 已登入 -->
+                                            <a class="dropdown-item" href="{:url('Member/reg_product_sign')}">{$lang_menu['產品註冊']}</a>
+                                        {else /}
+                                            <!-- 未登入 -->
+                                            <a class="dropdown-item" href="javascript:alert('{$lang_menu['請先登入會員']}');
+                                                                           location.href='{:url('Login/login')}'">
+                                                {$lang_menu['產品註冊']}
+                                            </a>
+                                        {/if}
+                                        {/empty}
+                                    </div>
+                                   
+                                </li>
+                                <li class="search-btn"><a href="/"><i class="fas fa-search"></i></a></li>
+                                
+                                {if condition="($user.name != '')"}
+                                    <!-- 已登入 -->
+                                    <li class="shapcar-btn">
+                                        <!-- <a href="{:url('Cart/cart')}"> -->
+                                        <a href="{:url('Cart/add_price')}">
+                                            <i class="fas fa-shopping-cart"></i><span class="counter prodNum">{$cartCount|default="0"}</span>
+                                        </a>
+                                    </li>
+                                {else /}
+                                    <!-- 未登入 -->
+                                    <li class="shapcar-btn">
+                                        <a href="javascript:alert('{$lang_menu['請先登入會員']}');location.href='{:url('Login/login')}'">
+                                            <i class="fas fa-shopping-cart"></i><span class="counter prodNum">{$cartCount|default="0"}</span>
+                                        </a>
+                                    </li>
+                                {/if}
+                                
+                            </ul>
+                            <div class="brand">
+                                <div class="menu-icon navbar-toggle" data-toggle="collapse" data-target="#navbar-menu">
+                                    <input class="menu-icon__cheeckbox" type="checkbox" />
+                                    <div>
+                                        <span></span>
+                                        <span></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+
+                <!-- 產品搜尋  -->
+                <div id="product_search_menu"></div>
+                <!-- 產品搜尋 end -->
+            <!-- anuenuemusic選單 結束 -->
+
+            <div class="content_block wrapper">
+            <!-- 內容/////////////////////////////////////////////////////////////////////////////////////////////// -->
+                {block name="path"}{/block}
+                <div class="anuenue_container">
+                    {block name="content"}{/block}
+                </div>
+            </div>
+
+            {block name="flulid_content"}{/block}
+
+            <!-- anuenuemusic頁尾 開始 -->
+            <footer class="mt-0">
+                <div class="container w1400">
+                    <div class="copy">
+                        <div class="item footer_accordion">
+                            <div class="title color_C8C8C8">{$lang_menu['產品']}<i></i></div>
+                            <div class="">
+                                <ul>
+                                    <li><a href="{$MAIN_WEB_LAN}/ukulele.html">{$lang_menu['烏克麗麗']}</a></li>
+                                    <li><a href="{$MAIN_WEB_LAN}/guitar.html">{$lang_menu['木吉他']}</a></li>
+                                    <li><a href="{$MAIN_WEB_LAN}/nylon_guitar.html">{$lang_menu['尼龍吉他']}</a></li>
+                                    <li><a href="{$MAIN_WEB_LAN}/bass.html">{$lang_menu['貝斯']}</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="item footer_accordion">
+                            <div class="title color_C8C8C8">{$lang_menu['關於我們']}<i></i></div>
+                            <div class="">
+                                <ul>
+                                    <li><a href="{$MAIN_WEB_LAN}/about.html?to=about_story">{$lang_menu['品牌故事']}</a></li>
+                                    <li><a href="{$MAIN_WEB_LAN}/about.html?to=about_histroy">{$lang_menu['產品沿革']}</a></li>
+                                    <li><a href="{$MAIN_WEB_LAN}/about.html?to=about_brand">{$lang_menu['品牌記事']}</a></li>
+                                    <li><a href="{$MAIN_WEB_LAN}/about.html?to=about_contact">{$lang_menu['聯絡我們']}</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="item footer_accordion">
+                            <div class="title color_C8C8C8">{$lang_menu['各地經銷']}<i></i></div>
+                            <div class="">
+                                <ul>
+                                    <li><a href="{$MAIN_WEB}/dealer.html">{$lang_menu['台灣']}</a></li>
+                                    <li><a href="{$MAIN_WEB}/ch/dealer.html">{$lang_menu['中國']}</a></li>
+                                    <li><a href="{$MAIN_WEB}/en/dealer.html">{$lang_menu['國際']}</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="item footer_accordion">
+                            <div class="title color_C8C8C8">{$lang_menu['聯絡我們']}<i></i></div>
+                            <div class="">
+                                <ul>
+                                    <li><a href="{$MAIN_WEB_LAN}/about.html?to=head_contact_prove">{$lang_menu['產品正偽查詢']}</a></li>
+                                    <li><a href="{$MAIN_WEB_LAN}/about.html?to=head_contact_repair">{$lang_menu['售後維修與諮詢']}</a></li>
+                                    <li><a href="{$MAIN_WEB_LAN}/about.html?to=head_contact_feedback">{$lang_menu['意見回饋']}</a></li>
+                                    <li><a href="{$MAIN_WEB_LAN}/about.html?to=head_contact_cooperation">{$lang_menu['加入合作經銷']}</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="item footer_accordion">
+                            <div class="title color_C8C8C8">{$lang_menu['會員專區']}<i></i></div>
+                            <ul>
+                                <li><a href="/index/member/member.html">{$lang_menu['會員資料']}</a></li>
+                                <li><a href="/index/member/reg_product.html">{$lang_menu['產品註冊紀錄']}</a></li>
+                                <li><a href="/index/member/product_store.html">{$lang_menu['我的最愛']}</a></li>
+                                <li><a href="/index/member/reg_product_sign.html">{$lang_menu['產品註冊']}</a></li>
+                            </ul>
+                        </div>
+                        <div class="item footer_accordion">
+                            <div class="title color_C8C8C8">{$lang_menu['社群連結']}<i></i></div>
+                            <ul class="community">
+                                <li><a href="https://www.facebook.com/aNueNueMusic" target="_blank"><i class="fab fa-facebook-f"></i></a></li>
+                                <li><a href="https://www.instagram.com/anuenuemusic/" target="_blank"><i class="fab fa-instagram"></i></a></li>
+                                <li><a href="https://www.youtube.com/channel/UC_6OdhxE5P05aQ7m9l6sqoA" target="_blank"><i class="fab fa-youtube"></i></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="copyright">2021 CopyRight © aNueNue All Rights Reserved.</div>
+            </footer>
+            <div class="toTop cursor-pointer" onclick="scrollToAnchor('body')"><i class="bi bi-chevron-compact-up"></i></div>
+            <!-- anuenuemusic頁尾 結束 -->
+            <!-- 頁尾/////////////////////////////////////////////////////////////////////////////////////////////// -->
+            {eq name='$index_online.block11' value='1'}
+            {/eq}
+
+        </div>
+
+        {block name="Modal"}{/block}
+
+        <script>
+            var Request = new Object();
+            Request = GetRequest();
+            function GetRequest() {
+                var url = location.search;
+                var theRequest = new Object();
+                if (url.indexOf("?") != -1) {
+                    var str = url.substr(1);
+                    strs = str.split("&");
+                    for(var i = 0; i < strs.length; i++) {
+                        theRequest[strs[i].split("=")[0]]=decodeURI(strs[i].split("=")[1]);
+                    }
+                }
+                return theRequest;
+            }
+            var proId =Request["id"];
+            var tagId =Request["tag"];
+
+            {notempty name="$product.id"}
+                var tagId ={$product.id};
+            {/notempty}
+        </script>
+
+        {block name="ownJS"}{/block}
+
+        <!-- FB登入//////////////////////////////////////////////////////////// -->
+        <script type="text/javascript">
+            //應用程式編號，進入 //developers.facebook.com/apps/ 即可看到
+            let FB_appID = "{$FB_appID}";
+            //FB Login 官方文件：//developers.facebook.com/docs/facebook-login/web
+            // Load the Facebook Javascript SDK asynchronously
+            (function (d, s, id) {
+                var js, fjs = d.getElementsByTagName(s)[0];
+                if (d.getElementById(id)) return;
+                js = d.createElement(s); js.id = id;
+                js.src = "//connect.facebook.net/en_US/sdk.js";
+                fjs.parentNode.insertBefore(js, fjs);
+            }(document, 'script', 'facebook-jssdk'));
+            window.fbAsyncInit = function () {
+                FB.init({
+                        appId: FB_appID,//FB appID
+                        cookie: true,  // enable cookies to allow the server to access the session
+                        
+                        xfbml: true,  // parse social plugins on this page
+                        version: 'v3.0' // use graph api version
+                });
+            };
+            //使用自己客製化的按鈕來登入
+            function FBLogin() {
+                FB.login(function (response) {
+                        //debug用
+                        console.log(response);
+                        if (response.status === 'connected') {
+                                //user已登入FB
+                                //抓userID
+                                let FB_ID = response["authResponse"]["userID"];
+                                console.log("userID:" + FB_ID);
+                                $.post("{:url('Login/FB_login')}", { U3: FB_ID,ig:FB_ID} , function(result){
+                                    console.log(result);
+                                    if(result == true){
+                                        location.href= "{:url('Member/member')}";
+                                    }
+                                });
+                                
+                        } else {
+                            // user FB取消授權
+                            alert("{$lang_menu['發生錯誤']}");
+                            // alert("Facebook帳號無法登入");
+                        }
+                }, { scope: 'public_profile,email' });
+            }
+            function Del_FB_App() {
+                FB.getLoginStatus(function(response) {
+                    console.log(response);
+                    if (response.status === 'connected') {
+                        // Logged into Facebook.
+                        //抓userID
+                        FB.api("/me/permissions", "DELETE", function (response) {
+                            console.log("刪除結果");
+                            console.log(response); //gives true on app delete success
+                        });
+                    } else {
+                        // FB取消授權
+                        console.log("無法刪除FB App");
+                    }
+                }, true);
+            /*
+                FB.getLoginStatus(function (response) {//取得目前user是否登入FB網站
+                    //debug用
+            
+                });
+            */
+            }
+        </script>
+        <!--Google登入-->
+        <script async defer src="https://apis.google.com/js/api.js"
+                onload="this.onload=function(){};GoogleClientInit()"
+                onreadystatechange="if (this.readyState === 'complete') this.onload()">
+        </script>
+        <script type="text/javascript">
+            let CLIENT_ID = "{$Google_appId}";
+            let DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/people/v1/rest"];
+
+            function GoogleClientInit() {
+                //官網範例寫client:auth2，但本人實測由於待會要呼叫gapi.client.init而不是gapi.auth2.init，所以給client即可
+                gapi.load('client', function () {
+                    gapi.client.init({
+                        //client_id 和 scope 兩者參數必填
+                        clientId: CLIENT_ID,
+                        //scope列表參考：https://developers.google.com/people/api/rest/v1/people/get
+                        //"profile"是簡寫，要用完整scope名稱也可以
+                        scope: "profile",//"https://www.googleapis.com/auth/userinfo.profile",
+                        discoveryDocs: DISCOVERY_DOCS
+                    });
+
+
+                });//end gapi.load
+            }//end GoogleClientInit function
+
+            function GoogleLogin(open) {
+                let auth2 = gapi.auth2.getAuthInstance();//取得GoogleAuth物件
+                auth2.signIn().then(function (GoogleUser) {
+                    let user_id = GoogleUser.getId();//取得user id，不過要發送至Server端的話，為了資安請使用id_token，本人另一篇文章有範例：https://dotblogs.com.tw/shadow/2019/01/31/113026
+                    let AuthResponse = GoogleUser.getAuthResponse(true) ;//true會回傳包含access token ，false則不會
+                    let id_token = AuthResponse.id_token;//取得id_token
+                    //people.get方法參考：https://developers.google.com/people/api/rest/v1/people/get
+                    gapi.client.people.people.get({
+                        'resourceName': 'people/me',
+                        //通常你會想要知道的用戶個資↓
+                        'personFields': 'names,phoneNumbers,emailAddresses,addresses,residences,genders,birthdays,occupations',
+                    }).then(function (res) {
+                            //success
+                            // console.log(res.result);
+                            //最終，取得用戶個資後看要填在畫面表單上或是透過Ajax儲存到資料庫
+                            $.post(
+                                "{:url('Login/g_login')}", 
+                                { 
+                                    U3: res['result']["emailAddresses"][0]['value'],  /*mail*/
+                                    ig: res['result']["names"][0]['displayName'],     /*name*/
+                                    open : open
+                                } , function(result){
+                                    console.log(result);
+                                    if(result == true){
+                                        if(open == 0){
+                                            location.href= "{:url('Member/member')}";
+                                        }else{
+                                            alert("{$lang_menu['操作成功']}");
+                                            // alert('成功合併，請重新登入');
+                                            Google_disconnect();
+                                            location.href="{:url('Login/Logout')}";
+                                        } 
+                                    }else{
+                                        alert(result.msg);
+                                    }
+                            });
+
+
+                    });
+
+                },
+                function (error) {
+                    console.log("Google登入失敗");
+                    console.log(error);
+                });
+
+            }//end function GoogleLogin
+
+            function Google_disconnect() {
+                let auth2 = gapi.auth2.getAuthInstance(); //取得GoogleAuth物件
+
+                auth2.disconnect().then(function () {
+                    console.log('User disconnect.');
+                });
+            }
+        </script>
+        <!--Line登入-->
+        <script type="text/javascript">
+                function LineAuth() {
+                var URL = '//access.line.me/oauth2/v2.1/authorize?';
+                URL += 'response_type=code';
+                        // URL += '&client_id={$client_id}';//胖胖
+                URL += '&client_id={$client_id}';
+                URL += '&redirect_uri={$line_url}';
+                URL += '&state=' + "{:url('Member/member')}";
+                URL += '&scope=openid%20profile';
+                window.location.href = URL;
+            }
+        </script>
+        <!-- 購物帳號合併社群帳號 -->
+        <script type="text/javascript">
+            function ck_number(aim){
+                $('#ck_number_'+aim).css("display","block");
+            }
+            function ck_number2(aim){
+                var id = $('#ck_id').val();
+                var pw = $('#ck_pw').val();
+                console.log(id);
+                console.log(pw);
+                if( id == '' || pw ==''){
+                    alert("{$lang_menu['資訊不足']}");
+                }else{
+                    var url = "{:url('Login/ck_number')}";
+                    if(aim == 'gmail'){
+                        var user_new = '{$user.gmail}';
+                    }else if(aim == 'FB_id'){
+                        var user_new = '{$user.FB_id}';
+                    }else{
+                        var user_new = '{$user.line_id}';
+                    }
+                    
+                    $.post(url, { id:id,pw:pw,user_new:user_new,aim:aim} , function(result){
+                        
+                        if(result == '1'){
+                            alert("{$lang_menu['操作成功']}");
+                            // alert('成功合併，請重新登入');
+                            Google_disconnect();
+                            location.href="{:url('Login/Logout')}";
+                        }else{
+                            alert(result);
+                        }
+                        return 0;
+                    });
+                    
+                }
+            }
+        </script>
+
+        <!-- EDM//////////////////////////////////////////////////////////// -->
+        <!-- <script src="//{$EDM_URL}/js/project/cmsDirective.js" type="text/javascript"></script> -->
+
+        <!-- 領取優惠券 -->
+        <script>
+            function getCoupon(id){
+                if('{$user.name}' != ''){
+                    var login = true;
+                }else{
+                    var login = false;
+                }
+
+                if(login){
+                    $.ajax({
+                        type: "POST",
+                        async: true,
+                        datatype: 'json',
+                        data: {
+                            id: id,
+                            cmd: 'assign',
+                            num: 1,
+                        },
+                        url: "{:url('Product/getFreeCoupon')}",
+                        success: function (result) {
+                            alert(result.message);
+                        },
+                        error: function (xhr) {
+                            alert("{$lang_menu['發生錯誤']}");
+                            console.error(xhr);
+                            return;
+                        }
+                    })
+                }else{
+                    unregistered();
+                }
+            }
+        </script>
+
+        <!-- 載入商品搜尋選單 -->
+        <script type="text/javascript">
+            $.ajax({
+                url: '/index/ajax/get_prod_search_menu',
+                method: 'GET',
+                success: function(res){
+                    $('#product_search_menu').html(res);
+                }
+            })
+        </script>
+        
+        <!-- 載入Bootstrap JS -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"></script>
+        <script src="{$MAIN_WEB}/frontEndPackage/js/all.js"></script>
+        <script src="{$MAIN_WEB}/frontEndPackage/js/template.js"></script>
+        <script src="{$MAIN_WEB}/frontEndPackage/js/all_andy.js"></script>
+
+        <script type="text/javascript">
+            var target_lang = location.href.split('.')[0];
+            target_lang = target_lang.split('//');
+            target_lang = target_lang.length==2 ? target_lang[1] : '';
+            if(target_lang){ $('.'+target_lang).addClass('active'); }
+        </script>
+    </body>
+</html>

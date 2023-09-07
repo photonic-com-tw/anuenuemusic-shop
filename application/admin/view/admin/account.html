@@ -1,0 +1,536 @@
+{extend name="Public/aside" /}
+
+{block name="title"}參數設定區 - 帳號管理{/block}
+
+{block name="css"}
+
+    <style type="text/css">
+
+        table {
+
+            margin: 30px;
+
+           /* width: 80%;*/
+
+        }
+
+        table td {
+
+            padding: 10px;
+
+			border: 2px #9D9D9D solid;
+
+        }
+
+        input{
+
+            /*width:84.9%;*/
+
+        }
+
+        table tr:nth-child(3) td,
+
+        table tr:nth-child(4) td,
+
+        table tr:nth-child(5) td,
+
+        table tr:nth-child(6) td {
+
+            /*border:none;*/
+
+        }            
+
+    </style>
+
+{/block}
+
+{block name="content"}
+
+    <div id="content">
+
+        <p id="title">參數設定區 > 帳號管理</p>
+
+        <center>
+
+                         
+
+             <table>
+
+				 <tr>
+
+					{if condition="$user['permission'] == 'all' "}<td>當前使用者：</td>{/if}
+
+					<td>名稱：</td>
+
+					<td>帳號：</td>
+
+					<td>信箱：</td>
+
+					<td>舊密碼：</td>
+
+					<td>新密碼：</td>
+
+					<td>確認新密碼：</td>
+
+					
+
+					<td style="text-align:center;">更新密碼</td>
+
+					<td style="text-align:center">修改權限</td>
+
+					<td style="text-align:center">刪除</td>
+
+				</tr>  
+
+				{volist name="admin" id="vo"}
+
+				<form action="{:url('Admin/update')}?id={$vo.id}" method="post">
+
+					<input name="id" type="hidden" value="{$vo.id}">    
+
+					<tr>
+
+						{if condition="$user['permission'] == 'all' "}
+
+						<td>
+
+							<label class="f_swi" style="display:inline-flex;margin-top: 5px;margin-left: 9px;top: 10px;">
+
+								<input type="radio" name="current" id="" class="current_{$vo.id}" {$vo.permission|fat_return_checked="current"} onclick="current_change({$vo.id})">
+
+								<span class="f_sli"><span class="X_reverse">X</span><span class="O_reverse">O</span></span>
+
+							</label>
+
+						</td>
+
+						{/if}
+
+						<td>{$vo.name}</td>
+
+						<td>{$vo.account}</td>
+
+						<td><input class="email{$vo.id}" type="email" value="{$vo.email}" placeholder="請輸入信箱" autocomplete="off" /><a class="btn btn-success btn-xs" onclick="update_email({$vo.id})">更新</a></td>
+
+						<td><input name="old_password" type="password" placeholder="請輸入舊密碼" autocomplete="off" /></td>
+
+						<td><input name="new_password" type="password" placeholder="請輸入新密碼" autocomplete="off" /></td>
+
+						<td><input name="rep_password" type="password" placeholder="請再次輸入新密碼" style="width:77.4%;" autocomplete="off" /></td>
+
+						<td style="text-align:center"><button  class="btn btn-success">更改</button></td>
+
+						<td style="text-align:center"><button type="button" class="btn btn-primary" data-toggle="modal" data-id="{$vo.id}" data-target="#exampleModal" data-whatever="權限修改">修改</button></td>
+
+						<td style="text-align:center"><a class="btn btn-danger" href="{:url('Admin/del')}?id={$vo.id}">刪除</a></td>
+
+					</tr>    
+
+				 </form>
+
+				{/volist}
+
+             </table>
+
+           <div class="row text-center">
+
+		   	{$admin->render()}
+
+		   </div>
+
+		   <h3 class="text-left" style="margin-left: 20%;">新增帳號</h3>
+
+		   <form action="{:url('Admin/add')}" method="post">             
+
+                <table style="margin-top:0">
+
+					
+
+                    <tr>
+
+						<td>名稱：<input name="name" type="text" placeholder="請輸入名稱" autocomplete="off"></td>
+
+						<td>帳號：<input name="account" type="text" placeholder="請輸入帳號" autocomplete="off"></td>
+
+						<td>密碼：<input name="password" type="password" placeholder="請輸入密碼" autocomplete="off"></td>
+
+						<td>信箱：<input name="email" type="email" placeholder="請輸入信箱" autocomplete="off"></td>
+
+                        <td colspan="2" style="text-align:right"><button>確認</button></td>
+
+                    </tr>   
+
+							
+
+					{volist name="show_list" id="sh"}
+
+					<tr>	
+
+						<td colspan="5">大項：
+
+						<label class="f_swi" style="display:inline-flex;margin-top: 5px;margin-left: 9px;top: 10px;">
+
+							<input type="checkbox" id="{$sh.name}" class="{$sh.name}_all">
+
+							<span class="f_sli"><span class="X">X</span><span class="O">O</span></span>
+
+						</label>
+
+						<label for="{$sh.name}">{$sh.name}</label>
+
+						
+
+						&emsp;&emsp;次項：
+
+						{volist name="$sh.sub" id="sub"}		
+
+							<label class="f_swi" style="display:inline-flex;margin-top: 5px;margin-left: 9px;top: 10px;">
+
+								<input type="checkbox" name="purview[{$sh.id}][]" value="{$sub.id}" id="{$sub.name}" class="{$sh.name}_box">
+
+								<span class="f_sli"><span class="X">X</span><span class="O">O</span></span>
+
+							</label>	
+
+							<label for="{$sub.name}">{$sub.name}</label>
+
+						{/volist}
+
+						</td>
+
+					</tr>
+
+					{/volist}	
+
+					
+
+                </table>
+
+            </form>
+
+			
+
+			
+
+            <!--form action="{:url('Admin/emailUpdate')}" method="post">                    
+
+                <table>
+
+                    <tr>
+
+                        <td colspan="2" style="text-align:right"><button>確認</button></td>
+
+                    </tr>                
+
+                </table>
+
+            </form-->
+
+        </center>
+
+    </div>
+
+	<div class="modal fade bd-example-modal-lg" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+
+	  <div class="modal-dialog modal-lg" role="document">
+
+		<div class="modal-content">
+
+		  <div class="modal-header">
+
+			<h5 class="modal-title" id="exampleModalLabel">New message</h5>
+
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+
+			  <span aria-hidden="true">&times;</span>
+
+			</button>
+
+		  </div>
+
+		  <div class="modal-body">
+
+			  <form id="update" action="{:url('Admin/update_purview')}" method="post">    
+
+					<input name="up_id" type="hidden" vlaue="">
+
+					<table style="margin-top:0" id="update_purview">		
+
+						{volist name="show_list" id="sh"}
+
+						<tr>	
+
+							<td colspan="5">大項：
+
+							<label class="f_swi" style="display:inline-flex;margin-top: 5px;margin-left: 9px;top: 10px;">
+
+								<input type="checkbox" id="update_purview{$sh.name}" class="update_purview{$sh.name}_all">
+
+								<span class="f_sli"><span class="X">X</span><span class="O">O</span></span>
+
+							</label>
+
+							<label for="update_purview{$sh.name}">{$sh.name}</label>
+
+							&emsp;&emsp;次項：
+
+							{volist name="$sh.sub" id="sub"}		
+
+								<label class="f_swi" style="display:inline-flex;margin-top: 5px;margin-left: 9px;top: 10px;">
+
+									<input type="checkbox" name="update_purview[{$sh.id}][]" value="{$sub.id}" id="update_purview{$sub.id}" class="update_purview{$sh.name}_box">
+
+									<span class="f_sli"><span class="X">X</span><span class="O">O</span></span>
+
+								</label>
+
+								<label for="update_purview{$sub.id}">{$sub.name}</label>
+
+							{/volist}
+
+							</td>
+
+						</tr>
+
+						{/volist}	
+
+						
+
+					</table>
+
+			  </form>
+
+		  </div>
+
+		  <div class="modal-footer">
+
+			<button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+
+			<button type="button" class="btn btn-primary" onclick="update.submit();">確認</button>
+
+		  </div>
+
+		</div>
+
+	  </div>
+
+	</div>
+
+{/block}
+
+{block name="ownJS"}
+
+<script>
+	function update_purview(){
+		var checked = $('input[name="update_purview"]').val();  
+		console.log(checked);
+	}//update.submit();
+
+	
+
+	function current_change(x){
+
+		$('input[name="current"]').prop("checked", false);  
+		$('.current_'+x).prop("checked", true); 
+
+		$.ajax({
+            url: "{:url('admin/current_change')}",
+            type: 'POST',
+            data: {
+				id:x
+			},
+            success: function(response) {
+				$.alert(response.message);
+            },
+            error: function(xhr) {
+                console.log(xhr);
+            }
+        });
+	}
+
+	function update_email(x){
+
+		$.ajax({
+            url: "{:url('admin/emailUpdate')}",
+            type: 'POST',
+            data: {
+				id:x,
+				email:$('.email'+x).val(),
+			},
+            success: function(response) {
+				$.alert(response.message);
+            },
+            error: function(xhr) {
+                console.log(xhr);
+            }
+        });
+	}
+
+	var purview = {
+		{volist name="admin" id="vo"}
+				{$vo.id}:{$vo.purview},
+		{/volist}
+	};
+
+	
+	$('#exampleModal').on('show.bs.modal', function (event) {
+
+		var button = $(event.relatedTarget)
+		var recipient = button.data('whatever')
+		var id = button.data('id')
+		var modal = $(this)
+		modal.find('.modal-title').text(recipient)
+		console.log(purview[id]);
+
+
+
+		$('input[name^="update_purview"]').prop("checked", false);    
+		$('input[name="up_id"]').val(id);
+
+
+
+		$.each( purview[id], function( key, value ) {
+			$.each( purview[id][key], function( sub_key, sub_value ) {
+				$("#update_purview"+sub_value).prop("checked", true);  
+			});
+		});
+
+
+		{volist name="show_list" id="sh"}
+
+			var ed = true;
+			$(".update_purview{$sh.name}_box").each(function(){
+				if(this.checked != ed){
+					ed = this.checked ;
+					return false;
+				}
+			});   
+
+			$(".update_purview{$sh.name}_all").prop("checked", ed);
+
+		{/volist}
+	})
+
+
+
+	$(function(){
+
+		{volist name="show_list" id="sh"}
+
+			$('.{$sh.name}_all').click(function(){
+
+				if(this.checked){   
+					$(".{$sh.name}_box").prop("checked", true);  
+				}else{   
+					$(".{$sh.name}_box").prop("checked", false);
+				}   
+			})
+
+			$('.{$sh.name}_box').click(function(){
+
+				var ed = true;
+				$(".{$sh.name}_box").each(function(){
+
+					if(this.checked != ed){
+						ed = this.checked ;
+						return false;
+					}
+				});   
+
+				$(".{$sh.name}_all").prop("checked", ed);
+			})
+
+			$('.update_purview{$sh.name}_all').click(function(){
+				if(this.checked){   
+					$(".update_purview{$sh.name}_box").prop("checked", true);  
+				}else{   
+					$(".update_purview{$sh.name}_box").prop("checked", false);
+				}   
+			})
+
+			$('.update_purview{$sh.name}_box').click(function(){
+				var ed = true;
+				$(".update_purview{$sh.name}_box").each(function(){
+
+					if(this.checked != ed){
+						ed = this.checked ;
+						return false;
+					}
+				});   
+
+				$(".update_purview{$sh.name}_all").prop("checked", ed);
+			})
+
+		{/volist}
+    });
+
+    function openList() {
+        $('#backstageListli').click();
+    }
+
+</script>
+
+{/block}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

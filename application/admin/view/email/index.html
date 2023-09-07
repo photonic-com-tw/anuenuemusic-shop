@@ -1,0 +1,48 @@
+{extend name="Public/mainTpl" /}
+{block name="title"}後台{/block}
+{block name="css"}
+
+{/block}
+{block name="content"}
+<div class="breadcrumbForOwn centerRow">
+	<p>關於久弘</p>
+</div>
+<form action="{:url('Email/update')}" method="post">
+    <div class="container materializeForm">
+        <div class="row">
+            <div class="centerRow">
+                <div class="col s2 flow-text">信箱1：</div>
+                <div class="input-field col s10">
+                    <input id="email" name="email" type="text" class="validate" value="{$email.email}">
+                    <label for="email">email</label>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="centerRow">
+                <div class="col s2 flow-text">信箱2：</div>
+                <div class="input-field col s10">
+                    <input id="email2" name="email2" type="text" class="validate" value="{$email.email2}">
+                    <label for="email2">email</label>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="centerRow">
+                <div class="col s2 flow-text">信箱3：</div>
+                <div class="input-field col s10">
+                    <input id="email3" name="email3" type="text" class="validate" value="{$email.email3}">
+                    <label for="email3">email</label>
+                </div>
+            </div>
+        </div>
+        <div class="row right-align">
+            <button class="btn waves-effect waves-light" type="submit">
+                修改<i class="material-icons right">send</i>
+            </button>
+        </div>
+    </div>
+    <input type="hidden" name="id" value="{$email['id']}">
+</form>
+{/block}
+{block name="ownJS"}{/block}

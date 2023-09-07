@@ -1,0 +1,35 @@
+<div class="w-100">
+    {if condition="($user.name != '')"}
+    <div class="member_Mwnu">
+        <ul class="mb-3">
+            <li class=""><a class="member" href="{:url('Member/member')}">{$lang_menu['基本資料']}</a></li>
+            <li class=""><a class="orderform" href="{:url('Orderform/orderform')}">{$lang_menu['訂單列表']}</a></li>
+
+            {if condition="$control_register==1"}
+            <li class=""><a class="examination" href="{:url('examination/examination')}">{$lang_menu['修改報名資料']}</a></li>
+            {/if}
+            
+            {empty name="$Front_name['優惠券專區']"}
+                <li class=""><a class="coupon" href="{:url('Coupon/coupon')}">{$lang_menu['優惠券專區']}</a></li>
+            {/empty}
+
+            {empty name="$Front_name['點數設定']"}
+                <li class=""><a class="points" href="{:url('Points/points')}">{$lang_menu['紅利點數']}</a></li>
+            {/empty}
+
+            {empty name="$Front_name['註冊商品回函']"}
+                <li class=""><a class="reg_product" href="{:url('Member/reg_product')}">{$lang_menu['產品註冊紀錄']}</a></li>
+            {/empty}
+
+            <li class=""><a class="product_store" href="{:url('Member/product_store')}">{$lang_menu['我的最愛']}</a></li>
+            <li class=""><a href="{:url('Login/logout')}">{$lang_menu['登出']}</a></li>
+        </ul>
+    </div>
+    {/if}
+
+    <script type="text/javascript">
+        var mebermenu_active = '.'+'{$mebermenu_active}';
+        $(mebermenu_active).addClass('active');
+    </script>
+
+</div>

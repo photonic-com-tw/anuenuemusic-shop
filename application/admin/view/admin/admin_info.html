@@ -1,0 +1,292 @@
+{extend name="Public/aside" /}
+
+{block name="title"}參數設定 - LOGO管理{/block}
+
+{block name="css"}
+
+<style type="text/css">
+    .edit{
+        cursor: pointer;
+        display: inline-block;
+        padding: 5px 10px;
+        background: #d8d8d8;
+    }
+    #open,#r_close,
+    #close{
+        margin-top: 4px;
+        margin-left: 10px;
+        margin-right: 5px;
+        cursor: pointer;
+    }
+    .change-title input {
+        border: 1px solid #000000;
+    }
+    .frame{
+        padding:10px 20px;
+        border: 1.5px #9D9D9D solid;
+        margin:10px auto;
+        width:99%
+    }
+    .frame li{
+        display:inline;
+    }
+    table{
+        margin: 0px auto;
+        margin-bottom: 10px;
+        width: 99%;
+    }
+    table, table tr, table td{
+        padding: 20px;
+        border: 2px #9D9D9D solid;
+    }
+
+    input{
+        border:none;
+        border-bottom:1px solid #000000;
+    }
+    .infobox input{
+        width: calc(100% - 50px);
+        padding: 0px 5px;
+    }
+    .img-box{
+        margin:0 auto;
+    }
+    .imgbox-text{
+        position: absolute
+    }
+    .preview{
+        max-height: 100%;
+        max-width: 100%;
+        position: relative
+    }
+    .url-box1{
+        width: 70%;
+        float: right;
+        margin-top:0px;
+    }
+    .url-box2{
+        width: 40%;
+        float: left;
+        margin-left:20px;
+        text-align: left;
+    }
+    .url-box3{
+        width: 95%;
+        margin-left:20px;
+        text-align: left;
+    }
+    .url-box4{
+        width: 95%;
+        margin-left:20px;
+        margin-top: 25px;
+    }
+    .url-box4 textarea{
+        width: 100%;
+        height: 100px;
+    }
+    td p{
+        margin-top:10px
+    }
+    textarea{
+        border:2px solid #000000;
+        padding:5px;
+    }
+    td .button{
+        padding:5px 20px
+    }
+    .align_left{
+        text-align: left;
+    }
+    table td{ text-align:center }
+    @media (max-width:1919px){
+        .ad-title{ width:500px; }
+        .infobox{ width:100%; }
+        .url-box1{ float:left; width:100%; }
+    }
+    .delbutton {
+        height: 20px;
+        width: 100px;
+        display:flex;
+        margin-bottom:5px;
+    }
+</style>
+
+{/block}
+
+{block name="content"}
+
+    <form action="{:url('admin/admin_info_update')}" name="productForm" method="post" enctype="multipart/form-data">
+    <input name="id" value="1" type="hidden" >
+    <div id="content">
+
+        <p id="title">參數設定區 > LOGO管理</p>
+
+        <div class="frame">
+            <button type="submit" class="edit">儲存內容</button>
+        </div>
+
+
+        <table>
+            <tr>
+                <td class="align_left">客戶名稱：
+                    <div class="infobox">
+                        <input type='text' name="customer_name" value="{$admin_info['customer_name']}">
+                    </div>
+                </td>
+
+                <td style="display: flex; justify-content: space-around;">
+                    <div>
+                        後台logo：
+                        <div class="img-box delbutton" onclick="delImg('customer_logo')">
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </div>
+
+                        <div class="img-box" style="height: 150px; width: 100px; display:flex;">
+                            <span class="glyphicon glyphicon-edit"></span>
+                            <input type='file' class="upl" name="customer_logo" accept="image/*" onclick="ChangeImages()">
+                            <img class="preview" id="customer_logo" name="customer_logo" src="__UPLOAD__{$admin_info.customer_logo}"/>
+                        </div>
+                    </div>
+                    <div>
+                        分頁縮圖：
+                        <div class="img-box delbutton" onclick="delImg('favicon')">
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </div>
+
+                        <div class="img-box" style="height: 150px; width: 100px; display:flex;">
+                            <span class="glyphicon glyphicon-edit"></span>
+                            <input type='file' class="upl" name="favicon" accept="image/*" onclick="ChangeImages()">
+                            <img class="preview" id="favicon" name="favicon" src="__UPLOAD__{$admin_info.favicon}"/>
+                        </div>
+                        <p>建議大小：50*50px</p>
+                    </div>
+
+                    <div>
+                        成功提示訊息圖片：
+                        <div class="img-box delbutton" onclick="delImg('success_logo')">
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </div>
+
+                        <div class="img-box" style="height: 150px; width: 100px; display:flex;">
+                            <span class="glyphicon glyphicon-edit"></span>
+                            <input type='file' class="upl" name="success_logo" accept="image/*" onclick="ChangeImages()">
+                            <img class="preview" id="success_logo" name="success_logo" src="__UPLOAD__{$admin_info.success_logo}"/>
+                        </div>
+                        <p>建議大小：480*56px</p>
+                    </div>
+                    <div>
+                        失敗提示訊息圖片：
+                        <div class="img-box delbutton" onclick="delImg('error_logo')">
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </div>
+
+                        <div class="img-box" style="height: 150px; width: 100px; display:flex;">
+                            <span class="glyphicon glyphicon-edit"></span>
+                            <input type='file' class="upl" name="error_logo" accept="image/*" onclick="ChangeImages()">
+                            <img class="preview" id="error_logo" name="error_logo" src="__UPLOAD__{$admin_info.error_logo}"/>
+                        </div>
+                        <p>建議大小：480*56px</p>
+                    </div>
+                </td>
+            </tr>
+
+            {if condition="$user.account == 'photonic'"}
+            <tr>
+                <td class="align_left">系統開發：
+                    <div class="infobox">
+                        <input type='text' name="system_name" value="{$admin_info['system_name']}">
+                    </div>
+                </td>
+
+                <td>系統開發logo：
+                    <div class="img-box delbutton" onclick="delImg('system_logo')">
+                        <span class="glyphicon glyphicon-trash"></span>
+                    </div>
+
+                    <div class="img-box" style="height: 150px; width: 100px; display:flex;">
+                        <span class="glyphicon glyphicon-edit"></span>
+                        <input type='file' class="upl" name="system_logo" accept="image/*" onclick="ChangeImages()">
+                        <img class="preview" id="system_logo" name="system_logo" src="__UPLOAD__{$admin_info.system_logo}"/>
+                    </div>
+                    <!-- <p>建議大小：540*540</p> -->
+                </td>
+            </tr>
+            <tr>
+                <td class="align_left">網路行銷：
+                    <div class="infobox">
+                        <input type='text' name="marketing_name" value="{$admin_info['marketing_name']}">
+                    </div>
+                </td>
+
+                <td>網路行銷logo：
+                    <div class="img-box delbutton" onclick="delImg('marketing_logo')">
+                        <span class="glyphicon glyphicon-trash"></span>
+                    </div>
+
+                    <div class="img-box" style="height: 150px; width: 100px; display:flex;">
+                        <span class="glyphicon glyphicon-edit"></span>
+                        <input type='file' class="upl" name="marketing_logo" accept="image/*" onclick="ChangeImages()">
+                        <img class="preview" id="marketing_logo" name="marketing_logo" src="__UPLOAD__{$admin_info.marketing_logo}"/>
+                    </div>
+                    <!-- <p>建議大小：540*540</p> -->
+                </td>
+            </tr>
+            <tr>
+                <td class="align_left">網址：
+                    <div class="infobox">
+                        <input type='text' name="url" value="{$admin_info['url']}">
+                    </div>
+                </td>
+                <td class="align_left">連絡電話：
+                    <div class="infobox">
+                        <input type='text' name="tel" value="{$admin_info['tel']}">
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="align_left">信箱：
+                    <div class="infobox">
+                        <input type='text' name="email" value="{$admin_info['email']}">
+                    </div>
+                </td>
+                <td class="align_left">地址：
+                    <div class="infobox">
+                        <input type='text' name="address" value="{$admin_info['address']}">
+                    </div>
+                </td>
+            </tr>
+            {/if}
+
+        </table>
+
+    </div>
+
+    <input type='hidden' name="del_customer_logo" value="0">
+    <input type='hidden' name="del_system_logo" value="0">
+    <input type='hidden' name="del_marketing_logo" value="0">
+    <input type='hidden' name="del_favicon" value="0">
+    <input type='hidden' name="del_success_logo" value="0">
+    <input type='hidden' name="del_error_logo" value="0">
+
+    </form>
+
+{/block}
+
+{block name="ownJS"}
+
+    <script src="__PUBLIC__/js/action.js"></script>
+    <script>     
+        function delImg(id) {
+            $("#" + id).attr('src', '');
+            $("input[name='del_" + id + "']").val(1);
+        }
+
+        $("img").load(function () {
+            if($(this).attr('src') != ''){
+                $("input[name='del_" + $(this).attr('name') + "']").val(0);
+            }
+
+        });
+    </script>
+
+{/block}

@@ -1,0 +1,1309 @@
+{extend name="Public/mainTpl" /}
+
+<!--搜尋引擎SEO-->
+{block name="title"}{$productinfo.title} - {$frontend_menu[$controller]['name']}| {$seo[0]['title']}{/block}
+{block name="Keywords"}{if condition="$productinfo.keywords != ''"}{$productinfo.keywords}{else/}{$seo[0]['seokey']}{/if}{/block}
+{block name='description'}{if condition="$productinfo.content != ''"}{$productinfo.content|strip_tags}{else/}{$seo[0]['descr']}{/if}{/block}
+
+<!--社群分享SEO-->
+{block name='ogtitle'}{if condition="$social_share ==1 && $productinfo.title != ''"}{$productinfo.title}{else/}{$seo[0]['fb_title']}{/if}{/block}
+{block name='ogdescription'}{if condition="$social_share ==1 && $productinfo.content != ''"}{$productinfo.content|strip_tags}{else/}{$seo[0]['fb_descr']}{/if}{/block}
+{block name='ogurl'}{if condition="$social_share ==1"}http://{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}{else/}http://{$_SERVER['HTTP_HOST']}{/if}{/block}
+{block name='ogimage'}{if condition="$social_share ==1 && $productinfo.pic[0] != ''"}__PUBLIC__{$productinfo.pic[0]}{else/}__PUBLIC__{$seo[0]['fb_img']}{/if}{/block}
+
+{block name="css"}
+    <style>
+        /* jquery ui 調整  */
+        .price_optoin .ui-state-active, 
+        .price_optoin .ui-widget-content 
+        .price_optoin .ui-state-active, 
+        .price_optoin .ui-widget-header 
+        .price_optoin .ui-state-active, 
+        .price_optoin a.ui-button:active, 
+        .price_optoin .ui-button:active, 
+        .price_optoin .ui-button.ui-state-active:hover{
+            border: 1px solid var(--dark_orange);
+            background: var(--orange);
+        }
+        .ui-icon-background, .ui-state-active .ui-icon-background{
+            display: none;
+        }
+
+
+        .path a, .path a:hover{
+            color: white;
+        }
+    </style>
+{/block}
+
+{block name="path"}
+    <div class="top_buy title_block bg_dark_black path w-100" style="left: 0; position: fixed;">
+        <div class="anuenue_container_full">
+            <h2 class="d-flex align-items-center justify-content-between pt_xsmal pb_xsmal m-0 overflow-hidden">
+                <div class="w_mxcont d-flex align-items-center">
+                    <a href="javascript:history.back();" class="text-white"><i class="bi bi-chevron-compact-left"></i></a>
+
+                    <ul class="d-flex align-items-center">
+                        {volist name="$title_array" id="ta"}
+                            {if condition="$ta.type != 'product'"}
+                                <li class="ml-3 small d-xl-block d-none"><a href="/index/product/{$ta.type}.html?id={$ta.id}&tag={$product.id}">{$ta.title}</a> - </li>
+                            {/if}
+                        {/volist}
+                        <li>{$productinfo.title}</li>
+                    </ul>
+                </div>
+            </h2>
+        </div>
+    </div>
+    <div class="top_buy title_block bg_dark_black path w-100" style="left: 0;">
+        <div class="anuenue_container_full">
+            <h2 class="d-flex align-items-center justify-content-between pt_xsmal pb_xsmal m-0 overflow-hidden">
+                <div class="w_mxcont d-flex align-items-center">
+                    <a href="javascript:history.back();" class="text-white"><i class="bi bi-chevron-compact-left"></i></a>
+
+                    <ul class="d-flex align-items-center">
+                        {volist name="$title_array" id="ta"}
+                            {if condition="$ta.type != 'product'"}
+                                <li class="ml-3 small d-xl-block d-none"><a href="/index/product/{$ta.type}.html?id={$ta.id}&tag={$product.id}">{$ta.title}</a> - </li>
+                            {/if}
+                        {/volist}
+                        <li>{$productinfo.title}</li>
+                    </ul>
+                </div>
+            </h2>
+        </div>
+    </div>
+{/block}
+{block name="content"}
+    <!-- announcement start -->
+    {include file='Public/newsLink' /}
+    <!-- announcement end -->
+
+    {if condition="$insert_edm == 1"}
+        <div id="rwd_edm" class="rwd_edm"></div>
+    {/if}
+
+    <section class="container max-wideVersion productPublic productinfo">
+        <div id="itemBox" class="d-flex justify-content-center">
+            <div id="rightContentBox" class="innerPageBox p-0 pt_medi w-100">
+                <!-- product intro start -->
+                <div class="row productIntroBox arrow no-gutters">
+                    <!-- 輪播商品圖 -->
+                    <div class="col-xl-6 col-12 pdSpacing proImgBox p-0 pr_medi">
+                        <div id="carousel01" class="owl-carousel owl-theme proImgCarousel d-flex align-items-center">
+    						{volist name="$productinfo.pic" id="vo"}	
+    							<div class="item">
+                                    {if condition="substr( explode('.', $vo)[1], 0, 3) == 'mp4' && $upload_film == 1"/}
+    								    <div><video src="__PUBLIC__{$vo}" type="video/mp4" style="width: 100%" controls="controls"></video></div>
+                                    {else if condition="" /}
+                                        <img class="light-zoom" src="__PUBLIC__{$vo}">
+                                        <!-- <div class="bgImg-responsive-12fBy12" style="background-image: url(__PUBLIC__{$vo});"></div> -->
+                                    {/if}
+    							</div>
+                            {/volist}
+                        </div>
+                        <div id="carousel02" class="owl-carousel owl-theme proImgCarousel d-flex align-items-center">
+    						{volist name="$productinfo.pic" id="vo"}	
+    							<div class="item cursor-pointer" value="{$key}">
+
+                                    {if condition="substr( explode('.', $vo)[1], 0, 3) == 'mp4' && $upload_film == 1"/}
+                                        <video src="__PUBLIC__{$vo}" type="video/mp4" style="width: 100%" ></video>
+                                    {else if condition="" /}
+                                        <div class="bgImg-responsive-12fBy12" style="background-image: url(__PUBLIC__{$vo});"></div>
+                                    {/if}
+    							</div>
+                            {/volist}
+                        </div>
+                    </div>
+
+                    <div class="col-xl-6 col-12 pdSpacing p-0 pl_medi">
+                        <div class="proTitleBox title_block m-0">
+                            <h1 class="pt-0 pb-1_1">
+                                <span class="color_black d-block pb-1_1">{$productinfo.title}</span>
+                                <p class="subtitle color_black">{$productinfo.Author}</p>
+                                {notempty name="$kol_name"}
+                                    <span class="prod_tag kol_tag">{$kol_name}{$lang_menu['推薦']}</span>
+                                {/notempty}
+                            </h1>
+                        </div>
+                        <div class="proTitleBox p-0 m-0">
+                            <div class="row">
+                                {if condition="$productinfo.prodesc != '==未輸入==' && empty($Front_name['存放位置管理'])"}
+                                <div class="col-6">
+                                    <h4>{$lang_menu['條碼']}：{$productinfo.ISBN}</h4>
+                                </div>
+                                {/if}                            
+                                <!-- <div class="col-6">
+        						    <h4>{$property1}</h4>
+                                </div>
+        						<div class="col-6">
+        						    <h4>{$property2}{$productinfo.house}</h4>
+                                </div>
+        						<div class="col-6">
+                                    <h4>{$property3}{$productinfo.house_date}</h4>
+                                </div> -->
+
+                                {if condition="$control_register==1 AND $productinfo.is_registrable == 1"}
+                                    <div class="col-12">
+                                        {if condition="$productinfo.expire_date != -28800"}
+                                            <h4>{$lang_menu['報名截止時間']}：{$productinfo.expire_date|date="Y-m-d H:i",###}</h4>
+                                        {else /}
+                                            <h4>{$lang_menu['報名截止時間']}：{$lang_menu['無時限']}</h4>
+                                        {/if}
+                                    </div>
+                                    <div class="col-12">
+                                         {if condition="$productinfo.examinee_date != -28800"}
+                                            <h4>{$lang_menu['活動開始時間']}：{$productinfo.examinee_date|date="Y-m-d H:i",###}</h4>
+                                        {else /}
+                                            <h4>{$lang_menu['活動開始時間']}：{$lang_menu['無時限']}</h4>
+                                        {/if}
+                                    </div>
+                                {/if}
+
+                                {if condition="$productinfo.prodesc != '==未輸入==' && empty($Front_name['商品描述設定'])"}
+                                    <div class="col-12">
+                                        <h4>{$lang_menu['商品描述']}：{$productinfo.prodesc}</h4>
+                                    </div>
+                                {/if}
+                            </div>
+                        </div>
+
+                        <div class="specialZone">
+                            {if condition="$act.type_name"}                          
+                                <div class="activityBox">
+                                    <span class="activityIcon"><i class="icon-activity"></i>{$act.type_name}</span>
+                                    <span class="activity">{$act.name} <span>|</span>{$act.content}</span>
+                                </div>
+                            {/if}
+
+                            {empty name="$Front_name['標籤設定']"}
+                                <div class="labelBox">
+                                    {if condition="$hot_product_type"}
+                                        <span class="popularityIcon"><i class="icon-popularity"></i>{$hot_product}</span>
+                                    {/if}
+                                    {if condition="$recommend_product_type"}
+                                        <span class="hornIcon"><i class="icon-horn"></i>{$recommend_product}</span>
+                                    {/if}
+                                    {if condition=" $expiring_product_type"}
+                                        <span class="inventoryIcon"><i class="icon-price_tag"></i>{$expiring_product}</span>
+                                    {/if}
+                                    {if condition=" $spec_product_type"}
+                                        <span class="offerIcon"><i class="icon-offer"></i>{$spec_product}</span>
+                                    {/if}
+                                </div>
+                            {/empty}
+                        </div>
+
+                        <div class="contentBox pb_ssmal">
+                            <p>{$productinfo.content}</p>
+                        </div>
+
+                        {if condition="$control_register==1 AND $productinfo.is_registrable eq 1 AND $productinfo.expire_date lt time() and $productinfo.expire_date neq -28800"}
+
+                        {elseif condition="$productinfo.has_price neq 0"}
+                            {empty name="$Front_name['庫存警示']"}
+                                <div class="specialZone">
+                                    <div class="activityBox">
+                                        <span class="activity">
+                                            <span v-for="pricevo in price"
+                                                  :class="[pricevo.id != current_price.id ? 'd-none' : '']"
+                                                  v-text="'{$lang_menu['庫存數']}：' + pricevo.num">
+                                            </span>
+                                        </span>    
+                                    </div>
+                                </div>
+                            {/empty}
+
+                            <div class="row no-gutters bottomBox">
+                                <div class="amountBox">
+                                    <span class="priceBox" v-if="current_price.price != current_price.count">
+                                        <span>{$lang_menu['市價']}</span>
+                                        <span class="lineThrough">
+                                            {$dolar}{$dolar_mark}<span v-text="current_price.price"></span>
+                                        </span>
+                                    </span>
+                                    <span class="offerPriceBox">
+                                        <!-- <span>{$lang_menu['售價']}</span> -->
+                                        <span class="amount">
+                                            {$dolar}{$dolar_mark}<span v-text="current_price.count"></span>
+                                        </span>
+                                    </span>
+                                </div>
+                                <!-- 商品規格 -->
+                                <div class="price_optoin w-100">
+                                    <!-- <!-- 下拉選式 ->
+                                    <div class="d-flex selectBox w-100">
+                                        <span class="selectTitle">{$lang_menu['規格']}</span>
+                                        <select class="form-control" id="priceSelect" v-model="priceSelect">
+                                            <option v-for="pricevo in price" 
+                                                    :value="pricevo.id" 
+                                                    v-text="pricevo.title">
+                                            </option>
+                                        </select>
+                                    </div> -->
+                                    <div class="activityBox w-100 mb-2">
+                                        <span class="show_name def_tb_sp activity w-100 d-block color_black">
+                                            <span v-if="selectTypes.length>1" v-text="get_selectTypes_name(' ')"></span>
+                                        </span>
+                                    </div>
+                                    <div class="option_text def_tb_sp mb-2">{$lang_menu['規格']}</div>
+                                    <!-- 直接點選式 -->
+                                    <div class="activityBox w-100 d-flex flex-wrap
+                                                position-absolute invisible">
+                                        <span v-for="pricevo in price">
+                                            <label  class="price_option"
+                                                    :for="'priceOption1_' + pricevo.id" 
+                                                    :data="pricevo.title" v-text="pricevo.title" 
+                                                    :pic_index="pricevo.pic_index"
+                                                    @click="changePic(pricevo.pic_index)"></label>
+                                            <input  type="radio" name="priceOption1" class="radio" radios="price_option"
+                                                    v-model="priceSelect"
+                                                    :id="'priceOption1_' + pricevo.id" :value="pricevo.id">
+                                        </span>
+                                    </div>
+                                    <!-- 多品項組合式 -->
+                                    <div v-for="(types, index) in show_type" class="optoins activityBox d-flex flex-wrap">
+                                        <span v-for="type in types">
+                                            <label :for="'type1_' + index + '_' + type" v-if="!type.match('^#[0-9a-fA-F]{6}$')"
+                                                   v-text="type" :class="['type_' + index]" @click="changeTypes()"></label>
+                                            <label :for="'type1_' + index + '_' + type" v-if="type.match('^#[0-9a-fA-F]{6}$')"
+                                                   :class="['type_' + index]" :style="{background: type}" @click="changeTypes()"></label>
+                                            <input  type="radio" class="radio"
+                                                    :name="'type1_' + index" 
+                                                    :radios="'type_' + index" 
+                                                    v-model="selectTypes[index]"
+                                                    :id="'type1_' + index + '_' + type" :value="type">
+                                        </span>
+                                        <!-- <hr class="m-1 p-0 w-100"> -->
+                                    </div>
+                                </div>
+                                <div class="amountBox activityBox pt_smal w-100 mb-3">   
+                                    <div class="d-flex spinnerBox">
+                                        <!-- <p class="title">{$lang_menu['數量']}</p> -->
+                                        <div class="input-group spinner w-100">
+                                            <div class="input-group-prepend">
+                                                <button class="btn text-monospace" type="button" @click="changeNum(-1)">
+                                                    <i class="bi bi-dash-lg"></i>
+                                                </button>
+                                            </div>
+                                            <input type="number" class="count form-control" min="1" :max="limit_num" step="1" v-model="itemcounter">
+                                            <div class="input-group-append">
+                                                <button class="btn text-monospace" type="button" @click="changeNum(1)">
+                                                    <i class="bi bi-plus-lg"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="bankStagingBox ml-2">
+                                        {if condition="$card_pay == 1"}
+                                            {if condition="$productinfo.card_pay == 1"}
+                                                <p><span class="">{$lang_menu['可以刷卡']}</span></p>
+                                            {else /}
+                                                <p><span class="num">{$lang_menu['不可以刷卡']}</span></p>
+                                            {/if}
+                                        {/if}
+                                    </div>
+                                </div>
+
+                                {if condition="$coupon_button"}
+                                    <div class="col-12 mbSpacing couponBox">
+                                        <a id="infocartButton" {$coupon_button}>{$lang_menu['會員優惠券']}</a>
+                                    </div>
+                                {/if}
+
+                                <div class="col-12 cartBoxFixed">
+                                    <div class="row  cartRow">
+                                        <div class="col-6 addCartBox">
+                                            <span class="d-none" data-toggle="modal" data-target="#addCart" id="getdiscount"></span>
+                                            <a class="def_tb_sp cartButton3" href="javascript:void(0)" onclick='select_type("cartCtrl")'>
+                                                <!-- <i class="icon-add_car"></i> -->
+                                                {$lang_menu['加入購物車']}
+                                            </a>
+                                        </div>
+                                        <div class="col-6 shoppingCartBox">
+                                            <a class="def_tb_sp" href="javascript:void(0)" onclick='select_type("cartCtrlGO")'>
+                                                <!-- <i class="icon-money"></i> -->
+                                                {$lang_menu['直接購買']}
+                                            </a>
+
+                                            <span id="selectTypeBtn" href="" data-toggle="modal" data-target="#selectType"></span>
+                                            <span id="checkoutBtn" href="" data-toggle="modal" data-target="#shoppingCart"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="bankStagingBox mbSpacing pt_xsmal">
+                                    <!-- 人氣 -->
+                                    <span class="btn love_btn mr-2" v-if="love==0" @click="set_love(1)">
+                                        <i class="bi bi-heart"></i>
+                                        <span v-text="love_num"></span>
+                                    </span>
+                                    <span class="btn love_btn fill mr-2" v-if="love!=0" @click="set_love(0)">
+                                        <i class="bi bi-heart-fill"></i>
+                                        <span v-text="love_num"></span>
+                                    </span>
+                                    <!-- 分享 -->
+                                    <span class="btn love_btn fill mr-2" @click="copyURL(1)">
+                                        <i class="bi bi-share"></i>
+                                        <input ref="mylink" class="position-absolute" style="opacity: 0; width:10px">
+                                    </span>
+                                    <!-- 收藏 -->
+                                    <span class="btn love_btn mr-2" v-if="store==0" @click="set_store(1)">
+                                        <i class="bi bi-bookmark"></i>
+                                    </span>
+                                    <span class="btn love_btn fill mr-2" v-if="store!=0" @click="set_store(0)">
+                                        <i class="bi bi-bookmark-fill"></i>
+                                    </span>
+                                </div>
+                                <span class="mbSpacing pt_xsmal">
+                                    {$lang_menu['購買時如遇任何問題，歡迎致電與我們聯繫']}<br>
+                                    TEL:{$Service_Tel}
+                                </span>
+
+                                {empty name="$Front_name['加價購設定']"}
+                                    <div class="col-12 row mbSpacing activityBox mt-lg-0 mt-md-2">
+                                        {volist name="addprice_type_group" id="productvo" key='k' empty=""}
+                                        <div class="d-flex col-lg-12 col-md-6 col-12">
+                                            <span class="activity"><span class="num">{$lang_menu['凡購買']}</span>{$productvo['rule_info']['title']}{$lang_menu['可加價購']}：</span>
+                                            <ul class="ml-2 mb-0">
+                                                {volist name="productvo['product']" id="product" key='p_k' empty=""}
+                                                    <li>
+                                                        <span class="activity">
+                                                            {$p_k}.{$product['pi_title']}-{$product['title']}&nbsp;
+                                                            {$product['adp_p_num']}
+                                                            {$lang_menu['個']}
+                                                        </span>
+                                                    </li>
+                                                {/volist}
+                                            </ul>
+                                        </div>
+                                        {/volist}
+                                        {notempty name="addprice_type_group"}
+                                            <div class="col-12"><span class="activity" style="font-size: 1rem">({$lang_menu['請先加入商品，再進入購物車進行加購']})</span></div>
+                                        {/notempty}
+                                    </div>
+                                {/empty}
+
+                                <!-- fb start -->
+                                <!-- <div class="col-12 mbSpacing">
+                                    <div class="g_share">
+                                        <div class="fb-like" data-href="{$FB_PAGE_URL}"
+                                            data-layout="standard" data-action="like" data-size="small" data-show-faces="true" data-share="true">
+                                        </div>
+                                    </div>
+                                    <!-- <div id="fb-root"></div> ->
+                                    <script>(function (d, s, id) {
+                                            var js, fjs = d.getElementsByTagName(s)[0];
+                                            if (d.getElementById(id)) return;
+                                            js = d.createElement(s); js.id = id;
+                                            js.src = 'https://connect.facebook.net/zh_TW/sdk.js#xfbml=1&version=v2.11&appId={$FB_appID}';
+                                            fjs.parentNode.insertBefore(js, fjs);
+                                        }(document, 'script', 'facebook-jssdk'));
+                                    </script>
+                                </div> -->
+                                <!-- fb end -->
+                            </div>
+                        {/if}
+
+                        {if condition="$control_register==1 && $productinfo.is_registrable eq 1 AND $productinfo.expire_date lt time() and $productinfo.expire_date neq -28800"}
+                            <div class="row no-gutters proPreparationBox">
+                                <div class="col-12">
+                                    <div>
+                                        <p>{$lang_menu['報名已截止說明']}</p>
+                                    </div>
+                                    <div class="g_addcart">
+                                        <a class="sayButton" href="{:url('about/about_contact')}">{$lang_menu['我要詢問']}</a>
+                                    </div>
+                                </div>
+                            </div>
+                        {elseif condition="$productinfo.has_price eq 0 OR count($price) eq 0"}
+                            <div class="row no-gutters proPreparationBox">
+                                <div class="col-12">
+                                    <div>
+                                        {$lang_menu['商品籌備中說明']}
+                                    </div>
+                                    <div class="g_addcart">
+                                        <a class="sayButton" href="{:url('about/about_contact')}">{$lang_menu['我要詢問']}</a>
+                                    </div>
+                                </div>
+                            </div>
+                        {/if}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{/block}
+
+{block name="flulid_content"}
+    <!-- 頁籤說名 -->
+    <div class="tabRow pt_xlar" id="proIntroTab">
+        <div class="tabBox sub_menu">
+            <div class="w-100 anuenue_container">
+                <div class="tab d-md-flex d-none">
+                    {eq name="$productinfo.text1_online" value="1"}
+                        <a class="tablinks active" onclick="scrollToAnchor('#content_intro', -150);">
+                            <span>
+                                <span class="d-i-block">{$lang_menu['琴款介紹']}</span>
+                            </span>
+                        </a>
+                    {/eq}
+                    {eq name="$productinfo.text2_online" value="1"}
+                        <a class="tablinks " onclick="scrollToAnchor('#content_specifications', -150);">
+                            <span>
+                                <span class="d-i-block">{$lang_menu['琴款規格']}</span>
+                            </span>
+                        </a>
+                    {/eq}
+                    {eq name="$productinfo.text3_online" value="1"}
+                        <a class="tablinks " onclick="scrollToAnchor('#content_bonus', -150);">
+                            <span>
+                                <span class="d-i-block">{$lang_menu['隨琴贈送']}</span>
+                            </span>
+                        </a>
+                    {/eq}
+                    {eq name="$productinfo.text4_online" value="1"}
+                        <a class="tablinks " onclick="scrollToAnchor('#content_order', -150);">
+                            <span>
+                                <span class="d-i-block">{$lang_menu['訂購須知']}</span>
+                            </span>
+                        </a>
+                    {/eq}
+                    {eq name="$productinfo.text5_online" value="1"}
+                        <a class="tablinks " onclick="scrollToAnchor('#content_payway', -150);">
+                            <span>
+                                <span class="d-i-block">{$lang_menu['付款方式']}</span>
+                            </span>
+                        </a>
+                    {/eq}
+                    <!-- <a class="tablinks " onclick="openTabs(event, 'tab_qa')">
+                        <span>
+                            <span class="d-i-block">{$lang_menu['問與答']}</span>
+                        </span>
+                    </a> -->
+                </div>
+                <div class="tab-bottom"></div>
+            
+                <div class="container d-md-none d-flex">
+                    <select class="sub_menu_select" onchange="scrollToAnchor($(this).val(), -80);">
+                        {eq name="$productinfo.text1_online" value="1"}
+                            <option value="#content_intro">{$lang_menu['琴款介紹']}</option>
+                        {/eq}
+                        {eq name="$productinfo.text2_online" value="1"}
+                            <option value="#content_specifications">{$lang_menu['琴款規格']}</option>
+                        {/eq}
+                        {eq name="$productinfo.text3_online" value="1"}
+                            <option value="#content_bonus">{$lang_menu['隨琴贈送']}</option>
+                        {/eq}
+                        {eq name="$productinfo.text4_online" value="1"}
+                            <option value="#content_order">{$lang_menu['訂購須知']}</option>
+                        {/eq}
+                        {eq name="$productinfo.text5_online" value="1"}
+                            <option value="#content_payway">{$lang_menu['付款方式']}</option>
+                        {/eq}
+                        <!-- <option value="#tab_qa">{$lang_menu['問與答']}</option> -->
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        {eq name="$productinfo.text1_online" value="1"}
+            <div class="tabBox bg_true_black">
+                <div id="content_intro" class="title_block bg_gray">
+                    <!-- <div class="anuenue_container">
+                        <h2>{$lang_menu['琴款介紹']}</h2>
+                    </div> -->
+                </div>
+                <div class="anuenue_container">
+                    <div id="tab1" class="tabcontent">
+                        {$productinfo.text1}
+                    </div>
+                </div>
+            </div>
+        {/eq}
+
+        {eq name="$productinfo.text2_online" value="1"}
+            <div class="tabBox bg_white">
+                <div id="content_specifications" class="title_block bg_gray">
+                    <div class="anuenue_container">
+                        <h2>{$lang_menu['琴款規格']}</h2>
+                    </div>
+                </div>
+                <div class="anuenue_container">
+                    <div id="tab2" class="tabcontent">    
+                        {$productinfo.text2}
+                    </div>
+                </div>
+            </div>
+        {/eq}
+
+        {eq name="$productinfo.text3_online" value="1"}
+            <div class="tabBox bg_white">
+                <div id="content_bonus" class="title_block bg_gray">
+                    <div class="anuenue_container">
+                        <h2>{$lang_menu['隨琴贈送']}</h2>
+                    </div>
+                </div>
+                <div class="anuenue_container">
+                    <div id="tab3" class="tabcontent">
+                        {$productinfo.text3}
+                    </div>
+                </div>
+            </div>
+        {/eq}
+
+        {eq name="$productinfo.text4_online" value="1"}
+            <div class="tabBox bg_white">
+                <div id="content_order" class="title_block bg_gray">
+                    <div class="anuenue_container">
+                        <h2>{$lang_menu['訂購須知']}</h2>
+                    </div>
+                </div>
+                <div class="anuenue_container">
+                    <div id="tab4" class="tabcontent">
+                        {$productinfo.text4}
+                    </div>
+                </div>
+            </div>
+        {/eq}
+
+        {eq name="$productinfo.text5_online" value="1"}
+            <div class="tabBox bg_white">
+                <div id="content_payway" class="title_block bg_gray">
+                    <div class="anuenue_container">
+                        <h2>{$lang_menu['付款方式']}</h2>
+                    </div>
+                </div>
+                <div class="anuenue_container">
+                    <div id="tab5" class="tabcontent">
+                        {$productinfo.text5}
+                    </div>
+                </div>
+            </div>
+        {/eq}
+
+        <!-- <div class="tabBox bg_true_black">
+            <div class="anuenue_container">
+                <div id="tab_qa" class="tabcontent">
+                    <table class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th style="width:100px;" scope="col"></th>
+                                <th scope="col">{$lang_menu['留言']}</th>
+                                <th style="width: 120px;" scope="col">{$lang_menu['日期']}</th>
+                            </tr>
+                        </thead>
+                        <tbody v-for="item in prodQa">
+                            <tr>
+                                <th >{$lang_menu['問題']}</th>
+                                <td v-text="item.prod_q"></td>
+                                <td v-text="item.q_datetime"></td>
+                            </tr>
+                            <tr v-if="item.prod_a">
+                                <th>{$lang_menu['回覆']}</th>
+                                <td v-text="item.prod_a"></td>
+                                <td v-text="item.a_datetime"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="loginQa">
+                        <hr style=" height:2px;border-top:2px solid #ccc;" />
+                        <div class="text-right">
+                            {eq name="haveLogin" value="true"}
+                                <textarea class="form-control" rows="3" v-model="addProdQ"></textarea>
+                                <button type="button" class="btn btn-primary" @click="submitProdQ()">{$lang_menu['送出提問']}</button>
+                            {else}
+                                <button class="btn btn-primary" data-toggle="modal" data-target="#memberLogin">{$lang_menu['登入提問']}</button>
+                            {/eq}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+    </div>
+
+    {if condition="$pushItem neq []"}
+    <!-- 推薦商品 -->
+    <div class="recommend_area product_search popularProBranch suggestProductBox m-0 pb_xbig">
+        <div class="title_block pt_big pb_medi">
+            <h2 class="pb_smal"><span>{$lang_menu['推薦商品']}</span></h2>
+        </div>
+        
+        <div class="anuenue_container">
+            <div class="container-fluid">
+                <div class="row position-relative">
+                    <div class="color_block"></div>
+                    <div class="color_block"></div>
+                    <div id="carousel_recommend" class="owl-carousel owl-theme  d-flex align-items-center">
+                        {volist name="pushItem" id="item"}
+                            <div class="item">
+                                <!-- 一個商品 -->
+                                <div class="product col-12">
+                                    <a class="w-100 pt_big pb_xsmal d-flex flex-column align-items-center" 
+                                       href="/index/product/productinfo.html?id={$item.id}">
+                                        <div class="intro_img">
+                                            <img src="__PUBLIC__/{$item.pic}">
+                                        </div>
+                                        <h2 class="mb-3 pt_medi">{$item.title}</h2>
+                                        <div class="text-center text">
+                                            <p>{$item.Author}</p>
+                                        </div>
+                                        <div class="text-center text">
+                                            <p class="pt_xsmal">{$item.price[0]['offerPrice']}</p>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        {/volist}
+                    </div>
+                </div>
+            </div>
+
+            <!-- <div class="row mgSpacing">
+                <div class="owl-carousel owl-theme suggest-owl-carousel col-12">
+                    {volist name="pushItem" id="item"}
+                        {if condition="isset($item.id)"}
+                        <div class="item">
+                            <a href="/index/product/productinfo.html?id={$item.id}">
+                                <div class="bgImg" style="background-image: url(__PUBLIC__/{$item.pic});"></div>
+                                <h4>{$item.title}</h4>
+                            </a>
+                        </div>
+                        {/if}
+                    {/volist}
+                </div>
+            </div> -->
+        </div>
+    </div>
+    {/if}
+{/block}
+
+{block name="Modal"}
+    <div id="priceOption">
+        <!--select type Modal Start  ///////////////////////////////////////////////-->
+        <div class="modal fade" id="selectType" tabindex="-1" role="dialog" aria-labelledby="selectType" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="selectType">{$lang_menu['請選擇規格']}</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        {neq name="$productinfo.has_price" value="0"}
+                            <div id="buyBlockShow" class="productIntroBox">
+                                {empty name="$Front_name['庫存警示']"}
+                                    <div class="specialZone">
+                                        <div class="activityBox">
+                                            <span class="activity">
+                                                <span v-for="pricevo in price"
+                                                      :class="[pricevo.id != current_price.id ? 'd-none' : '']"
+                                                      v-text="'{$lang_menu['庫存數']}：' + pricevo.num">
+                                                </span>
+                                            </span>    
+                                        </div>
+                                    </div>
+                                {/empty}
+
+                                <div class="price_optoin w-100">
+                                    <!-- <!-- 下拉選式 ->
+                                    <div class="d-flex selectBox w-100">
+                                        <span class="selectTitle">{$lang_menu['規格']}</span>
+                                        <select class="form-control" id="priceSelect" v-model="priceSelect">
+                                            <option v-for="pricevo in price" 
+                                                    :value="pricevo.id" 
+                                                    v-text="pricevo.title">
+                                            </option>
+                                        </select>
+                                    </div> -->
+                                    <div class="activityBox w-100 mb-2">
+                                        <span class="show_name def_tb_sp activity w-100 d-block color_black">
+                                            <span v-if="selectTypes.length>1" v-text="get_selectTypes_name(' ')"></span>
+                                        </span>
+                                    </div>
+                                    <div class="option_text def_tb_sp mb-2">{$lang_menu['規格']}</div>
+                                    <!-- 直接點選式 -->
+                                    <div class="activityBox w-100 d-flex flex-wrap
+                                                position-absolute invisible">
+                                        <span v-for="pricevo in price">
+                                            <label  class="price_option"
+                                                    :for="'priceOption2_' + pricevo.id" 
+                                                    :data="pricevo.title" v-text="pricevo.title" 
+                                                    :pic_index="pricevo.pic_index"
+                                                    @click="changePic(pricevo.pic_index)"></label>
+                                            <input  type="radio" name="priceOption2" class="radio" radios="price_option"
+                                                    v-model="priceSelect"
+                                                    :id="'priceOption2_' + pricevo.id" :value="pricevo.id">
+                                        </span>
+                                    </div>
+                                    <!-- 多品項組合式 -->
+                                    <div v-for="(types, index) in show_type" class="optoins activityBox d-flex flex-wrap">
+                                        <span v-for="type in types">
+                                            <label :for="'type2_' + index + '_' + type" v-if="!type.match('^#[0-9a-fA-F]{6}$')"
+                                                   v-text="type" :class="['type_' + index]" @click="changeTypes()"></label>
+                                            <label :for="'type2_' + index + '_' + type" v-if="type.match('^#[0-9a-fA-F]{6}$')"
+                                                   :class="['type_' + index]" :style="{background: type}" @click="changeTypes()"></label>
+                                            <input  type="radio" class="radio"
+                                                    :name="'type2_' + index" 
+                                                    :radios="'type_' + index" 
+                                                    v-model="selectTypes[index]"
+                                                    :id="'type2_' + index + '_' + type" :value="type">
+                                        </span>
+                                        <!-- <hr class="m-1 p-0 w-100"> -->
+                                    </div>
+                                </div>                                
+                                <div class="amountBox">
+                                    <span class="priceBox" v-if="current_price.price != current_price.count">
+                                        <span>{$lang_menu['市價']}</span>
+                                        <span class="lineThrough">
+                                            {$dolar}{$dolar_mark}<span v-text="current_price.price"></span>
+                                        </span>
+                                    </span>
+                                    <span class="offerPriceBox">
+                                        <!-- <span>{$lang_menu['售價']}</span> -->
+                                        <span class="amount">
+                                            {$dolar}{$dolar_mark}<span v-text="current_price.count"></span>
+                                        </span>
+                                    </span>
+                                </div>
+                                <div class="row no-gutters bottomBox pt_smal w-100">
+                                    <div class="col-6 mbSpacing amountBox">     
+                                        <div class="d-flex spinnerBox w-100">
+                                            <!-- <p class="title">{$lang_menu['數量']}</p> -->
+                                            <div class="input-group spinner w-100">
+                                                <div class="input-group-prepend">
+                                                    <button class="btn text-monospace" type="button" @click="changeNum(-1)">
+                                                        <i class="bi bi-dash-lg"></i>
+                                                    </button>
+                                                </div>
+                                                <input type="number" class="count form-control" min="1" :max="limit_num" step="1" v-model="itemcounter">
+                                                <div class="input-group-append">
+                                                    <button class="btn text-monospace" type="button" @click="changeNum(1)">
+                                                        <i class="bi bi-plus-lg"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 bankStagingBox mbSpacing">
+                                        {if condition="$card_pay == 1"}
+                                            {if condition="$productinfo.card_pay == 1"}
+                                                <p><span class="">{$lang_menu['可以刷卡']}</span></p>
+                                            {else /}
+                                                <p><span class="num">{$lang_menu['不可以刷卡']}</span></p>
+                                            {/if}
+                                        {/if}
+                                    </div>
+                                    <div class="col-12 addCartBox mt-2">
+                                        <a href="javascript:void(0)" class="cartButton3" onclick="type_selected()">{$lang_menu['確認']}</a>
+                                    </div>
+                                </div>
+                            </div>
+                        {/neq}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--select type Modal end  ///////////////////////////////////////////////-->
+     
+        <!--add cart Modal Start  ///////////////////////////////////////////////-->
+        <div class="modal fade" id="addCart" tabindex="-1" role="dialog" aria-labelledby="ShoppingCartTitle02" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="ShoppingCartTitle02">{$lang_menu['加入購物車']}</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div>
+                            <p class="add">{$lang_menu['商品已放入購物車']}</p>
+                            <p>
+                                {$lang_menu['目前總金額']}
+                                <span class="amount">
+                                    {$dolar}{$dolar_mark}
+                                    <span id="totalAmount"></span>
+                                </span>
+                                ({$lang_menu['折扣前']})
+                            </p>
+                            <br>
+                            <a id="goCheckout" onclick='checkout()' data-dismiss="modal" aria-label="Close">{$lang_menu['前往結帳']}</a>
+                      </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--add cart Modal end  ///////////////////////////////////////////////-->
+    </div>
+{/block}
+
+{block name="ownJS"}
+    <script src="__PUBLIC__/js/owl.productIntro.js"></script>
+    <!-- <script src="__PUBLIC__/js/productIntroTabs.js"></script> -->
+    <script src="__PUBLIC__/js/productIntroSelect.js"></script>
+    <script src="__PUBLIC__/js/productIntroAddLessOperation.js"></script>
+    <script>
+        // 取得參數
+        function GetRequest() {
+            var Request = new Object();
+            var url = location.search; 
+            var theRequest = new Object();      
+            if (url.indexOf("?") != -1) {       
+                var str = url.substr(1);         
+                strs = str.split("&");       
+                for(var i = 0; i < strs.length; i++) {       
+                    theRequest[strs[i].split("=")[0]]=decodeURI(strs[i].split("=")[1]);       
+                }        
+            }       
+            return theRequest;
+        }
+
+        var add_method = '';
+        function type_selected(){
+            eval( add_method + '()')
+            $('#selectType').click()
+        }
+
+        function select_type(method){
+            // console.log(method)
+
+            if(window.innerWidth <= 991){
+                add_method = method
+                $('#selectTypeBtn').click();
+            }else{
+                eval( method+ '()')
+            }
+        }
+
+        /*加入購物車*/
+        function cartCtrl() {
+            // console.log(response)
+            var successFunction = function (response) {
+                ///////add btn animatione///////////////////////////
+                $('.counter.prodNum').html(response.message);
+                $('.counter.prodNum').html(response.message);
+                $('.counter.prodNum').addClass('pulse');
+                $('.counter').on('animationend',function(){
+                    $('.counter.prodNum').removeClass('pulse');
+                });
+                ////////////////////////////////////////////////////
+
+                $.ajax({
+                    type: "GET",
+                    async: true,   
+                    dataType: "json",
+                    url: "{:url('Product/cart')}",
+                    success: function (msg) {
+                        $('#totalAmount').html(msg)
+                        $('#getdiscount').click();
+                    }
+                });
+            }
+            ajax_cartCtrl(successFunction); /*送出請求*/
+        }
+        /*直接購物*/
+        function cartCtrlGO() {
+            var successFunction = function (response) {
+                ///////add btn animatione///////////////////////////
+                $('.counter.prodNum').html(response.message);
+                $('.counter.prodNum').html(response.message);
+                $('.counter.prodNum').addClass('pulse');
+                $('.counter').on('animationend',function(){
+                    $('.counter.prodNum').removeClass('pulse');
+                });
+                ////////////////////////////////////////////////////
+
+                if( "{$user.name}" != ''){
+                    // document.location.href="{:url('Cart/cart')}";
+                    document.location.href="{:url('Cart/add_price')}";
+                }else{
+                    $('#checkoutBtn').click();
+                    // $('#gotocart').click(); //會員登入畫面
+                }
+            }
+            ajax_cartCtrl(successFunction); /*送出請求*/
+        }
+        /*發送加入購物車請求*/
+        function ajax_cartCtrl(successFunction) {
+            if(priceOptionVM.current_price.id){
+                product_id = priceOptionVM.current_price.id.toString();
+            }else{
+                alert("{$lang_menu['請選擇規格']}");
+                return;
+            }
+            num = priceOptionVM.itemcounter.toString();
+
+            theRequest = GetRequest();
+            product_id = (theRequest.kol) ? product_id +'_kol'+theRequest.kol : product_id;
+
+            $.ajax({
+                url: "{:url('Cart/cartCtrl')}",
+                type: 'POST',
+                datatype: 'json',
+                data: {
+                    cmd: 'increase',
+                    num: num,
+                    product_id: product_id
+                },
+                error: function (xhr) {
+                    alert("{$lang_menu['發生錯誤']}");
+                    console.error(xhr);
+                },
+                success: function (response) {
+                    // console.log(response);
+                    if (response.message) {
+                        /*執行指定的成功後function*/
+                        successFunction(response);
+
+                        rightContentBoxVM.itemcounter = 1;
+                        priceOptionVM.itemcounter = 1;
+                    }else{
+                        if(response.message){
+                            alert(response.message);
+                        }else if(response.msg){
+                            alert(response.msg);
+                        }else{
+                            alert("{$lang_menu['發生錯誤']}");
+                        }
+
+                        if(response.url){
+                            location.href = response.url;
+                        }
+                        // console.error(response.message);
+                    }
+                }
+            });
+        }
+
+        //////////////////////////////////////////////////////////////////////
+        //手機版
+        function checkout() {
+            if('{$user.name}' != ''){
+                // document.location.href="{:url('Cart/cart')}";
+                document.location.href="{:url('Cart/add_price')}";
+            }else{
+                $("#goCheckout").on("click", function() {
+                    $('#addCart').one('hidden.bs.modal', function(e) {
+                        $('#checkoutBtn').click();
+                    })
+                });
+            }
+        }
+        //////////////////////////////////////////////////////////////////////
+    </script>
+
+    <!-- 插入EDM -->
+    <script type="text/javascript">
+        if('{$insert_edm}' == '1' && '{$productinfo.out_ID}' != '0'){
+            $.ajax({
+                url: "//{$EDM_URL}/api/product_cms/{$productinfo.out_ID}/view",
+                type: 'GET',
+                datatype: 'json',
+                success: function (response) {
+                    $('#rwd_edm').html(response);
+                }
+            });
+        }
+    </script>
+
+    <script type="text/javascript" src="/public/static/admin/js/vue.min.js"></script>
+    <script src="https://unpkg.com/vue-toasted@1.1.28/dist/vue-toasted.min.js"></script>
+    <script type="text/javascript">
+        Vue.use(Toasted);
+
+        productinfoVMData = {
+            /* 商品問答功能 ----------------------------*/
+            prodInfoId: "{$productinfo.id}",
+            prodQa: [],
+            addProdQ: "",
+
+            /* 品項功能 ----------------------------*/
+            price_json: '{$price|json_encode}', /*品項*/
+            priceSelect: 0,                     /*選擇的品項id*/
+            itemcounter: 1,                     /*加入購物車的數量*/
+            limit_num: 10,                      /*加入購物車數量上限*/
+            selectTypes: [],                    /*選擇的品項分段*/
+
+            /* 人氣功能 ----------------------------*/
+            love: "{$love['record']}",      /*是否有愛心*/
+            love_num: "{$love['num']}",     /*此商品被愛心的次數*/
+            /* 我的收藏功能 ----------------------------*/
+            store: "{$store['record']}",     /*是否有收藏*/
+            store_num: "{$store['num']}",    /*此商品被收藏的次數*/
+        };
+        var vue_els = ['rightContentBox', 'priceOption'];
+        for (var ie = 0; ie < vue_els.length; ie++) {
+            targetVM = vue_els[ie] + 'VM';
+            window[targetVM] = new Vue({
+                el: '#' + vue_els[ie],
+                data: productinfoVMData,
+                computed:{
+                    price: function(){
+                        return this.price_json ? JSON.parse(this.price_json) : [];
+                    },
+                    show_type: function(){
+                        show_types = [];
+                        for (var i = 0; i < this.price.length; i++) {
+                            titles = this.price[i]['title'].split('_');
+                            for (var x = 0; x < titles.length; x++) {
+                                if(!show_types[x]) show_types[x] = [];
+
+                                if(show_types[x].indexOf(titles[x])==-1){
+                                    show_types[x].push(titles[x]); 
+                                }
+                            }
+                        }
+                        return show_types;
+                    },
+                    current_price: function () {
+                        if(this.priceSelect==0){
+                            return {};
+                        }else{
+                            for (var i = 0; i < this.price.length; i++) {
+                                if(this.price[i].id == this.priceSelect){
+                                    return this.price[i];
+                                }
+                            }
+                        }
+                    },
+                },
+                methods: {
+                    /* 商品問答功能 ----------------------------*/
+                    getProdAllQa: function () {
+                        self = this;
+                        $.ajax({
+                            method : "post",
+                            url : "/index/ajax/prodAllQa",
+                            data: {prodInfoId: self.prodInfoId},
+                        }).success(function(data){
+                            self.prodQa = data.prodQa
+                            for(var i=0; i<self.prodQa.length;i++){
+                                if(self.prodQa[i]['prod_a'])
+                                    self.prodQa[i]['prod_a'] = self.prodQa[i]['prod_a'].replaceAll('\n', '<br>');
+                            }
+                            //console.log(this.prodQa )
+                        }).error(function(){
+                        })//error
+                    },
+                    submitProdQ: function () {
+                        self = this;
+                        if(!self.addProdQ){
+                            Vue.toasted.show("{$lang_menu['資訊不足']}",{duration:1500, className: ["toasted-primary", "bg-danger"]});
+                            return;
+                        }
+                        Vue.toasted.show("{$lang_menu['處理中，請稍候']}",{duration:1500});
+                        $('#block_block').show();
+                        $.ajax({
+                            method : "post",
+                            url : "/index/ajax/prodQueCreate",
+                            data: {prodInfoId:self.prodInfoId, prodQ:self.addProdQ},
+                        }).success(function(data){
+                            if(!data) return;
+                            data = JSON.parse(data);
+                            if (data.status == '200'){
+                                self.getProdAllQa();
+                                self.addProdQ = "";
+                                Vue.toasted.show("{$lang_menu['操作成功']}",{duration:1500, className: ["toasted-primary", "bg-success"]});
+                                $('#block_block').hide();
+                            }
+                        }).error(function(res){
+                            Vue.toasted.show(res.msg,{duration:1500, className: ["toasted-primary", "bg-danger"]});
+                            $('#block_block').hide();
+                        })//error
+                    },
+
+                    /* 品項功能 ----------------------------*/
+                    changeNum: function(num){
+                        if(this.itemcounter + num < 1){
+                            Vue.toasted.show("{$lang_menu['數量不可小於1']}",{duration:1500, className: ["toasted-primary", "bg-danger"]});
+                        }else if(this.itemcounter + num > this.limit_num){
+                            Vue.toasted.show("{$lang_menu['超出數量上限']}",{duration:1500, className: ["toasted-primary", "bg-danger"]});
+                        }else{
+                            this.itemcounter = this.itemcounter + num;
+                        }
+                    },
+                    changePic: function(index){
+                        item = $('#carousel02 div.item');
+                        if(index >=1 & index <= item.length){
+                            item[index-1].click();
+                            item[index-1].click();
+                        }
+                    },
+                    changeTypes: function(){
+                        self = this;
+                        setTimeout(function(){
+                            for (var i = 0; i <  self.selectTypes.length; i++) {
+                                if(!self.selectTypes[i]){ /*有空值則跳出*/
+                                    return;
+                                }
+                            }
+
+                            teyp_name = self.get_selectTypes_name();
+                            tarag_label = $('.price_option[data="' + teyp_name + '"]');
+                            if(tarag_label.length>0){
+                                tarag_label.click();
+                                pic_index = tarag_label.attr('pic_index');
+                                self.changePic(pic_index);
+                            }else{
+                                Vue.toasted.show("{$lang_menu['無此組合規格']}",{duration:1500, className: ["toasted-primary", "bg-danger"]});
+                                self.priceSelect = 0;
+                                // self.resetTypes();
+                            }
+                        }, 150);
+                    },
+                    resetTypes: function(){
+                        resetType = [];
+                        if(this.show_type){
+                            for (var i = 0; i < this.show_type.length; i++) {
+                                resetType.push(this.show_type[i][0]);
+                            }
+                            this.changeTypes();
+                        }
+                        this.selectTypes = resetType;
+                    },
+                    get_selectTypes_name: function(str='_') {
+                        return this.selectTypes.join(str);
+                    },
+
+                    /* 人氣功能 ----------------------------*/
+                    set_love: function(status) {
+                        // $('#block_block').show();
+                        self = this;
+                        $.ajax({
+                            method : "post",
+                            url : "/index/ajax/love_record",
+                            data: {
+                                prodInfoId:self.prodInfoId, 
+                                status:status
+                            },
+                        }).success(function(data){
+                            if(data.code == '1'){
+                                self.love = status;
+                                msg = status==0 ? "{$lang_menu['操作成功']}" : "{$lang_menu['操作成功']}";
+                                self.love_num = data.msg;
+                                Vue.toasted.show(msg,{duration:1500, className: ["toasted-primary", "bg-success"]});
+                                // $('#block_block').hide();
+                            }else{
+                                Vue.toasted.show(data.msg,{duration:1500, className: ["toasted-primary", "bg-danger"]});
+                            }
+                        }).error(function(res){
+                            Vue.toasted.show(res.msg,{duration:1500, className: ["toasted-primary", "bg-danger"]});
+                            // $('#block_block').hide();
+                        })//error
+                    },
+                    /* 我的收藏功能 ----------------------------*/
+                    set_store: function(status) {
+                        // $('#block_block').show();
+                        self = this;
+                        $.ajax({
+                            method : "post",
+                            url : "/index/ajax/store_record",
+                            data: {
+                                prodInfoId:self.prodInfoId, 
+                                status:status
+                            },
+                        }).success(function(data){
+                            if(data.code == '1'){
+                                self.store = status;
+                                msg = status==0 ? "{$lang_menu['操作成功']}" : "{$lang_menu['操作成功']}";
+                                self.store_num = data.msg;
+                                Vue.toasted.show(msg,{duration:1500, className: ["toasted-primary", "bg-success"]});
+                                // $('#block_block').hide();
+                            }else{
+                                Vue.toasted.show(data.msg,{duration:1500, className: ["toasted-primary", "bg-danger"]});
+                            }
+                        }).error(function(res){
+                            Vue.toasted.show(res.msg,{duration:1500, className: ["toasted-primary", "bg-danger"]});
+                            // $('#block_block').hide();
+                        })//error
+                    },
+                    
+                    /* 複製網址 */
+                    copyURL: function() {
+                      var Url = $(this.$refs.mylink);
+                      Url.val(window.location.href);
+                      Url.select();
+                      document.execCommand("copy");
+                      Vue.toasted.show("{$lang_menu['操作成功']}", {duration:1500, className: ["toasted-primary", "bg-success"]});
+                    },
+                },
+            });
+            // window[targetVM].priceSelect = window[targetVM].price ? window[targetVM].price[0]['id'] : 0;  /*初始化選擇的品項id*/
+            window[targetVM].resetTypes();  /*初始化選擇的品項分段*/
+        }
+        rightContentBoxVM.getProdAllQa(); /*載入商品問答*/
+
+        $(function() {
+            /*初始化ui radio*/
+            $(".radio").checkboxradio();
+            /*監聽radio變化時修改樣式*/
+            $(".radio").on("change", function(event){
+                targt_input = $($(this).next().context);
+                value = targt_input.val();
+                radios = targt_input.attr('radios');
+                $('.' + radios).removeClass('ui-state-active');
+                $('input.radio[value="' + value + '"]').prev().addClass('ui-state-active');
+            });
+        });
+    </script>
+    <script type="text/javascript">
+        $('#carousel_recommend').owlCarousel({
+            items: 1,
+            slideSpeed: 2000,
+            nav: false,
+            autoplay: false,
+            dots: true,
+            loop: false,
+            responsiveRefreshRate: 200,
+            responsive: {
+                0: {
+                    items: 1,
+                },
+                576: {
+                    items: 2,
+                },
+                1440: {
+                    items: 3,
+                },
+            },
+        })
+
+        $(window).on('scroll', function(e) {
+            var element =  document.querySelector('#content_intro');
+            elemRect = element.getBoundingClientRect();
+            need_fixed_h = elemRect.top + element.offsetHeight + 1200;
+            last_known_scroll_position = window.scrollY;
+            // console.log("need_fixed_h:" + need_fixed_h +  ",position:" + last_known_scroll_position)
+            if(last_known_scroll_position>=need_fixed_h){
+                $('.sub_menu').css({'position':'fixed'});
+            }else{
+                $('.sub_menu').css({'position':'static'});
+            }
+        });
+    </script>
+
+    <link rel="stylesheet" type="text/css" href="/public/static/jq-plugin/lightzoom-master/glassstyle.css">
+    <script src="/public/static/jq-plugin/lightzoom-master/lightzoom.js"></script>
+    <style>
+    #glass{
+        z-index: 999;
+        border-radius: 0px!important;
+        width: 250px;
+        height: 250px;
+        box-shadow: 0 0 0 3px rgba(255, 255, 255, 1), 0 0 7px 7px rgba(0, 0, 0, 0.25), inset 0 0 20px 0px rgba(0, 0, 0, 0.25);
+    }
+    </style>
+    <script>
+        $(document).ready(function () {
+            $('.light-zoom').lightzoom({
+                zoomPower   : 2.5,    //Default
+                glassSize   : 250,  //Default
+            });
+        });
+    </script>
+{/block}
+
+{block name="angularJs"}
+{/block}

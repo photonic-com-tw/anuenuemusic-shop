@@ -1,0 +1,347 @@
+{extend name="Public/aside" /}
+
+{block name="title"}進階SEO設定 - 後台設定{/block}
+
+{block name="css"}
+
+   <style>
+       input, #title, textarea, select{
+           width:calc(100% - 450px);
+           padding:5px;
+           font-size:15px
+       }
+       textarea{
+           height:200px;
+       }
+       input[type=file]{
+           cursor: pointer;
+       }
+       label{
+           font-size:15px;
+           padding:5px;
+           width:200px;
+           text-align: right;
+       }
+       .block{
+           width:1100px;
+           margin:20px auto;
+           margin-bottom:60px;
+           position: relative;
+       }
+       .title{
+           font-size:30px;
+           font-weight: bold;
+           text-align: center
+       }
+       .form-group{
+           position: relative;
+       }
+       .button{
+           font-size:25px;
+           padding:3px 20px;
+       }
+       .upl, .imgbox{
+           width:calc(100% - 450px);
+           height:200px;
+       }
+       .imgbox{
+           border:1px solid #ADADAD;
+           position: absolute;
+           left:200px;
+           top:0;
+           text-align: center;
+       }
+       .preview{
+           position: relative;
+           max-height: 100%;
+           max-width: 100%;
+           z-index: 2;
+
+       }
+    </style>
+
+{/block}
+
+{block name="content"}
+
+<div id="content">
+
+    <form action="{:url('seo/update_advance')}" method="post" enctype="multipart/form-data">
+
+    <input type="hidden" name="id" value="1">
+
+    <div class="block" style="margin-bottom:20px">
+
+        <p class="title">進階SEO設定</p>
+
+        <div class="form-group"><label>Google驗證：</label><input type="text" id="verification" name="verification" value="{$seo.verification}"></div>
+
+        <div class="form-group">
+
+            <label style="position:absolute;">Google分析追蹤碼：</label>
+
+            <textarea style="position:relative; left:200px; height:200px;" type="text" id="trackgoogle" name="trackgoogle">{$seo.trackgoogle}</textarea>
+
+        </div>
+
+        <div class="form-group">
+
+            <label style="position:absolute;">Google再行銷碼：</label>
+
+            <textarea style="position:relative; left:200px; height:200px;" type="text" id="marketgoogle" name="marketgoogle">{$seo.marketgoogle}</textarea>
+
+        </div>
+
+        <div class="form-group">
+
+            <label style="position:absolute;">Yahoo再行銷碼：</label>
+
+            <textarea style="position:relative; left:200px; height:200px;" type="text" id="marketyahoo" name="marketyahoo" value="">{$seo.marketyahoo}</textarea>    
+
+        </div>
+
+        <div class="form-group">
+
+            <label style="position:absolute;">隱藏描述詞：</label>
+
+            <textarea style="position:relative; left:200px; height:200px;" type="text" id="display" name="display">{$seo.display}</textarea>
+
+        </div>
+
+        <div class="form-group">
+
+            <label style="position:absolute;">Robots：</label>
+
+            <textarea style="position:relative; left:200px; height:200px;" type="text" id="robot" name="robot">{$seo.robot}</textarea>
+
+            <font style="position:absolute; color:red; top:0; right:55px; font-size:24px; font-weight:bold">
+
+                Robots 指令參考
+
+            </font>
+
+            <p class="robots" style="position:absolute; color:red; top:50px; right:0px; height:150px; overflow:hidden">
+
+                允許所有的機器人：<br>
+
+                User-agent: *<br>
+
+                Disallow:<br><br>
+
+                另一寫法<br>
+
+                User-agent: *<br>
+
+                Allow:/<br><br>
+
+                僅允許特定的機器人：<br>
+
+                （name_spider用真實名字代替）<br>
+
+                User-agent: name_spider<br>
+
+                Allow:<br><br>
+
+                攔截所有的機器人：<br>
+
+                User-agent: *<br>
+
+                Disallow: /<br><br>
+
+                禁止所有機器人造訪特定目錄：<br>
+
+                User-agent: *<br>
+
+                Disallow: /cgi-bin/<br>
+
+                Disallow: /images/<br>
+
+                Disallow: /tmp/<br>
+
+                Disallow: /private/<br><br>
+
+                僅禁止壞爬蟲造訪特定目錄<br>
+
+                （BadBot用真實的名字代替）：<br>
+
+                User-agent: BadBot<br>
+
+                Disallow: /private/<br><br>
+
+                禁止所有機器人造訪特定檔案類型[2]：<br>
+
+                User-agent: *<br>
+
+                Disallow: /*.php$<br>
+
+                Disallow: /*.js$<br>
+
+                Disallow: /*.inc$<br>
+
+                Disallow: /*.css$
+
+                <font id="up" style="position:absolute; color:red; bottom:0; right:0px; font-size:24px; font-weight:bold; cursor:pointer; display:none;">
+
+                    more <span style="font-size:18px; top:4px" class="glyphicon glyphicon-menu-up"></span>
+
+                </font>  
+
+            </p>
+
+            <font id="down" style="position:absolute; color:red; bottom:0; right:0px; font-size:24px; font-weight:bold; cursor:pointer">
+
+                more <span style="font-size:18px;" class="glyphicon glyphicon-menu-down"></span>
+
+            </font>                    
+
+        </div>
+
+        <div class="form-group">
+
+            <label>Map：</label>
+
+            <input style="display:inline-block" type="file" id="map" name="map">
+
+        </div>
+
+       
+
+        {if condition="$seo.map != ''"}
+
+            <div class="form-group">
+
+                <label>現在的Map：</label>
+
+                <a style="
+
+                    border: 1px solid #ADADAD; 
+
+                    display: inline-block;
+
+                    width: calc(100% - 450px);
+
+                    padding: 5px;" download="{$seo.map}" href="/{$seo.map}">{$seo.map}</a>
+
+            </div>
+
+        {/if}
+
+        
+
+        <!--
+
+        <div class="form-group">
+
+            <label>關鍵字雲：</label>
+
+            <select style="margin-left: -4px; margin-bottom: 15px;">
+
+                <option>請選擇</option>
+
+                <option>加購</option>
+
+                <option>不加購</option>
+
+            </select>
+
+        </div>
+
+        -->
+
+    </div>
+
+    <div class="block" style="text-align:center">
+
+        <button class="button">儲存</button>
+
+    </div>            
+
+    </form>
+
+</div>
+
+{/block}
+
+{block name="ownJS"}
+
+    <script src="__PUBLIC__/js/action.js"></script>
+
+    <script>
+
+        
+
+        function format_float(num, pos)
+
+        {
+
+            var size = Math.pow(10, pos);
+
+            return Math.round(num * size) / size;
+
+        }
+
+    
+
+        function preview(input) {
+
+    
+
+            if (input.files && input.files[0]) {
+
+                var reader = new FileReader();
+
+                
+
+                reader.onload = function (e) {
+
+                    $('.preview').attr('src', e.target.result);
+
+                }
+
+    
+
+                reader.readAsDataURL(input.files[0]);
+
+            }
+
+        }
+
+    
+
+        $("body").on("change", ".upl", function (){
+
+            preview(this);
+
+        })
+
+
+
+        $('#down').click(function(){
+
+            $('.robots').animate({height:'710px'},1000)
+
+            $('#down').fadeOut()
+
+            $('#up').fadeIn()
+
+        })
+
+        $('#up').click(function(){
+
+            $('.robots').animate({height:'150px'},1000)
+
+            $('#up').fadeOut()
+
+            $('#down').fadeIn()
+
+        })
+
+        function openList() {
+
+            $('#backstageListli').click();
+
+        }
+
+    </script>
+
+{/block}

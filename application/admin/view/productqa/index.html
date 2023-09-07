@@ -1,0 +1,244 @@
+{extend name="Public/aside" /}
+{block name="title"}商品問答{/block}
+{block name="css"}
+    <style type="text/css">
+		/* 編輯 */
+		.editItem{
+			border: 2px solid #9D9D9D;
+			background: #fff;
+			z-index: 5;
+			padding: 10px;
+			left: calc(5% + 55px);
+			font-size: 20px;
+		}
+		
+    </style>
+{/block}
+{block name="content"}
+    <div id="block" onclick="CloseAdd('.add-qa')"></div>
+
+    <!-- 新增修改問答開始 -->
+    <div class="add-qa none" id="Box">
+        <div style="padding:10px 0px;">
+            <p>問題：<br>
+                <textarea v-model="q"></textarea>
+            </p>
+            <p>回答：<br>
+                <textarea v-model="a"></textarea>
+            </p>
+        </div>
+        <a class="button" @click="ajaxSubmit">儲存</a>
+    </div>
+    <!-- 新增修改問答結束 -->
+
+    <div id="content">
+        <p id="title" onclick="javascript:location.href='index.html'" style="cursor:pointer;">
+            商品問答
+            {neq name="searchKey" value=""}
+                > 搜尋：{$searchKey}
+            {/neq}
+        </p>
+        <div style="padding:10px 30px;">
+            <form action="" name="searchForm" method="get">
+                <input type="text" name="searchKey" style="text-align:center" placeholder="搜尋文章">
+                <a class="button" onclick="searchForm.submit();">搜尋</a>
+            </form>
+        </div>
+
+        <!--新增與編輯-->
+        <div class="editItem">
+           
+                <a onclick="multiDelete();">
+                    刪除 <span style="margin-left: 15px;" class="glyphicon glyphicon-trash"></span>
+                </a>
+           
+        </div>
+
+        <!--表格 開始-->
+        <table class="table">
+            <tr>
+                <td><input ng-model="contCtrl.allSel"  ng-click="contCtrl.selAll()" type="checkbox" class="activityCheckboxAll" style=" cursor:pointer;"></td>
+                <td>客戶名稱</td>
+
+                <td style="cursor:pointer">產品</td> 
+                <td>問題</td>
+                <td></td>
+                <td onclick="multiDelete();">刪除</td>
+            </tr>
+            {volist name="qa" id="vo" empty="沒有數據"}
+            <tr id="qa_{$vo.prod_qa_id}">
+                <td><input 	type="checkbox" class="qaCheckbox" alt="{$vo.prod_qa_id}" 
+                			ng-model="contCtrl.model.checkbox[{$vo.prod_qa_id}]"
+                			ng-init ="contCtrl.model.checkbox[{$vo.prod_qa_id}]=false"></td>
+                <td>{$vo.name}</td>
+
+                <td>{$vo.title}</td>
+
+                <td>{$vo.prod_q}</td>
+                <td>
+                	<button type="button" class="btn btn-info" 
+                		ng-click="contCtrl.openModal('{$vo.prod_qa_id}','{$vo.title}','{$vo.prod_q}','{$vo.prod_a}',{$vo.uid})">回覆
+                	</button>
+               	</td>
+                <td><span class="glyphicon glyphicon-trash" onclick="location.href = '{:url('productqa/delete')}?id={$vo.prod_qa_id}'"></span></td>
+            </tr>
+            {/volist}
+        </table>
+        <div class="row text-center">
+            {$qa->render()}
+        </div>
+    </div>
+
+	<!-- Modal -->
+	<div class="modal fade" id="myModal" role="dialog">
+		<div class="modal-dialog">
+
+			<!-- Modal content-->
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title"><% contCtrl.modal.prodQaId %><% contCtrl.modal.title %></h4>
+				</div>
+				<div class="modal-body">
+					<p>問題</p>
+					<p><% contCtrl.modal.q %></p>
+					<p>回覆</p>
+					<p><textarea ng-model="contCtrl.modal.a"></textarea></p>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-warning"  ng-click="contCtrl.closeModal()">關閉</button>
+					<button type="button" class="btn btn-danger"  ng-click="contCtrl.qaUpdate()">更新</button>
+				</div>
+			</div>
+
+		</div>
+	</div>
+
+{/block}
+{block name="ownJS"}
+    <script src="__PUBLIC__/js/action.js"></script>
+
+    <script>  
+        $(function() {
+            $(document).click(function() {
+                $('.edit-item').fadeOut();
+            })
+            $('.edit').click(function(event) {
+                event.stopPropagation();
+            })
+        });
+
+
+        function getMultiId() {
+            var multiIdArray = [];
+            $('.qaCheckbox').each(function () {
+                if($(this).prop("checked")){
+                    multiIdArray.push($(this).attr('alt'));
+                    $(this).prop("checked", false);
+                }
+            });
+            return multiIdArray;
+        }
+
+		function multiDelete() {
+			var form = document.createElement("form");
+			form.action = "{:url('productqa/multiDelete')}";
+			form.method = "post";
+
+			multiId 		= document.createElement("input");
+			multiId.value 	= JSON.stringify(getMultiId());
+			multiId.name 	= "id";
+
+			// $('.activityCheckboxAll').each(function () {
+			// 	if($(this).prop("checked")){
+			// 		$(this).prop("checked", false);
+			// 	}
+			// });
+
+
+			form.appendChild(multiId);
+			document.body.appendChild(form);
+			form.submit();
+		}
+       
+    ///////////////
+    //   Angular
+    ///////////////
+    var app = angular.module('app',[]);
+
+	app.config(function($interpolateProvider){
+		$interpolateProvider.startSymbol('<%');
+		$interpolateProvider.endSymbol('%>');
+	});
+
+	app.controller('ContentController',['$http',function($http){
+
+		var self = this; //self.ngtest = "angular test";alert(self.ngtest);
+
+		self.model 	= {};
+		self.modal 	= {};
+		self.allSel = false;
+
+		for (var prop in self.model.checkbox) {
+				// document.write("name: " + prop + "; value: " + my_object[prop], "<br>");
+				self.model.checkbox[prop] = true;
+				console.log(self.model.checkbox[prop]);
+			}
+
+
+		self.openModal = function(id,title,q,a,uid){
+			self.modal.prodQaId = id;
+			self.modal.title 	= title;
+			self.modal.q 		= q;
+			self.modal.a 		= a;
+			self.modal.uid 		= uid
+        	$("#myModal").modal({backdrop: "static"});
+        }
+
+        self.closeModal = function(){
+        	$("#myModal").modal("hide");
+        }
+
+		self.qaUpdate = function(){
+			// $("#myModal").modal("hide");
+			$http({
+				method : "post",
+				url : "/admin/productqa/update",
+				data: {
+					prod_qa_id :self.modal.prodQaId,
+					prod_q 	:self.modal.q,
+					prod_a 	:self.modal.a,
+					uid		:self.modal.uid
+				},
+			}).success(function(data){
+				$("#myModal").modal("hide");
+				window.location.reload();
+			}).error(function(){
+
+			})//error
+		}//self.login
+
+		self.selAll = function(){
+			for (var prop in self.model.checkbox) {
+				self.model.checkbox[prop] = self.allSel;
+			}
+		}
+
+
+		// self.login = function(){
+		// 	$http({
+		// 		method : "post",
+		// 		url : "/webapi/getOrder",
+		// 		//data: orderPost,
+		// 	}).success(function(data){
+
+		// 	}).error(function(){
+
+		// 	})//error
+		// }//self.login
+
+	}])//app.controller()
+
+        
+    </script>
+{/block}

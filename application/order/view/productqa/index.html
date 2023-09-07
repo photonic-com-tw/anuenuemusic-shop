@@ -1,0 +1,212 @@
+{extend name="Public/aside" /}
+{block name="title"}商品問答{/block}
+{block name="css"}
+    <style type="text/css">
+		/* 編輯 */
+		.editItem{
+			border: 2px solid #9D9D9D;
+			background: #fff;
+			z-index: 5;
+			padding: 10px;
+			left: calc(5% + 55px);
+			font-size: 20px;
+		}
+		
+    </style>
+{/block}
+{block name="content"}
+   	<div class="content">
+        <p class="title" onclick="javascript:location.href='{:url('Productqa/index')}'" style="cursor:pointer;">
+            商品問答
+            {neq name="searchKey" value=""}
+                > 搜尋：{$searchKey}
+            {/neq}
+        </p>
+        <div style="padding:10px 30px;">
+            <form action="" name="searchForm" method="get">
+                <input type="text" name="searchKey" style="text-align:center" placeholder="搜尋客戶名稱">
+                <a class="button" onclick="searchForm.submit();">搜尋</a>
+            </form>
+        </div>
+
+        <!--新增與編輯-->
+        <div class="editItem">
+           
+                <a onclick="multiDelete();">
+                    刪除 <span style="margin-left: 15px;" class="glyphicon glyphicon-trash"></span>
+                </a>
+           
+        </div>
+
+        <!--表格 開始-->
+        <table class="table">
+            <tr>
+                <td><input type="checkbox" class="activityCheckboxAll" style="cursor:pointer;"
+                		   v-model="allSel" :true-value="true" :false-value="false" @click="selAll()"></td>
+                <td>客戶名稱 </td>
+                <!-- <td style="cursor:pointer">產品</td>  -->
+                <td style="cursor:pointer">產品網址</td> 
+                <td>問題</td>
+                 <td>發問時間</td>
+                <td></td>
+                <td onclick="multiDelete();">刪除</td>
+            </tr>
+
+            <tr v-for="vo in model" :id="'qa_' + vo.prod_qa_id">
+                <td><input 	type="checkbox" class="qaCheckbox" :alt="vo.prod_qa_id" 
+                			v-model="vo.checkbox" :true-value="true" :false-value="false"></td>
+                <td v-text="vo.name"></td>
+
+                <td><a :href="vo.prod_addr" target="_blank" v-text="vo.prod_addr"></a></td>
+               
+                <td>
+                	<span v-text="vo.prod_q"></span>
+                	<span v-if="vo.new" style="color: red">new!</span>
+                </td>
+                <td v-text="vo.q_datetime"></td>
+                <td>
+                	<button type="button" class="btn btn-primary" 
+                		@click="openModal(vo.prod_qa_id, vo.prod_q, vo.prod_a, vo.uid)">回覆
+                	</button>
+               	</td>
+                <td><span class="glyphicon glyphicon-trash" @click="delete_one(vo.prod_qa_id)"></span></td>
+            </tr>
+        </table>
+        <div class="row text-center">
+            {$qa->render()}
+        </div>
+    </div>
+
+	<!-- Modal -->
+	<div class="modal fade" id="myModal" role="dialog">
+		<div class="modal-dialog">
+
+			<!-- Modal content-->
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title" v-text="modal.prodQaId + modal.title"></h4>
+				</div>
+				<div class="modal-body">
+					<p>問題</p>
+					<p v-text="modal.q"></p>
+					<p>回覆</p>
+					<p><textarea v-model="modal.a" class="form-control"></textarea></p>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-warning"  @click="closeModal()">關閉</button>
+					<button type="button" class="btn btn-danger"  @click="qaUpdate()">更新</button>
+				</div>
+			</div>
+
+		</div>
+	</div>
+{/block}
+{block name="ownJS"}
+    <script src="__PUBLIC__/js/action.js"></script>
+
+    <script>  
+        $(function() {
+            $(document).click(function() {
+                $('.edit-item').fadeOut();
+            })
+            $('.edit').click(function(event) {
+                event.stopPropagation();
+            })
+        });
+
+
+        function getMultiId() {
+            var multiIdArray = [];
+            $('.qaCheckbox').each(function () {
+                if($(this).prop("checked")){
+                    multiIdArray.push($(this).attr('alt'));
+                    $(this).prop("checked", false);
+                }
+            });
+            return multiIdArray;
+        }
+
+		function multiDelete() {
+			var form = document.createElement("form");
+			form.action = "{:url('Productqa/multiDelete')}";
+			form.method = "post";
+
+			multiId 		= document.createElement("input");
+			multiId.value 	= JSON.stringify(getMultiId());
+			multiId.name 	= "id";
+
+			// $('.activityCheckboxAll').each(function () {
+			// 	if($(this).prop("checked")){
+			// 		$(this).prop("checked", false);
+			// 	}
+			// });
+
+
+			form.appendChild(multiId);
+			document.body.appendChild(form);
+			form.submit();
+		}
+       
+	    ///////////////
+	    //   Vue
+	    ///////////////
+	    var qa_json = '{$qa->items()|json_encode}';
+	    qa_json = JSON.parse(qa_json);
+	    for (var prop in qa_json) {
+			qa_json[prop].checkbox = false;
+		}
+
+	    var content_area_data = {
+	    	model: qa_json,
+	    	modal: {prodQaId:"", title:"", q:"", a:""},
+	    	allSel: false,
+	    };
+	    var content_areaVM = new Vue({
+	    	el: '#content_area',
+	    	data: content_area_data,
+	    	methods: {
+	    		openModal: function(id,q,a,uid){
+					this.modal.prodQaId = id;
+					// this.modal.title 	= title;
+					this.modal.q 		= q;
+					this.modal.a 		= a;
+					this.modal.uid 		= uid
+		        	$("#myModal").modal({backdrop: "static"});
+		        },
+		        closeModal: function(){
+		        	$("#myModal").modal("hide");
+		        },
+		        qaUpdate: function(){
+		        	self = this;
+					// $("#myModal").modal("hide");
+					$.ajax({
+						type: "post",
+						url: "{:url('Productqa/update')}",
+						data: {
+							prod_qa_id :self.modal.prodQaId,
+							prod_q 	:self.modal.q,
+							prod_a 	:self.modal.a,
+							uid		:self.modal.uid
+						},
+						success: function(data){
+							$("#myModal").modal("hide");
+							window.location.reload();
+						}
+					});
+				},
+				selAll: function(){
+					self = this;
+					setTimeout(function(){
+						for (var prop in self.model) {
+							self.model[prop].checkbox = self.allSel;
+						}
+					}, 50);
+				},
+				delete_one: function(prod_qa_id){
+					location.href = "{:url('Productqa/delete')}?id=" + prod_qa_id;
+				},
+	    	},
+	    });
+    </script>
+{/block}

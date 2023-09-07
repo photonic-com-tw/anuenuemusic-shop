@@ -1,0 +1,23 @@
+{
+  "name": "傳訊光測試購物車",
+  "short_name": "傳訊光",
+  "description": "測試購物車~~~",
+  "theme_color": "#ff0000",
+  "background_color": "#ffffff",
+  "display": "standalone",
+  "orientation": "portrait",
+  "scope": "/",
+  "start_url": "/index.html",
+  "icons": [
+      {
+        "src": "/public/static/manifest/favicon.ico.png",
+        "type": "image/png",
+        "sizes": "37x37"
+      },
+      {
+        "src": "/public/static/manifest/favicon.ico-144.png",
+        "type": "image/png",
+        "sizes": "144x144"
+      }
+  ]
+}

@@ -1,0 +1,2545 @@
+{extend name="Public/aside" /}
+
+{block name="title"}後台{/block}
+
+{block name="cssChange"}
+
+    <link rel="stylesheet" href="__PUBLIC__/css/style_old.css">
+    <link rel="stylesheet" href="__PUBLIC__/css/style.css">
+
+{/block}
+
+{block name="css"}
+
+    <style>
+        .preImg{
+            max-width:100%; max-height:100%;
+        }
+        #twelfthADVVM div{
+            display: inline-block;
+            width: 100%;
+            text-align: left;
+        }
+        #change-text-box textarea {
+            margin: 0px;
+        }
+    </style>
+
+{/block}
+
+{block name="content"}
+
+    <div id="mask">
+        <div id="block" v-if="visibility" @click="setHidden"></div>
+    </div>
+
+    <iframe id="changeImageFormIframe" name="changeImageFormIframe" style="display: none;"></iframe>
+    <iframe id="changeGroupFormIframe" name="changeGroupFormIframe" style="display: none;"></iframe>
+    <iframe id="changeImgtextFormIframe" name="changeImgtextFormIframe" style="display: none;"></iframe>
+    <center>
+        <h4 style="color: red">* 請注意圖片過大時會無法自動切割</h4>
+    </center>
+
+    <!-- 更換一張圖片 -->
+    <div id="changeImageBox">
+        <div id="change-image-box" v-if="visibility">
+            <span class="glyphicon glyphicon-remove-sign" @click="setHidden"></span>
+            <form name="changeImageBoxForm" :action="action" method="post" target="changeImageFormIframe" enctype="multipart/form-data">
+                <div class="image-box">
+                    <input type='file' ref="img" class="upl" name="image" accept="image/*" @change="previewImg">
+                    <img style="max-width:100%; max-height:100%;" class="preview" :src="src"/>
+                </div>
+                <input type="hidden" :value="width" name="width">
+                <input type="hidden" :value="height" name="height">
+                <input type="hidden" :value="id" name="id">
+                <p>建議大小：{{width}}*{{height}}</p>
+                <div class="infobox" style="bottom: 10%; left: 15%;">
+                    <label>URL：</label><input name="link" v-model="link" type="text">
+                </div>
+            </form>
+            <button class="send-btn" @click="formSubmit">儲存</button>
+        </div>
+    </div>
+
+
+
+    <!-- 更換五張圖片 -->
+    <div id="changeGroupBox">
+        <form name="changeGroupBoxForm" :action="action" method="post" target="changeGroupFormIframe" enctype="multipart/form-data">
+        <div id="change-group-box" v-if="visibility"> 
+            <span class="glyphicon glyphicon-remove-sign" @click="setHidden"></span>
+            <div class="image-box">
+                <input type='file' ref="img1" class="upl1" name="image1" v-show="src == src1" accept="image/*" @change="previewImg(1)">
+                <input type='file' ref="img2" class="upl1" name="image2" v-show="src == src2" accept="image/*" @change="previewImg(2)">
+                <input type='file' ref="img3" class="upl1" name="image3" v-show="src == src3" accept="image/*" @change="previewImg(3)">
+                <input type='file' ref="img4" class="upl1" name="image4" v-show="src == src4" accept="image/*" @change="previewImg(4)">
+                <input type='file' ref="img5" class="upl1" name="image5" v-show="src == src5" accept="image/*" @change="previewImg(5)">
+                <img :src="src" class="preview preImg"/>
+            </div>
+            <div class="sm-group-box">
+                <div class="sm-image-box" @mouseenter="switchSrc(1)">
+                    <img :src="src1" class="preview"/>
+                </div>
+                <div class="sm-image-box" @mouseenter="switchSrc(2)">
+                    <img :src="src2" class="preview"/>
+                </div>
+                <div class="sm-image-box" @mouseenter="switchSrc(3)">
+                    <img :src="src3" class="preview"/>
+                </div>
+
+                <div class="sm-image-box" @mouseenter="switchSrc(4)">
+
+                    <img :src="src4" class="preview"/>
+                </div>
+                <div class="sm-image-box" @mouseenter="switchSrc(5)">
+                    <img :src="src5" class="preview"/>
+                </div>
+            </div>
+            <p>建議大小：1920*470</p>
+            <div v-show="src == src1">
+                <div class="infobox" style="bottom: 63px; left: 15%; border-bottom:none">
+                    <label>名稱：</label><input name="title1" v-model="title1" type="text">
+                </div>
+                <div class="infobox" style="bottom: 25px; left: 15%;">
+                    <label>URL：</label><input name="link1" v-model="link1" type="text">
+                </div>
+            </div>
+            <div v-show="src == src2">
+                <div class="infobox" style="bottom: 63px; left: 15%; border-bottom:none">
+                    <label>名稱：</label><input name="title2" v-model="title2" type="text">
+                </div>
+                <div class="infobox" style="bottom: 25px; left: 15%;">
+                    <label>URL：</label><input name="link2" v-model="link2" type="text">
+                </div>
+            </div>
+            <div v-show="src == src3">
+                <div class="infobox" style="bottom: 63px; left: 15%; border-bottom:none">
+                    <label>名稱：</label><input name="title3" v-model="title3" type="text">
+                </div>
+                <div class="infobox" style="bottom: 25px; left: 15%;">
+
+                    <label>URL：</label><input name="link3" v-model="link3" type="text">
+                </div>
+            </div>
+            <div v-show="src == src4">
+                <div class="infobox" style="bottom: 63px; left: 15%; border-bottom:none">
+                    <label>名稱：</label><input name="title4" v-model="title4" type="text">
+                </div>
+                <div class="infobox" style="bottom: 25px; left: 15%;">
+                    <label>URL：</label><input name="link4" v-model="link4" type="text">
+                </div>
+            </div>
+            <div v-show="src == src5">
+                <div class="infobox" style="bottom: 63px; left: 15%; border-bottom:none">
+                    <label>名稱：</label><input name="title5" v-model="title5" type="text">
+                </div>
+                <div class="infobox" style="bottom: 25px; left: 15%;">
+                    <label>URL：</label><input name="link5" v-model="link5" type="text">
+                </div>
+            </div>
+            <button class="send-btn" @click="formSubmit">儲存</button>
+        </div>
+        </form>
+    </div>
+
+    <!-- 更換資訊 -->
+    <div id="changeInfoBox">
+        <div id="change-info-box" v-if="visibility"> 
+            <span class="glyphicon glyphicon-remove-sign" @click="setHidden"></span>
+            <form>
+                <div class="infobox"><label>LINE：</label><input type="text" v-model="line"></div>
+                <div class="infobox"><label>FB：</label><input type="text" v-model="fb"></div>
+                <div class="infobox"><label>E-mail：</label><input type="text" v-model="email"></div>
+                <div class="infobox"><label>Phone：</label><input type="text" v-model="phone"></div>
+            </form>            
+            <button class="send-btn" @click="ajaxSubmit">儲存</button>
+        </div>
+    </div>
+
+    <!-- 限時採購 -->
+    <div id="changeLimitBox">
+        <div id="change-limit-box" v-if="visibility"> 
+            <span class="glyphicon glyphicon-remove-sign" @click="setHidden"></span>
+            <p style="font-size:16px; font-weight:bold">廣告時程表</p>
+            <div style="position:relative; width:100%; height:100px;">
+                <label>開始日期</label>
+                <input style="background: #E0E0E0; border: 1px #000000 solid;" type="date" v-model="start"><br>
+                <button @click="noTimeLimit">沒有結束日期</button>
+                <button @click="hasTimeLimit">設定結束日期 ( 設為今天 ) </button><br>
+                <label>結束日期</label>
+                <input style="background: #E0E0E0; border: 1px #000000 solid;" type="date" v-model="end">
+                <button class="send-btn" @click="timeAjaxSubmit">儲存</button>
+            </div>
+            <hr style="border-top:1px solid #000000">
+            <form style="margin:0">
+                <div style="float:left">
+                    <label>1. 品號：</label><input type="text" v-model="product_id1"><br>
+                    <label>2. 品號：</label><input type="text" v-model="product_id2"><br>
+                    <label>3. 品號：</label><input type="text" v-model="product_id3"><br>
+                    <label>4. 品號：</label><input type="text" v-model="product_id4"><br>
+                    <label>5. 品號：</label><input type="text" v-model="product_id5"><br>
+                </div>
+                <div style="float:right">
+                    <label>6. 品號：</label><input type="text" v-model="product_id6"><br>
+                    <label>7. 品號：</label><input type="text" v-model="product_id7"><br>
+                    <label>8. 品號：</label><input type="text" v-model="product_id8"><br>
+                    <label>9. 品號：</label><input type="text" v-model="product_id9"><br>
+                    <label>10. 品號：</label><input type="text" v-model="product_id10">  
+                </div> 
+            </form>
+            <button class="send-btn" @click="productAjaxSubmit">儲存</button>
+        </div>
+    </div>
+
+
+    <!-- 其他商品 人氣+店長+即期 -->
+    <div id="changeProductBox">
+        <div v-if="visibility" id="change-product-box"> 
+            <span class="glyphicon glyphicon-remove-sign" @click="setHidden"></span>
+            <form style="margin:0">
+            <h4 style="color: red">* 若無商品請填入0</h4>
+                <div style="float:left">
+                    <label>1. 品號</label><input type="text" v-model="product_id1"><br>
+                    <label>2. 品號：</label><input type="text" v-model="product_id2"><br>
+                    <label>3. 品號：</label><input type="text" v-model="product_id3"><br>
+                    <label>4. 品號：</label><input type="text" v-model="product_id4"><br>
+                    <label>5. 品號：</label><input type="text" v-model="product_id5"><br>
+                </div>
+                <div style="float:right">
+                    <label>6. 品號：</label><input type="text" v-model="product_id6"><br>
+                    <label>7. 品號：</label><input type="text" v-model="product_id7"><br>
+                    <label>8. 品號：</label><input type="text" v-model="product_id8"><br>
+                    <label>9. 品號：</label><input type="text" v-model="product_id9"><br>
+                    <label>10. 品號：</label><input type="text" v-model="product_id10">  
+                </div> 
+            </form>
+            <button class="send-btn" @click="ajaxSubmit">儲存</button>
+        </div>
+    </div> 
+
+
+
+    <!-- 推薦圖文 -->
+    <div id="changeImgtextBox">        
+    <div id="change-imgtext-box" v-if="visibility"> 
+        <form name="changeImgtextForm" :action="action" method="post" target="changeImgtextFormIframe" enctype="multipart/form-data">            
+        <span class="glyphicon glyphicon-remove-sign" @click="setHidden"></span>
+        <div class="image-box">
+            <input type='file' ref="img" class="upl" name="image" @change="previewImg" accept="image/*">
+            <img :src="src" class="preview preImg" />
+        </div>
+        <p>建議大小：600*340</p>
+        <div style="position:relative; left:15%; margin-bottom:5%">
+            <label>URL：</label>
+            <input v-model="link" name="link" style="border:none; border-bottom:1px solid #000000; width:60%;" type="text">
+        </div>
+        <input v-model="location" name="location" type="hidden">
+
+        
+        <div style="position:relative; left:15%; width:70%">
+            <table style="width:100%;">
+                <tr>
+                    <td><input style="width:100%; border:2px solid #000000;"
+                                type="text" name="title" v-model="title"></td>
+                </tr>
+                <tr>
+                    <td><textarea style="width:100%; height:170px; border:2px solid #000000; border-top:none; resize: none;"
+                                    type="text" v-model="content"></textarea></td>    
+                    <input name="content" type="hidden" v-model="contentNl2br">
+                </tr>
+            </table>
+        </div>
+        <button class="send-btn" @click="formSubmit">儲存</button>
+    </div>
+    </div>
+
+
+
+    <!-- 文字編輯器 -->
+    <div id="changeTextBox">
+        <div v-show="visibility" id="change-text-box"> 
+            <span class="glyphicon glyphicon-remove-sign" @click="setHidden"></span>
+            <input type="hidden" v-model="content">
+            <input type="hidden" id="editor">
+            <button class="send-btn" @click="ajaxSubmit">儲存</button>
+        </div>
+    </div>
+
+
+    <div class="content">
+        <table class="indexview">
+            <tr>
+                <!-- LOGO -->
+                <td>LOGO</td>
+                <td></td>
+                <td>
+                    <a id="firstRowLeft">
+                        <div class="change-img" @click="openBox" style="width:250px; height:60px; cursor:pointer;">
+                            <img :src="src" class="preImg" alt="600*120"/>
+                            <span class="glyphicon glyphicon-edit"></span>
+                        </div>
+                    </a>
+					
+                    <a id="firstRowRight">
+                        <!-- <div class="change-img" @click="openBox" style="width:80px; height:40px; cursor:pointer;">
+                            <img :src="src" class="preImg" alt="240*140"/>
+                            <span class="glyphicon glyphicon-edit"></span>
+                        </div> -->
+                    </a>
+					
+                </td>
+
+                <!-- 聯絡方式  -->
+                <td rowspan="14" id="fixADV">
+                    <div class="change-info" @click="openBox" style="border:none; position:fixed; cursor:pointer; top: 25%;">
+                        <ul class="iconbox">
+                            <li><img src="__PUBLIC__/image/icon_boxline.png"></li>
+                            <li><img src="__PUBLIC__/image/icon_boxfb.png"></li>
+                            <li><img src="__PUBLIC__/image/icon_boxmail.png"></li>
+                            <li><img src="__PUBLIC__/image/icon_boxcall.png"></li>
+                            <span class="glyphicon glyphicon-edit"></span>
+                        </ul>
+                    </div>
+                </td>
+
+                <!-- 側邊廣告  -->
+                <td rowspan="14">
+                    <a id="RightADV">
+                        <label class="switch" style="position: fixed; top: 25%;z-index:2;">
+                            <input type="checkbox" v-model="online" @change="onlineToggle">
+                            <span class="slider round"></span>
+                        </label>
+                        <div class="change-img" @click="openBox" style="width:70px; height:400px; position:fixed; top:25%; display:grid; cursor:pointer;">
+                            <img :src="src" class="preImg" alt="150*800"/>
+                            <span class="glyphicon glyphicon-edit"></span>
+                        </div>
+                    </a>
+                </td>
+            </tr>
+
+            <!-- 輪播圖片 -->
+            <tr id="slideShow">
+                <td>輪播圖片</td>
+                <td>
+                    <div style="position: absolute;
+                                top: 5; left: -5;
+                                padding: 0;
+                                border: none;top: 15px;left: -3px;">
+                            <label class="switch">
+                                <input type="checkbox" v-model="online" @change="onlineToggle">
+                                <span class="slider round"></span>
+                            </label>
+                    </div>
+                </td>
+
+                <td>
+                    <div v-if="online" style="border:none;padding:0; margin:0; display:unset">
+                        <div class="change-img-group" @click="openBox" style="width:500px; height:200px; display:flex; margin-bottom:0px; cursor:pointer">
+                            <img :src="src" class="preImg" alt="1260*350"/>
+                            <span class="glyphicon glyphicon-edit"></span>
+                        </div>
+                        <div @mouseenter="switchSrc(1)" style="width:97px; height:30px; margin:0px; margin-left:10px; margin-bottom:10px"><img :src="src1" class="preImg"/></div>
+                        <div @mouseenter="switchSrc(2)" style="width:97px; height:30px; margin:0px; margin-bottom:10px"><img :src="src2" class="preImg"/></div>
+                        <div @mouseenter="switchSrc(3)" style="width:97px; height:30px; margin:0px; margin-bottom:10px"><img :src="src3" class="preImg"/></div>
+                        <div @mouseenter="switchSrc(4)" style="width:97px; height:30px; margin:0px; margin-bottom:10px"><img :src="src4" class="preImg"/></div>
+                        <div @mouseenter="switchSrc(5)" style="width:97px; height:30px; margin:0px; margin-bottom:10px"><img :src="src5" class="preImg"/></div>
+                    </div>
+                    <p v-else style="margin:10px">輪播圖片待開啟</p>
+                </td>
+            </tr>
+
+            {if condition="$index_edm == 1"}
+                <!-- EDM -->
+                <tr id="edm">
+
+                    <td>EDM</td>
+                    <td>
+                        <div style="position: absolute;left: -5;padding: 0; border: none;top: 0px;left: -3px;">
+                                <label class="switch">
+                                    <input type="checkbox" v-model="online" @change="onlineToggle">
+                                    <span class="slider round"></span>
+                                </label>
+                        </div>
+                    </td>
+                    <td>
+                        <div v-if="online" style="width: 500px; height: 25px; border:0px; display: block;">
+                            EDM ID：<input type="number"  v-model="edm_id" placeholder="請輸入EDM ID" @blur="saveId">
+                        </div>
+                        <p v-else style="margin:10px">EDM待開啟</p>
+                    </td>
+                </tr>
+            {/if}
+
+            <!-- 抬頭廣告 -->
+            <tr id="titleADV">
+                <td>抬頭廣告</td>
+                <td>
+                    <div style="position: absolute;
+                                top: 5; left: -5;
+                                padding: 0;
+                                border: none;top: 15px;left: -3px;">
+                        <label class="switch">
+                            <input type="checkbox" v-model="online" @change="onlineToggle">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </td>
+
+                <td>
+                    <div v-if="online" @click="openBox" style="border:none; padding:0; margin:0" name="1">
+                        <div class="change-img" style="width:500px; height:50px; cursor:pointer">
+                            <img :src="src" class="preImg" alt="1410*282"/>
+                            <span class="glyphicon glyphicon-edit"></span>
+                        </div>
+                    </div>
+                    <p v-else style="margin:10px">抬頭廣告待開啟</p>
+                </td>
+            </tr>
+
+            <!-- 三幅廣告-1 -->
+            <tr>
+                <td>三幅廣告-1</td>
+                <td id="threeADVCtrl">
+                    <div style="position: absolute;
+                                top: 5; left: -5;
+                                padding: 0;
+                                border: none;top: 15px;left: -3px;">
+                            <label class="switch">
+                                <input type="checkbox" v-model="online" @change="onlineToggle">
+                                <span class="slider round"></span>
+                            </label>
+                    </div>
+                </td>
+                <td>
+                    <div style="border:none; padding:0; margin:0" name="3">
+                        <a id="threeADVLeft">
+                            <div v-if="online" @click="openBox" class="change-img" style="width:164px; height:164px; margin:10px 0px; margin-left:10px; cursor:pointer">
+                                <img :src="src" class="preImg" alt="460*460"/>
+                                <span class="glyphicon glyphicon-edit"></span>
+                            </div>
+                        </a>
+                        <a id="threeADVCenter">
+                            <div v-if="online" @click="openBox" class="change-img" style="width:164px; height:164px; margin:10px 0px; margin-left:10px; cursor:pointer">
+                                <img :src="src" class="preImg" alt="460*460"/>
+                                <span class="glyphicon glyphicon-edit"></span>
+                            </div>
+                        </a>
+                        <a id="threeADVRight">
+                            <div v-if="online" @click="openBox" class="change-img" style="width:164px; height:164px; margin:10px 0px; margin-left:10px; cursor:pointer">
+                                <img :src="src" class="preImg" alt="460*460"/>
+                                <span class="glyphicon glyphicon-edit"></span>
+                            </div>
+                        </a>
+                    </div>
+                    <p id="threeADVCtrlHiddenHint" style="margin:10px" name="3"><span v-if="!hidden">三幅廣告-1待開啟</span></p>
+                </td>
+            </tr>
+
+            {if condition="$show_time_limit_prod == 1"}
+                <!-- 限時搶購 -->
+                <tr id="fifthADV">
+                    <td>限時搶購</td>
+                    <td></td>
+                    <td>
+                        <div class="change-limit" @click="openBox" style="width:500px; height:50px; cursor:pointer">
+                            限時搶購
+                            <span class="glyphicon glyphicon-edit"></span>
+                        </div>
+                    </td>
+                </tr>
+            {/if}
+
+            <!-- 橫幅廣告-1 -->
+            <tr id="SixthADV">
+                <td>橫幅廣告-1</td>
+                <td>
+                    <div style="position: absolute;
+                                top: 5; left: -5;
+                                padding: 0;
+                                border: none;top:3px;left: -3px;">
+                        <label class="switch">
+                            <input type="checkbox" v-model="online" @change="onlineToggle">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </td>
+                <td>
+                    <div v-if="online" @click="openBox" style="border:none; padding:0; margin:0" name="1">
+                        <div class="change-img" style="width:500px; height:161px; cursor:pointer">
+                            <img :src="src" class="preImg" alt="1376*459"/>
+                            <span class="glyphicon glyphicon-edit"></span>
+                        </div>
+                    </div>
+                    <p v-else style="margin:10px">橫幅廣告-1待開啟</p>
+                </td>
+            </tr>
+
+            {if condition="empty($close_function['標籤設定'])"}
+                <!-- 人氣商品 -->
+                <tr id="seventhADV">
+                    <td>{$tag[0]['name']}</td>
+                    <td>
+                        <div style="position: absolute;
+                                    top: 5; left: -5;
+                                    padding: 0;
+                                    border: none;top: 15px;left: -3px;">
+                                <label class="switch">
+                                    <input type="checkbox" v-model="online" @change="onlineToggle">
+                                    <span class="slider round"></span>
+                                </label>
+                        </div>
+                    </td>
+                    <td>
+                        <div v-if="online" @click="openBox" style="border:none; padding:0; margin:0" name="5">
+                            <div class="change-product" style="width:500px; height:50px; cursor:pointer">
+                                {$tag[0]['name']}
+                                <span class="glyphicon glyphicon-edit"></span>
+                            </div>
+                        </div>
+                        <p v-else style="margin:10px" name="5">{$tag[0]['name']}待開啟</p>
+                    </td>
+                </tr>
+            {/if}
+
+            <!-- 圖文廣告 -->
+            <tr>
+                <td>圖文廣告</td>
+                <td id="eighthADVCtrl">
+                    <div style="position: absolute;
+                                top: 5; left: -5;
+                                padding: 0;
+                                border: none;top: 15px;left: -3px;">
+                            <label class="switch">
+                                <input type="checkbox" v-model="online" @change="onlineToggle">
+                                <span class="slider round"></span>
+                            </label>
+                    </div>
+                </td>
+                <td>
+                    <div style="border:none; border: none; display: flex; width: 100%;" name="6">
+                        <a id="eighthADVLeft">
+                            <div class="change-img" v-if="online" @click="openBox" style="width:240px; height:200px; cursor:pointer;">
+                                <img :src="src" class="preImg" alt="525*367"/>
+                                <span class="glyphicon glyphicon-edit"></span>
+                            </div>
+                        </a>
+                        <span id="eighthADVText" style="width: 50%;">
+                            <div v-if="online" style="width:240px; height:30px; position:absolute; right:8px; top:0px;">
+                                <input type="text" style="width:90%; border:none" v-model="title">
+                                <span class="glyphicon glyphicon-floppy-disk" @click="ajaxTitle"></span>
+                            </div>
+                            <div v-if="online" style="width:240px; height:80px;
+                                        position:absolute; top:8px; margin-top:40px;
+                                        right:8px">
+                                <textarea type="text" v-model="content"></textarea>
+                                <span class="glyphicon glyphicon-floppy-disk" @click="ajaxContent"></span>
+                            </div>
+                            <div v-if="online" style="width:110px; height:90px;
+                                        position:absolute;
+                                        right:8px; top:125px;">
+                                ID：<input type="text" style="width:80%;" v-model="id1">
+                                <span class="glyphicon glyphicon-floppy-disk" @click="ajaxId1"></span>
+                            </div>
+                            <div v-if="online" style="width:110px; height:90px;
+                                        position:absolute;
+                                        right:138px; top:125px;">
+                                ID：<input type="text" style="width:80%;" v-model="id2">
+                                <span class="glyphicon glyphicon-floppy-disk" @click="ajaxId2"></span>
+                            </div>
+                        </span>
+                    </div>
+                    <p id="eighthADVCtrlHiddenHint" style="margin:10px" name="3"><span v-if="!hidden">圖文廣告待開啟</span></p>
+                </td>
+            </tr>
+
+            {if condition="empty($close_function['標籤設定'])"}
+                <!-- 第九列 店長推薦-->
+                <tr id="ninthADV">
+                    <td>{$tag[1]['name']}</td>
+                    <td>
+                        <div style="position: absolute;
+                                    top: 5; left: -5;
+                                    padding: 0;
+                                    border: none;top: 15px;left: -3px;">
+                                <label class="switch">
+                                    <input type="checkbox" v-model="online" @change="onlineToggle">
+                                    <span class="slider round"></span>
+                                </label>
+                        </div>
+                    </td>
+                    <td>
+                        <div v-if="online" @click="openBox" style="border:none; padding:0; margin:0" name="5">
+                            <div class="change-product" style="width:500px; height:50px; cursor:pointer">
+                                {$tag[1]['name']}
+                                <span class="glyphicon glyphicon-edit"></span>
+                            </div>
+                        </div>
+                        <p v-else style="margin:10px" name="5">{$tag[1]['name']}待開啟</p>
+                    </td>
+                </tr>
+            {/if}
+
+            {if condition="empty($close_function['標籤設定']) && $use_sepc_price == 1"}
+                <!-- 特價商品(不限數量全部顯示)-->
+    			<tr id="spe_ADV">
+                    <td>{$tag[3]['name']}</td>
+                    <td>
+                        <div style="position: absolute;
+                                    top: 5; left: -5;
+                                    padding: 0;
+                                    border: none;top: 15px;left: -3px;">
+                                <label class="switch">
+                                    <input type="checkbox" v-model="online" @change="onlineToggle">
+                                    <span class="slider round"></span>
+                                </label>
+                        </div>
+                    </td>
+                    <td>
+                        <div v-if="online" style="border:none; padding:0; margin:0" name="5">
+                            <div class="change-product" style="width:500px; height:50px; cursor:pointer" onclick="location.href = '{:url(\'index/spePriceProduct\')}'">
+                                {$tag[3]['name']}
+                                <!--span class="glyphicon glyphicon-edit"></span-->
+                            </div>
+                        </div>
+                        <p v-else style="margin:10px" name="5">{$tag[3]['name']}待開啟</p>
+                    </td>
+                </tr>
+            {/if}
+
+
+            <!-- 圖文廣告B
+            <tr>
+                <td>圖文廣告B</td>
+                <td id="tenthADVCtrl">
+                    <div style="position: absolute;
+                                top: 5; left: -5;
+                                padding: 0;
+                                border: none;top: 15px;left: -3px;">
+                        <label class="switch">
+                            <input type="checkbox" v-model="online" @change="onlineToggle">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </td>
+                <td>
+                    <div style="border:none; padding:0; margin:0; display:table-row" name="8">
+                        <a id="tenthADVText" style="color:black;">
+                            <div v-if="online" style="width:240px; height:30px; justify-content:left;">
+                                <input type="text" style="width:80%; border:none" v-model="title">
+                                <span class="glyphicon glyphicon-floppy-disk" @click="ajaxTitle"></span>
+                            </div>
+                            <div v-if="online" style="width:240px; height:80px;
+                                        position:absolute;
+                                        left:5px; top:35px; margin-top:8px;
+                                        justify-content:left; align-items:left; text-align:left">
+                                <textarea type="text" v-model="content"></textarea>
+                                <span class="glyphicon glyphicon-floppy-disk" @click="ajaxContent"></span>
+                            </div>
+                            <div v-if="online" style="width:240px; height:40px;
+                                        position:absolute;
+                                        left:5px; top:125px;">
+                                URL：<input type="text" style="width:80%;" v-model="url">
+
+                                <span class="glyphicon glyphicon-floppy-disk" @click="ajaxUrl"></span>
+                            </div>
+                        </a>
+                        <a id="tenthADVRight">
+                            <div class="change-img" v-if="online" @click="openBox" style="width:240px; height:160px; float:right; cursor:pointer">
+                                <img :src="src" class="preImg" alt="700*475"/>
+                                <span class="glyphicon glyphicon-edit"></span>
+                            </div>
+                        </a>
+                    </div>
+                    <p id="tenthADVCtrlHiddenHint" style="margin:10px" name="8"><span v-if="!hidden">圖文廣告B待開啟</span></p>
+
+                </td>
+
+            </tr>-->
+
+
+            <!-- 橫幅廣告-2 -->
+            <tr id="new_tenthADV">
+                <td>橫幅廣告-2</td>
+                <td>
+                    <div style="position: absolute;
+                                top: 5; left: -5;
+                                padding: 0;
+                                border: none;top: 3px;left: -3px;">
+                        <label class="switch">
+                            <input type="checkbox" v-model="online" @change="onlineToggle">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </td>
+                <td>
+                    <div v-if="online" @click="openBox" style="border:none; padding:0; margin:0" name="1">
+                        <div class="change-img" style="width:500px; height:161px; cursor:pointer">
+                            <img :src="src" class="preImg" alt="1920*640"/>
+                            <span class="glyphicon glyphicon-edit"></span>
+                        </div>
+                    </div>
+                    <p v-else style="margin:10px">橫幅廣告-2待開啟</p>
+                </td>
+            </tr>
+
+            {if condition="empty($close_function['標籤設定'])"}
+                <!-- 即期良品 -->
+                <tr id="eleventhADV">
+                    <td>{$tag[2]['name']}</td>
+                    <td>
+                        <div style="position: absolute;
+                                    top: 5; left: -5;
+                                    padding: 0;
+                                    border: none;top: 15px;left: -3px;">
+                                <label class="switch">
+                                    <input type="checkbox" v-model="online" @change="onlineToggle">
+                                    <span class="slider round"></span>
+                                </label>
+                        </div>
+                    </td>
+                    <td>
+                        <div v-if="online" @click="openBox" style="border:none; padding:0; margin:0" name="5">
+                            <div class="change-product" style="width:500px; height:50px; cursor:pointer">
+                                {$tag[2]['name']}
+                                <span class="glyphicon glyphicon-edit"></span>
+                            </div>
+                        </div>
+                        <p v-else style="margin:10px" name="5">{$tag[2]['name']}待開啟</p>
+                    </td>
+                </tr>
+            {/if}
+
+
+            <!-- 三幅廣告-2 -->
+            <tr>
+                <td>三幅廣告-2</td>
+                <td id="new_thirteenthADVCtrl">
+                    <div style="position: absolute;
+                                top: 5; left: -5;
+                                padding: 0;
+                                border: none;top: 15px;left: -3px;">
+                            <label class="switch">
+                                <input type="checkbox" v-model="online" @change="onlineToggle">
+                                <span class="slider round"></span>
+                            </label>
+                    </div>
+                </td>
+                <td>
+                    <div style="border:none; padding:0; margin:0" name="3">
+                        <a id="new_thirteenthADVLeft">
+                            <div v-if="online" @click="openBox" class="change-img" style="width:164px; height:164px; margin:10px 0px; margin-left:10px; cursor:pointer">
+                                <img :src="src" class="preImg" alt="460*460"/>
+                                <span class="glyphicon glyphicon-edit"></span>
+                            </div>
+                        </a>
+                        <a id="new_thirteenthADVCenter">
+                            <div v-if="online" @click="openBox" class="change-img" style="width:164px; height:164px; margin:10px 0px; margin-left:10px; cursor:pointer">
+                                <img :src="src" class="preImg" alt="460*460"/>
+                                <span class="glyphicon glyphicon-edit"></span>
+                            </div>
+                        </a>
+                        <a id="new_thirteenthADVRight">
+                            <div v-if="online" @click="openBox" class="change-img" style="width:164px; height:164px; margin:10px 0px; margin-left:10px; cursor:pointer">
+                                <img :src="src" class="preImg" alt="460*460"/>
+                                <span class="glyphicon glyphicon-edit"></span>
+                            </div>
+                        </a>
+                    </div>
+                    <p id="new_thirteenthADVCtrlHiddenHint" style="margin:10px" name="3"><span v-if="!hidden">三幅廣告待開啟</span></p>
+                </td>
+            </tr>
+
+
+            <!-- 商城分類廣告 -->
+            <tr id="twelfthADVVM">
+                <td>商城分類廣告</td>
+                <td>
+                    <div style="position: absolute;
+                                top: 5; left: -5;
+                                padding: 0;
+                                border: none;top: 15px;left: -3px;">
+                            <label class="switch">
+                                <input type="checkbox" v-model="online" @change="onlineToggle">
+                                <span class="slider round"></span>
+                            </label>
+                    </div>
+                </td>
+                <td style="width: 500px">
+                    <draggable v-if="online" :list="list" @end="endDrag">
+                        <div style="width:97px; height: 56px;" v-for="element in list">
+                            <p style="position: absolute; top: 5;">{{element.title}}</p>
+                            <select style="position: absolute; top: 30px;
+                                        display: block;
+                                        width: 97px;
+                                        border: 2px solid;
+                                        left:-2px;" v-model="element.online" @change="onChange">
+                                <option value="1">開啟</option>
+                                <option value="0">關閉</option>
+                            </select>
+                        </div>
+                    </draggable>
+                    <p v-else style="margin:10px" name="10">商城分類廣告待開啟</p>
+                </td>
+
+            </tr>
+
+
+            <!-- 推薦圖文 
+            <tr>
+                <td>推薦圖文</td>
+                <td id="thirteenthADVCtrl">
+                    <div style="position: absolute;
+                                top: 5; left: -5;
+                                padding: 0;
+                                border: none;top: 15px;left: -3px;">
+                            <label class="switch">
+                                <input type="checkbox" v-model="online" @change="onlineToggle">
+                                <span class="slider round"></span>
+                            </label>
+                    </div>
+                </td>
+                <td>
+                    <div style="border:none; padding:0; margin:0" name="11">
+                        <a id="thirteenthRowLeft" style="color: black;" @click="openBox">
+                            <div v-if="online" class="change-imgtext" style="width:248px; height: 260px; position: relative; margin:0px; margin-left:10px; margin-top:10px; cursor:pointer;">
+                                    <img :src="src" style="position:absolute; top:0%; left:0%; max-width:100%; max-height:50%;" alt="600*340"/>
+                                <span class="glyphicon glyphicon-edit"></span>
+                                <div style="position: absolute; top: 130px; margin:0;
+                                            display: block;
+                                            width: 248px; height:128px;
+                                            border: 2px solid;">
+                                    <p style="font-size:13px; text-align:left">
+                                        <font style="font-size:14px">{{title}}</font><br>
+                                        <textarea readonly style="height:100px" v-model="content"></textarea>
+                                    </p>
+                                </div>
+                            </div>
+                        </a>
+                        <a id="thirteenthRowRight" style="color: black;" @click="openBox">
+                            <div v-if="online" class="change-imgtext" style="width:248px; height: 260px; position: relative; margin:0px; margin-right:10px; margin-top:10px; cursor:pointer; margin-left: -2px;">
+                                <img :src="src" style="position:absolute; top:0%; left:0%; max-width:100%; max-height:50%;" alt="600*340"/>
+                                <span class="glyphicon glyphicon-edit"></span>
+                                <div style="position: absolute; top: 130px; margin:0;
+                                            display: block;
+                                            width: 248px; height:128px;
+                                            border: 2px solid;">
+                                    <p style="font-size:13px; text-align:left">
+                                        <font style="font-size:14px">{{title}}</font><br>
+                                        <textarea readonly style="height:100px" v-model="content"></textarea>
+                                    </p>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <p id="thirteenthADVCtrlHiddenHint" style="margin:10px" name="8"><span v-if="!hidden">推薦圖文待開啟</span></p>
+                </td>
+            </tr>-->
+
+
+            <!-- 頁尾區域文字 -->
+            <tr id="fourteenthADV">
+                <td>頁尾區域文字</td>
+                <td>
+                    <div style="position: absolute;
+                                top: 5; left: -5;
+                                padding: 0;
+                                border: none;top: 15px;left: -3px;">
+                        <label class="switch">
+                            <input type="checkbox" v-model="online" @change="onlineToggle">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </td>
+                <td>
+                    <div v-if="online" style="border:none; padding:0; margin:0" name="12">
+                        <div @click="openBox(1)" class="change-text" style="width:125px; height: 50px; position: relative; margin:0px; margin-left:10px; margin-top:10px; cursor:pointer">
+                            A區域文字編輯
+                            <span class="glyphicon glyphicon-edit"></span>
+                        </div>
+                        <div @click="openBox(2)" class="change-text" style="width:125px; height: 50px; position: relative; margin:0px; margin-top:10px; margin-left:-3px; cursor:pointer">
+                            B區域文字編輯
+                            <span class="glyphicon glyphicon-edit"></span>
+                        </div>
+                        <div @click="openBox(3)" class="change-text" style="width:125px; height: 50px; position: relative; margin:0px; margin-top:10px; margin-left:-3px; cursor:pointer">
+                            C區域文字編輯
+                            <span class="glyphicon glyphicon-edit"></span>
+                        </div>
+                        <div @click="openBox(4)" class="change-text" style="width:125px; height: 50px; position: relative; margin:0px; margin-right:10px; margin-left:-3px; margin-top:10px; cursor:pointer">
+                            D區域文字編輯
+                            <span class="glyphicon glyphicon-edit"></span>
+                        </div>
+                    </div>
+                    <p v-else style="margin:10px" name="12">頁尾區域文字待開啟</p>
+                </td>
+            </tr>
+
+        </table>
+    </div>                
+
+{/block}
+
+{block name="ownJS"}
+
+    <!--
+    <script src="http://ajax.aspnetcdn.com/ajax/knockout/knockout-3.0.0.js "></script>
+    <script src="http://cdn.kendostatic.com/2013.3.1119/js/kendo.core.min.js"></script>
+    -->
+
+    <script charset="utf-8" src="__PUBLIC__/js/kindeditor/kindeditor.js"></script>
+    <script charset="utf-8" src="__PUBLIC__/js/kindeditor/lang/zh_TW.js"></script>
+    <script>
+        var editor;
+        KindEditor.ready(function(K) {
+                editor = K.create('#editor', {
+                        afterBlur: function(){this.sync();},
+                        langType : 'zh_TW',
+                        items:['source', '|', 'image', 'link', 'unlink'],
+                        width:'100%',
+                        height:'300px',
+                        resizeType:0
+                });
+        });
+    </script>
+
+    <script>
+        /*init prototype method that will use*/
+        Vue.prototype.blockCtrl = function (blockData) {
+            $.ajax({
+                url: "{:url('Index/blockCtrl')}",
+                type: 'POST',
+                dataType: 'json',
+                data: blockData,
+                success: function(response) {
+                    if(response.status){
+                        //alert('留言成功');
+                    }else{
+                        alert('更改失敗');
+                        console.log(response.message);
+                    }
+                },
+                error: function(xhr) {
+                    alert('更改失敗');
+                    console.log(xhr);
+                }
+            });
+        };
+
+        Vue.prototype.setSocialLink = function (linkData) {
+            $.ajax({
+                url: "{:url('Index/setSocialLink')}",
+                type: 'POST',
+                dataType: 'json',
+                data: linkData,
+                success: function(response) {
+                    if(response.status){
+                        alert('更改成功');
+                        changeInfoBoxVM.updateCallerData();
+                        maskVM.setHidden();
+                    }else{
+                        alert('更改失敗');
+                        console.log(response.message);
+                    }
+                },
+                error: function(xhr) {
+                    alert('更改失敗');
+                    console.log(xhr);
+                }
+            });
+        };
+
+        Vue.prototype.setText = function (id, text) {
+            $.ajax({
+                url: "{:url('Index/setText')}",
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    id: id,
+                    text: text
+                },
+                success: function(response) {
+                    if(response.status){
+                        alert('更改成功');
+                    }else{
+                        alert('更改失敗');
+                        console.log(response.message);
+                    }
+                },
+                error: function(xhr) {
+                    alert('更改失敗');
+                    console.log(xhr);
+                }
+            });
+        };
+
+        Vue.prototype.setLink = function (id, link) {
+            $.ajax({
+                url: "{:url('Index/setLink')}",
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    id: id,
+                    link: link
+                },
+                success: function(response) {
+                    if(response.status){
+                        alert('更改成功');
+                    }else{
+                        alert('更改失敗');
+                        console.log(response.message);
+                    }
+                },
+                error: function(xhr) {
+                    alert('更改失敗');
+                    console.log(xhr);
+                }
+            });
+        };
+
+        Vue.prototype.setProductOnline = function (id, online) {
+            $.ajax({
+                url: "{:url('Index/setProductOnline')}",
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    id: id,
+                    online: online
+                },
+                success: function(response) {
+                    if(response.status){
+                        //alert('更改成功');
+                    }else{
+                        alert('更改失敗');
+                        console.log(response.message);
+                    }
+                },
+                error: function(xhr) {
+                    alert('更改失敗');
+                    console.log(xhr);
+                }
+            });
+        };
+
+        Vue.prototype.setProductOrder = function (idArray) {
+            $.ajax({
+                url: "{:url('Index/setProductOrder')}",
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    idArray: JSON.stringify(idArray)
+                },
+                success: function(response) {
+                    if(response.status){
+                        //alert('更改成功');
+                    }else{
+                        alert('更改失敗');
+                        console.log(response.message);
+                    }
+                },
+                error: function(xhr) {
+                    alert('更改失敗');
+                    console.log(xhr);
+                }
+            });
+        };
+
+        Vue.prototype.setTimeRange = function (start, end) {
+            $.ajax({
+                url: "{:url('Index/setTimeRange')}",
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    start: start,
+                    end: end
+                },
+                success: function(response) {
+                    if(response.status){
+                        alert('更改成功');
+                        changeLimitBoxVM.updateCallerTime();
+                        maskVM.setHidden();
+                    }else{
+                        alert('更改失敗');
+                        console.log(response.message);
+                    }
+                },
+                error: function(xhr) {
+                    alert('更改失敗');
+                    console.log(xhr);
+                }
+            });
+        };
+
+        Vue.prototype.setProduct = function (productData) {
+            $.ajax({
+                url: "{:url('Index/setProduct')}",
+                type: 'POST',
+                dataType: 'json',
+                data: productData,
+                success: function(response) {
+                    if(response.status){
+                        alert('更改成功');
+                        if(changeProductBoxVM.caller){
+                            changeProductBoxVM.updateCallerData();
+                        }
+                        if(changeLimitBoxVM.caller){
+                            changeLimitBoxVM.updateCallerData();
+                        }
+                        maskVM.setHidden();
+                    }else{
+                        alert('更改失敗');
+                        console.log(response.message);
+                    }
+                },
+                error: function(xhr) {
+                    alert('更改失敗');
+                    console.log(xhr);
+                }
+            });
+        };
+
+        Vue.prototype.setContent = function (id, content) {
+            $.ajax({
+                url: "{:url('Index/setText')}",
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    id: id,
+                    text: content
+                },
+                success: function(response) {
+                    if(response.status){
+                        alert('更改成功');
+                        changeTextBoxVM.setHidden();
+                        changeTextBoxVM.updateCallerData();
+                    }else{
+                        alert('更改失敗');
+                        console.log(response.message);
+                    }
+                },
+                error: function(xhr) {
+                    alert('更改失敗');
+                    console.log(xhr);
+                }
+            });
+        };
+
+        Vue.prototype.formatDate = function (date) {
+            var d = date,
+                month = '' + (d.getMonth() + 1),
+                day = '' + d.getDate(),
+                year = d.getFullYear();
+
+            if (month.length < 2) month = '0' + month;
+            if (day.length < 2) day = '0' + day;
+            return [year, month, day].join('-');
+        }
+
+        /*mask and uploadBox*/
+        var mask = {
+            visibility:　false
+        }
+        var maskVM = new Vue({
+            el: '#mask', 
+            data: mask,
+            methods: {
+                setHidden: function () {
+                    this.visibility = false;
+                    changeImageBox.visibility = false;
+                    changeGroupBox.visibility = false;
+                    changeInfoBox.visibility = false;
+                    changeProductBox.visibility = false;
+                    changeImgtextBox.visibility = false;
+                    changeTextBox.visibility = false;
+                    changeLimitBox.visibility = false;
+                }
+            }
+        });
+
+        var changeImageBox = {
+            visibility:　false,
+            width: 0,
+            height: 0,
+            link: '',
+            src: '',
+            id: 0,
+            action: "{:url('Index/setPicWithLink')}",
+            caller: null
+        }
+        var changeImageBoxVM = new Vue({
+            el: '#changeImageBox', 
+            data: changeImageBox,
+            methods: {
+                setHidden: function () {
+                    maskVM.setHidden();
+                },
+                formSubmit: function () {
+                    document.changeImageBoxForm.submit();
+                },
+                previewImg: function () {
+                    console.log(this.$refs.img.files);
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        changeImageBox.src = e.target.result;
+                    }
+                    reader.readAsDataURL(this.$refs.img.files[0]);
+                },
+                updateCallerData: function () {
+                    changeImageBox.caller.src = this.src;
+                    changeImageBox.caller.link = this.link;
+                }
+            }
+        });
+
+        $('#changeImageFormIframe').load(function () {
+            var uploadStatus = $(this).contents().find('h1').text();
+            if(uploadStatus == "上傳成功"){
+                alert("上傳成功");
+                changeImageBoxVM.updateCallerData();
+                maskVM.setHidden();
+            }else{
+                alert("上傳失敗");
+                console.log($(this).contents().find('body').text());
+            }
+        });
+
+        $('#changeGroupFormIframe').load(function () {
+            var uploadStatus = $(this).contents().find('h1').text();
+            if(uploadStatus == "上傳成功"){
+                alert("上傳成功");
+                changeGroupBoxVM.updateCallerData();
+                maskVM.setHidden();
+            }else{
+                alert("上傳失敗");
+                console.log($(this).contents().find('body').text());
+            }
+        });
+
+
+        var changeImgtextBox = {
+            visibility:　false,
+            title: "", src: "",
+            content: "", caller: null,
+            location: "", link: "",
+            action: "{:url('Index/setthirteenth')}"
+        }
+        var changeImgtextBoxVM = new Vue({
+            el: '#changeImgtextBox', 
+            data: changeImgtextBox,
+            computed: {
+                contentNl2br: function () {
+                    return this.content.replace(/\n/g, '<br>');
+                }
+            },
+            methods: {
+                setHidden: function () {
+                    maskVM.setHidden();
+                },
+                formSubmit: function () {
+                    document.changeImgtextForm.submit();
+                },
+                previewImg: function () {
+                    console.log(this.$refs.img.files);
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        changeImgtextBox.src = e.target.result;
+                    }
+                    reader.readAsDataURL(this.$refs.img.files[0]);
+                },
+                updateCallerData: function () {
+                    this.caller.src = this.src;
+                    this.caller.link = this.link;
+                    this.caller.title = this.title;
+                    this.caller.content = this.content;
+                }
+            }
+        });
+
+        $('#changeImgtextFormIframe').load(function () {
+            var uploadStatus = $(this).contents().find('h1').text();
+            if(uploadStatus == "上傳成功"){
+                alert("上傳成功");
+                changeImgtextBoxVM.updateCallerData();
+                maskVM.setHidden();
+            }else{
+                alert("上傳失敗");
+                console.log($(this).contents().find('body').text());
+            }
+        });
+
+
+        var changeInfoBox = {
+            visibility:　false,
+            line: "",
+            fb: "",
+            email: "",
+            phone: "",
+            caller: null
+        }
+        var changeInfoBoxVM = new Vue({
+            el: '#changeInfoBox', 
+            data: changeInfoBox,
+            methods: {
+                setHidden: function () {
+                    maskVM.setHidden();
+                },
+                ajaxSubmit: function () {
+                    newData = {
+                        line: this.line,
+                        fb: this.fb,
+                        email: this.email,
+                        phone: this.phone
+                    }
+                    this.setSocialLink(newData);
+                },
+                updateCallerData: function () {
+                    this.caller.line = this.line;
+                    this.caller.fb = this.fb;
+                    this.caller.email = this.email;
+                    this.caller.phone = this.phone;
+                }
+            }
+        });
+
+        
+        var changeProductBox = {
+            visibility:　false,
+            product_id1: "", product_id2: "",
+            product_id3: "", product_id4: "",
+            product_id5: "", product_id6: "",
+            product_id7: "", product_id8: "",
+            product_id9: "", product_id10: "",
+            tableName:"" ,caller: null
+        }
+        var changeProductBoxVM = new Vue({
+            el: '#changeProductBox', 
+            data: changeProductBox,
+            methods: {
+                setHidden: function () {
+                    maskVM.setHidden();
+                },
+                ajaxSubmit: function () {
+                    newData = {
+                        tableName: this.tableName, 
+                        product_id1: this.product_id1, product_id2: this.product_id2, 
+                        product_id3: this.product_id3, product_id4: this.product_id4, 
+                        product_id5: this.product_id5, product_id6: this.product_id6, 
+                        product_id7: this.product_id7, product_id8: this.product_id8, 
+                        product_id9: this.product_id9, product_id10: this.product_id10,
+                    }
+                    this.setProduct(newData);
+                },
+                updateCallerData: function () {
+                    this.caller.product_id1 = this.product_id1; this.caller.product_id6 = this.product_id6;
+                    this.caller.product_id2 = this.product_id2; this.caller.product_id7 = this.product_id7;
+                    this.caller.product_id3 = this.product_id3; this.caller.product_id8 = this.product_id8;
+                    this.caller.product_id4 = this.product_id4; this.caller.product_id9 = this.product_id9;
+                    this.caller.product_id5 = this.product_id5; this.caller.product_id10 = this.product_id10;
+                }
+            }
+        });
+
+
+    /* Row */
+    /* logo start */
+        var firstRowLeft = {
+            link: "{$index_excel[0]['data2']}",
+            src: "__UPLOAD__{$index_excel[0]['data1']}"
+        }
+        var firstRowLeftVM = new Vue({
+            el: '#firstRowLeft',
+            data: firstRowLeft,
+            methods: {
+                openBox: function () {
+                    changeImageBox.id = 1;
+                    changeImageBox.width = 600;
+                    changeImageBox.height = 120;
+                    changeImageBox.link = this.link;
+                    changeImageBox.src = this.src;
+                    changeImageBox.visibility = true;
+                    changeImageBox.caller = this;
+                    mask.visibility = true;
+                }
+            }
+        });
+        var firstRowRight = {
+            link: "{$index_excel[1]['data2']}",
+            src: "__UPLOAD__{$index_excel[1]['data1']}"
+        }
+
+        var firstRowRightVM = new Vue({
+            el: '#firstRowRight',
+            data: firstRowRight,
+            methods: {
+                openBox: function () {
+                    changeImageBox.id = 2;
+                    changeImageBox.width = 240;
+                    changeImageBox.height = 140;
+                    changeImageBox.link = this.link;
+                    changeImageBox.src = this.src;
+                    changeImageBox.visibility = true;
+                    changeImageBox.caller = this;
+                    mask.visibility = true;
+                }
+            }
+        });
+    /* logo end */
+
+
+    /* 側邊廣告 start */
+        var RightADV = {
+            link: "{$index_excel[6]['data2']}",
+            src: "__UPLOAD__{$index_excel[6]['data1']}",
+            online: +"{$index_online['block13']}"
+        }
+
+        var RightADVVM = new Vue({
+            el: '#RightADV',
+            data: RightADV,
+            methods: {
+                openBox: function () {
+                    changeImageBox.id = 7;
+                    changeImageBox.width = 150;
+                    changeImageBox.height = 800;
+                    changeImageBox.link = this.link;
+                    changeImageBox.src = this.src;
+                    changeImageBox.visibility = true;
+                    changeImageBox.caller = this;
+                    mask.visibility = true;
+                },
+                onlineToggle: function () {
+                    console.log(this.online);
+                    blockData = {
+                        id: 1,
+                        block13: this.online ? 1 : 0
+                    }
+                    this.blockCtrl(blockData);
+                }
+            }
+        });
+    /* 側邊廣告 end */
+
+
+    /* 聯絡方式 start */
+        var fixADV = {
+            line: "{$index_excel[2]['data2']}",
+            fb: "{$index_excel[3]['data2']}",
+            email: "{$index_excel[4]['data2']}",
+            phone: "{$index_excel[5]['data2']}"
+        }
+        var fixADVVM = new Vue({
+            el: '#fixADV',
+            data: fixADV,
+            methods: {
+                openBox: function () {
+                    changeInfoBox.fb = this.fb;
+                    changeInfoBox.email = this.email;
+                    changeInfoBox.phone = this.phone;
+                    changeInfoBox.line = this.line;
+                    changeInfoBox.visibility = true;
+                    changeInfoBox.caller = this;
+                    mask.visibility = true;
+                }
+            }
+        });
+    /* 聯絡方式 end */
+
+
+    /* 抬頭廣告 start */
+        var titleADV = {
+            link: "{$index_excel[7]['data2']}",
+            src: "__UPLOAD__{$index_excel[7]['data1']}",
+            online: +"{$index_online['block1']}"
+        }
+        var titleADVVM = new Vue({
+            el: '#titleADV',
+            data: titleADV,
+            methods: {
+                openBox: function () {
+                    changeImageBox.id = 8;
+                    changeImageBox.width = 1410;
+                    changeImageBox.height = 282;
+                    changeImageBox.link = this.link;
+                    changeImageBox.src = this.src;
+                    changeImageBox.visibility = true;
+                    changeImageBox.caller = this;
+                    mask.visibility = true;
+                },
+                onlineToggle: function () {
+                    console.log(this.online);
+                    blockData = {
+                        id: 1,
+                        block1: this.online ? 1 : 0
+                    }
+                    this.blockCtrl(blockData);
+                }
+            }
+        });
+    /* 抬頭廣告 end */
+
+
+    /* 輪播圖片 start*/
+         // 跳出視窗 
+        var changeGroupBox = {
+            visibility:　false,
+            title1: "", link1: "", src1: "",
+            title2: "", link2: "", src2: "",
+            title3: "", link3: "", src3: "",
+            title4: "", link4: "", src4: "",
+            title5: "", link5: "", src5: "",
+            src: "", caller: null,
+            action: "{:url('Index/setSlideShow')}"
+        }
+        var changeGroupBoxVM = new Vue({
+            el: '#changeGroupBox', 
+            data: changeGroupBox,
+            methods: {
+                setHidden: function () {
+                    maskVM.setHidden();
+                },
+                formSubmit: function () {
+                    document.changeGroupBoxForm.submit();
+                },
+                previewImg: function (number) {
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        changeGroupBox.src = e.target.result;
+                        switch (number) {
+                            case 1:
+                                changeGroupBox.src1 = e.target.result;
+                                break;
+                            case 2:
+                                changeGroupBox.src2 = e.target.result;
+                                break;
+                            case 3:
+                                changeGroupBox.src3 = e.target.result;
+                                break;
+                            case 4:
+                                changeGroupBox.src4 = e.target.result;
+                                break;
+                            case 5:
+                                changeGroupBox.src5 = e.target.result;
+                                break;
+                        }
+                    }
+                    switch (number) {
+                        case 1:
+                            reader.readAsDataURL(this.$refs.img1.files[0]);
+                            break;
+                        case 2:
+                            reader.readAsDataURL(this.$refs.img2.files[0]);
+                            break;
+                        case 3:
+                            reader.readAsDataURL(this.$refs.img3.files[0]);
+                            break;
+                        case 4:
+                            reader.readAsDataURL(this.$refs.img4.files[0]);
+                            break;
+                        case 5:
+                            reader.readAsDataURL(this.$refs.img5.files[0]);
+                            break;
+                    }
+                },
+                updateCallerData: function () {
+                    changeGroupBox.caller.src = this.src;
+                    changeGroupBox.caller.src1 = this.src1; changeGroupBox.caller.link1 = this.link1; changeGroupBox.caller.title1 = this.title1;
+                    changeGroupBox.caller.src2 = this.src2; changeGroupBox.caller.link2 = this.link2; changeGroupBox.caller.title2 = this.title2;
+                    changeGroupBox.caller.src3 = this.src3; changeGroupBox.caller.link3 = this.link3; changeGroupBox.caller.title3 = this.title3;
+                    changeGroupBox.caller.src4 = this.src4; changeGroupBox.caller.link4 = this.link4; changeGroupBox.caller.title4 = this.title4;
+                    changeGroupBox.caller.src5 = this.src5; changeGroupBox.caller.link5 = this.link5; changeGroupBox.caller.title5 = this.title5;
+                },
+                switchSrc: function (number) {
+                    switch (number) {
+                        case 1: this.src = this.src1; break;
+                        case 2: this.src = this.src2; break;
+                        case 3: this.src = this.src3; break;
+                        case 4: this.src = this.src4; break;
+                        case 5: this.src = this.src5; break;
+                    }
+                }
+            }
+        });
+
+        // 表格
+        var slideShow = {
+            title1: "{$slideshow[0]['title']}", link1: "{$slideshow[0]['link']}", src1: "__UPLOAD__{$slideshow[0]['pic']}",
+            title2: "{$slideshow[1]['title']}", link2: "{$slideshow[1]['link']}", src2: "__UPLOAD__{$slideshow[1]['pic']}", 
+            title3: "{$slideshow[2]['title']}", link3: "{$slideshow[2]['link']}", src3: "__UPLOAD__{$slideshow[2]['pic']}",
+            title4: "{$slideshow[3]['title']}", link4: "{$slideshow[3]['link']}", src4: "__UPLOAD__{$slideshow[3]['pic']}",
+            title5: "{$slideshow[4]['title']}", link5: "{$slideshow[4]['link']}", src5: "__UPLOAD__{$slideshow[4]['pic']}",
+            src: "__UPLOAD__{$slideshow[0]['pic']}",
+            online: +"{$index_online['block2']}"
+        }
+        var slideShowVM = new Vue({
+            el: '#slideShow',
+            data: slideShow,
+            methods: {
+                openBox: function () {
+                    changeGroupBox.link1 = this.link1; changeGroupBox.link2 = this.link2; changeGroupBox.link3 = this.link3;
+                    changeGroupBox.link4 = this.link4; changeGroupBox.link5 = this.link5;
+                    changeGroupBox.src1 = this.src1; changeGroupBox.src2 = this.src2; changeGroupBox.src3 = this.src3;
+                    changeGroupBox.src4 = this.src4; changeGroupBox.src5 = this.src5; changeGroupBox.src = this.src;
+                    changeGroupBox.title1 = this.title1; changeGroupBox.title2 = this.title2; changeGroupBox.title3 = this.title3;
+                    changeGroupBox.title4 = this.title4; changeGroupBox.title5 = this.title5;
+                    changeGroupBox.visibility = true;
+                    changeGroupBox.caller = this;
+                    mask.visibility = true;
+                },
+                onlineToggle: function () {
+                    //console.log(this.online);
+                    blockData = {
+                        id: 1,
+                        block2: this.online ? 1 : 0
+                    }
+                    this.blockCtrl(blockData);
+                },
+                switchSrc: function (number) {
+                    switch (number) {
+                        case 1: this.src = this.src1; break;
+                        case 2: this.src = this.src2; break;
+                        case 3: this.src = this.src3; break;
+                        case 4: this.src = this.src4; break;
+                        case 5: this.src = this.src5; break;
+                    }
+                }
+            }
+        });
+    /* 輪播圖片 end*/
+
+
+    /* EDM start*/
+        var edm = {
+            online: +"{$index_online['block_edm']}",
+            edm_id: "{$index_excel[36]['data3']}",
+            index_excel_id: 37
+        }
+        var edm = new Vue({
+            el: '#edm',
+            data: edm,
+            methods:{
+                onlineToggle: function () {
+                    console.log(this.online);
+                    blockData = {
+                        id: 1,
+                        block_edm: this.online ? 1 : 0
+                    }
+                    this.blockCtrl(blockData);
+                },
+                saveId: function () {
+                    console.log(this.index_excel_id, this.edm_id);
+                    this.setContent(this.index_excel_id, this.edm_id);
+                }
+            }
+        });
+    /* EDM end*/
+
+
+    /* 三幅廣告-1 start */
+        var threeADVCtrl = {
+            online: +"{$index_online['block3']}"
+        }
+        var threeADVCtrlVM = new Vue({
+            el: '#threeADVCtrl',
+            data: threeADVCtrl,
+            methods: {
+                onlineToggle: function () {
+                    console.log(this.online);
+                    blockData = {
+                        id: 1,
+                        block3: this.online ? 1 : 0
+                    }
+                    this.blockCtrl(blockData);
+                    threeADVLeftVM.online = this.online;
+                    threeADVCenterVM.online = this.online;
+                    threeADVRightVM.online = this.online;
+                    threeADVCtrlHiddenHint.hidden = this.online;
+                }
+            }
+        });
+
+        var threeADVLeft = {
+            link: "{$index_excel[8]['data2']}",
+            src: "__UPLOAD__{$index_excel[8]['data1']}",
+            online: +"{$index_online['block3']}"
+        }
+        var threeADVLeftVM = new Vue({
+            el: '#threeADVLeft',
+            data: threeADVLeft,
+            methods: {
+                openBox: function () {
+                    changeImageBox.id = 9;
+                    changeImageBox.width = 460;
+                    changeImageBox.height = 460;
+                    changeImageBox.link = this.link;
+                    changeImageBox.src = this.src;
+                    changeImageBox.visibility = true;
+                    changeImageBox.caller = this;
+                    mask.visibility = true;
+                }
+            }
+        });
+
+        var threeADVCenter = {
+            link: "{$index_excel[9]['data2']}",
+            src: "__UPLOAD__{$index_excel[9]['data1']}",
+            online: +"{$index_online['block3']}"
+        }
+        var threeADVCenterVM = new Vue({
+            el: '#threeADVCenter',
+            data: threeADVCenter,
+            methods: {
+                openBox: function () {
+                    changeImageBox.id = 10;
+                    changeImageBox.width = 460;
+                    changeImageBox.height = 460;
+                    changeImageBox.link = this.link;
+                    changeImageBox.src = this.src;
+                    changeImageBox.visibility = true;
+                    changeImageBox.caller = this;
+                    mask.visibility = true;
+                }
+            }
+        });
+
+        var threeADVRight = {
+            link: "{$index_excel[10]['data2']}",
+            src: "__UPLOAD__{$index_excel[10]['data1']}",
+            online: +"{$index_online['block3']}"
+        }
+        var threeADVRightVM = new Vue({
+            el: '#threeADVRight',
+            data: threeADVRight,
+            methods: {
+                openBox: function () {
+                    changeImageBox.id = 11;
+                    changeImageBox.width = 460;
+                    changeImageBox.height = 460;
+                    changeImageBox.link = this.link;
+                    changeImageBox.src = this.src;
+                    changeImageBox.visibility = true;
+                    changeImageBox.caller = this;
+                    mask.visibility = true;
+                }
+            }
+        });
+
+        var threeADVCtrlHiddenHint = {
+            hidden: +"{$index_online['block3']}"
+        }
+        var threeADVCtrlHiddenHintVM = new Vue({
+            el: '#threeADVCtrlHiddenHint',
+            data: threeADVCtrlHiddenHint
+        });
+    /* 三幅廣告-1 end */
+
+
+    /*限時搶購 start*/
+        // 跳出視窗
+        var changeLimitBox = {
+            visibility:　false,
+            product_id1: "", product_id2: "",
+            product_id3: "", product_id4: "",
+            product_id5: "", product_id6: "",
+            product_id7: "", product_id8: "",
+            product_id9: "", product_id10: "",
+            tableName:"" ,caller: null,
+            start: 0, end: 0
+        }
+        var changeLimitBoxVM = new Vue({
+            el: '#changeLimitBox', 
+            data: changeLimitBox,
+            methods: {
+                setHidden: function () {
+                    maskVM.setHidden();
+                },
+                productAjaxSubmit: function () {
+                    newData = {
+                        tableName: this.tableName, 
+                        product_id1: this.product_id1, product_id2: this.product_id2, 
+                        product_id3: this.product_id3, product_id4: this.product_id4, 
+                        product_id5: this.product_id5, product_id6: this.product_id6, 
+                        product_id7: this.product_id7, product_id8: this.product_id8, 
+                        product_id9: this.product_id9, product_id10: this.product_id10,
+                    }
+                    this.setProduct(newData);
+                },
+                timeAjaxSubmit: function () {
+                    this.setTimeRange(this.start, this.end);
+                },
+                updateCallerData: function () {
+                    this.caller.product_id1 = this.product_id1; this.caller.product_id6 = this.product_id6;
+                    this.caller.product_id2 = this.product_id2; this.caller.product_id7 = this.product_id7;
+                    this.caller.product_id3 = this.product_id3; this.caller.product_id8 = this.product_id8;
+                    this.caller.product_id4 = this.product_id4; this.caller.product_id9 = this.product_id9;
+                    this.caller.product_id5 = this.product_id5; this.caller.product_id10 = this.product_id10;
+                },
+                updateCallerTime: function () {
+                    this.caller.start = this.start; 
+                    this.caller.end = this.end;
+                },
+                noTimeLimit: function () {
+                    this.end = '1970-01-01';
+                    this.timeAjaxSubmit();
+                },
+                hasTimeLimit: function () {
+                    this.end = this.formatDate(new Date());
+                }
+            }
+        });
+
+        // 表格
+        var fifthADV = {
+            product_id1:"{$time_product[0]['product_id']}",
+            product_id2:"{$time_product[1]['product_id']}",
+            product_id3:"{$time_product[2]['product_id']}",
+            product_id4:"{$time_product[3]['product_id']}",
+            product_id5:"{$time_product[4]['product_id']}",
+            product_id6:"{$time_product[5]['product_id']}",
+            product_id7:"{$time_product[6]['product_id']}",
+            product_id8:"{$time_product[7]['product_id']}",
+            product_id9:"{$time_product[8]['product_id']}",
+            product_id10:"{$time_product[9]['product_id']}",
+            start:"{$index_excel[31]['data2']|date='Y-m-d',###}",
+            end:"{$index_excel[31]['data3']|date='Y-m-d',###}",
+            tableName:"time_product"
+        }
+        var fifthADVVM = new Vue({
+            el: '#fifthADV',
+            data: fifthADV,
+            methods: {
+                openBox: function () {
+                    changeLimitBox.product_id1 = this.product_id1;
+                    changeLimitBox.product_id2 = this.product_id2;
+                    changeLimitBox.product_id3 = this.product_id3;
+                    changeLimitBox.product_id4 = this.product_id4;
+                    changeLimitBox.product_id5 = this.product_id5;
+                    changeLimitBox.product_id6 = this.product_id6;
+                    changeLimitBox.product_id7 = this.product_id7;
+                    changeLimitBox.product_id8 = this.product_id8;
+                    changeLimitBox.product_id9 = this.product_id9;
+                    changeLimitBox.product_id10 = this.product_id10;
+                    changeLimitBox.start = this.start;
+                    changeLimitBox.end = this.end;
+                    changeLimitBox.tableName = this.tableName;
+                    changeLimitBox.visibility = true;
+                    changeLimitBox.caller = this;
+                    mask.visibility = true;
+                }
+            }
+        });
+    /*限時搶購 end*/
+
+
+
+    /* 橫幅廣告-1 start */
+        var SixthADV = {
+            link: "{$index_excel[11]['data2']}",
+            src: "__UPLOAD__{$index_excel[11]['data1']}",
+            online: +"{$index_online['block4']}"
+        }
+        var SixthADVVM = new Vue({
+            el: '#SixthADV',
+            data: SixthADV,
+            methods: {
+                openBox: function () {
+                    changeImageBox.id = 12;
+                    changeImageBox.width = 1376;
+                    changeImageBox.height = 459;
+                    changeImageBox.link = this.link;
+                    changeImageBox.src = this.src;
+                    changeImageBox.visibility = true;
+                    changeImageBox.caller = this;
+                    mask.visibility = true;
+                },
+                onlineToggle: function () {
+                    console.log(this.online);
+                    blockData = {
+                        id: 1,
+                        block4: this.online ? 1 : 0
+                    }
+                    this.blockCtrl(blockData);
+                }
+            }
+        });
+    /* 橫幅廣告-1 end */
+
+        
+    /*人氣商品 start*/
+        var seventhADV = {
+            product_id1:"{$hot_product[0]['product_id']}",
+            product_id2:"{$hot_product[1]['product_id']}",
+            product_id3:"{$hot_product[2]['product_id']}",
+            product_id4:"{$hot_product[3]['product_id']}",
+            product_id5:"{$hot_product[4]['product_id']}",
+            product_id6:"{$hot_product[5]['product_id']}",
+            product_id7:"{$hot_product[6]['product_id']}",
+            product_id8:"{$hot_product[7]['product_id']}",
+            product_id9:"{$hot_product[8]['product_id']}",
+            product_id10:"{$hot_product[9]['product_id']}",
+            tableName:"hot_product",
+            online: +"{$index_online['block5']}"
+        }
+        var seventhADVVM = new Vue({
+            el: '#seventhADV',
+            data: seventhADV,
+            methods: {
+                openBox: function () {
+                    changeProductBox.product_id1 = this.product_id1;
+                    changeProductBox.product_id2 = this.product_id2;
+                    changeProductBox.product_id3 = this.product_id3;
+                    changeProductBox.product_id4 = this.product_id4;
+                    changeProductBox.product_id5 = this.product_id5;
+                    changeProductBox.product_id6 = this.product_id6;
+                    changeProductBox.product_id7 = this.product_id7;
+                    changeProductBox.product_id8 = this.product_id8;
+                    changeProductBox.product_id9 = this.product_id9;
+                    changeProductBox.product_id10 = this.product_id10;
+                    changeProductBox.tableName = this.tableName;
+                    changeProductBox.visibility = true;
+                    changeProductBox.caller = this;
+                    mask.visibility = true;
+                },
+                onlineToggle: function () {
+                    console.log(this.online);
+                    blockData = {
+                        id: 1,
+                        block5: this.online ? 1 : 0
+                    }
+                    this.blockCtrl(blockData);
+                }
+            }
+        });
+    /*人氣商品 end*/
+
+
+    /*圖文廣告 start*/
+        var eighthADVCtrl = {
+            online: +"{$index_online['block12']}"
+        }
+        var eighthADVCtrlVM = new Vue({
+            el: '#eighthADVCtrl',
+            data: eighthADVCtrl,
+            methods: {
+                onlineToggle: function () {
+                    console.log(this.online);
+                    blockData = {
+                        id: 1,
+                        block12: this.online ? 1 : 0
+                    }
+                    this.blockCtrl(blockData);
+                    eighthADVCtrlHiddenHintVM.hidden = this.online;
+                    eighthADVLeftVM.online = this.online;
+                    eighthADVTextVM.online = this.online;
+                }
+            }
+        });
+
+        var eighthADVLeft = {
+            link: "{$index_excel[12]['data2']}",
+            src: "__UPLOAD__{$index_excel[12]['data1']}",
+            online: +"{$index_online['block12']}"
+        }
+        var eighthADVLeftVM = new Vue({
+            el: '#eighthADVLeft',
+            data: eighthADVLeft,
+            methods: {
+                openBox: function () {
+                    changeImageBox.id = 13;
+                    changeImageBox.width = 525;
+                    changeImageBox.height = 367;
+                    changeImageBox.link = this.link;
+                    changeImageBox.src = this.src;
+                    changeImageBox.visibility = true;
+                    changeImageBox.caller = this;
+                    mask.visibility = true;
+                }
+            }
+        });
+
+        var eighthADVText = {
+            title: "{$index_excel[13]['data3']}",
+            content: "<?php echo preg_replace('/<br\\s*?\/??>/i','\n', $index_excel[14]['data3']); ?>",
+            id1: "{$index_excel[15]['data3']}",
+            id2: "{$index_excel[16]['data3']}",
+            online: +"{$index_online['block12']}"
+        }
+        var eighthADVTextVM = new Vue({
+            el: '#eighthADVText',
+            data: eighthADVText,
+            methods: {
+                ajaxTitle: function () {
+                    this.setText(14, this.title);
+                },
+                ajaxContent: function () {
+                    this.setText(15, this.content.replace(/\n/g, '<br>'));
+                },
+                ajaxId1: function () {
+                    this.setText(17, this.id1);
+                },
+                ajaxId2: function () {
+                    this.setText(16, this.id2);
+                },
+            }
+        });
+
+        var eighthADVCtrlHiddenHint = {
+            hidden: +"{$index_online['block12']}"
+        }
+        var eighthADVCtrlHiddenHintVM = new Vue({
+            el: '#eighthADVCtrlHiddenHint',
+            data: eighthADVCtrlHiddenHint
+        });
+    /*圖文廣告 end*/
+
+
+
+    /*店長推薦 start*/
+        var ninthADV = {
+            product_id1:"{$recommend_product[0]['product_id']}",
+            product_id2:"{$recommend_product[1]['product_id']}",
+            product_id3:"{$recommend_product[2]['product_id']}",
+            product_id4:"{$recommend_product[3]['product_id']}",
+            product_id5:"{$recommend_product[4]['product_id']}",
+            product_id6:"{$recommend_product[5]['product_id']}",
+            product_id7:"{$recommend_product[6]['product_id']}",
+            product_id8:"{$recommend_product[7]['product_id']}",
+            product_id9:"{$recommend_product[8]['product_id']}",
+            product_id10:"{$recommend_product[9]['product_id']}",
+            tableName:"recommend_product",
+            online: +"{$index_online['block6']}"
+        }
+        var ninthADVVM = new Vue({
+            el: '#ninthADV',
+            data: ninthADV,
+            methods: {
+                openBox: function () {
+                    changeProductBox.product_id1 = this.product_id1;
+                    changeProductBox.product_id2 = this.product_id2;
+                    changeProductBox.product_id3 = this.product_id3;
+                    changeProductBox.product_id4 = this.product_id4;
+                    changeProductBox.product_id5 = this.product_id5;
+                    changeProductBox.product_id6 = this.product_id6;
+                    changeProductBox.product_id7 = this.product_id7;
+                    changeProductBox.product_id8 = this.product_id8;
+                    changeProductBox.product_id9 = this.product_id9;
+                    changeProductBox.product_id10 = this.product_id10;
+                    changeProductBox.tableName = this.tableName;
+                    changeProductBox.visibility = true;
+                    changeProductBox.caller = this;
+                    mask.visibility = true;
+                },
+                onlineToggle: function () {
+                    console.log(this.online);
+                    blockData = {
+                        id: 1,
+                        block6: this.online ? 1 : 0
+                    }
+                    this.blockCtrl(blockData);
+                }
+            }
+        });
+    /*店長推薦 end*/
+
+
+    /*特價商品 start*/
+        var spe_ADV = {
+            tableName:"spe_price_product",
+            online: +"{$index_online['block_spe_price']}"
+        }
+        var spe_ADVM = new Vue({
+            el: '#spe_ADV',
+            data: spe_ADV,
+            methods: {
+                openBox: function () {
+                    changeProductBox.tableName = this.tableName;
+                    changeProductBox.visibility = true;
+                    changeProductBox.caller = this;
+                    mask.visibility = true;
+                },
+                onlineToggle: function () {
+                    console.log(this.online);
+                    blockData = {
+                        id: 1,
+                        block_spe_price: this.online ? 1 : 0
+                    }
+                    this.blockCtrl(blockData);
+                }
+            }
+        });
+    /*特價商品 end*/
+
+		
+
+    /*圖文廣告B start
+        var tenthADVCtrl = {
+            online: +"{$index_online['block7']}"
+        }
+        var tenthADVCtrlVM = new Vue({
+            el: '#tenthADVCtrl',
+            data: tenthADVCtrl,
+            methods: {
+                onlineToggle: function () {
+                    console.log(this.online);
+                    blockData = {
+                        id: 1,
+                        block7: this.online ? 1 : 0
+                    }
+                    this.blockCtrl(blockData);
+                    tenthADVCtrlHiddenHintVM.hidden = this.online;
+                    tenthADVRightVM.online = this.online;
+                    tenthADVText.online = this.online;
+                }
+            }
+        });
+
+        var tenthADVRight = {
+            link: "{$index_excel[19]['data2']}",
+            src: "__UPLOAD__{$index_excel[19]['data1']}",
+            online: +"{$index_online['block7']}"
+
+        }
+        var tenthADVRightVM = new Vue({
+            el: '#tenthADVRight',
+            data: tenthADVRight,
+            methods: {
+                openBox: function () {
+                    changeImageBox.id = 20;
+                    changeImageBox.width = 700;
+                    changeImageBox.height = 475;
+                    changeImageBox.link = this.link;
+                    changeImageBox.src = this.src;
+                    changeImageBox.visibility = true;
+                    changeImageBox.caller = this;
+                    mask.visibility = true;
+                }
+            }
+        });
+
+        var tenthADVText = {
+            title: "{$index_excel[17]['data3']}",
+            content: "<?php echo preg_replace('/<br\\s*?\/??>/i','\n', $index_excel[18]['data3']); ?>",
+            url: "{$index_excel[20]['data2']}",
+            online: +"{$index_online['block7']}"
+        }
+        var tenthADVTextVM = new Vue({
+            el: '#tenthADVText',
+            data: tenthADVText,
+            methods: {
+                ajaxTitle: function () {
+                    this.setText(18, this.title);
+                },
+                ajaxContent: function () {
+                    this.setText(19, this.content.replace(/\n/g, '<br>'));
+                    //console.log(this.content.replace(/\n/g, '<br>'));
+                },
+                ajaxUrl: function () {
+                    //console.log(this.url);
+                    this.setLink(21, this.url);
+                }
+            }
+        });
+        var tenthADVCtrlHiddenHint = {
+            hidden: +"{$index_online['block7']}"
+        }
+        var tenthADVCtrlHiddenHintVM = new Vue({
+            el: '#tenthADVCtrlHiddenHint',
+            data: tenthADVCtrlHiddenHint
+        });*/
+    /*圖文廣告B end
+
+
+    /* 橫幅廣告-2 start */
+        var new_tenthADV = {
+            link: "{$index_excel[32]['data2']}",
+            src: "__UPLOAD__{$index_excel[32]['data1']}",
+            online: +"{$index_online['block7_new']}"
+        }
+        var new_tenthADVVM = new Vue({
+            el: '#new_tenthADV',
+            data: new_tenthADV,
+            methods: {
+                openBox: function () {
+                    changeImageBox.id = 33;
+                    changeImageBox.width = 1920;
+                    changeImageBox.height = 640;
+                    changeImageBox.link = this.link;
+                    changeImageBox.src = this.src;
+                    changeImageBox.visibility = true;
+                    changeImageBox.caller = this;
+                    mask.visibility = true;
+                },
+                onlineToggle: function () {
+                    console.log(this.online);
+                    blockData = {
+                        id: 1,
+                        block7_new: this.online ? 1 : 0
+                    }
+                    this.blockCtrl(blockData);
+                }
+            }
+        });
+    /* 橫幅廣告-2 end */
+
+
+    /*即期良品 start*/
+        var eleventhADV = {
+            product_id1:"{$expiring_product[0]['product_id']}",
+            product_id2:"{$expiring_product[1]['product_id']}",
+            product_id3:"{$expiring_product[2]['product_id']}",
+            product_id4:"{$expiring_product[3]['product_id']}",
+            product_id5:"{$expiring_product[4]['product_id']}",
+            product_id6:"{$expiring_product[5]['product_id']}",
+            product_id7:"{$expiring_product[6]['product_id']}",
+            product_id8:"{$expiring_product[7]['product_id']}",
+            product_id9:"{$expiring_product[8]['product_id']}",
+            product_id10:"{$expiring_product[9]['product_id']}",
+            tableName:"expiring_product",
+            online: +"{$index_online['block8']}"
+        }
+        var eleventhADVVM = new Vue({
+            el: '#eleventhADV',
+            data: eleventhADV,
+            methods: {
+                openBox: function () {
+                    changeProductBox.product_id1 = this.product_id1;
+                    changeProductBox.product_id2 = this.product_id2;
+                    changeProductBox.product_id3 = this.product_id3;
+                    changeProductBox.product_id4 = this.product_id4;
+                    changeProductBox.product_id5 = this.product_id5;
+                    changeProductBox.product_id6 = this.product_id6;
+                    changeProductBox.product_id7 = this.product_id7;
+                    changeProductBox.product_id8 = this.product_id8;
+                    changeProductBox.product_id9 = this.product_id9;
+                    changeProductBox.product_id10 = this.product_id10;
+                    changeProductBox.tableName = this.tableName;
+                    changeProductBox.visibility = true;
+                    changeProductBox.caller = this;
+                    mask.visibility = true;
+                },
+                onlineToggle: function () {
+                    console.log(this.online);
+                    blockData = {
+                        id: 1,
+                        block8: this.online ? 1 : 0
+                    }
+                    this.blockCtrl(blockData);
+                }
+            }
+        });
+    /*即期良品 end*/
+
+
+    /*商城分類廣告 start*/
+        var twelfthADV = {
+            list: {$product},
+            online: +"{$index_online['block9']}"
+        }
+        var twelfthADVVM = new Vue({
+            el: "#twelfthADVVM",
+            data: twelfthADV,
+            methods:{
+                endDrag: function () {
+                    var idArray = []
+                    this.list.forEach(function(element) {
+                        idArray.push(element.id);
+                    });
+                    //console.log(idArray);
+                    twelfthADVVM.setProductOrder(idArray);
+                },
+                onlineToggle: function () {
+                    console.log(this.online);
+                    blockData = {
+                        id: 1,
+                        block9: this.online ? 1 : 0
+                    }
+                    this.blockCtrl(blockData);
+                },
+                onChange: function () {
+                    this.list.forEach(function(element) {
+                        twelfthADVVM.setProductOnline(element.id, element.online);
+                        console.log(element);
+                    });
+                }
+            }
+        });
+    /*商城分類廣告 end*/
+
+
+    /*推薦圖文 start
+        var thirteenthADVCtrl = {
+            online: +"{$index_online['block10']}"
+        }
+        var thirteenthADVCtrlVM = new Vue({
+            el: '#thirteenthADVCtrl',
+            data: thirteenthADVCtrl,
+            methods: {
+                onlineToggle: function () {
+                    console.log(this.online);
+                    blockData = {
+                        id: 1,
+                        block10: this.online ? 1 : 0
+                    }
+                    this.blockCtrl(blockData);
+                    thirteenthADVCtrlHiddenHintVM.hidden = this.online;
+                    thirteenthRowLeftVM.online = this.online;
+                    thirteenthRowRightVM.online = this.online;
+                }
+            }
+        });
+
+        var thirteenthRowLeft = {
+            link: "{$index_excel[21]['data2']}",
+            src: "__UPLOAD__{$index_excel[21]['data1']}",
+            title: "{$index_excel[23]['data3']}",
+            content: "<?php echo preg_replace('/<br\\s*?\/??>/i','\n', $index_excel[24]['data3']); ?>",
+            online: +"{$index_online['block10']}",
+            location: 'left'
+        }
+        var thirteenthRowLeftVM = new Vue({
+            el: '#thirteenthRowLeft',
+            data: thirteenthRowLeft,
+            methods: {
+                openBox: function () {
+                    changeImgtextBox.link = this.link;
+                    changeImgtextBox.src = this.src;
+                    changeImgtextBox.title = this.title;
+                    changeImgtextBox.content = this.content;
+                    changeImgtextBox.location = this.location;
+                    changeImgtextBox.visibility = true;
+                    changeImgtextBox.caller = this;
+                    mask.visibility = true;
+                }
+            }
+        });
+
+        var thirteenthRowRight = {
+            link: "{$index_excel[22]['data2']}",
+            src: "__UPLOAD__{$index_excel[22]['data1']}",
+            title: "{$index_excel[25]['data3']}",
+            content: "<?php echo preg_replace('/<br\\s*?\/??>/i','\n', $index_excel[26]['data3']); ?>",
+            online: +"{$index_online['block10']}",
+            location: 'right'
+        }
+        var thirteenthRowRightVM = new Vue({
+            el: '#thirteenthRowRight',
+            data: thirteenthRowRight,
+            methods: {
+                openBox: function () {
+                    changeImgtextBox.link = this.link;
+                    changeImgtextBox.src = this.src;
+                    changeImgtextBox.title = this.title;
+                    changeImgtextBox.content = this.content;
+                    changeImgtextBox.location = this.location;                
+                    changeImgtextBox.visibility = true;
+                    changeImgtextBox.caller = this;
+                    mask.visibility = true;
+                }
+            }
+        });
+        var thirteenthADVCtrlHiddenHint = {
+            hidden: +"{$index_online['block10']}"
+        }
+        var thirteenthADVCtrlHiddenHintVM = new Vue({
+            el: '#thirteenthADVCtrlHiddenHint',
+            data: thirteenthADVCtrlHiddenHint
+        });
+    推薦圖文 end*/
+
+
+    /* 三幅廣告-2 start*/
+        var new_thirteenthADVCtrl = {
+            online: +"{$index_online['block10_new']}"
+        }
+        var new_thirteenthADVCtrlVM = new Vue({
+            el: '#new_thirteenthADVCtrl',
+            data: new_thirteenthADVCtrl,
+            methods: {
+                onlineToggle: function () {
+                    console.log(this.online);
+                    blockData = {
+                        id: 1,
+                        block10_new: this.online ? 1 : 0
+                    }
+                    this.blockCtrl(blockData);
+                    new_thirteenthADVLeftVM.online = this.online;
+                    new_thirteenthADVCenterVM.online = this.online;
+                    new_thirteenthADVRightVM.online = this.online;
+                    new_thirteenthADVCtrlHiddenHint.hidden = this.online;
+                }
+            }
+
+        });
+
+        var new_thirteenthADVLeft = {
+            link: "{$index_excel[33]['data2']}",
+            src: "__UPLOAD__{$index_excel[33]['data1']}",
+            online: +"{$index_online['block10_new']}"
+        }
+        var new_thirteenthADVLeftVM = new Vue({
+            el: '#new_thirteenthADVLeft',
+            data: new_thirteenthADVLeft,
+            methods: {
+                openBox: function () {
+                    changeImageBox.id = 34;
+                    changeImageBox.width = 460;
+                    changeImageBox.height = 460;
+                    changeImageBox.link = this.link;
+                    changeImageBox.src = this.src;
+                    changeImageBox.visibility = true;
+                    changeImageBox.caller = this;
+                    mask.visibility = true;
+                }
+            }
+        });
+
+        var new_thirteenthADVCenter = {
+            link: "{$index_excel[34]['data2']}",
+            src: "__UPLOAD__{$index_excel[34]['data1']}",
+            online: +"{$index_online['block10_new']}"
+        }
+        var new_thirteenthADVCenterVM = new Vue({
+            el: '#new_thirteenthADVCenter',
+            data: new_thirteenthADVCenter,
+            methods: {
+                openBox: function () {
+                    changeImageBox.id = 35;
+                    changeImageBox.width = 460;
+                    changeImageBox.height = 460;
+                    changeImageBox.link = this.link;
+                    changeImageBox.src = this.src;
+                    changeImageBox.visibility = true;
+                    changeImageBox.caller = this;
+                    mask.visibility = true;
+                }
+            }
+
+        });
+
+        var new_thirteenthADVRight = {
+            link: "{$index_excel[35]['data2']}",
+            src: "__UPLOAD__{$index_excel[35]['data1']}",
+            online: +"{$index_online['block10_new']}"
+        }
+        var new_thirteenthADVRightVM = new Vue({
+            el: '#new_thirteenthADVRight',
+            data: new_thirteenthADVRight,
+            methods: {
+                openBox: function () {
+                    changeImageBox.id = 36;
+                    changeImageBox.width = 460;
+                    changeImageBox.height = 460;
+                    changeImageBox.link = this.link;
+                    changeImageBox.src = this.src;
+                    changeImageBox.visibility = true;
+                    changeImageBox.caller = this;
+                    mask.visibility = true;
+                }
+            }
+        });
+
+        var new_thirteenthADVCtrlHiddenHint = {
+            hidden: +"{$index_online['block10_new']}"
+        }
+        var new_thirteenthADVCtrlHiddenHintVM = new Vue({
+            el: '#new_thirteenthADVCtrlHiddenHint',
+            data: new_thirteenthADVCtrlHiddenHint
+        });
+    /* 三幅廣告-2 end*/
+
+
+    /*頁尾區域文字 start*/
+        // 跳出視窗
+        var changeTextBox = {
+            id: 0,
+            content: '',
+            visibility:　false,
+            caller: null
+        }
+        var changeTextBoxVM = new Vue({
+            el: '#changeTextBox', 
+            data: changeTextBox,
+            watch: {
+                content: function (val) {
+                    editor.html(val);
+                }
+            },
+            methods: {
+                setHidden: function () {
+                    maskVM.setHidden();
+                },
+                ajaxSubmit: function () {
+                    editor.sync();
+                    //console.log(editor.html());
+                    this.content = editor.html();
+                    this.setContent(this.id, this.content.replace(/\n/g, ''));
+                },
+                updateCallerData: function () {
+                    switch (this.id) {
+                        case 28:
+                            this.caller.content1 = this.content;
+                            break;
+                        case 29:
+                            this.caller.content2 = this.content;
+                            break;
+                        case 30:
+                            this.caller.content3 = this.content;
+                            break;
+                        case 31:
+                            this.caller.content4 = this.content;
+                            break;
+                        default:
+                            break
+                    }
+                }
+            }
+        });
+
+        // 表格
+        var fourteenthADV = {
+            content1: "{$index_excel[27]['data3']|addslashes}",
+            content2: "{$index_excel[28]['data3']|addslashes}",
+            content3: "{$index_excel[29]['data3']|addslashes}",
+            content4: "{$index_excel[30]['data3']|addslashes}",
+            online: + "{$index_online['block11']}"
+        }
+        var fourteenthADVVM = new Vue({
+            el: "#fourteenthADV",
+            data: fourteenthADV,
+            methods:{
+                onlineToggle: function () {
+                    console.log(this.online);
+                    blockData = {
+                        id: 1,
+                        block11: this.online ? 1 : 0
+                    }
+                    this.blockCtrl(blockData);
+                },
+                openBox: function (number) {
+                    switch (number) {
+                        case 1:
+                            changeTextBox.content = this.content1;
+                            changeTextBox.id = 28;
+                            break;
+                        case 2:
+                            changeTextBox.content = this.content2;
+                            changeTextBox.id = 29;
+                            break;
+                        case 3:
+                            changeTextBox.id = 30;
+                            changeTextBox.content = this.content3;
+                            break;
+                        case 4:
+                            changeTextBox.id = 31;
+                            changeTextBox.content = this.content4;
+                            break;
+                        default:
+                            break;
+                    }
+                    changeTextBox.visibility = true;
+                    changeTextBox.caller = this;
+                    mask.visibility = true;
+                }
+            }
+        });
+    /*頁尾區域文字 end*/
+    </script>
+
+{/block}

@@ -1,0 +1,709 @@
+{extend name="Public/aside" /}
+
+{block name="title"}會員管理{/block}
+{block name="css"}
+    <style>
+        input, textarea {
+            font-size: 16px;
+        }
+        table .glyphicon {
+            font-size: medium;
+        }
+        .item-info td:nth-child(1){
+            text-align: center;
+        }
+
+        .dot_green {
+            height: 25px;
+            width: 25px;
+            background-color: rgb(0, 255, 0);
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .dot_red {
+            height: 25px;
+            width: 25px;
+            background-color: rgb(255, 0, 0);
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .dot_load {
+            height: 15px;
+            width: 15px;
+            background-color:#E0E0E0;
+            border-radius: 50%;
+            display: inline-block;
+            margin-left:5px;
+            -webkit-animation-name: example; /* Safari 4.0 - 8.0 */
+            -webkit-animation-duration: 2s; /* Safari 4.0 - 8.0 */
+            -webkit-animation-iteration-count: infinite; /* Safari 4.0 - 8.0 */
+            animation-name: example;
+            animation-duration: 2s;
+            animation-iteration-count: infinite;
+            position: relative;
+
+        }
+       /* Safari 4.0 - 8.0 */
+        @-webkit-keyframes example {
+            0%   {background-color:red; left:0px; top:0px;}
+            25%  {background-color:yellow; left:300px; top:0px;}
+            50%  {background-color:blue; left:300px; top:300px;}
+            75%  {background-color:green; left:0px; top:300px;}
+            100% {background-color:red; left:0px; top:0px;}
+        }
+        /* Standard syntax */
+        @keyframes example {
+            0%   {background-color:red; left:0px; top:0px;}
+            25%  {background-color:yellow; left:300px; top:0px;}
+            50%  {background-color:blue; left:300px; top:300px;}
+            75%  {background-color:green; left:0px; top:300px;}
+            100% {background-color:red; left:0px; top:0px;}
+        }
+        input[type=file] {
+            display: -webkit-inline-box;
+        }
+
+        /* 新增經驗區塊 */
+        .add-news{
+            position: absolute;
+            background: #fff;
+            padding:20px;
+            width: 370px;
+            height:300px;
+            z-index:999;
+            top:calc(50% - 400px / 2);
+            left:calc(50% - 370px / 2);
+        }
+        .add-news textarea{
+            margin-top:-15px;
+            margin-left:52px;
+            width:278px;
+            height:180px;
+            padding:5px
+        }            
+        .add-news .button{
+            right:20px;
+            bottom:15px;
+            position:absolute;
+        }  
+    </style>
+{/block}
+
+{block name="content"}
+
+<div id="block" onclick="CloseAdd('.add-news')"></div>
+
+    <div class="content">
+
+	    <!-- 匯出中動畫 -->
+        <div class="add-news none" id="Box" style="height:410px;">
+            <div style="padding: 10px;height: 320px;">
+                <p>匯出中</p><span class="dot_load"></span>
+            </div>
+        </div>
+
+        <p class="title" onclick="javascript:location.href='{:url('Index/index')}'" style="cursor:pointer;">
+            會員管理 > {$Member_status}
+	        {neq name="memberKey" value=""}
+                > 搜尋：{$memberKey}
+            {/neq}
+            {neq name="searchKey1" value=""}
+                > 搜尋：{$searchKey1}
+            {/neq}		
+            {neq name="searchKey2" value=""}
+                > 搜尋：{$searchKey2}
+            {/neq}		
+        </p>
+
+        <div style="padding:10px 20px; margin:10px; width:99%">
+            <div class="frame">
+                <form action="{:url('index/import')}" name="excelForm" method="post"  enctype="multipart/form-data">
+                    <input type="file" name="file" id="file_excel">
+                    <button onclick="uploadFile(event);">匯入檔案</button>
+                    <a href="/public/static/index/example_account.xlsx" download="">下載範本</a>
+                    <span style="color: red;">也可使用匯出搜尋資料取得範本</span>
+                </form>
+            </div>
+            <br>
+
+            <form action="" name="searchForm" method="get" id="searchForm">
+                <select name="nameKey" id='nameKey' v-model="nameKey">
+                      <option value="">會員搜尋</option>
+                    　<option value="1">註冊商品搜尋</option>
+                      <option value="2">購買商品搜尋</option>
+                </select>
+
+				<div>
+                    會員來源：
+                    <select name="memberFromType" id='memberFromType' v-model="memberFromType">
+                        <option value="">請選擇</option>
+                        <option value="A">繁體版</option>
+                        <option value="B">簡體版</option>
+                        <option value="C">國際版</option>
+                        <option value="D">日文版</option>
+                    </select>&nbsp;&nbsp;
+
+                    會員資料：
+                    <input type="text" name="memberKey" style="text-align:center;width: 250px;" value="{$memberKey}" placeholder="請輸入會員編號/姓名/信箱/手機">
+                    加入開始日期:<input id="date_st" name="date_st" type="date" value="{$date_st}">
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    結束日期:<input id="date_en" name="date_en" type="date" value="{$date_en}">
+                    &nbsp;&nbsp;&nbsp;
+
+                    {if condition="$VipDiscount == 1"}
+                        VIP狀態：
+                        <select name="vipType" id='vipType' v-model="vipType">
+                            <option value="">全部</option>
+                            <option value="-1">無等級</option>
+                            {volist name="vip_type" id="vo"}
+                                <option value="{$vo.id}">{$vo.vip_name}</option>
+                            {/volist}
+                        </select>
+                        &nbsp;&nbsp;&nbsp;
+                    {/if}
+                </div>
+
+				<div class='buy_date' v-if="nameKey==1">
+                    商品註冊：
+                    <input type="text" name="searchKey1" style="text-align:center;width: 250px;" value="{$searchKey1}" placeholder="請輸入會員編號/姓名/信箱/手機">
+                    購買開始日期:<input id="buy_date_st1" name="buy_date_st1" type="date" value="{$buy_date_st1}">
+                    購買結束日期:<input id="buy_date_en1" name="buy_date_en1" type="date" value="{$buy_date_en1}">
+                    &nbsp;&nbsp;&nbsp;
+                    註冊開始日期:<input id="reg_date_st" name="reg_date_st" type="date" value="{$reg_date_st}">
+                    &nbsp;&nbsp;
+                    註冊結束日期:<input id="reg_date_en" name="reg_date_en" type="date" value="{$reg_date_en}">
+                </div>
+
+				<div class='reg_date' v-if="nameKey==2">
+                    購買商品：
+                    <input type="text"  name="searchKey2" style="text-align:center;width: 250px;" value="{$searchKey2}" placeholder="請輸入會員編號/姓名/信箱/手機">
+                    購買開始日期:<input id="buy_date_st2" name="buy_date_st2" type="date" value="{$buy_date_st2}">
+                    購買結束日期:<input id="buy_date_en2" name="buy_date_en2" type="date" value="{$buy_date_en2}">
+                </div>
+                <button>搜尋</button>
+            </form>
+            <br>
+
+			<div class="frame">
+                <button onclick="newBlock();">匯出搜尋資料</button>
+            </div>
+        </div>
+
+		{notempty name="tag_name"}
+            <div class="row text-center">
+                <ul class="pagination">
+                    <li class="<?php  if($tag==1)echo 'active'; ?>">
+                        <a href="javascript:change_tag(1)">{$tag_name[1]}</a>
+                    </li>
+                    <li class="<?php  if($tag==2)echo 'active'; ?>">
+                        <a href="javascript:change_tag(2)">{$tag_name[2]}</a>
+                    </li>
+                </ul>
+            </div>
+        {/notempty}
+
+        <div style="padding:15px 20px; border: 2px #9D9D9D solid; margin:0 10px; width:99%">
+            <span class="glyphicon glyphicon-plus add"  data-toggle="modal" data-target="#addModal"
+                    style="color:#fff; font-size:20px; text-align:center;
+                    background:#333; padding:10px; border-radius:100px; cursor:pointer">
+            </span>
+
+
+            <!-- 多項編輯開始 -->
+            <div class="tool_item">
+                <span class="edit">
+                    編輯<span class="glyphicon glyphicon-triangle-bottom" style="font-size: 25px;"></span>				 
+                </span>
+                <div class="edit-item itme_box none">
+                    {if condition="$VipDiscount == 1"}
+                        VIP等級：
+                        <select id="vip_type" onchange="multiOperate('vip_type');">
+                            <option value="">請選擇</option>
+                            <option value="0">無等級</option>
+                            {volist name="vip_type" id="vo"}
+                                <option value="{$vo.id}">{$vo.vip_name}</option>
+                            {/volist}
+                        </select>
+                        <br>
+                    {/if}
+
+                    <a onclick="multiOperate('status', 1);">
+                        <font>通過&nbsp;</font>
+                    </a>&nbsp;&nbsp;
+                    <a onclick="multiOperate('status', 2);">
+                        <font>黑名單&nbsp;</font>
+                    </a>&nbsp;&nbsp;
+                    <a onclick="multiOperate('status', 3);">
+                        <font>停用&nbsp;</font>
+                    </a><br>
+                    
+                    <hr style="border-top: 1px solid #333; margin:10px 0px">
+                    <a onclick="multiOperate('Delete');">
+                        刪除 <span style="margin-left: 15px;" class="glyphicon glyphicon-trash"></span>
+                    </a>
+                </div>
+            </div>
+            <!-- 多項編輯結束 -->
+
+            {if condition="$POINT_DISCOUNT == 1"}
+			<!-- 贈送開始 -->
+            <div class="tool_item">
+                <span class="gift">
+                    贈送<span class="glyphicon glyphicon-triangle-bottom" style="font-size: 25px;"></span>
+                </span>
+                <div class="gift-item itme_box none">
+                    
+                    <p>目標：<input type="text" id="gift_member" size="12" placeholder="請輸入會員編號" /></p>
+                    <p>點數說明：<input type="text" id="gift_msg" /></p>
+                    <p>贈送點數：<input type="text" id="gift_points" placeholder="輸入負數則為扣點"/></p>
+                    <button class="btn" onclick="gift();">
+                        <font>確認&nbsp;</font>
+                    </button>
+                    <br>
+                </div>
+            </div>
+            <!-- 贈送結束 -->
+            {/if}
+
+            {if condition="$NOTIFICATION == 1"}
+            <!-- 推播開始 -->
+            <div class="tool_item">
+                <span class="notification">
+                    推播<span class="glyphicon glyphicon-triangle-bottom" style="font-size: 25px;"></span>
+                </span>
+
+                <div class="notification-item itme_box none">
+                    <p>推播標題：<input type="text" id="notification_tit" /></p>
+                    <p>推播內容：<input type="text" id="notification_cont" /></p>
+                    <p>開啟連結：<input type="text" id="notification_url" placeholder="請包涵http://或https://" /></p>
+                    <input type="hidden" id="notification_id" />
+                    <button class="btn" onclick="notification();">
+                        <font>確認&nbsp;</font>
+                    </button>
+                    <br>
+                </div>
+            </div>
+            <!-- 推播結束 -->
+            {/if}
+
+            <div class="" style="font-size:25px; display: inline-block; cursor:pointer;position: absolute;right: 40px;">
+                會員數：{$allMember}
+                {if condition="$nameKey==1"}、已註冊數：{$do_number}、未註冊數：{$allMember-$do_number}、註冊率：{$do_percent}{/if}
+                {if condition="$nameKey==2"}、已購買數：{$do_number}、未購買數：{$allMember-$do_number}、購買率：{$do_percent}{/if}
+            </div>
+        </div>
+
+        <table class="item-info">
+            <tr>
+                <td style="width:5%"><input type="checkbox" class="activityCheckboxAll" onclick="$('.item-info input[class=indexCheckbox]').prop('checked', ($(this).is(':checked')?true:false))"style="width:100%; cursor:pointer;"></td>
+                <td style="width:10%">會員註冊日期</td>
+                <td style="width:7%">會員編號</td>
+                <td style="width:10%">姓名</td>
+
+                {if condition="$VipDiscount == 1"}
+                <td style="width:7%">會員等級</td>
+                {/if}
+
+                <td style="width:7%">狀態</td>
+                <td style="width:10%">聯絡信箱</td>
+                <td style="width:10%">手機</td>
+                <td style="width:7%" style="cursor:pointer">完成<span class="glyphicon glyphicon-arrow-down"></td>
+                <td style="width:7%" style="cursor:pointer">退貨<span class="glyphicon glyphicon-arrow-down"></td>
+                <td style="width:7%" style="cursor:pointer">取消<span class="glyphicon glyphicon-arrow-down"></td>
+                <td style="width:7%" style="cursor:pointer">總消費金額<span class="glyphicon glyphicon-arrow-down"></td>
+				<td style="width:10%">匯出狀態</td>
+				<?php if($nameKey==2){  ?><td style="width:10%">購買狀態</td><?php } ?>
+				<?php if($nameKey==1){  ?><td style="width:10%">註冊狀態</td><?php } ?>
+                <td style="width:5%">刪除</td>
+            </tr> 
+
+			{volist name="rowDataItem" id="vo"}
+                <tr>
+                    <td><input type="checkbox" class="indexCheckbox" alt="{$vo.id}"></td>
+                    <td>{$vo.createtime|date='Y-m-d',###}</td>
+                    <td><a href="{:url('Index/edit', ['id' => $vo['id']])}">{$vo.number|default=$vo.id}</a></td>
+                    <td><a href="{:url('Index/edit', ['id' => $vo['id']])}">{$vo.name}</a></td>
+
+                    {if condition="$VipDiscount == 1"}
+                    <td>{if condition="$vo.vip_id==0"}無{else/}{$vo.vip_name}{/if}</td>
+                    {/if}
+
+                    <td>{$vo.status}</td>
+                    <td><a href="mailto:{$vo.email}">{$vo.email}</a></td>                    
+                    <td>{$vo.phone}</td>
+                    <td>{$vo.complete}</td>
+                    <td>{$vo.return}</td>
+                    <td>{$vo.cancel}</td>
+                    <td>{$vo.totalcom-$vo.totaldel}</td>
+					<td>{$Export[$vo.export]}</td>
+					<?php if($nameKey == 1 ){  ?><td>{$Registered[$vo.reg]}</td><?php } ?>
+					<?php if($nameKey == 2 ){ ?><td>{$Buy[$vo.buy]}</td><?php } ?>
+					<td><span class="glyphicon glyphicon-trash" onclick="delete_item('{$vo.id}')"></span></td>
+                </tr>
+            {/volist}
+
+        </table>
+        <div class="row text-center">
+            <ul class="pagination">
+                <li class=""><a href="javascript:change_page({$page-1})">«</a></li> 
+
+                {volist name="pages" id="vo"}
+                    <li class="<?php  if($i==$page)echo 'active'; ?>">
+                        <a href="javascript:change_page({$vo})">{$vo}</a>
+                    </li> 
+                {/volist}
+
+                <li class=""><a href="javascript:change_page({$page+1})">»</a></li> 
+            </ul>
+        </div>
+    </div>
+
+    <div class="modal fade in" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true">
+        <div id="addMember" class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addModalLabel" style="display: inline-block;">新增會員</h5>
+                    <button type="button" class="close eeeeeee" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body row" id="boxModel">
+                    <div class="form-group col-sm-6 col-12">
+                        <label class="col-form-label">推薦者會員編號</label>
+                        <input type="text" class="form-control " value=""  v-model="addModel.upline_user" placeholder="">
+                    </div>
+                    <div class="form-group col-sm-12 col-12"></div>
+
+                    <div class="form-group col-sm-6 col-12">
+                        <label class="col-form-label">會員帳號</label>
+                        <input type="text" class="form-control " value=""  v-model="addModel.email" placeholder="請填入email">
+                    </div>
+                    <div class="form-group col-sm-6 col-12">
+                        <label class="col-form-label">會員密碼</label>
+                        <input type="text" class="form-control " value=""  v-model="addModel.pwd" placeholder="需包含英文數字">
+                    </div>
+                    <div class="form-group col-sm-6 col-12">
+                        <label class="col-form-label">姓名</label>
+                        <input type="text" class="form-control " value=""  v-model="addModel.name">
+                    </div>
+                    <div class="form-group col-sm-6 col-12">
+                        <label class="col-form-label">生日</label>
+                        <input type="date" class="form-control " name="birthday">
+                    </div>
+                    <div class="form-group col-sm-6 col-12">
+                        <label class="col-form-label">手機</label>
+                        <input type="text" class="form-control " value=""  v-model="addModel.phone">
+                    </div>
+                    <div class="form-group col-sm-6 col-12">
+                        <label class="col-form-label">電話</label>
+                        <input type="text" class="form-control " value=""  v-model="addModel.tele">
+                    </div>
+                    <div class="form-group col-sm-12 col-12">
+                        <label class="col-form-label">聯絡地址</label>
+                        <input type="text" class="form-control " value=""  v-model="addModel.F_S_NH_Address">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a class="btn btn-success btn-sm" @click="doAdd()">新增</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{/block}
+
+{block name="ownJS"}
+    <script src="__PUBLIC__/js/action.js"></script>
+    <script>  
+		/*搜尋功能*/
+        var searchForm_data = {
+            memberFromType: '{$memberFromType}',
+            nameKey: '{$nameKey}',
+            vipType: '{$vipType}',
+        }
+        var searchFormVM = new Vue({
+            el: '#searchForm', 
+            data: searchForm_data,
+            watch: {
+            },
+            methods: {
+            }
+        }); 
+
+        //抓取GET資料
+        function get_theRequest(){
+            var Request = new Object();  
+            var url = location.search; 
+            var theRequest = new Object();      
+            if (url.indexOf("?") != -1) {       
+                var str = url.substr(1);         
+                strs = str.split("&");       
+                for(var i = 0; i < strs.length; i++) {       
+                   theRequest[strs[i].split("=")[0]]=decodeURI(strs[i].split("=")[1]);       
+                }        
+            }
+            return theRequest;
+        }
+        function change_tag(tag){
+            theRequest = get_theRequest();
+
+            target_url = "{:url('Index/index')}?";
+            theRequest['page'] = 1;
+            theRequest['tag'] = tag;
+            ob_keys = Object.keys(theRequest);
+            for(var i = 0; i < ob_keys.length; i++) {       
+                target_url += ( ob_keys[i] + '=' + theRequest[ob_keys[i]] + '&');
+            } 
+            location.href= target_url;
+        }
+        function change_page(page){
+            total_pages = {$total_pages};
+            if(page<1 || page>total_pages){ return; }
+
+            theRequest = get_theRequest();
+
+            target_url = "{:url('Index/index')}?";
+            theRequest['page'] = page;
+            ob_keys = Object.keys(theRequest);
+            for(var i = 0; i < ob_keys.length; i++) {       
+                target_url += ( ob_keys[i] + '=' + theRequest[ob_keys[i]] + '&');
+            } 
+            location.href= target_url;
+        }
+
+        /*工具列區塊*/
+        $(function () {    
+            // 編輯
+            $('.edit').click(function(){
+                if($('.edit-item').is(':visible')==true){
+                    $('.edit-item').hide();
+                }
+                else{
+                    $('.edit-item').show();
+                }
+            })
+            $('.gift').click(function(){
+                if($('.gift-item').is(':visible')==true){
+                    $('.gift-item').hide();
+                }
+                else{
+                    $('.gift-item').show();
+                }
+            })
+            $('.notification').click(function(){
+                if($('.notification-item').is(':visible')==true){
+                    $('.notification-item').hide();
+                }
+                else{
+                    $('.notification-item').show();
+                }
+            })
+        });
+
+        /*推播訊息*/
+        $('#notification_id').val(new Date());
+        function notification(){
+            var notification_tit = $('#notification_tit').val();
+            if(notification_tit == ''){ alert('請輸推波標題');return; }
+
+            var notification_cont = $('#notification_cont').val();
+            if(notification_cont == ''){ alert('請輸推波內容');return; }
+
+            var notification_url = $('#notification_url').val();
+            var notification_id = $('#notification_id').val() ? $('#notification_id').val() : 'confirm-notification';
+
+            $.post("{:url('notification/send_notification')}", 
+                {
+                    'notification_id'   : notification_id,
+                    'title'             : notification_tit, 
+                    'msg'               : notification_cont, 
+                    'open_url'          : notification_url
+                }, 
+                function(result){
+                    alert(result.msg);
+                    $('#notification_id').val(new Date());
+                }
+            );
+        }
+
+        /*贈送點數*/
+		function gift(){
+			var number = $('#gift_member').val();
+            var msg = $('#gift_msg').val();
+			var point = $('#gift_points').val();
+
+            if(number == ''){ alert('請輸入會員編號');return; }
+            if(msg == ''){ alert('請輸入說明');return; }
+            if(point == ''){ alert('請輸入點數');return; }
+
+			if (confirm("目標會員"+number+"確定贈送") == true) {
+				  $.post("{:url('Index/gift')}", {number:number,point:point,msg:msg}, function(result){
+						alert(result.message);
+				  });
+			}
+		}
+
+        /*批次操作會員*/
+        function multiOperate(Operate, value=null) {
+            if(Operate=='Delete'){
+                if(!confirm('確認刪除？')){
+                    return;
+                }
+            }
+
+            if(Operate=='vip_type'){
+                if($("#vip_type").val()=="") return;
+                vip_name = $("#vip_type option:selected").html();
+                if(!confirm('確認修改成 '+vip_name+' ?')){
+                    $("#vip_type").val("")
+                    return;
+                }
+            }
+
+            var form = document.createElement("form");
+            if(Operate == 'Delete'){ /*刪除*/
+                form.action = "{:url('Index/multiDelete')}";
+            }
+            else{ /*VIP等級、狀態*/
+                form.action = "{:url('Index/multiUpdate')}";
+                inputValue = document.createElement("input");
+                inputValue.value = value!==null ? value : $("#"+Operate).val();
+                inputValue.name = "value";
+                form.appendChild(inputValue);
+
+                inputColumn = document.createElement("input");
+                inputColumn.value = Operate;
+                inputColumn.name = "column";
+                form.appendChild(inputColumn);
+            }
+            form.method = "post";
+            multiId = document.createElement("input");
+            multiId.value = JSON.stringify(getMultiId());
+            if(multiId.value=="[]"){
+                alert("請選擇對象");
+                $("#vip_type").val("");
+                return;
+            }
+            multiId.name = "id";
+            form.appendChild(multiId);
+            document.body.appendChild(form);
+            form.submit();
+
+            $('.activityCheckboxAll').each(function () {
+                if($(this).prop("checked")){
+                    $(this).prop("checked", false);
+                }
+            });
+        }
+
+        /*刪除會員*/
+        function delete_item(id){
+            if(confirm('確認刪除？')){
+                location.href = '{:url('index/delete')}?id='+id
+            }
+        }
+
+        function getMultiId() {
+            var multiIdArray = [];
+            $('.indexCheckbox').each(function () {
+                if($(this).prop("checked")){
+                    multiIdArray.push($(this).attr('alt'));
+                    $(this).prop("checked", false);
+                }
+            });
+            return multiIdArray;
+        }
+
+        /*匯出客戶功能*/
+        var Box = {id:0, content: "", title: "", caller: null}
+        var BoxVM = new Vue({
+            el: '#Box', 
+            data: Box,
+            watch: {
+                content: function (val) {
+                    editor.html(val);
+                }
+            },
+            methods: {
+                ajaxSubmit: function () {
+                    editor.sync();
+                    this.content = editor.html();
+                    this.content = this.content.replace(/\n/g, '')
+                    if(this.caller == 'new'){
+                        this.createNews({
+                            content: this.content,
+                            title: this.title
+                        });
+                    }else{
+                        this.updateNews({
+                            id: this.id,
+                            content: this.content,
+                            title: this.title
+                        });
+                    }
+                },
+                updateCallerData: function () {
+                    this.caller.content = this.content;
+                    this.caller.title = this.title;
+                    CloseAdd('.add-news');
+                }
+            }
+        });
+        /*匯入檔案*/
+        function uploadFile(){
+            event.preventDefault();
+            if($("#file_excel").val() != ''){
+               excelForm.submit();
+            }else{
+                alert('請選擇檔案');
+            }
+        }
+        /*匯出檔案*/
+        function newBlock(){
+            alert('已匯出檔案');
+
+            theRequest = get_theRequest();
+
+            target_url = "/order/index/member_excel/status/{$urlstatus}.html?";
+            ob_keys = Object.keys(theRequest);
+            for(var i = 0; i < ob_keys.length; i++) {       
+                target_url += ( ob_keys[i] + '=' + theRequest[ob_keys[i]] + '&');
+            } 
+            location.href= target_url;
+        }
+
+        /*新增會員功能*/
+        var addMember_data = { 
+            addModel:{
+                email:"",
+                pwd:"",
+                name:"",
+                phone:"",
+                tele:"",
+                F_S_NH_Address:"",
+            },
+        }
+        var addMemberVM = new Vue({
+            el: '#addMember', 
+            data: addMember_data,
+            methods: {
+                doAdd: function () {
+                    post_data = Object.assign({}, this.addModel);
+                    post_data.birthday = $('input[name="birthday"]').val();
+                    $.ajax({
+                        url: "/order/index/addMember.html",
+                        type: 'POST',
+                        data: post_data,
+                        datatype: 'json',
+                        success: function (response) {
+                            if (response.code==1) {
+                                location.reload();
+                            } else {
+                                alert(response.msg);
+                            }
+                        }
+                    });
+                },
+            }
+        }); 
+    </script>
+{/block}

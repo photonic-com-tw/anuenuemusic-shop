@@ -1,0 +1,404 @@
+{extend name="Public/aside" /}
+{block name="title"}售後服務區 > 產品序號管理{/block}
+{block name="css"}
+    <style type="text/css">
+
+        /*表格樣式*/
+        table{
+            margin-top:25px;
+
+            width: 100%;
+            table-layout: fixed;
+            border-collapse: collapse;
+        }
+
+
+        table th:nth-child(1){
+            border-left:none;
+        }
+
+
+        table th:nth-child(1),
+		table td:nth-child(1) { width: 3%; cursor: default; }
+		table th:nth-child(2),
+		table td:nth-child(2) { width: 5%; cursor: default;text-align: center;}
+        table th:nth-child(3),
+		table td:nth-child(3) { width: 15%; cursor: default; }
+        table th:nth-child(4),
+		table td:nth-child(4) { width: 15%; cursor: default; }
+        table th:nth-child(5),
+        table td:nth-child(5) { width: 30%; cursor: default; }
+        table th:nth-child(6),
+        table td:nth-child(6) { width: 140px; text-align: center; }
+        table th:nth-child(7),
+        table td:nth-child(7) { width: 140px; text-align: center; }
+        table th:nth-child(8),
+        table td:nth-child(8) { width: 10%; text-align: center; }
+        table th:nth-child(9),
+        table td:nth-child(9) { width: 140px; text-align: center; }
+
+        table td:nth-child(1),
+        table td:nth-child(5) { word-break:break-all; }
+
+        
+		
+		table td:nth-child(2){ text-align: center; }
+
+        table thead {
+            background-color:#E0E0E0;
+        }
+        table thead tr {
+            display: block;
+            position: relative;
+        }
+        table tbody {
+            display: block;
+            overflow: auto;
+            width: 100%;
+        }
+        table thead tr th span{
+            font-size:14px;
+            padding-left:1px;
+        }
+
+        /* 捲軸樣式 */
+        table tbody::-webkit-scrollbar {
+            width: .5em;
+        }
+        table tbody::-webkit-scrollbar-track {
+            -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+        }
+        table tbody::-webkit-scrollbar-thumb {
+        background-color: darkgrey;
+        outline: 1px solid slategrey;
+        }
+        .wrap-outer {
+            margin-left: calc(100vw - 100%);
+        }
+
+
+        .dot_green {
+            height: 25px;
+            width: 25px;
+            background-color: rgb(0, 255, 0);
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .dot_red {
+            height: 25px;
+            width: 25px;
+            background-color: rgb(255, 0, 0);
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .dot_load {
+            height: 15px;
+            width: 15px;
+            background-color:#E0E0E0;
+            border-radius: 50%;
+            display: inline-block;
+            margin-left:5px;
+            -webkit-animation-name: example; /* Safari 4.0 - 8.0 */
+            -webkit-animation-duration: 2s; /* Safari 4.0 - 8.0 */
+            -webkit-animation-iteration-count: infinite; /* Safari 4.0 - 8.0 */
+            animation-name: example;
+            animation-duration: 2s;
+            animation-iteration-count: infinite;
+            position: relative;
+
+        }
+       /* Safari 4.0 - 8.0 */
+        @-webkit-keyframes example {
+        0%   {background-color:red; left:0px; top:0px;}
+        25%  {background-color:yellow; left:300px; top:0px;}
+        50%  {background-color:blue; left:300px; top:300px;}
+        75%  {background-color:green; left:0px; top:300px;}
+        100% {background-color:red; left:0px; top:0px;}
+        }
+
+        /* Standard syntax */
+        @keyframes example {
+        0%   {background-color:red; left:0px; top:0px;}
+        25%  {background-color:yellow; left:300px; top:0px;}
+        50%  {background-color:blue; left:300px; top:300px;}
+        75%  {background-color:green; left:0px; top:300px;}
+        100% {background-color:red; left:0px; top:0px;}
+        }
+        input[type=file] {
+            display: -webkit-inline-box;
+        }
+
+     /* 新增經驗區塊 */
+     .add-news{
+            position: absolute;
+            background: #fff;
+            padding:20px;
+            width: 370px;
+            height:300px;
+            z-index:999;
+            top:calc(50% - 400px / 2);
+            left:calc(50% - 370px / 2);
+        }
+        .add-news textarea{
+            margin-top:-15px;
+            margin-left:52px;
+            width:278px;
+            height:180px;
+            padding:5px
+        }            
+        .add-news .button{
+            right:20px;
+            bottom:15px;
+            position:absolute;
+        }
+		.qaCheckbox{
+			width: 100%;
+		}
+		table{
+			margin-top: 0px;
+		}
+    </style>
+{/block}
+{block name="content"}
+<div id="block" onclick="CloseAdd('.add-news')"></div>
+    <div id="content">
+        <!-- 新增修改問答開始 -->
+        <div class="add-news none" id="Box" style="height:410px;">
+                <div style="padding: 10px;height: 320px;">
+                    <p>匯入中</p><span class="dot_load"></span>
+                </div>
+        </div>
+        <!-- 新增修改問答結束 -->
+
+        <!--新增與編輯-->
+        <p id="title" onclick="javascript:location.href='index.html'" style="cursor:pointer;">
+            售後服務區 > 產品序號管理
+            {neq name="searchKey" value=""}
+                > 搜尋：{$searchKey}
+            {/neq}
+        </p>
+        <div style="padding:10px 30px;">
+            <form action="{:url('Excel/Import')}" name="excelForm" method="post"  enctype="multipart/form-data">
+                    <div class="frame">
+                        <input type="file" name="file" id="file_excel"/>
+                        <a class="button" onclick="newBlock();">匯入檔案</a>
+                        <a class="button" href="/public/static/index/example.xlsx" download>下載範本</a>
+                    </div>
+            </form>
+			<br>
+
+            <form action="" name="searchForm" method="get">
+                <input type="text" name="searchKey" style="width: 350px;" value="{$searchKey}" placeholder="請輸入產品序號/匯入日期/產品型號/品牌名稱">
+                <select name="statusKey">
+                    {if condition = "$statusKey eq '0'"}
+                      <option value="">全部</option>
+                    　<option value="1">已註冊</option>
+                      <option value="0" selected>未註冊</option>
+                    {elseif condition = "$statusKey eq '1'" /}
+                      <option value="">全部</option>
+                    　<option value="1" selected>已註冊</option>
+                      <option value="0">未註冊</option>
+                    {else /}
+                      <option value="" selected>全部</option>
+                    　<option value="1">已註冊</option>
+                      <option value="0">未註冊</option>
+                    {/if}
+                </select>
+
+                <select name="brandKey">
+                    {if condition = "$brandKey eq ''"}
+                        <option value="" selected>全部品牌</option>
+                        {volist name="brand" id="vo" empty=""}
+                            {if condition = "$brandKey eq $vo.product_brand"}
+                                <option value="{$vo.product_brand}" selected>{$vo.product_brand}</option>
+                            {else/}
+                                <option value="{$vo.product_brand}" >{$vo.product_brand}</option>
+                            {/if}
+                        {/volist}
+                    {else/}
+                        <option value="" >全部品牌</option>
+                        {volist name="brand" id="vo" empty=""}
+                            {if condition = "$brandKey eq $vo.product_brand"}
+                                <option value="{$vo.product_brand}" selected>{$vo.product_brand}</option>
+                            {else/}
+                                <option value="{$vo.product_brand}" >{$vo.product_brand}</option>
+                            {/if}
+                        {/volist}
+                    {/if}
+                </select>
+
+                <a class="button" onclick="searchForm.submit();">搜尋</a>
+                <a class="button" onclick="javascript:location.href='index.html'">清除查詢</a>
+            </form>
+
+            <div class="frame" style="margin-top: 25px;">
+                <a onclick="multiDelete();">
+                        刪除 <span style="margin-left: 15px;" class="glyphicon glyphicon-trash"></span>
+                </a>
+				<div style="display:inline-block;float:right">
+					<span>共{$total}個，已註冊：{$regisetered}；未註冊：{$un_regisetered}；註冊率：{$regiseter_rate|number_format=2}%</span>
+				</div>
+            </div>
+
+            <table>
+                <!-- 標題 -->
+                <thead>
+                    <tr>
+                        <th><input type="checkbox" class="activityCheckboxAll" onclick="$('.tableListA input[class=qaCheckbox]').prop('checked', ($(this).is(':checked')?true:false))"style="width:100%; cursor:pointer;"></th>
+						<th>編碼</th>
+                        <th>產品序號</th>
+                        <th>匯入日期</th>
+                        <th>產品型號</th>
+                        <th>品牌名稱</th>
+                        <th>註冊狀態</th>
+                        <th>會員編號</th>
+                        <th>註冊日期</th>
+                    </tr>
+                </thead>
+                <!-- 內容 -->
+                <tbody class="tableListA">
+                    {volist name="num" id="vo" empty=""}
+                    <tr>
+                        <td><input type="checkbox" class="qaCheckbox" alt="{$vo.id}"></td>
+                        <td>{$key+1+50*($page-1)}</td>
+                        <td>{$vo.product_code}</td>
+                        <td>
+                                {$vo.createtime}
+                        </td>
+                        <td>{$vo.product_name}</td>
+                        <td> {$vo.product_brand}</td>
+                        <td>
+                            {if condition="$vo.status eq 1"} 
+                                <span class="dot_green"></span>
+                            {else /}
+                                <span class="dot_red"></span>
+                            {/if}
+                        </td>
+                        <td>{$vo.number}</td>
+                        <td>{$vo.regtime}</td>
+                    </tr>
+                    {/volist}
+                </tbody>
+            </table>
+            <div class="row text-center">
+                {$num->render()}
+            </div>
+        </div>
+    </div>
+{/block}
+{block name="ownJS"}
+    <script src="__PUBLIC__/js/action.js"></script>
+    <script>
+        $(function(){
+            $(document).ready(function(){
+                $(window).resize(function() {
+                    var i ;
+                    for(i=1 ; i<=8; i++){
+                        $('table').find('td:nth-child('+i+')').outerWidth($('table').find('th:nth-child('+i+')').outerWidth());
+                    }
+                    if($('table').find('thead').find('tr').outerWidth() != $('table').find('tbody').find('tr').outerWidth()){
+                        for(i=4 ; i<=8; i++){
+                            $('table').find('td:nth-child('+i+')').css('padding-right','calc(19px - .5em)')
+                        }
+                    }
+                });
+            });
+
+            var i ;
+            for(i=1 ; i<=8; i++){
+                $('table').find('td:nth-child('+i+')').outerWidth($('table').find('th:nth-child('+i+')').outerWidth());
+            }
+            if($('table').find('thead').find('tr').outerWidth() != $('table').find('tbody').find('tr').outerWidth()){
+                for(i=4 ; i<=8; i++){
+                    $('table').find('td:nth-child('+i+')').css('padding-right','calc(19px - .5em)')
+                }
+            }
+        });
+
+        var Box = {id:0, content: "", title: "", caller: null}
+        var BoxVM = new Vue({
+            el: '#Box', 
+            data: Box,
+            /*
+            computed: {
+                contentNl2br: function () {
+                    return this.content.replace(/\n/g, '<br>');
+                }
+            },
+            */
+            watch: {
+                content: function (val) {
+                    editor.html(val);
+                }
+            },
+            methods: {
+                ajaxSubmit: function () {
+                    editor.sync();
+                    this.content = editor.html();
+                    this.content = this.content.replace(/\n/g, '')
+                    if(this.caller == 'new'){
+                        this.createNews({
+                            content: this.content,
+                            title: this.title
+                        });
+                    }else{
+                        this.updateNews({
+                            id: this.id,
+                            content: this.content,
+                            title: this.title
+                        });
+                    }
+                },
+                updateCallerData: function () {
+                    this.caller.content = this.content;
+                    this.caller.title = this.title;
+                    CloseAdd('.add-news');
+                }
+            }
+        });
+
+
+        function newBlock(){
+            if($("#file_excel").val() != ''){
+                BoxVM.id = 0;
+                BoxVM.content = "";
+                BoxVM.title = "";
+                BoxVM.caller = "new";
+                ShowAdd('.add-news');
+               excelForm.submit();
+            }else{
+                alert('請選擇檔案');
+            }    
+        }
+
+        function multiDelete() {
+            var form = document.createElement("form");
+            form.action = "{:url('Excel/multiDelete_or')}";
+            form.method = "post";
+
+            multiId = document.createElement("input");
+            multiId.value = JSON.stringify(getMultiId());
+            multiId.name = "id";
+
+            form.appendChild(multiId);
+            document.body.appendChild(form);
+            form.submit();
+            $('.activityCheckboxAll').each(function () {
+                if($(this).prop("checked")){
+                    $(this).prop("checked", false);
+                }
+            });
+        }
+    	
+    	function getMultiId() {
+            var multiIdArray = [];
+            $('.qaCheckbox').each(function () {
+                if($(this).prop("checked")){
+                    multiIdArray.push($(this).attr('alt'));
+                    $(this).prop("checked", false);
+                }
+            });
+            return multiIdArray;
+        }
+    </script>
+{/block}

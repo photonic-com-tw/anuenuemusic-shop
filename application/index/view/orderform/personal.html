@@ -1,0 +1,70 @@
+
+<table class="orderTable table table-striped table-bordered table-rwd">
+	<thead>
+	<tr class="tr-only-hide">
+		<th>考試名稱</th>
+		<th>考試日期</th>
+		<th>考場地點</th>
+		<th>報名學校</th>
+		<th>報名班級</th>
+		<th>學生姓名</th>
+		<th>繳費狀況</th>
+		<th>考試地點</th>
+		<th>教室</th>
+		<th>座位</th>
+		<th>淮考證</th>
+		<th>成績</th>
+		<th>落點</th>
+		<th>操作</th>
+	</tr>
+	</thead>
+	{volist name="p" id="p"}
+	<tr>
+		<td data-th="考試名稱">{$p.pi_title}</td>
+		<td data-th="考試日期">{if condition="$p.examinee_date=='-28800'"}無日期{else/}{$p.examinee_date|date="Y-m-d",###}{/if}</td>
+		<td data-th="考場地點">{$p.title}</td>
+		<td data-th="報名學校">{$p.examinee_school}</td>
+		<td data-th="報名班級">{$p.examinee_class}</td>
+		<td data-th="學生姓名">{$p.examinee_name}</td>
+		<td data-th="繳費狀況">{$p.receipts_state}</td>
+		<td data-th="考試地點">{if condition="$p.examinee_ticket eq ''"} 未公布 {else/} {$p.exam_school} {/if}</td>
+		<td data-th="教室">{if condition="$p.examinee_ticket eq ''"} 未公布 {else/} {$p.examinee_room} {/if}</td>
+		<td data-th="座位">{if condition="$p.examinee_ticket eq ''"} 未公布 {else/} {$p.examinee_site} {/if}</td>
+		<td data-th="淮考證">{$p.examinee_ticket|default="未公布"}</td>
+		<td data-th="成績">{if condition="$p.grade_show eq '0'"} 未公布 {else/} {$p.grade|default="未公布"} {/if}</td>
+		<td data-th="落點">{if condition="$p.grade_show eq '0'"} 未公布 {else/} {$p.grade_point|default="未公布"} {/if}</td>
+		<td data-th="操作"><a href onclick="print_admin_ticket('{$p.id}','{$p.examinee_id}')" data-toggle="modal" data-target="#ticketModel">印出</a></td>
+	</tr>
+	{/volist}
+</table>
+
+
+<script>
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

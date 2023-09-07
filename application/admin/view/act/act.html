@@ -1,0 +1,332 @@
+{extend name="Public/aside" /}
+{block name="title"}行銷管理區 > 活動優惠{/block}
+{block name="css"}
+    <link rel="stylesheet" type="text/css" href="__PUBLIC__/css/daterangepicker.css" />
+    <style type="text/css">
+
+        .frame{
+            padding:10px 20px;
+            border: 1.5px #9D9D9D solid;
+            margin: 0px auto;
+            margin-top: 10px;
+            width: 99%
+        }
+
+        .frame li{
+            display: inline;
+        }
+
+        .frame .add_act{
+            color:#fff;
+            font-size:20px;
+            text-align:center;
+            background:#333;
+            padding:10px;
+            border-radius:100px;
+        }
+        .frame .edit{
+            font-size:25px;
+            display: inline-block;
+            margin-left:5%;
+            cursor:pointer
+        }
+        .switch{
+            display:inline-flex;
+            margin-top: 5px;
+        }
+
+        table{
+            border:none
+        }
+
+        /* 表格設定 */
+        .info{
+            width:99%;
+            margin:0px auto;
+            margin-top:-2px;
+        }
+        .info tr:nth-child(1) td {
+            background: #E0E0E0;
+            border: 2px #9D9D9D solid;
+            padding-right: 5px;
+        }
+        .info td:nth-child(1){
+            width:5%;                
+            text-align: center;
+        }
+        .info td:nth-child(2){
+            width:11%;
+            text-align: center;
+        }
+        .info td:nth-child(3){
+            width:19%;                
+            text-align: left;
+        }
+        .info td:nth-child(4){
+            width:20%;
+            text-align: left;
+        }
+        .info td:nth-child(5){
+            width:20%;                
+            text-align: left;
+        }
+        .info td:nth-child(6){
+            width:20%;                
+            text-align: left;
+        }
+        .info td:nth-child(7){
+            width:5%;
+            text-align: center;
+        }
+        /* 編輯 */
+        .edit-item{
+            position: absolute;
+            border: 2px solid #9D9D9D;
+            background: #fff;
+            z-index: 5;
+            padding: 10px;
+            left: calc(5% + 55px);
+            font-size: 16px;
+        }
+        .edit-item .switch{
+            display:inline-flex;
+            margin-top: 10px;
+        }
+    </style>
+{/block}
+{block name="content"}
+    <div id="content">
+        <p id="title" onclick="javascript:location.href='index.html'" style="cursor:pointer;">
+            行銷管理區 > 活動優惠
+            {neq name="searchKey" value=""}
+                > 搜尋：{$searchKey}
+            {/neq}
+        </p>
+        <div style="padding:10px 30px;">
+            <form action="{:url('act/index')}" name="searchForm" method="get" style="display: inline-block;">
+                <input type="text" name="searchKey" style="text-align:center" placeholder="搜尋活動">
+                <a class="button" onclick="searchForm.submit();">搜尋</a>
+            </form>
+            <div style="float: right;">
+                <a class="button pull-right" onclick="searchTime();">搜尋</a>
+                <input id="searchTimeInput" class="date pull-right" type="text" style="width: 220px;" value="{$start} - {$end}" />
+            </div>
+        </div>
+
+        <!--新增與編輯-->
+        <div class="frame">
+            <a href="{:url('Act/create')}"><span class="glyphicon glyphicon-plus add_act"></span></a>
+            <div class="edit" onclick="Show('.edit-item')">編輯 <span class="glyphicon glyphicon-triangle-bottom"></span></div>
+            <!-- 編輯開始 -->
+            <div class="edit-item none">
+                <a onclick="multiOnline();">
+                    <font>上架&nbsp;</font>
+                    <label class="switch" name="0">
+                        <input type="checkbox" disabled checked><span class="slider round"></span>
+                    </label>
+                </a>
+                <br>
+                <a onclick="multiOffline();">
+                    <font>下架&nbsp;</font>
+                    <label class="switch" name="0">
+                        <input type="checkbox" disabled><span class="slider round"></span>
+                    </label>
+                </a>
+                <br>
+                <hr style="border-top: 1px solid #333; margin:10px 0px">
+                <a onclick="multiDelete();">
+                    刪除 <span style="margin-left: 15px;" class="glyphicon glyphicon-trash"></span>
+                </a>
+            </div>
+            <!-- 編輯結束 -->
+        </div>
+
+        <!--表格 開始-->
+        <table class="info" style="border:1.5px #9D9D9D solid">
+            <tr>
+                <td><input type="checkbox" class="activityCheckboxAll" onclick="$('.info input[class=actCheckbox]').prop('checked', ($(this).is(':checked')?true:false))"style="width:100%; cursor:pointer;"></td>
+                <td style="cursor:pointer">上下架</td>
+                <td>活動品號</td>
+                <td>活動名稱</td>
+                <td>開始日期</td>
+                <td>結束日期</td>
+                <td>刪除</td>
+            </tr>
+            {volist name="act" id="vo" empty="沒有數據"}
+                <tr id="act_{$vo.id}">
+                    <td><input type="checkbox" class="actCheckbox" alt="{$vo.id}"></td>
+                    <td>
+                        <label class="switch">
+                            <input type="checkbox" v-model="online">
+                            <span class="slider round"></span>
+                        </label>
+                    </td>
+                    <td>{{number}}</td>
+                    <td><a href="{:url('act/edit', ['id' => $vo.id])}">{{name}}</a></td>
+                    <td>{{startFormat}}</td>
+                    <td>{{endFormat}}</td>                    
+                    <td><span class="glyphicon glyphicon-trash" onclick="location.href = '{:url('act/delete')}?id={$vo.id}'"></span></td>                    
+                </tr>
+            {/volist}
+        </table>
+        <!--表格 結束-->
+        <div class="row text-center">
+            {$act->render()}
+        </div>
+    </div>
+{/block}
+{block name="ownJS"}
+    <script type="text/javascript" src="__PUBLIC__/js/moment.min.js"></script>  
+    <script type="text/javascript" src="__PUBLIC__/js/daterangepicker.js"></script>
+    <script src="__PUBLIC__/js/action.js"></script>
+    
+    <script>
+        $(function() {
+            $(document).click(function() {
+                $('.edit-item').fadeOut();
+            })
+            $('.edit').click(function(event) {
+                event.stopPropagation();
+            })
+        });
+    </script>
+
+    <script>
+        $("input.date").daterangepicker({locale: {format: 'YYYY-MM-DD'}});
+
+        Vue.prototype.blockCtrl = function (blockData) {
+            $.ajax({
+                url: "{:url('act/cellCtrl')}",
+                type: 'POST',
+                dataType: 'json',
+                data: blockData,
+                success: function(response) {
+                    if(response.status){
+                        //alert('留言成功');
+                    }else{
+                        alert('更改失敗');
+                        console.log(response.message);
+                    }
+                },
+                error: function(xhr) {
+                    alert('更改失敗');
+                    console.log(xhr);
+                }
+            });
+        };
+        {volist name="act" id="vo" empty=""}
+            var act_{$vo.id} = {
+                id: "{$vo.id}",
+                name: "{$vo.name}",
+                number: "{$vo.number}",
+                start: "{$vo.start|date='Y-m-d',###}",
+                end: "{$vo.end|date='Y-m-d',###}",
+                online: +"{$vo.online}"
+            }
+            var act_{$vo.id}_VM = new Vue({
+                el: '#act_{$vo.id}',
+                data: act_{$vo.id},
+                watch: {
+                    online: function () {
+                        blockData = {
+                            id: this.id,
+                            online: this.online ? 1 : 0
+                        }
+                        this.blockCtrl(blockData);
+                    }
+                },
+                computed: {
+                    startFormat: function () {
+                        if (this.start == '1970-01-01'){
+                            return '沒有設定時間';
+                        }else{
+                            return this.start;
+                        }
+                    },
+                    endFormat: function () {
+                        if (this.end == '1970-01-01'){
+                            return '沒有設定時間';
+                        }else{
+                            return this.end;
+                        }
+                    }
+                }
+            });
+        {/volist}
+
+        function getMultiId() {
+            var multiIdArray = [];
+            $('.actCheckbox').each(function () {
+                if($(this).prop("checked")){
+                    multiIdArray.push($(this).attr('alt'));
+                    $(this).prop("checked", false);
+                }
+            });
+            return multiIdArray;
+        }
+
+        function multiDelete() {
+            var form = document.createElement("form");
+            form.action = "{:url('act/multiDelete')}";
+            form.method = "post";
+
+            multiId = document.createElement("input");
+            multiId.value = JSON.stringify(getMultiId());
+            multiId.name = "id";
+
+            form.appendChild(multiId);
+            document.body.appendChild(form);
+            form.submit();
+            $('.activityCheckboxAll').each(function () {
+            if($(this).prop("checked")){
+                $(this).prop("checked", false);
+            }
+        });
+        }
+
+        function multiOnline() {
+            var multiIdArray = getMultiId();
+            multiIdArray.forEach(function(element) {
+                eval('act_' + element + '.online = true;');
+            });
+            $('.activityCheckboxAll').each(function () {
+            if($(this).prop("checked")){
+                $(this).prop("checked", false);
+            }
+        });
+        }
+
+        function multiOffline() {
+            var multiIdArray = getMultiId();
+            multiIdArray.forEach(function(element) {
+                eval('act_' + element + '.online = false;');
+            });
+            $('.activityCheckboxAll').each(function () {
+            if($(this).prop("checked")){
+                $(this).prop("checked", false);
+            }
+        });
+        }
+
+        function searchTime() {
+            var form = document.createElement("form");
+            form.action = "{:url('act/searchTime')}";
+            form.method = "get";
+
+            $timeRange = $('#searchTimeInput').val().split(" - ");
+
+            start = document.createElement("input");
+            start.value = $timeRange[0];
+            start.name = "start";
+            form.appendChild(start);
+
+            end = document.createElement("input");
+            end.value = $timeRange[1];
+            end.name = "end";
+            form.appendChild(end);
+
+            document.body.appendChild(form);
+            form.submit();
+        }
+    </script>
+{/block}

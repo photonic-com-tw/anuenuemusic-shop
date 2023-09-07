@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" href="/public/static/index/css/reset.css">
+    <link rel="stylesheet" href="/public/static/index/css/layout_style.css">
+    <style>
+      html,body{
+        font-family: '微軟正黑體', Arial, Helvetica, sans-serif;
+      }
+      #bg header{
+        color:  #ff7300;
+        margin-bottom:  .5rem;
+      }
+      #bg #discount #ck_coupon{
+        margin-left: 66px;
+        text-align: center;
+        text-align-last: center;
+        padding: 0 5px;
+      }
+      #bg #member_cart_inf #info{
+        background-color: #FFF;
+        text-align: left;
+        /* padding: 10px 7%; */
+      }
+      #bg #member_cart_inf #info ul{
+        list-style: none;
+        margin: 0px;
+        padding: 0px;
+        font-size:  1rem;
+        color:  #333;
+      }
+      #bg #member_cart_inf #info ul li{
+        margin-bottom: 10px;
+      }
+      #bg #member_cart_inf #pay{
+        text-align: center;
+        margin-top: 2rem;
+      }
+      #bg #member_cart_inf #pay .pay_btn{
+        background-color: #777;
+        color: #FFF;
+        display: inline-block;
+        font-size: 1rem;
+        padding: .5rem .75rem;
+      }
+      #coupon_select:hover > .type1{
+        background:rgba(0%, 0%, 0%, 0.4);
+      }
+      .optionsOfferBox{
+        position: relative;
+      }
+      .pay_btn:hover, .optionsOfferBox:hover{
+        cursor:pointer;
+      }
+      .type{
+        border-radius: 50%;
+        width:.5rem;
+        height:.5rem;
+        background: transform;
+        border: 1px solid #777;
+        float: left;
+        margin-right:.5rem;
+        position: relative;
+        top: 6px;
+      }
+      .optionsOfferBox a{
+        color: #333;
+        font-size:  1rem;
+        display: inline-block;
+      }
+      .optionsOfferBox{
+        display: inline-block;
+        margin-bottom: 1rem;
+        width: 100%;
+      }
+      #act_select:hover > .type2{
+        background:rgba(0%, 0%, 0%, 0.4);
+      }
+      #point_select{
+        margin-bottom: 16px;
+      }
+      #point_select:hover > .type3{
+        background:rgba(0%, 0%, 0%, 0.4);
+      }
+      #none_select:hover > .type4{
+        background:rgba(0%, 0%, 0%, 0.4);
+      }
+      .coupon_select_context{
+        z-index:2;
+        display:none;
+        width:100%;
+        height:auto;
+        border: 1px solid #ededed;
+        color:  #000;
+        box-sizing: border-box;
+      }
+      .act_select_context{
+        z-index:2;
+        display:none;
+        width:100%;
+        height:auto;
+      }
+      .point_select_context{
+        z-index:2;
+        width:100%;
+        height:auto;
+      }
+      .conpon_select_radio{
+        display: block;
+        padding:.25rem .5rem;
+        /* background-color: transform; */
+      }
+      .conpon_select_radio:not(:last-child){
+        border-bottom: 1px solid #ededed;
+      }
+      .conpon_select_radio:hover{
+        background-color: rgba(0%, 0%, 0%, 0.4);
+      }
+
+      #div[id~='acts_']:hover{
+        background-color: rgba(0%, 0%, 0%, 0.4);
+      }
+      #div[id~='coupon_']:hover{
+        background-color: rgba(0%, 0%, 0%, 0.4);
+      }
+      .freightColor{
+        color:#5442f5;
+      }
+      #bg #member_cart_inf #info ul li.totalColor {
+        color:  #ff7300;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="bg">
+    <header>
+      {$lang_menu['選擇優惠方式']}
+      {if condition="($user.name != '')"}
+        {empty name="$Front_name['優惠券專區']"}
+          <a class="process_btn" href onclick="parent.location.href='{:url('Product/coupon')}'">{$lang_menu['領取優惠券']}</a>
+        {/empty}
+      {/if}
+    </header>
+    <div id="member_cart_inf">
+      <div id="new_info">
+        {if condition="($user.name != '')"}
+
+          {if condition="$FirstBuyDiscount==1 && $discountData.firstBuyDiscount.can_use==1"}
+            <div class="optionsOfferBox" id="firstbuy_select">
+              <div class="type type6"></div>
+              {$lang_menu['會員首購優惠']}&nbsp;&nbsp;{$discountData.firstBuyDiscount.note}
+            </div>
+          {/if}
+
+          {if condition="$VipDiscount==1 && $discountData.vipDiscount.can_use==1"}
+            <div class="optionsOfferBox" id="vipdiscount_select">
+              <div class="type type7"></div>
+              {$lang_menu['VIP會員優惠']}&nbsp;&nbsp;{$discountData.vipDiscount.note}
+            </div>
+          {/if}
+
+          {empty name="$Front_name['直接輸入型優惠券']"}
+            <div class="optionsOfferBox" id="directcoupon_select" alt="" alt2="">
+              <div class="type type5"></div>
+              {$lang_menu['請輸入優惠券代碼']}：
+              <input type="text" id="directcoupon_code">
+              <span class="d-none" id="direct_coupon_msg" style="color:red;"></span>
+            </div>
+          {/empty}
+
+          {empty name="$Front_name['優惠券專區']"}
+            <!-- 屬於會員優惠券 -->
+            {if condition = "$coupon_c eq '1' "}
+              {volist name="discountData.coupon" id="co" empty=""}
+              <div class="optionsOfferBox" id="coupon_select" alt="{$coupon_c}" alt2="{$co.coupon_pool_id|default=''}">
+                <div class="type type1"></div>
+                <a>{$lang_menu['您有']}{$coupon_c}{$lang_menu['張優惠券可以使用']}</a>
+                <div class="coupon_select_context"></div>
+                <div class="conpon_select_radio" id="coupon_{$co.coupon_pool_id}">{$co.coupon_title}</div>
+              </div>
+              {/volist}
+
+            {else/}
+              <div class="optionsOfferBox" id="coupon_select" alt="{$coupon_c}" alt2="">
+                <div class="type type1"></div>
+                <a>{$lang_menu['您有']}{$coupon_c}{$lang_menu['張優惠券可以使用']}</a>
+                <div class="coupon_select_context">
+                  {volist name="discountData.coupon" id="vo" empty=""}
+                  <div class="conpon_select_radio" id="coupon_{$vo.coupon_pool_id}">{$vo.coupon_title}</div>
+                  {/volist}
+                </div>
+              </div>
+
+            {/if}
+          {/empty}
+
+        {/if}
+
+        {empty name="$Front_name['活動優惠']"}
+          <div class="optionsOfferBox" id="act_select" alt="{$acts_c}" alt2="">
+            <div class="type type2"></div>
+            {$lang_menu['目前有']}{$acts_c}{$lang_menu['個活動符合條件']}
+            <div class="act_select_context">
+            </div>
+          </div>
+        {/empty}
+
+        {empty name="$Front_name['點數設定']"}
+          {if condition="($user.name != '')"}
+            <div class="optionsOfferBox" id="point_select">
+              <div class="type type3"></div>
+              <div id="pointDiv">
+                {volist name="discountData.points" id="vo" empty=""}
+                {$lang_menu['使用']}{$lang_menu['紅利']}：
+                <input id="point" value="0" size="10">{$lang_menu['點']}
+                {$lang_menu['目前剩餘紅利']} {$vo.point}，{$lang_menu['本次可用']} {$points_limit}{$lang_menu['點']}</input>
+                <input id="point_old" type="hidden" value="points_{$vo.point}" size="10"></input>
+                {/volist}
+              </div>
+            </div>
+          {/if}
+        {/empty}
+        <div class="optionsOfferBox" id="none_select">
+          <div class="type type4"></div>
+          <div id="">
+            <div id="none_discount" value="0" size="10">
+              {$lang_menu['取消任何折扣']} 
+              {empty name="$Front_name['點數設定']"}
+                ({$lang_menu['累積紅利點數']})
+              {/empty}
+            </div> <!--(累積紅利點數)-->
+          </div>
+        </div>
+        <input type="hidden" id="ck_coupon" value="" />
+      </div>
+      <hr>
+      <div id="info">
+        <ul>
+          <li>{$lang_menu['商品合計']}：<span>{$dolar_mark} {$discountData.Total}</span></li>
+          <li>{$lang_menu['運送方式']}：<span>{$shipping.name}</span></li>
+          <li>{$lang_menu['運費']}：
+            <span class="freightColor">
+              ({$lang_menu['滿']}{$shipping.free_rule}{$lang_menu['元免收取']})
+            </span>：
+            <span>{$dolar_mark} {$shipping.price}</span>
+          </li>
+          <li>{$lang_menu['折價']}：<span id='discount'>{$lang_menu['無']}</span></li>
+          <li class="totalColor">{$lang_menu['總計']}：<span id="total">{$dolar_mark} {$discountData.Total + $shipping.price}</span></li>
+        </ul>
+      </div>
+      <div id="pay">
+        <a class="pay_btn send_clr arrow" onclick="getOrder()">{$lang_menu['前往結帳']}</a>
+      </div>
+    </div>
+  </div>
+  <!-- <script type="text/javascript" src="__PUBLIC__/js/jquery-1.12.4.min.js"></script> -->
+  <script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+  <script>
+    $('#ck_coupon').val('none_discount');
+    
+    /*會員首購優惠 開始*/
+    var firstbuydiscount = {$discountData.firstBuyDiscount.discount};
+    $("#firstbuy_select").click(function(){
+        $(".coupon_select_context").css("display","none");
+        $("#direct_coupon_msg").hide();
+        $(".conpon_select_radio").css("background","#FFF");
+        $(".type").css("background","#FFF");
+        $(".type6").css("background","rgba(0%, 0%, 0%, 0.5");
+
+        $('#ck_coupon').val('firstbuy_select');
+        $('#discount').text("{$lang_menu['扣']}" + firstbuydiscount + "{$lang_menu['元']}");
+        $('#total').text({$discountData.Total} + {$shipping.price} - firstbuydiscount);
+    })
+    /*會員首購優惠 結束*/
+
+    /*VIP會員優惠 開始*/
+    var vipdiscount = {$discountData.vipDiscount.discount};
+    $("#vipdiscount_select").click(function(){
+        $(".coupon_select_context").css("display","none");
+        $("#direct_coupon_msg").hide();
+        $(".conpon_select_radio").css("background","#FFF");
+        $(".type").css("background","#FFF");
+        $(".type7").css("background","rgba(0%, 0%, 0%, 0.5");
+
+        $('#ck_coupon').val('vipdiscount_select');
+        $('#discount').text("{$lang_menu['扣']}" + vipdiscount + "{$lang_menu['元']}");
+        $('#total').text({$discountData.Total} + {$shipping.price} - vipdiscount);
+    })
+    /*VIP會員優惠 結束*/
+
+
+    /*直接輸入型優惠券 開始*/
+    var directcoupon_code = $("#directcoupon_code");
+    var direct_coupon_msg = $("#direct_coupon_msg");
+    $("#directcoupon_select").click(function(){
+        $(".coupon_select_context").css("display","none");
+        $(".conpon_select_radio").css("background","#FFF");
+        $(".type").css("background","#FFF");
+        $(".type5").css("background","rgba(0%, 0%, 0%, 0.5");
+
+        if(directcoupon_code.val()!=""){
+          get_direct_coupon_discount();
+        }else{
+          none_discount();
+        }
+    })
+    directcoupon_code.on('keydown', function(e){
+      if(e.keyCode === 13) directcoupon_code.blur();
+    })
+    directcoupon_code.on('blur', function(){
+      get_direct_coupon_discount();
+    })
+    function get_direct_coupon_discount(){
+      $.ajax({
+          url: "/index/coupondirect/get_discount.html",
+          type: 'POST',
+          data: {
+            user_code: directcoupon_code.val()
+          },  
+          success: function(resp) {
+            if(resp.status==0){
+              none_discount();
+              direct_coupon_msg.html(resp.msg);
+            }else{
+              direct_coupon_msg.html("{$lang_menu['已套用優惠']}");
+              $('#ck_coupon').val('directcoupon_' + directcoupon_code.val());
+              $('#discount').text("{$lang_menu['扣']}" + resp.discount + "{$lang_menu['元']}");
+              $('#total').text({$discountData.Total} + {$shipping.price} - resp.discount);
+            }
+            direct_coupon_msg.show();
+          }
+      }); 
+    }
+    /*直接輸入型優惠券 結束*/
+
+
+    $( "#coupon_select" ).click(function() {
+      var select_context_display=$(".coupon_select_context").css("display");
+      if(select_context_display=='block'){
+        /*var select_context_display=$(".coupon_select_context").css("display","none");*/
+      }else {
+        none_discount();
+        $(".coupon_select_context").css("display","block"); //顯示優惠券
+        ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
+        $("#direct_coupon_msg").hide();
+        $(".conpon_select_radio").css("background","#FFF");
+        $(".type").css("background","#FFF");
+        $(".type1").css("background","rgba(0%, 0%, 0%, 0.5");
+        ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
+      }
+      console.log("優惠券折扣")
+
+      if($( "#coupon_select" ).attr('alt') == '1'){
+        var alt2 =$( "#coupon_select" ).attr('alt2');
+        eval('coupon_'+alt2+ '();');
+        $('#ck_coupon').val('coupon_'+alt2);
+      }
+    });
+
+    //活動符合 start////////////////////////////////////////////////////////////////
+    $( "#act_select" ).click(function() {
+      console.log("活動折扣")
+      // console.log("執行")////////////////////////////////////////
+      $('#ck_coupon').val('acts_0');
+      // console.log($('#ck_coupon').val('acts_0'))
+      var select_context_display=$(".act_select_context").css("display");
+      if(select_context_display=='block'){
+        /*  var select_context_display=$(".act_select_context").css("display","none");*/
+      }else {
+        // none_discount();
+        var discount = ({$discountData.Total})-({$discountData['acts']['sum']}); //折價$
+        $('#discount').html(discount);                                       //折價
+        $('#total').html({$discountData['acts']['sum']}+{$shipping.price});           //總計
+        ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
+        $(".coupon_select_context").css("display","none");
+        $("#direct_coupon_msg").hide();
+        $(".conpon_select_radio").css("background","#FFF");
+        $(".type").css("background","#FFF");
+        $(".type2").css("background","rgba(0%, 0%, 0%, 0.5");
+        ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
+      }
+    });
+    //活動符合 end////////////////////////////////////////////////////////////////
+
+    // 取消折扣 start
+    $( "#none_select" ).click(function() {
+      var select_context_display=$(".none_select").css("display");
+      if(select_context_display=='block'){
+        /*  var select_context_display=$(".act_select_context").css("display","none");*/
+      }else {
+        none_discount();
+        ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
+        $(".coupon_select_context").css("display","none");
+        $("#direct_coupon_msg").hide();
+        $(".conpon_select_radio").css("background","#FFF");
+        $(".type").css("background","#FFF");
+        $(".type4").css("background","rgba(0%, 0%, 0%, 0.5");
+        ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
+      }
+    });
+    // 取消折扣 end
+
+    {volist name="discountData.coupon" id="vo" empty=""}
+      $( "#coupon_{$vo.coupon_pool_id}" ).click(function() {
+      $('#ck_coupon').val("coupon_{$vo.coupon_pool_id}");
+      $("div[id^='coupon_']").each(function() {$(this).css('background', '#FFF')});
+      $("div[id^='acts_']").each(function() {$(this).css('background', '#FFF');});
+        $(this).css("background","rgba(0%, 0%, 0%, 0.5");
+      });
+      /*
+      $( "#coupon_{$vo.coupon_pool_id}" ).hover(function() {
+        $(this).css("background","rgba(0%, 0%, 0%, 0.4");
+      });
+      */
+    {/volist}
+  </script>
+  <script>
+    //紅利點數 start ////////////////////////////////////////////
+    $("#point_select" ).click(function() {
+      item = $('#point');
+      if(item.val()==0 || item.val()==''){
+        none_discount();
+      }else{
+        points_discount(item)
+      }
+      $(".coupon_select_context").css("display","none");
+      $("#direct_coupon_msg").hide();
+      $(".conpon_select_radio").css("background","#FFF");
+      $(".type").css("background","#FFF");
+      $(".type3").css("background","rgba(0%, 0%, 0%, 0.5");
+    });
+    //紅利點數 end ////////////////////////////////////////////
+
+    var point = 0;
+    //$('#pointDiv').hide();
+    $('#ck_coupon').change(function () {
+      eval($(this).val() + '();');
+    });
+    $('.conpon_select_radio').click(function () {
+      eval($(this)['0']['id'] + '();');
+    });
+    $('.act_select_radio').click(function () {
+      eval($(this)['0']['id'] + '();');
+    });
+    $('#point').blur(function () {
+      points_discount(this);
+    });
+    function points_discount(item){
+      if($(item).val() > {$discountData.Total}){
+        $(item).val({$discountData.Total});
+      }
+      if ($(item).val() > point) {
+        $('#point').val(0);
+        alert("{$lang_menu['超過您的點數']}");
+        return;
+      }
+      $('#discount').text("{$lang_menu['扣']}" + $(item).val() + {$lang_menu['元']});
+      var total = {$discountData.Total} - $(item).val();
+      total = total < 0 ? 0:total;
+      // $('#ck_coupon').val("point_"+$('#point_old').val());
+      $('#ck_coupon').val($('#point_old').val());
+      $('#total').text(total + {$shipping.price});
+    }
+    function none_discount() {
+      $('#ck_coupon').val('none_discount');
+      $('#discount').text("{$lang_menu['無']}");
+      //$('#pointDiv').hide();
+      $('#total').text({$discountData.Total} + {$shipping.price});
+    }
+
+    {volist name="discountData.points" id="vo" empty=""}
+      function points_{$vo.point}() {
+        $('#pointDiv').show();
+        $('#point').val(0);
+        $('#discount').text("{$lang_menu['扣']}0{$lang_menu['元']}");
+        $('#total').text({$discountData.Total} + {$shipping.price});
+      }
+      point = {$vo.point};
+    {/volist}
+  </script>
+  <script>
+    // 優惠券點擊  觸發
+    {volist name="discountData.coupon" id="vo" empty=""}
+      function coupon_{$vo.coupon_pool_id}() {
+        //$('#pointDiv').hide();
+        $('#discount').text("{$lang_menu['扣']}" + '{$vo.discount}' + "{$lang_menu['元']}");
+        var total = {$discountData.Total} - {$vo.discount};
+        total = total < 0 ? 0:total;
+        $('#total').text(total + {$shipping.price});
+      }
+    {/volist}
+    
+    /* 結束純前端 */
+  </script>
+  <script>
+    // 前往結帳////////////////////////////////////////////////////////////
+    /* 送回後端 */
+    function getOrder () {
+      Data = {
+        'discount'          : $('#ck_coupon').val(),
+        'point'             : $('#point').val(),
+        'directcoupon_code' : $('#directcoupon_code').val(),
+      }
+      // console.log($('#ck_coupon').val());
+      // console.log($('#point').val());
+      parent.getOrder(Data);
+    }
+  </script>
+  <script>
+    function resize() {
+      var h = document.body.scrollHeight;
+      parent.document.getElementById("contWrap").height = h+20;
+      }
+      $(window).on("resize", function() {
+      resize();
+    }).resize();
+  </script>
+</body>
+</html>

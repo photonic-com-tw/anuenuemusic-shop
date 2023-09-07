@@ -1,0 +1,159 @@
+<section class="max-wideVersion productPublic">
+    <div id="itemBox" class="memberInforBox">
+        <div class="paddingSpacing">
+            <div class="pack">
+                <div class="memberMiddle">
+                    <div class="orderDetailsBox shoppingCartBox">
+                        <form name="cartform" action="{:url('cart/buy')}" method="post">
+                            <div class="row">
+                                <div class="form-group col-sm-6 col-12">
+                                    <label class="col-form-label">報名學校</label>
+                                    <input type="text" class="form-control " value="{$p.examinee_school}" id="examinee_school" name="examinee_school" {$user.edi_examination|compare_return="0","readonly"} {$p.examinee_ticket|regidata_readonly}>
+                                </div>
+
+                                <div class="form-group col-sm-6 col-12">
+                                    <label class="col-form-label">報名班級</label>
+                                    <input type="text" class="form-control " value="{$p.examinee_class}" id="examinee_class" name="examinee_class" {$user.edi_examination|compare_return="0","readonly"}   {$p.examinee_ticket|regidata_readonly}>
+                                </div>
+
+                                <div class="form-group col-sm-6 col-12">
+                                    <label class="col-form-label">比賽學生姓名 </label>
+                                    <input type="text" class="form-control " value="{$p.examinee_name}" id="examinee_name" name="examinee_name" {$user.edi_examination|compare_return="0","readonly"}   {$p.examinee_ticket|regidata_readonly}>
+                                </div>
+
+                                <div class="form-group col-sm-6 col-12">
+                                    <label class="col-form-label">比賽學生身份證號碼</label>
+                                    <input type="text" class="form-control " value="{$p.examinee_id}" id="examinee_id" name="examinee_id" {$user.edi_examination|compare_return="0","readonly"}   {$p.examinee_ticket|regidata_readonly}>
+                                </div>
+
+                               <!--  <div class="form-group col-sm-6 col-12">
+                                    <label class="col-form-label">比賽學生生日</label>
+                                    <input type="text" class="form-control " value="{$p.examinee_birthday}" id="examinee_birthday" name="examinee_birthday" {$user.edi_examination|compare_return="0","readonly"}   {$p.examinee_ticket|regidata_readonly}>
+                                </div> -->
+
+    							<div class="form-group col-sm-6 col-12">
+                                    <label class="col-form-label">家長姓名 </label>
+                                    <input type="text" class="form-control " value="{$p.parents_name}" id="parents_name" name="parents_name" {$user.edi_examination|compare_return="0","readonly"}   {$p.examinee_ticket|regidata_readonly}>
+                                </div>
+
+                                <div class="form-group col-sm-6 col-12">
+                                    <label class="col-form-label">家長聯絡手機</label>
+                                    <input type="text" class="form-control " value="{$p.parents_phone}" id="parents_phone" name="parents_phone" {$user.edi_examination|compare_return="0","readonly"}   {$p.examinee_ticket|regidata_readonly}>
+                                </div>
+
+                                <div class="form-group col-sm-6 col-12">
+                                    <label class="col-form-label">家長聯絡email</label>
+                                    <input type="text" class="form-control " value="{$p.parents_mail}" id="parents_mail" name="parents_mail" {$user.edi_examination|compare_return="0","readonly"}   {$p.examinee_ticket|regidata_readonly}>
+                                </div>
+
+                                <div class="form-group col-sm-6 col-12">
+                                    <label class="col-form-label">家長聯絡室內電話</label>
+                                    <input type="text" class="form-control " value="{$p.parents_tel}" id="parents_tel" name="parents_tel" {$user.edi_examination|compare_return="0","readonly"}   {$p.examinee_ticket|regidata_readonly}>
+                                </div>
+
+    							<div class="form-group col-sm-6 col-12">
+                                    <label class="col-form-label">通訊地址</label>
+                                    <input type="text" class="form-control " value="{$p.parents_add}" id="parents_add" name="parents_add" {$user.edi_examination|compare_return="0","readonly"}   {$p.examinee_ticket|regidata_readonly}>
+                                </div>
+                            </div>
+
+        					<input type="hidden" id="alt" value="{$_POST['id']}">
+                        </form>
+
+                        <hr>
+                    </div>
+                </div>
+            </div>
+    	</div>
+    </div>
+</section>								
+
+{if condition="$user.edi_examination eq '1' "}
+    <div id="bg">
+        <div id="pay">
+            <a id="post_exinfo" class="btn btn-success btn-sm text-white send_clr arrow" >確認</a>
+        </div>
+    </div>
+
+{/if}
+
+<script>
+    $('#post_exinfo').click(function () {
+    	var ne = '';
+    	ne = checkEmpty($('#examinee_school').val(),'報名學校請勿空白',ne);
+    	ne = checkEmpty($('#examinee_class').val(),'報名班級請勿空白',ne);
+    	ne = checkEmpty($('#examinee_name').val(),'學生姓名請勿空白',ne);
+    	ne = checkEmpty($('#examinee_birthday').val(),'學生生日請勿空白',ne);
+    	ne = checkEmpty($('#parents_name').val(),'家長姓名請勿空白',ne);
+    	ne = checkEmpty($('#parents_phone').val(),'聯絡手機請勿空白',ne);
+    	ne = checkEmpty($('#parents_mail').val(),'聯絡email請勿空白',ne);
+    	ne = checkEmpty($('#parents_add').val(),'通訊地址請勿空白',ne);
+    	ne = checkPhone($('#parents_phone').val(),'手機格式錯誤',ne);
+
+    	if(ne == ''){
+    		var ck = checkID($('#examinee_id').val());
+    		if(ck){
+    			update_exinfo();
+    		}else{
+    			alert('身分證格式錯誤');
+    		}
+    	}else{
+    		alert(ne);
+    	}
+    });
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

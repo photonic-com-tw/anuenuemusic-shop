@@ -1,0 +1,358 @@
+{extend name="Public/aside" /}
+{block name="title"}參數設定區 > 運費標籤管理{/block}
+{block name="css"}
+    <style type="text/css">
+
+        .frame{
+            padding:10px 20px;
+            border: 1.5px #9D9D9D solid;
+            margin: 0px auto;
+            margin-top: 10px;
+            width: 99%
+        }
+
+        .frame li{
+            display: inline;
+        }
+
+        .frame .add{
+            color:#fff;
+            font-size:20px;
+            text-align:center;
+            background:#333;
+            padding:10px;
+            border-radius:100px;
+            cursor:pointer
+        }
+        .frame .edit{
+            font-size:25px;
+            display: inline-block;
+            margin-left:5%;
+            cursor:pointer
+        }
+        .switch{
+            display:inline-flex;
+            margin-top: 5px;
+        }
+
+        /* 新增經驗區塊 */
+        .add-shipping_fee{
+            position: absolute;
+            background: #fff;
+            padding:20px;
+            width: 370px;
+            height:400px;
+            z-index:999;
+            top:calc(50% - 400px / 2);
+            left:calc(50% - 370px / 2);
+        }
+        .add-shipping_fee textarea{
+            margin-top:-15px;
+            margin-left:52px;
+            width:278px;
+            height:150px;
+            padding:5px
+        }            
+        .add-shipping_fee .button{
+            right:20px;
+            bottom:15px;
+            position:absolute;
+        }
+
+        /* 編輯 */
+        .edit-item{
+            position: absolute;
+            border: 2px solid #9D9D9D;
+            background: #fff;
+            z-index: 5;
+            padding: 10px;
+            left: calc(5% + 55px);
+            font-size: 16px;
+        }
+        .edit-item .switch{
+            display:inline-flex;
+            margin-top: 10px;
+        }
+
+        /* 表格設定 */
+        table{
+            width:99%;
+            margin:0px auto;
+            margin-top:-2px;
+        }
+        tr:nth-child(1) td {
+            background: #E0E0E0;
+            border: 2px #9D9D9D solid;
+            padding-right: 5px;
+        }
+        td:nth-child(1){
+            width:5%;
+            text-align: center;
+        }
+        td:nth-child(2){
+            width:10%;
+            text-align: center;
+        }
+        td:nth-child(3){
+            width:10%;
+            text-align: center;
+        }
+        td:nth-child(4),
+        td:nth-child(5),
+        td:nth-child(6){
+            width:20%;
+            text-align: left;
+        }
+        td:nth-child(7){
+            width:5%;
+            text-align: center;
+        }
+    </style>
+{/block}
+{block name="content"}
+    <div id="block" onclick="CloseAdd('.add-shipping_fee')"></div>
+
+    <!-- 新增修改問答開始 -->
+    <div class="add-shipping_fee none" id="Box">
+        <div style="padding:10px 0px;">
+            <p>運費標籤名稱：<br>
+                <input v-model="name" type="text" placeholder="請輸入名稱">
+            </p>
+            <p>運費標籤金額：<br>
+                <input v-model="price" type="number" placeholder="請輸入金額">
+            </p>
+        </div>
+        <a class="button" @click="ajaxSubmit">儲存</a>
+    </div>
+    <!-- 新增修改問答結束 -->
+
+    <div id="content">
+        <p id="title" onclick="javascript:location.href='index.html'" style="cursor:pointer;">
+            參數設定區 > 運費標籤管理
+            {neq name="searchKey" value=""}
+                > 搜尋：{$searchKey}
+            {/neq}
+        </p>
+        <div style="padding:10px 30px;">
+            <form action="" name="searchForm" method="get">
+                <input type="text" name="searchKey" style="text-align:center" placeholder="請輸入運費標籤名稱">
+                <a class="button" onclick="searchForm.submit();">搜尋</a>
+            </form>
+        </div>
+
+        <!--新增與編輯-->
+        <div class="frame">
+            <span class="glyphicon glyphicon-plus add" onclick="newBlock();"></span>
+
+            <div class="edit" onclick="multiDelete();">
+                刪除 <span style="margin-left: 15px;" class="glyphicon glyphicon-trash"></span>
+            </div>
+
+            <span style="color:red; margin-left: 25px;">當商品找不到對應的運費標籤時，一律視為免運費</span>
+        </div>
+
+        <!--表格 開始-->
+        <table class="tableListA">
+            <tr>
+                <td><input type="checkbox" class="activityCheckboxAll" onclick="$('.tableListA input[class=shipping_feeCheckbox]').prop('checked', ($(this).is(':checked')?true:false))"style="width:100%; cursor:pointer;"></td>
+                <td>排序</td>
+                <td>運費標籤名稱</td>
+                <td>運費標籤金額</td>
+                <td>刪除</td>
+            </tr>
+            {volist name="shipping_fee" id="vo" empty="沒有數據"}
+            <tr id="shipping_fee_{$vo.id}">
+                <td><input type="checkbox" class="shipping_feeCheckbox" alt="{$vo.id}"></td>
+                <td><input type="number" v-model = "order_id" @blur="change_order()"></td>
+                <td><a @click="openBox">{{name}}</a></td>
+                <td>{{price}}</td>
+                <td><span class="glyphicon glyphicon-trash" onclick="delete_one('{$vo.id}')"></span></td>
+            </tr>
+            {/volist}
+        </table>
+        <div class="row text-center">
+            {$shipping_fee->render()}
+        </div>
+    </div>
+{/block}
+{block name="ownJS"}
+    <script src="__PUBLIC__/js/action.js"></script>
+
+    <script>
+    
+        $(function() {
+            $(document).click(function() {
+                $('.edit-item').fadeOut();
+            })
+            $('.edit').click(function(event) {
+                event.stopPropagation();
+            })
+        });
+
+        Vue.prototype.blockCtrl = function (blockData) {
+            $.ajax({
+                url: "{:url('shippingfeetag/cellCtrl')}",
+                type: 'POST',
+                dataType: 'json',
+                data: blockData,
+                success: function(response) {
+                    if(response.status){
+                        //alert('留言成功');
+                        location.reload();
+                    }else{
+                        alert('更改失敗');
+                        console.log(response.message);
+                    }
+                },
+                error: function(xhr) {
+                    alert('更改失敗');
+                    console.log(xhr);
+                }
+            });
+        };
+
+        Vue.prototype.createShipping_fee = function (Data) {
+            $.ajax({
+                url: "{:url('shippingfeetag/doCreate')}",
+                type: 'POST',
+                dataType: 'json',
+                data: Data,
+                success: function(response) {
+                    if(response.status){
+                        location.reload();
+                    }else{
+                        alert('新增失敗');
+                        console.log(response.message);
+                    }
+                },
+                error: function(xhr) {
+                    alert('新增失敗');
+                    console.log(xhr);
+                }
+            });
+        };
+
+        Vue.prototype.updateShipping_fee = function (Data) {
+            $.ajax({
+                url: "{:url('shippingfeetag/update')}",
+                type: 'POST',
+                dataType: 'json',
+                data: Data,
+                success: function(response) {
+                    if(response.status){
+                        alert('更改成功');
+                        BoxVM.updateCallerData();
+                    }else{
+                        alert('更改失敗');
+                        console.log(response.message);
+                    }
+                },
+                error: function(xhr) {
+                    alert('更改失敗');
+                    console.log(xhr);
+                }
+            });
+        };
+
+        var Box = {name: "", price: 0, id: 0, caller: null}
+        var BoxVM = new Vue({
+            el: '#Box', 
+            data: Box,
+            computed: {
+            },
+            methods: {
+                ajaxSubmit: function () {
+                    var Data = {
+                        name: this.name,
+                        price: this.price,
+                    }
+                    if(this.caller == 'new'){
+                        this.createShipping_fee(Data);
+                    }else{
+                        Data.id = this.id;
+                        this.updateShipping_fee(Data);
+                    }
+                },
+                updateCallerData: function () {
+                    this.caller.name = this.name;
+                    this.caller.price = this.price;
+                    CloseAdd('.add-shipping_fee');
+                }
+            }
+        });
+
+        {volist name="shipping_fee" id="vo" empty=""}
+            var shipping_fee_{$vo.id} = {
+                id: "{$vo.id}",
+                order_id: "{$vo.order_id}",
+                name: "{$vo.name}",
+                price: "{$vo.price}",
+            }
+            var shipping_fee_{$vo.id}_VM = new Vue({
+                el: '#shipping_fee_{$vo.id}',
+                data: shipping_fee_{$vo.id},
+                methods: {
+                    openBox: function () {
+                        BoxVM.id = this.id;
+                        BoxVM.name = this.name;
+                        BoxVM.price = this.price;
+                        BoxVM.caller = this;
+                        ShowAdd('.add-shipping_fee');
+                    },
+                    change_order: function () {
+                        blockData = {
+                            id: this.id,
+                            order_id: this.order_id
+                        }
+                        this.blockCtrl(blockData);
+                    },
+                }
+            });
+        {/volist}
+
+        function newBlock(){
+            BoxVM.id = 0;
+            BoxVM.name = "";
+            BoxVM.price = "";
+            BoxVM.caller = "new";
+            ShowAdd('.add-shipping_fee');
+        }
+
+        function getMultiId() {
+            var multiIdArray = [];
+            $('.shipping_feeCheckbox').each(function () {
+                if($(this).prop("checked")){
+                    multiIdArray.push($(this).attr('alt'));
+                    $(this).prop("checked", false);
+                }
+            });
+            return multiIdArray;
+        }
+
+        function delete_one(id){
+            if(confirm('確認刪除?')){
+                location.href = '{:url('shippingfeetag/delete')}?id='+id;
+            }
+        }
+        function multiDelete() {
+            if(confirm("確定刪除?")){
+                var form = document.createElement("form");
+                form.action = "{:url('shippingfeetag/multiDelete')}";
+                form.method = "post";
+
+                multiId = document.createElement("input");
+                multiId.value = JSON.stringify(getMultiId());
+                multiId.name = "id";
+
+                form.appendChild(multiId);
+                document.body.appendChild(form);
+                form.submit();
+                $('.activityCheckboxAll').each(function () {
+                    if($(this).prop("checked")){
+                        $(this).prop("checked", false);
+                    }
+                });
+            }
+        }
+    </script>
+{/block}

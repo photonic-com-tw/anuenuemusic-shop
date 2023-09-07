@@ -1,0 +1,422 @@
+{extend name="Public/mainTpl" /}
+
+{block name="title"}{$lang_menu['訂單詳細內容']} - {$lang_menu['會員專區']} | {$seo[0]['title']}{/block}
+
+{block name="css"}
+{/block}
+
+{block name="flulid_content"}
+    <!-- <section class="container max-wideVersion directoryRow">
+        <ul class="clearfix">
+            <li><a href="{$MAIN_WEB_LAN}/">{$lang_menu['首頁']}</a><i class="icon-right"></i></li>
+            <li><a href="{:url('Member/member')}">{$lang_menu['會員專區']}</a><i class="icon-right"></i></li>
+            <li><a href="{:url('Orderform/orderform')}">{$lang_menu['訂單查詢']}</a></li>
+        </ul>
+    </section> -->
+    <div class="d-flex justify-content-center">
+        <div class="w-100 bg_anuenue bg_pic d-flex justify-content-center">
+            <section class="reg_prod_area box_show bg_white max-wideVersion productPublic">
+                <div class="pt_sxsmal pb_ssmal">
+                    <h3 class="page_title">
+                        {$lang_menu['會員專區']}
+                        <span>{include file='Public/member_menu' /}</span>
+                    </h3>
+                </div>
+                <div class="row w-100 m-0">
+                    <div class="col-12 p-0 text-center mb-3">
+                        <span class="other_login color_gray"><span>{$lang_menu['訂單詳細內容']}</span></span>
+                    </div>
+                    <div class="col-12 p-0 mb-2 memberContentBox">
+                        <div class="orderBtnBox">
+                            <!-- <a data-toggle="modal" data-target="#processModel">{$lang_menu['流程說明']}</a> -->
+
+                            {if condition="($user.name != '')"}
+                            <a href="{:url('Orderform/orderform')}">{$lang_menu['訂單狀態']}</a>
+                            <a href="{:url('Orderform/history')}">{$lang_menu['歷史紀錄']}</a>
+                            {/if}
+
+                            <!-- <a target="_blank" href="{:url('About/about_contact')}?order_number={$orderform[0]['order_number']}" class="bg-danger text-light">{$lang_menu['訂單問題']}</a> -->
+                        </div>
+                    </div>
+                    <table class="col-12 p-0 prodReg orderTable table table-striped table-bordered table-rwd">
+                        <thead>
+                            <tr class="tr-only-hide">
+                                <th>{$lang_menu['購買日期']}</th>
+                                <th>{$lang_menu['訂單編號']}</th>
+                                <th>{$lang_menu['總價']}</th>
+                                <th>{$lang_menu['付款方式']}</th>
+                                <th>{$lang_menu['出貨狀態']}</th>
+                                <th>{$lang_menu['收款狀態']}</th>
+                                <th>{$lang_menu['操作']}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                        {volist name="orderform" id="vo" empty=""}
+                            <form action="{:url('Cart/redirect3Next')}" method="post">
+                                <tr>
+                                    <td data-th="{$lang_menu['購買日期']}">{$vo.create_time|date='Y/m/d H:i:s', ###}</td>
+                                    <td data-th="{$lang_menu['訂單編號']}"><a href="{:url('Orderform/orderform_c', ['id' => $vo['order_number']])}">{$vo.order_number}</a></td>
+                                    <td data-th="{$lang_menu['總價']}">{$dolar_mark}{$vo.total}</td>
+                                    <td data-th="{$lang_menu['付款方式']}">{$vo.payment}</td>
+                                    <td data-th="{$lang_menu['出貨狀態']}">{$vo.transport_state|TRANSPORT_STATE}</td>
+                                    <!-- <td data-th="收款狀況">已收款</td> -->
+                                    <!-- ////////////////////////////////////////////////// -->
+
+                                    <td data-th="{$lang_menu['收款狀態']}">
+                                        {if condition="($vo.payment == $lang_menu['ATM轉帳\\匯款'])"}
+                                            {if condition="($vo.receipts_state == 1 || $vo.report_check_time neq '')" /}
+                                                {$vo.report}&nbsp;&nbsp;&nbsp;{$lang_menu['已確認']}
+                                            {else/}
+                                                {if condition="($vo.report == '')"}
+                                                    <div class="input-group transferBox">
+                                                        <div class="custom-file">
+                                                            <input type="text" class="form-control" placeholder="{$lang_menu['回報後五碼或姓名']}" id="pc_{$vo.id}" onfocus="javascript:this.parentElement.parentNode.className+=' write';" onblur="javascript:this.parentElement.parentNode.classList.remove('write');" style="font-size: 12px; padding: 0px;">
+                                                        </div>
+                                                        <div class="input-group-append" style="align-items: center">
+                                                            <button class="btn" type="button" alt="pc_{$vo.id}" onclick="setReportNumber(this);">{$lang_menu['確認']}</button>
+                                                        </div>
+                                                    </div>
+                                                {else/}
+                                                    {$vo.report}&nbsp;&nbsp;&nbsp;{$lang_menu['待確認']}
+                                                {/if}
+                                            {/if}
+                                        {else /}
+                                            {$vo.receipts_state|RECEIPTS_STATE}
+                                        {/if}
+                                    </td>
+
+                                    <!-- //////////// -->
+                                    <input type="hidden" name="id" value="{$vo.id}"/>
+                                    <input type="hidden" name="total" value="{$vo.total}"/>
+                                    <input type="hidden" name="order_number" value="{$vo.order_number}"/>
+                                    <input type="hidden" name="pay_way" value="{$vo.payment}"/>
+                                    <!-- //////////// -->
+                                    <td data-th="{$lang_menu['操作']}">
+                                        {if condition="($ecpay_card==1||$tspg_card==1) and $vo.status=='New'"}
+                                            {if condition=" (
+                                                                $vo.payment==$lang_menu['綠界刷卡(一次付清)'] || 
+                                                                $vo.payment==$lang_menu['綠界刷卡(分期付款)'] 
+                                                             || $vo.payment==$lang_menu['Paypal']
+                                                             || $vo.payment==$lang_menu['支付寶'] || $vo.payment==$lang_menu['微信支付']
+                                                            ) AND ($vo.receipts_state == '0')"}
+                                                <input type="submit" value="{$lang_menu['補單']}"></input>
+                                            {/if}
+                                        {/if}
+                                            
+                                        {if condition="($vo.transport_state != 1 ) and $vo.status=='New'" /}
+                                            <a class="cancel" order_number="{$vo.order_number}">{$lang_menu['取消']}</a>
+                                        {/if}
+                                    </td>
+                                </tr>
+
+                                {if condition="($ecpay_card==1||$tspg_card==1) and $vo.status=='New'"}
+                                    {if condition=" (
+                                            $vo.payment==$lang_menu['綠界刷卡(一次付清)'] || 
+                                            $vo.payment==$lang_menu['綠界刷卡(分期付款)'] 
+                                         || $vo.payment==$lang_menu['Paypal']
+                                         || $vo.payment==$lang_menu['支付寶'] || $vo.payment==$lang_menu['微信支付']
+                                        ) AND ($vo.receipts_state == '0')"}
+
+                                        {if condition="$vo.tsbc_qr_code_url!=''"}
+                                            <tr>
+                                                <td colspan="10" class="text-center text-lg-right">
+                                                    <a class="btn btn-success text-white mr-2" href="{$vo.tsbc_qr_code_url}" target="_blank">
+                                                        {$lang_menu['付款QR code']}
+                                                    </a>
+                                                    <a class="btn btn-primary text-white" href="{:url('Tsbc/check_order', ['orderid' => $vo['order_number']])}">{$lang_menu['更新付款狀態']}</a>
+                                                    <span class="text-danger">
+                                                        {$lang_menu['付款狀態不會即時更新，請勿重複付款。 若無法使用了，請使用「補單」生成新QR code']}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        {/if}
+                                    {/if}
+                                {/if}
+                            </form>
+                        {/volist}
+
+                        </tbody>
+                    </table>
+                </div>
+               
+                <hr>
+                <div class="orderDetailsBox">
+                    <h3 class="orderTitlt">{$lang_menu['訂單編號']}：<span>{$singleData.order_number}</span></h3>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <span>{$lang_menu['訂單時間']}：<span>{$singleData.create_time|date='Y/m/d H:i', ###}</span></span>
+                        </div>
+                        <div class="col-lg-6">
+                            <span>{$lang_menu['訂單Email']}：<span>{$singleData.transport_email}</span></span>
+                        </div>
+                    </div>
+                    <table class="prodReg orderTable table table-striped table-bordered table-rwd">
+                        <thead>
+                            <tr class="tr-only-hide">
+                                <th style="text-align: left;">{$lang_menu['品項']}</th>
+                                <th style="width: 75px">{$lang_menu['單價']}</th>
+                                <th style="width: 75px">{$lang_menu['數量']}</th>
+                                <th style="width: 75px">{$lang_menu['總價']}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            {volist name="singleData.product" id="product"}
+                            <tr>
+                                <td data-th="{$lang_menu['品項']}">
+                                    <div class="d-flex">
+
+                                        {notempty name="$product.url2"}
+                                        <div class="smallProImg" style="background-image: url(http://{$product.url2}); position: relative;">
+                                            {if condition="empty($Front_name['網紅列表']) AND isset($product.key_type)"}
+                                            {if condition=" substr($product.key_type,0,3)== 'kol'"}
+                                                <span class="prod_tag kol_tag">{$lang_menu['網紅推薦']}</span>
+                                            {/if}
+                                            {/if}
+
+                                            {if condition="empty($Front_name['加價購設定']) AND isset($product.key_type)"}
+                                            {if condition=" $product.key_type== 'add'"}
+                                                <span class="prod_tag add_tag">{$lang_menu['加價購']}</span>
+                                            {/if}
+                                            {/if}
+                                        </div>
+                                        {/notempty}
+
+                                        <div class="proContent d-flex align-items-center">
+                                            <span class="mr-3">{$product.name}</span>
+                                            {if condition="$control_register==1 && isset($product.is_registrable) "}
+                                                {if condition="$product.is_registrable=='1'"}
+                                                    <a class="btn btn-success btn-sm text-white show_info" data-toggle="modal" data-target="#regiModal{$product.type_id_ori}">{$lang_menu['查看報名資料']}</a>
+                                                    <div class="modal fade" id="regiModal{$product.type_id}" tabindex="-1" role="dialog" aria-labelledby="regiModalLabel" aria-hidden="true">
+                                                        <div class="modal-dialog" role="document">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h5 class="modal-title" id="regiModalLabel">{$product.name}</h5>
+                                                                    <button type="button" class="close eeeeeee" data-dismiss="modal" aria-label="Close">
+                                                                        <span aria-hidden="true">&times;</span>
+                                                                    </button>
+                                                                </div>
+                                                                {if condition="isset( $examinee_info[$product.type_id] )"}
+                                                                    <div class="modal-body" id="boxModel">
+                                                                        <table class="orderTable table table-striped table-bordered table-rwd">
+                                                                            <thead>
+                                                                                <tr class="tr-only-hide">
+                                                                                    <th>報名學校</th>
+                                                                                    <th>報名班級</th>
+                                                                                    <th>學生姓名</th>
+                                                                                    <th>身份證號碼</th>
+                                                                                    <th>准考證</th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                {volist name="examinee_info[$product.type_id]" id="ei"}
+                                                                                <tr class="">
+                                                                                    <td data-th="報名學校">{$ei.examinee_school}</td>
+                                                                                    <td data-th="報名班級">{$ei.examinee_class}</td>
+                                                                                    <td data-th="學生姓名">{$ei.examinee_name}</td>
+                                                                                    <td data-th="身份證號碼">{$ei.examinee_id}</td>
+                                                                                    <td data-th="准考證">{$ei.examinee_ticket|default="未公布"}</td>
+                                                                                </tr>
+                                                                                {/volist}
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </div>
+                                                                {/if}
+                                                                <div class="modal-footer">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                {/if}
+                                            {/if}
+                                        </div>
+                                    </div>
+                                </td>
+                                <td data-th="{$lang_menu['單價']}">{$product.price}</td>
+                                <td data-th="{$lang_menu['數量']}">{$product.num}</td>
+                                <td data-th="{$lang_menu['總價']}">{$product.total}</td>
+                            </tr>
+                            {/volist}
+                            <!-- ////////////////////// -->
+                            {volist name="singleData.discount" id="discount"}
+                                <tr>
+                                    <td colspan="4">
+                                        <p><span>【{$discount.type}】</span>{$discount.name}-<span>{$discount.count}</span></p>
+                                    </td>
+                                </tr>
+                            {/volist}
+                            {if condition="$singleData.freediscount != 0"}
+                                <tr>
+                                    <td colspan="4">
+                                        <p>
+                                            <span>【{$lang_menu['折扣']}】</span>
+                                            <span>{$lang_menu['購物現折']-</span>
+                                            <span>{$dolar_mark}{$singleData.freediscount}</span>
+                                        </p>
+                                    </td>
+                                </tr>
+                            {/if}
+                        </tbody>
+                    </table>
+                    <hr>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            {empty name="$Front_name['點數設定']"}
+                                <span>{$lang_menu['本訂單增加紅利']}<span>{$singleData.add_point}{$lang_menu['點']}</span></span>
+                            {/empty}
+                        </div>
+                        <div class="col-lg-6">
+                            <span>{$lang_menu['訂單金額']}<span>{$singleData.total}</span></span>
+
+                            {if condition="$singleData.AllPayLogisticsID != ''"}
+                                <a class="use-btn float-right" data-toggle="modal" data-target="#logisticModel"><span>{$lang_menu['查看物流狀態']}</span></a>
+                            {/if}
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <p class="col-lg-6">{$lang_menu['購買人']}：<span>{$singleData.name}</span></p>
+                        <p class="col-lg-6">{$lang_menu['收件人']}：<span>{$singleData.transport_location_name}</span></p>
+                        <p class="col-lg-6">{$lang_menu['出貨地址']}：<span>{$singleData.transport_location}</span></p>
+                        <p class="col-lg-6">{$lang_menu['手機號碼']}：<span>{$singleData.transport_location_phone}</span></p>
+                        <p class="col-lg-6">{$lang_menu['聯絡電話']}：<span>{$singleData.transport_location_tele}</span></p>
+                        <p class="col-lg-6">{$lang_menu['付款方式']}：<span>{$singleData.payment}</span></p>
+                        <p class="col-lg-12">{$lang_menu['備註']}：<span>{$singleData.transport_location_textarea}</span></p>
+                        <p class="col-lg-12">{$lang_menu['賣家備註']}：<span>{$singleData.ps2}</span></p>
+                    </div>
+
+                    <hr>
+
+                    {if condition="($user.name != '')"}
+
+                    <div class="col-12 text-center">
+                        <a href="{:url('Orderform/orderform')}" class="use-btn">{$lang_menu['返回列表']}</a>
+                    </div>
+                    {/if}
+                </div>
+
+                <div class="memberBottom pb_xsmal">
+                    <div>
+                        {$consent_other}
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+{/block}
+
+{block name="Modal"}
+    <!-- processModel start-->
+    <div class="modal fade " id="processModel" tabindex="-1" role="dialog" aria-labelledby="processModelTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content ">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="processModelTitle">{$lang_menu['流程說明']}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <img src="__PUBLIC__/img/process_img_01.png" alt="">
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- processModel end-->
+
+    <!-- logisticModel start-->
+        <div class="modal fade " id="logisticModel" tabindex="-1" role="dialog" aria-labelledby="processModelTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content ">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="processModelTitle">{$lang_menu['物流狀態']}</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>{$lang_menu['配送方式']}：<span id="logist_type"></span></p>
+                        <table class="table table-striped table-bordered table-rwd">
+                            <thead>
+                                <tr>
+                                    <th>{$lang_menu['狀態']}</th>
+                                    <th>{$lang_menu['時間']}</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- logisticModel end-->
+{/block}
+
+{block name="ownJS"}
+    <script src="__PUBLIC__/js/memberToggle.js"></script>
+    <script>
+        function setReportNumber($this){
+            $.ajax({
+                url: "{:url('Orderform/setReportNumber')}",
+                type: 'POST',
+                dataType: 'json',
+                data:{
+                    id: $($this).attr('alt').split("_")[1],
+                    reportNumber: $("#" + $($this).attr('alt')).val()
+                },
+                success: function(response) {
+                    if(response.status){
+                        alert("{$lang_menu['操作成功']}");
+                        $($this).parent().html("{$lang_menu['待確認']}");
+                    }else{
+                        alert(response.message);
+                        console.log(response.message);
+                    }
+                },
+                error: function(xhr) {
+                    alert("{$lang_menu['發生錯誤']}");
+                    console.log(xhr);
+                }
+            });
+        }
+
+        function get_logistic_record(){
+            $.ajax({
+                url: "/index/orderform/ajax_logistic_status/id/{$orderform[0]['id']}",
+                type: 'GET',
+                dataType: 'json',
+            success: function(response) {
+                console.log(response);
+                $("#logist_type").html("{$orderform[0]['transport']}");
+                record_html = "";
+                for(var i =0; i<response.length; i++){
+                    record_html = record_html + '<tr><td>'+response[i]['message']+'</td><td>'+response[i]['time']+'</td></tr>';
+                }
+                $('#logisticModel tbody').html(record_html);
+            },
+            error: function(xhr) {
+                alert("{$lang_menu['發生錯誤']}");
+                console.log(xhr);
+                }
+            });
+        }
+        get_logistic_record();
+
+        $('.cancel').on('click', function(e){
+            $.ajax({
+                url: "{:url('Orderform/cancel')}",
+                type: "POST",
+                dataType: "json",
+                data: { order_number: $(this).attr('order_number') },
+                success: function (response) {
+                    alert(response.msg);
+                    location.href="/index/orderform/orderform.html"
+                },
+                error: function (xhr) {
+                    alert("{$lang_menu['發生錯誤']}");
+                    console.log(xhr);
+                },
+            });
+        });
+    </script>
+{/block}
+

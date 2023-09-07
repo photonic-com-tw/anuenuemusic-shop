@@ -1,0 +1,31 @@
+{extend name="Public/mainTpl" /}
+{block name="title"}{$lang_menu['會員登入']} | {$seo[0]['title']}{/block}
+{block name="css"}
+{/block}
+
+{block name="flulid_content"}
+    <!-- /////////////////////////////////////////////////////////////////////////////////////////////// -->
+    <!-- announcement start -->
+    {include file='Public/newsLink' /}
+    <!-- announcement end -->
+    <!-- /////////////////////////////////////////////////////////////////////////////////////////////// -->
+    <div class="d-flex justify-content-center">
+        <div class="w-100 bg_anuenue bg_pic d-flex justify-content-center">
+          <div class="thanks_block box_show bg_white">
+              <h3>{$lang_menu['感謝您加入 aNueNue彩虹人 官方會員！']}</h3>
+              <h3>{$lang_menu['請先去到您的MAIL收取驗証信 點擊連結後帳號才會開通喔！']}</h3>
+              <div class="pt_smal d-flex">
+                <a class="btn" href="{$MAIN_WEB_LAN}">{$lang_menu['回首頁']}</a>
+                <a class="btn" href="{:url('Member/reg_product_sign')}">{$lang_menu['產品註冊']}</a>
+              </div>
+          </div>
+        </div>
+    </div>
+{/block}
+
+{block name="Modal"}
+{/block}
+
+{block name="ownJS"}
+{/block}
+

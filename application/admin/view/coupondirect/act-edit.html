@@ -1,0 +1,671 @@
+{extend name="Public/aside" /}
+
+{block name="title"}行銷管理區-修改直接輸入型優惠券{/block}
+
+{block name="css"}
+    <style>
+        .back {
+            border: 1px solid #333;
+            background: #e0e0e0;
+            padding: 0px 10px;
+            padding-top: 4px;
+            color: #333;
+            margin-left: 10px;
+        }
+
+        .img-box {
+            margin: 0px;
+        }
+
+        .sm-img-box {
+            width: 85px;
+            height: 85px;
+            display: inline-flex;
+            margin-top: 6.5px;
+        }
+
+        .info-div {
+            border-bottom: 1px solid #000000;
+            margin-bottom: 10px;
+            width: 480px;
+            position: relative;
+        }
+
+        label {
+            font-weight: normal;
+            cursor: pointer;
+            margin: 0px;
+        }
+
+        .glyphicon-plus {
+            color: #fff;
+            font-size: 14px;
+            text-align: center;
+            background: #333;
+            padding: 6px;
+            border-radius: 100px;
+            cursor: pointer;
+        }
+
+        /* 主體表格設置 */
+        table {
+            width: 99%;
+            margin: 10px auto;
+        }
+        table td {
+            padding: 5%;
+        }
+
+        /* 第一列設置 */
+        .sm-group {
+            float: left;
+            margin-left: 10px;
+            margin-right: 10%;
+        }
+
+        .info-div textarea {
+            height: 100px;
+            width: 400px;
+            position: absolute;
+            margin-left: 10px;
+            margin-top: 2px;
+        }
+
+        @media (max-width: 1280px) {
+            .sm-group {
+                margin-right: 20;
+            }
+            .setting {
+                margin: 0px auto;
+                display: flex;
+            }
+        }
+
+        /* 第二列設置 */
+        #setting {
+            margin: 10px auto;
+            width: 100%;
+        }
+
+        #setting,
+        #setting tr,
+        #setting td {
+            border: 2px #9d9d9d solid;
+        }
+
+        #setting td {
+            padding: 1%;
+        }
+
+        #setting td:nth-child(1) {
+            background: #e0e0e0;
+            text-align: center;
+            width: 10%;
+        }
+
+        .discount {
+            width: 30%;
+            padding: 0px 5px;
+            text-align: right;
+        }
+
+        .confirm {
+            position: absolute;
+            left: 45%;
+            margin-top: 20px;
+            font-size: 22px;
+            padding: 5px 20px;
+        }
+    </style>
+{/block}
+
+{block name="content"}
+    <div id="content">
+        <p id="title">行銷管理區 > 修改直接輸入型優惠券</p>
+
+        <a class="back" href="{:url('Coupondirect/index')}">
+            <span style="font-size:18px; color:#333" class="glyphicon glyphicon-arrow-left"></span>
+        </a>
+
+        <form action="{:url('Coupondirect/update')}" name="actForm" method="post" enctype="multipart/form-data">
+            <input type="hidden" value="{$singleData.id}" name="id">
+
+            <table>
+                <!-- 第一列 -->
+                <tr>
+                    <td>
+                        <div>
+                            <div class="info-div">
+                                優惠券名稱：<input type="text" name="name" value="{$singleData.name}" style="border:none" class="w-c100">
+                            </div>
+                            <div class="info-div">
+                                品號：{$singleData.number}
+                            </div>
+                            <div class="info-div">
+                                優惠券代碼：<span class="text-danger">*</span>
+                                <input type="text" value="{$singleData.user_code}" name="user_code" style="border:none" placeholder="消費者使用此代碼取得優惠" class="w-c100">
+                            </div>
+                            <div class="info-div" style="height:140px;">
+                                注意簡介
+                                <textarea name="content">{$singleData.content}</textarea>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <div class="info-div">
+                                介紹圖片：(建議寬度1100px，高度不限)<input type='file' name="img" ng-file-select="onFileSelect($files)" ng-model="contCtrl.img">
+                                <img ng-if="contCtrl.img!='/public/static/index'" ng-src="<%contCtrl.img%>" style="max-width: 100%;"/>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+
+                <!-- 第一列結束 -->
+                <!-- 第二列 -->
+                <tr>
+                    <td colspan="2">
+                        優惠券設定
+                        <table id="setting">
+                            <tr>
+                                <td>時間</td>
+                                <td colspan="2">
+                                    <p>開始日期 <input type="date" name="start" id="start" value="{$singleData.start|date='Y-m-d',###}"></p>
+                                    <p><input type="checkbox" style="margin-left:70px" id="noEndTime"
+
+                                    {if condition="($singleData.end <= 0)"}
+                                        checked
+                                    {/if}
+                                    > 沒有結束日期</p>
+                                    <span id="endPTag">結束日期</span> <input type="date" name="end" id="end" value="{$singleData.end|date='Y-m-d',###}">
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    滿額折扣
+                                </td>
+                                <td style="border:2px dashed #9D9D9D">
+                                    <p><input type="radio" name="discountType" value="1" id="discount" checked>
+                                        <label for="discount">滿幾元，打幾折</label>
+                                    </p>
+                                    <p style="margin-left:15px"><input type="checkbox" name="online11">滿 <input class="discount" type="number" name="condition11"> 元，打 <input class="discount" type="number" name="discount11"> 折</p>
+                                    <p style="margin-left:15px"><input type="checkbox" name="online21">滿 <input class="discount" type="number" name="condition21"> 元，打 <input class="discount" type="number" name="discount21"> 折</p>
+                                    <p style="margin-left:15px"><input type="checkbox" name="online31">滿 <input class="discount" type="number" name="condition31"> 元，打 <input class="discount" type="number" name="discount31"> 折</p>
+                                </td>
+                                <td style="border:2px dashed #9D9D9D">
+                                    <p><input type="radio" name="discountType" value="2" id="discount1">
+                                        <label for="discount1">滿幾元，折幾元</label>
+                                    </p>
+                                    <p style="margin-left:15px"><input type="checkbox" name="online12">滿 <input class="discount" type="number" name="condition12"> 元，折 <input class="discount" type="number" name="discount12"> 元</p>
+                                    <p style="margin-left:15px"><input type="checkbox" name="online22">滿 <input class="discount" type="number" name="condition22"> 元，折 <input class="discount" type="number" name="discount22"> 元</p>
+                                    <p style="margin-left:15px"><input type="checkbox" name="online32">滿 <input class="discount" type="number" name="condition32"> 元，折 <input class="discount" type="number" name="discount32"> 元</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    滿件折扣
+                                </td>
+                                <td style="border:2px dashed #9D9D9D">
+                                    <p><input type="radio" name="discountType"  value="3" id="discount2">
+                                        <label for="discount2">滿幾件，打幾折</label>
+                                    </p>
+                                    <p style="margin-left:15px"><input type="checkbox" name="online13">滿 <input class="discount" type="number" name="condition13"> 件，打 <input class="discount" type="number" name="discount13"> 折</p>
+                                    <p style="margin-left:15px"><input type="checkbox" name="online23">滿 <input class="discount" type="number" name="condition23"> 件，打 <input class="discount" type="number" name="discount23"> 折</p>
+                                    <p style="margin-left:15px"><input type="checkbox" name="online33">滿 <input class="discount" type="number" name="condition33"> 件，打 <input class="discount" type="number" name="discount33"> 折</p>
+                                </td>
+                                <td style="border:2px dashed #9D9D9D">
+                                    <p><input type="radio" name="discountType"  value="4" id="discount3">
+                                        <label for="discount3">滿幾件，折幾元</label>
+                                    </p>
+                                    <p style="margin-left:15px"><input type="checkbox" name="online14">滿 <input class="discount" type="number" name="condition14"> 件，折 <input class="discount" type="number" name="discount14"> 元</p>
+                                    <p style="margin-left:15px"><input type="checkbox" name="online24">滿 <input class="discount" type="number" name="condition24"> 件，折 <input class="discount" type="number" name="discount24"> 元</p>
+                                    <p style="margin-left:15px"><input type="checkbox" name="online34">滿 <input class="discount" type="number" name="condition34"> 件，折 <input class="discount" type="number" name="discount34"> 元</p>
+                                </td>
+                            </tr>
+                        </table>
+                        <span style="color: red">如需打85折，請輸入8.5</span>
+                        
+                        <a class="button confirm" onclick="actForm.submit();">優惠券更新</a>
+                    </td>
+                </tr>
+                <!-- 第二列結束 -->
+            </table>
+        </form>
+
+		<div>
+			<div class="container-fluid">
+				<div class="">
+					<span ng-click="contCtrl.selectAll()" class="text-primary"> 全選</span>
+				</div>
+				<div class="">
+					<div ng-repeat="item in contCtrl.model.actProd" class="col-sm-3">
+						<div>
+							<div>
+								<input ng-model="item.select" type="checkbox">
+                                <span onclick="$(this).prev('input').click()"><% item.title%></span>
+							</div>
+							<div onclick="$(this).prev().children('input').click()">
+								<img src="/public/static/index<%item.pic1%>" width=200>
+							</div>
+						</div>
+					</div>
+				</div>
+				<br>
+				<div class="">
+					<button ng-click="contCtrl.delActProd()" class="btn btn-primary" style="width: 100%">刪除優惠券產品</button>	
+				</div>
+			</div>
+		</div>
+
+		<br><br>
+
+		<div class="container-fluid">
+    		<p ng-click="contCtrl.getList()" class="text-primary">優惠券設定重整</p>
+    		<p>
+				<span ng-show="contCtrl.showSeries"><% contCtrl.currCate %></span>
+				<span ng-show="contCtrl.showBreadcrumb"> / </span>
+				<span ng-show="contCtrl.showCate"><% contCtrl.catProd %> <span ng-click="contCtrl.selectAllProd()" class="text-primary"> 全選</span></span>
+			</p> 
+
+			<span ng-repeat="item in contCtrl.model.series"> 
+				<!--input ng-model = "item.select" type="checkbox" --> 
+				&emsp;
+				<span ng-click="contCtrl.getCate(item)"><% item.title %></span>
+			</span>
+
+			<span ng-repeat="item in contCtrl.model.cate2"> 
+				&emsp;
+				<!--input ng-model = "item.select" type="checkbox" --> 
+				<span ng-click="contCtrl.getCate2(item)"><% item.title %></span>
+			</span>
+
+			<span ng-repeat="item in contCtrl.model.cate"> 
+				<input ng-model = "item.select" type="checkbox" > 
+				<span ng-click="contCtrl.getCateProd(item)"><% item.title %></span>
+			</span>
+
+    		<div class="container-fluid">
+				<div class="">
+					<div ng-repeat="item in contCtrl.model.cateProd" class="col-sm-3">
+						<div>
+							<div>
+								<input ng-model="item.select" type="checkbox">
+                                <span onclick="$(this).prev('input').click()"><% item.title%></span>
+							</div>
+							<div onclick="$(this).prev().children('input').click()">
+								<img src="/public/static/index<%item.pic1%>" width=200>
+							</div>
+						</div>				
+					</div>
+				</div>			
+			</div>
+
+			<div><button class="btn btn-primary" ng-click="contCtrl.insertAct()" style="width: 100%">加入優惠券</button></div>
+    	</div>
+   	    <br><br> <br> <br> <br> <br> <br> 
+    </div>
+{/block}
+
+{block name="ownJS"}
+
+    <script>
+
+        $.ajax({
+
+            url: "{:url('Product/getList')}",
+
+            type: 'GET',
+
+            datatype: 'json',
+
+            error: function(xhr) {
+
+                //alert('Ajax request 發生錯誤');
+
+            },
+
+            success: function(response) {
+                if(response.status){
+                    //console.log(response);
+                    var productList = '';
+                    response.message.forEach(
+                        function listLoop(value) {
+                            $('#productList').append("<option value='" + value.id + "'>" + value.title + "</option>");
+                        }
+                    );
+                }else{
+                    console.error(response);
+                }
+            }
+        });
+
+        $("#noEndTime").click(function() {
+            if($("#noEndTime").prop("checked")) {
+                $('#end').val('1970-01-01');
+                $('#end').hide();
+                $('#endPTag').hide();
+
+            } else {
+                $('#end').val($('#start').val());
+                $('#end').show();
+                $('#endPTag').show();
+            }
+        });
+
+        if($("#noEndTime").prop("checked")) {
+            $('#end').val('1970-01-01');
+            $('#end').hide();
+            $('#endPTag').hide();
+
+        } else {
+			// $('#end').val($('#start').val());
+			// $('#end').show();
+			// $('#endPTag').show();
+        }
+
+        var type = {$singleData.type};
+        $('input[name=discountType]').each(function(i, item) {
+            if($(item).val() == type) {
+                $(item).attr('checked', true);
+            }
+        });
+
+        if(+'{$singleData.online1}'){
+            $('input[name=online1'+type+']').attr('checked', true);
+        }
+
+        if(+'{$singleData.online2}'){
+            $('input[name=online2'+type+']').attr('checked', true);
+        }
+
+        if(+'{$singleData.online3}'){
+            $('input[name=online3'+type+']').attr('checked', true);
+        }
+
+        $('input[name=condition1'+type+']').val(+'{$singleData.condition1}');
+        $('input[name=condition2'+type+']').val(+'{$singleData.condition2}');
+        $('input[name=condition3'+type+']').val(+'{$singleData.condition3}');
+        $('input[name=discount1'+type+']').val(+'{$singleData.discount1}');
+        $('input[name=discount2'+type+']').val(+'{$singleData.discount2}');
+        $('input[name=discount3'+type+']').val(+'{$singleData.discount3}');
+    </script>
+
+    <script type="text/javascript" src="__PUBLIC__/js/angular/angular-1.4.4/angular.js"></script>
+    <script>
+    ///////////////
+    //   Angular
+    ///////////////
+    var app = angular.module('app',[]);
+	app.config(function($interpolateProvider){
+		$interpolateProvider.startSymbol('<%');
+		$interpolateProvider.endSymbol('%>');
+	});
+	app.controller('ContentController',['$http',function($http){
+
+		var self = this; //self.ngtest = "angular test";alert(self.ngtest);
+		self.model = {};
+		self.actId = <?php echo $actId?>;
+        self.img = "/public/static/index{$singleData['img']}";
+
+		self.getActProd = function(){
+			$http({
+				method : "post",
+				url : "{:url('Coupondirect/getActProd')}",
+				data: {actId:self.actId},
+			}).success(function(data){
+				self.model.actProd = data.actProd;
+				console.log(self.model.actProd)
+			}).error(function(){
+			})//error
+
+		}//self.login
+		self.getActProd();
+
+		self.showSeries 		= false;
+		self.showCate 			= false; //Categories
+		self.showDiscType 		= [false,true,false,false,false];
+		self.showBreadcrumb 	= true;
+
+		self.model 				= {};
+		self.model.act 			= {};
+		self.model.series 		= {};
+		self.model.cate 		= {};
+        self.model.cate2        = {};
+		self.model.cateProd 	= {};
+
+		self.getList = function(){
+			self.showSeries 		= false;
+			self.showCate 			= false; //Categories
+			self.model.act 			= {};
+			self.model.series 		= {};
+			self.model.cate 		= {};
+            self.model.cate2        = {};
+			self.model.cateProd 	= {};
+			$http({
+				method : "post",
+				url : "{:url('Product/getList')}",
+				//data: orderPost,
+			}).success(function(data){
+				// console.log(data); 
+				self.model.series = data.message;
+				// 
+			}).error(function(){
+			})//error
+		}//self.getList
+		self.getList();
+
+		self.getCate = function(item){
+			console.log(item.id);
+			self.showSeries = true;
+			self.model.series = {};
+			$http({
+				method : "post",
+				url : "{:url('Product/getCate')}",
+				data: {seriesId:item.id},
+			}).success(function(data){
+				data['first'] = true;
+                // console.log(data)
+                self.getCateProd(data);
+
+				self.model.cate2 = data.cate;
+				self.currCate = item.title;
+				for (var prop in self.model.series){
+					self.model.series[prop]['select'] = false;
+				}
+
+			}).error(function(){
+			})//error
+		}
+
+	   self.getCate2 = function(item){
+			console.log(item.id);
+			self.showSeries = true;
+			self.model.cate2 = {};
+			$http({
+    			method : "post",
+				url : "{:url('Product/getCate2')}",
+				data: {seriesId:item.id},
+			}).success(function(data){
+
+				self.model.cate2 = data.cate;
+				if(!self.currCate){
+					self.currCate = item.title;
+				}else{
+					self.currCate = self.currCate +' / '+item.title;
+				}
+
+				if(data.getCateProd == 1){
+					self.model.cate2 = {};
+					//self.currCate = '';
+				}
+				self.getCateProd(data);
+
+				/*
+				self.model.cate2 = data.cate;
+				self.currCate = item.title;
+				for (var prop in self.model.series){
+					self.model.series[prop]['select'] = false;
+				}
+				*/
+			}).error(function(){
+			})//error
+		}
+
+		self.getCateProd = function (item){
+			// console.log(seriesId);
+			self.showCate 			= true; //Categories
+			self.model.cate = {};
+
+			$http({
+				method : "post",
+				url : "{:url('Coupondirect/getCouponDirectProd')}",
+				data: {cateId:item.seriesId, first:item.first},
+
+			}).success(function(data){
+				self.catProd = item.title;
+				for (var prop in self.model.cate){
+					self.model.cate[prop]['select'] = false;
+				}
+				self.model.cateProd = data.productinfo;	
+			}).error(function(){
+			})//error
+		}//self.getProd()
+
+		self.selDiscType = function(typeId){
+			for(var prop in self.showDiscType){
+				self.showDiscType[prop] = false;
+				if (prop == typeId){
+					self.showDiscType[prop] = true;
+				}
+			}
+		}//self.selDiscType = function
+
+		self.insertAct = function(){
+            $('#block_block').show();
+			//console.log(self.model.series);
+			//console.log('--檢查--');
+			//self.getCateProd(self.model.series);
+			for(var prop in self.model.cateProd){
+				self.model.cateProd[prop]['actId'] = self.actId;
+			}
+
+			$http({
+				method : "post",
+				url : "{:url('Coupondirect/insertAct')}",
+				data: {actId:self.actId,actData:self.model}
+			}).success(function(data){
+
+				if (data.status == 200){
+					alert("新增優惠券已完成")
+					location.reload();
+				}else{
+					alert("網路異常");
+				}
+                $('#block_block').hide();
+			}).error(function(){
+                alert("網路異常");
+                $('#block_block').hide();
+			})//error
+		}
+
+		self.delActProd = function(){
+            $('#block_block').show();
+			for(var prop in self.model.cateProd){
+				self.model.actProd[prop]['actId'] = self.actId;
+			}
+
+			$http({
+				method : "post",
+				url : "{:url('Coupondirect/delActProd')}",
+				data: {cateProd:self.model.actProd}
+			}).success(function(data){
+				if (data.status == 200){
+					alert("優惠券商品已刪除")
+					location.reload();
+				}else{
+					alert("網路異常");
+				}
+                $('#block_block').hide();
+			}).error(function(){
+                alert("網路異常");
+                $('#block_block').hide();
+			})//error
+		}
+
+		self.selectAll = function(){
+			for(var prop in self.model.actProd){
+				self.model.actProd[prop]['select'] = true;
+			}
+		}
+
+		self.selectAllProd = function(){
+			for(var prop in self.model.cateProd){
+				self.model.cateProd[prop]['select'] = true;
+			}
+		}
+	}])//app.controller()
+    .directive("ngFileSelect", function(fileReader, $timeout) {
+            return {
+                scope: {
+                    ngModel: '='
+                },
+                link: function($scope, el) {
+                    function getFile(file) {
+                        fileReader.readAsDataUrl(file, $scope)
+                        .then(function(result) {
+                            $timeout(function() {
+                                $scope.ngModel = result;
+                            });
+                        });
+                    }
+                    el.bind("change", function(e) {
+                        var file = (e.srcElement || e.target).files[0];
+                        getFile(file);
+                    });
+                }
+            };
+    })
+    .factory("fileReader", function($q, $log) {
+        var onLoad = function(reader, deferred, scope) {
+            return function() {
+                scope.$apply(function() {
+                    deferred.resolve(reader.result);
+                });
+            };
+        };
+        var onError = function(reader, deferred, scope) {
+            return function() {
+                scope.$apply(function() {
+                    deferred.reject(reader.result);
+                });
+            };
+        };
+        var onProgress = function(reader, scope) {
+            return function(event) {
+                scope.$broadcast("fileProgress", {
+                    total: event.total,
+                    loaded: event.loaded
+                });
+            };
+        };
+        var getReader = function(deferred, scope) {
+            var reader = new FileReader();
+            reader.onload = onLoad(reader, deferred, scope);
+            reader.onerror = onError(reader, deferred, scope);
+            reader.onprogress = onProgress(reader, scope);
+            return reader;
+        };
+        var readAsDataURL = function(file, scope) {
+            var deferred = $q.defer();
+            var reader = getReader(deferred, scope);
+            reader.readAsDataURL(file);
+            return deferred.promise;
+        };
+        return {
+            readAsDataUrl: readAsDataURL
+        };
+    });
+	</script>
+
+{/block}

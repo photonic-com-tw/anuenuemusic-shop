@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html {$useNg ? 'ng-app="app"' : ''}>
+    <title>{block name="title"}{/block}</title>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+            integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+            crossorigin="anonymous">
+            {block name="cssChange"}
+            <link rel="stylesheet" href="__PUBLIC__/css/style.css">
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.css">
+            {/block}
+            <style type="text/css">
+            .aside{
+            width:150px;
+            height:100%;
+            font-size:16px;
+            border-right:1px #000000 solid;
+            text-align:center;
+            /*padding:25px 0px;*/
+            position: fixed;
+            top:0;
+            left:0;
+            overflow-y: scroll;
+            overflow-x: hidden;
+            }
+            .aside::-webkit-scrollbar{
+            display: none;
+            }
+            .aside ul{
+            list-style: none;
+            padding:0px;
+            }
+            .aside a{
+            display: block;
+            border:1px #000000 solid;
+            padding: 12px 0px;
+            border-left:none;
+            margin-bottom:-1px;
+            margin-right:-1px;
+            color: #000000;
+            cursor: pointer;
+            }
+            .aside a:hover{
+            background: #333;
+            color:#fff;
+            text-decoration: none;
+            }
+            .aside li ul a{
+            border:none;
+            }
+            .aside li ul a.active,
+            .aside li ul a:hover{
+            background: #666;
+            color:#fff;
+            text-decoration: none;
+            }
+            .aside .glyphicon{
+            font-size:14px
+            }
+            .aside ul .glyphicon{
+            margin-left:3px
+            }
+            .aside .warning{
+            border:1px solid #000000;
+            padding:0px 5px;
+            margin-left:3px;
+            font-size:12px;
+            }
+            .show-div .button{
+            position: relative
+            }
+            .show-div input{
+            border:1px solid #000000
+            }
+            </style>
+            {block name="css"}{/block}
+        </head>
+        <body>
+            <div id="block_block"></div>
+            <div class="aside">
+                <a href="{:url('Login/logout')}" style="color: black;">
+                    <p style="margin-bottom:2px;">後台登出　<span class="glyphicon glyphicon-log-out"></span></p>
+                    <p style="font-size:13.5px;
+                        margin-bottom:10px;
+                    cursor:default;">歡迎　{$user.account}您好</p>
+                </a>
+                <ul>
+                    {volist name="show_list" id="vo"}
+                        <li id="target{$vo.id}"><a class="first_list">{$vo.name}<span class="glyphicon glyphicon-menu-right"></span></a>
+                        
+                            <ul style="font-size:15px" class="none">
+                                
+                                {volist name="$vo.sub" id="sub"}
+                                    {empty name="$sub.url"}
+                                        <li id="productListli" class="{$sub.class}">
+                                            {if condition="$sub.important eq '1'"}
+                                            <a class="second_list" style="color:red">{$sub.show_name}<span class="glyphicon glyphicon-menu-right"></span></a>
+                                            {else/}
+                                            <a class="second_list">{$sub.show_name}<span class="glyphicon glyphicon-menu-right"></span></a>
+                                            {/if}
+                                            
+                                            <ul style="font-size:15px" class="{$extra[$sub.id][0]} none" id="{$extra[$sub.id][1]}">
+                                                <!-- will load product list by AJAX -->
+                                                <!-- 增加主題館 開始 -->
+                                                <li>
+                                                    <div class="add-item none" style="position:relative; border:2px solid #9D9D9D; background:#fff; padding:5px; width:150px; z-index:999; text-align:left">
+                                                        <p style="margin-bottom:5px">館名新增</p>
+                                                        <input class="newProductName" type="text" style="width:100%; margin-bottom:10px" autofocus>
+                                                        <div style="text-align:right">
+                                                            <a class="button" onclick="addProdect(this, '{$sub.Front_desk}')" style="display:unset; border:1px solid #000000; padding:0px 5px">儲存</a>
+                                                            <a class="button" onclick="ShowList(this)" style="display:unset; border:1px solid #000000; padding:0px 5px">取消</a>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                                <!-- 增加主題館 結束 -->
+                                                <li class="add"><a><span class="glyphicon glyphicon-plus"></span></a></li>
+                                            </ul>
+                                        </li>
+                                        
+                                    {else /}
+                                        <li class="{$sub.class}">
+                                            {if condition="$sub.important eq '1'"}
+                                            <a href="{$sub.url}" target="{$sub.target}" style="color:red">{$sub.show_name}
+                                                {notempty name="$sub.count_id"}<span class="warning" id="{$sub.count_id}"></span>{/notempty}
+                                            </a>
+                                            {else/}
+                                            <a href="{$sub.url}" target="{$sub.target}">{$sub.show_name}
+                                                {notempty name="$sub.count_id"}<span class="warning" id="{$sub.count_id}"></span>{/notempty}
+                                            </a>
+                                            {/if}
+                                        </li>
+                                    {/empty}
+                                {/volist}
+                                
+                            </ul>
+                        
+                        </li>
+                    {/volist}
+                
+                    <li><a class="first_list" href="/index/index/index" target="_blank">查看前台</a></li>  
+                </ul>
+            </div>
+            <div ng-controller="ContentController as contCtrl">
+                {block name="content"}{/block}
+            </div>
+        </body>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+        integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+        crossorigin="anonymous"></script>
+        <!--script src="https://unpkg.com/vue"></script-->
+        <!--script src="https://cdn.jsdelivr.net/npm/vue"></script-->
+        <script src="//cdnjs.cloudflare.com/ajax/libs/Sortable/1.6.0/Sortable.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/Vue.Draggable/2.14.1/vuedraggable.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js"></script>
+        <script type="text/javascript" src="__PUBLIC__/js/vue.min.js"></script>
+
+        <script src="https://unpkg.com/vue-toasted@1.1.28/dist/vue-toasted.min.js"></script>
+    <script>
+        $(function(){
+            /*
+            // 側邊欄顯示
+            $('li').click(function(){     
+                console.log($(this).children('ul').length);
+                if($(this).children('ul').length != 0){
+                    if($(this).children('ul').is(':hidden')==true){
+                       
+                    } $(this).children('.glyphicon-menu-right').removeClass('glyphicon-menu-right').addClass('glyphicon-menu-down');
+                        $(this).children('ul').slideDown(500);
+                    else{
+                        $(this).children('.glyphicon-menu-down').removeClass('glyphicon-menu-down').addClass('glyphicon-menu-right');
+                        $(this).children('ul').slideUp(500);
+                    }
+                }
+            })*/
+            
+            $('.first_list').click(function(){
+                if($(this).next('ul').length != 0){
+                    if($(this).next('ul').is(':hidden')==true){
+                        $(this).contents('.glyphicon-menu-right').removeClass('glyphicon-menu-right').addClass('glyphicon-menu-down');
+                        $(this).next('ul').slideDown(500);
+                    }
+                    else{
+                        $(this).contents('.glyphicon-menu-down').removeClass('glyphicon-menu-down').addClass('glyphicon-menu-right');
+                        $(this).next('ul').slideUp(500);
+                    }
+                }
+            })
+            
+            $('.second_list').click(function(){
+                if($(this).next('ul').length != 0){
+                    if($(this).next('ul').is(':hidden')==true){
+                        $(this).contents('.glyphicon-menu-right').removeClass('glyphicon-menu-right').addClass('glyphicon-menu-down');
+                        $(this).next('ul').slideDown(500);
+                    }
+                    else{
+                        $(this).contents('.glyphicon-menu-down').removeClass('glyphicon-menu-down').addClass('glyphicon-menu-right');
+                        $(this).next('ul').slideUp(500);
+                    }
+                }
+            })
+
+            // 庫存警示數字框變色
+            $('#warning').mouseover(function(){
+                $('.warning').css('border-color','#fff')
+            })
+            $('#warning').mouseout(function(){
+                $('.warning').css('border-color','#000000')
+            })
+
+        });
+
+        // 點擊+主題館、經銷專增加區塊
+        $('.add').click(function(event){
+            var add_item  = $(event.currentTarget).prev().children();
+            if(add_item.is(':visible')==true){
+                add_item.slideUp(500);
+                add_item.val('')
+            }
+            else{
+                add_item.slideDown(500);
+            }
+            return false;
+        })
+
+        // 隱藏主題館、經銷專增加區塊
+        function ShowList(item){
+            var add_item = $(item).parent().parent();
+            var input = $(item).parent().prev();
+            if(add_item.is(':visible')==true){
+                add_item.slideUp(500);
+                input.val('')
+            }
+            else{
+                add_item.slideDown(500);
+            }
+        }
+
+        function limit_getCount(){
+            //AJAX get limit productinfo count
+            $.ajax({
+                url: "{:url('limit/getCount')}",
+                type: 'GET',
+                datatype: 'json',
+                error: function (xhr) {
+                    //alert('Ajax request 發生錯誤');
+                    console.error(xhr);
+
+                    act_getCount();
+                },
+                success: function (response) {
+                    if (response.status) {
+                        $('#limitCount').html(response.message);
+                    } else {
+                        console.error(response);
+                    }
+
+                    act_getCount();
+                }
+            });
+        }
+        function act_getCount(){
+            $.ajax({
+                url: "{:url('Act/getCount')}",
+                type: 'GET',
+                datatype: 'json',
+                error: function (xhr) {
+                    //alert('Ajax request 發生錯誤');
+                    console.error(xhr);
+
+                    discount_getCount();
+                },
+                success: function (response) {
+                    if (response.status) {
+                        $('#ActCount').html(response.message);
+                    } else {
+                        console.error(response);
+                    }
+
+                    discount_getCount();
+                }
+            });
+        }
+        function discount_getCount(){
+            $.ajax({
+                url: "{:url('discount/getCount')}",
+                type: 'GET',
+                datatype: 'json',
+                error: function (xhr) {
+                    //alert('Ajax request 發生錯誤');
+                    console.error(xhr);
+
+                    contact_getCount();
+                },
+                success: function (response) {
+                    if (response.status) {
+                        $('#DisCount').html(response.message);
+                    } else {
+                        console.error(response);
+                    }
+
+                    contact_getCount();
+                }
+            });
+        }
+        function contact_getCount(){
+            $.ajax({
+                url: "{:url('contact/getCount')}",
+                type: 'GET',
+                datatype: 'json',
+                error: function (xhr) {
+                    //alert('Ajax request 發生錯誤');
+                    console.error(xhr);
+
+                    stronghold_getList();
+                },
+                success: function (response) {
+                    if (response.status) {
+                        $('#ConCount').html(response.message[0]+"/"+response.message[1]);
+                    } else {
+                        console.error(response);
+                    }
+
+                    stronghold_getList();
+                }
+            });
+        }
+        function stronghold_getList(){
+            /*取得經銷專區分類*/
+            $.ajax({
+                url: "{:url('stronghold/getList')}",
+                type: 'GET',
+                datatype: 'json',
+                error: function (xhr) {
+                    //alert('Ajax request 發生錯誤');
+                    console.error(xhr);
+                },
+                success: function (response) {
+                    if (response.status) {
+                    //console.log(response);
+                        var productList = '';
+                        response.message.forEach(
+                            function listLoop(value) {
+                            productList +=
+                                $('<li/>').html(
+                                    $('<a/>').attr('href', "{:url('stronghold/Dodelete')}?id=" + value.id +"&url=" + location.pathname)
+                                        .append(
+                                            $('<span/>').addClass('glyphicon').addClass('glyphicon-trash').addClass('productTrash')
+                                        )
+                                        .css('display', 'inline-block').css('float', 'left')
+                                        .append(
+                                            $('<a/>').attr('href', value.url)
+                                            .append(value.title).css('display', 'inline-block').css('width', '80%')
+                                        )
+                                        .append('<br>')
+                                ).html();
+                            }
+                        );
+                        $('#myList2').prepend(productList);
+
+                    } else {
+                        console.error(response);
+                    }
+                }
+            });
+        }
+        // function product_getList(){
+        //     /*取得館列*/
+        //     $.ajax({
+        //         url: "{:url('Product/getList')}",
+        //         type: 'GET',
+        //         datatype: 'json',
+        //         error: function (xhr) {
+        //             //alert('Ajax request 發生錯誤');
+        //             console.error(xhr);
+        //         },
+        //         success: function (response) {
+        //             if (response.status) {
+        //                 //console.log(response);
+        //                 var productList = '';
+        //                 response.message.forEach(
+        //                     function listLoop(value) {
+        //                         productList +=
+        //                             $('<li/>').html(
+        //                                 $('<a/>').attr('href', "{:url('product/delete')}?id=" + value.id)
+        //                                 .append(
+        //                                     $('<span/>').addClass('glyphicon')
+        //                                     .addClass('glyphicon-trash')
+        //                                     .addClass('productTrash')
+        //                                 ).css('display', 'inline-block')
+        //                                 .css('float', 'left')
+        //                                 .append(
+        //                                     $('<a/>').attr('href', value.url)
+        //                                     .append(value.title)
+        //                                     .append( $('<span/>').addClass('warning').html(value.all_count))
+        //                                     .css('display', 'inline-block')
+        //                                     .css('width', '80%')
+        //                                 )
+        //                                 .append('<br>')
+        //                             ).html();
+        //                     }
+        //                 );
+        //                 $('#myList').prepend(productList);
+        //             } else {
+        //                 console.error(response);
+        //             }
+        //         }
+        //     });
+        // }
+        function auto_open_menu(){
+            //預設展開選單
+            var target = '{$target}';
+            var selector ="#target" +target+" .first_list";
+            // console.log(target);
+            // console.log(selector);
+            $(selector).click();
+            if({$second_list}){
+                selector = "#target2 .second_list";
+                selector = "#target" +target+ " .second_list";
+                selector_span = selector + ' span';
+                // console.log(selector);
+                setTimeout(function(){
+                    $(selector).click();
+                    // $(selector_span).removeClass('glyphicon glyphicon-menu-right');
+                    // $(selector_span).addClass('glyphicon glyphicon-menu-down');
+                    // $(selector).next().toggle();
+                }, 100);
+            }
+            var sec_ative = '{$sec_ative}';
+            // console.log('.'+sec_ative+' a')
+            $('.'+sec_ative+' a').addClass('active');
+
+            limit_getCount();
+        }
+        $(document).ready( function () {
+            auto_open_menu();
+        });
+
+        //新增分館、經銷據點名稱
+        function addProdect(item, type) {
+            var input = $(item).parent().prev();
+            if(input.val() == '') return alert("請輸入名稱");
+            if(type.indexOf('product')>0){
+                var post_url =  "{:url('Product/create')}"
+            }else if(type.indexOf('distribution')>0){
+                var post_url = "{:url('stronghold/create')}"
+            }else{
+                return
+            }
+            $.ajax({
+                url: post_url,
+                type: 'POST',
+                datatype: 'json',
+                data: {
+                title: input.val()
+                },
+                error: function(xhr) {
+                    //alert('Ajax request 發生錯誤');
+                    console.error(xhr);
+                },
+                success: function(response) {
+                    if(response.status){
+                        //console.log(response);
+                        location.reload();
+                    }else{
+                        console.error(response);
+                    }
+                }
+            });
+        }
+    </script>
+
+    <script type="text/javascript">
+        $.ajax({
+            url: "{:url('login/renew_coockie')}",
+            type: 'GET',
+            datatype: 'json',
+            error: function(xhr) {},
+            success: function(response) {
+                console.log('renew_coockie');
+            }
+        });
+
+        setInterval(function(){
+           $.ajax({
+                url: "{:url('login/renew_session')}",
+                type: 'GET',
+                datatype: 'json',
+                error: function(xhr) {},
+                success: function(response) {
+                    console.log('renew_session:'+response);
+                }
+            }); 
+        } ,60000);
+    </script>
+    {block name="ownJS"}{/block}
+</html>

@@ -1,0 +1,139 @@
+{extend name="Public/mainTpl" /}
+{block name="title"}{$lang_menu['會員登入']} | {$seo[0]['title']}{/block}
+{block name="css"}
+{/block}
+
+{block name="flulid_content"}
+    <!-- /////////////////////////////////////////////////////////////////////////////////////////////// -->
+    <!-- announcement start -->
+    {include file='Public/newsLink' /}
+    <!-- announcement end -->
+    <!-- /////////////////////////////////////////////////////////////////////////////////////////////// -->
+    <!-- <section class="container max-wideVersion directoryRow">
+        <ul class="clearfix">
+            <li><a href="{$MAIN_WEB_LAN}/">首頁</a><i class="icon-right"></i></li>
+            <li id="aboutDirectoryText"><a href="{:url('Login/login')}">登入</a></li>
+        </ul>
+    </section> -->
+    <div class="d-flex justify-content-center">
+        <div class="w-100 bg_guitar bg_pic d-flex justify-content-center">
+            <div class="login_page">
+                <section class="container max-wideVersion min-heightVersion aboutUsBox">
+                    <h3 class="page_title mb_ssmal">
+                        {$lang_menu['會員登入']}
+                        <span>{$lang_menu['還不是aNueNue的會員嗎']}><a class="color_orange" href="{:url('Login/signup')}">{$lang_menu['註冊會員']}</a></span>
+                    </h3>
+                    <form action="{:url('Login/pagelogin')}" method="post" name="newloginForm">
+                        <div class="form-group pb_sxsmal">
+                            <label>{$lang_menu['帳號']}</label>
+                            <input type="text" class="form-control" name="email" aria-describedby="emailHelp" placeholder="" value="" />
+                        </div>
+                        <div class="form-group pb_sxsmal">
+                            <label for="in_password">{$lang_menu['密碼']}</label>
+                            <input type="password" name="password" class="form-control" id="in_password" placeholder="" value="" />
+                        </div>
+                        <div class="verifyCode pb_sxsmal">
+                            <label>{$lang_menu['驗證碼']}</label>
+                            <div class="verification" id="verification_newloginForm"></div>
+                        </div>
+
+                        <div class="row submitBox shoppingCart"><!--pb_medi-->
+                            <div class="col-12">
+                                <a class="signMbrBtn bg_black" onclick="submitForm('newloginForm')" id="check_btn_newloginForm">{$lang_menu['登入']}</a>
+
+                                <a id="forgetPassword1" class="color_black pt_xsmal float-right" data-toggle="modal" data-target="#forgetPasswordModel">{$lang_menu['忘記密碼']}</a>
+                            </div>
+                        </div>
+                    </form>
+
+                    <?php /*
+                    <div class="thPartyPlatformBox row">
+                        {if condition="$FB_appID || $client_id || $Google_appId"}
+                            <div class="col-12 pb_ssmal text-center">
+                                <span class="other_login color_gray"><span>{$lang_menu['其他登入方式']}</span></span>
+                            </div>
+                        {/if}
+                        {if condition="$FB_appID"}
+                            <div class="col-sm-4 offset-sm-0 offset-3 col-6 mb-sm-0 mb-2">
+                                <a class="FBlogin" onclick="FBLogin();"><img src="__PUBLIC__/img/icon_facebook-en.png" alt=""></a>
+                            </div>
+                        {/if}
+                        {if condition="$client_id"}
+                            <div class="col-sm-4 offset-sm-0 offset-3 col-6 mb-sm-0 mb-2">
+                                <a class="LineAuth" onclick="LineAuth();"><img src="__PUBLIC__/img/icon_line-en.png" alt=""></a>
+                            </div>
+                        {/if}
+                        {if condition="$Google_appId"}
+                            <div class="col-sm-4 offset-sm-0 offset-3 col-6 mb-sm-0 mb-2">
+                                <a class="GoogleLogin" onclick="GoogleLogin(0);"><img src="__PUBLIC__/img/icon_google.png" alt=""></a>
+                            </div>
+                        {/if}
+                    </div>
+                    */ ?>
+                </section>
+            </div>
+        </div>
+    </div>
+{/block}
+
+{block name="Modal"}
+    <div class="modal fade smallMOdel forgetPasswordModel" id="forgetPasswordModel" tabindex="-1" role="dialog" aria-labelledby="forgetPasswordModelTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="forgetPasswordModelTitle">{$lang_menu['忘記密碼']}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form class="hid" id="newforgotForm2" action="{:url('login/forgot_form')}" method="post">
+                        <div class="form-group">
+                            <label class="color_black">{$lang_menu['帳號']}(Email)</label>
+                            <input type="text" name="account" class="form-control" placeholder="">
+                        </div>
+                        <label class="forgetBtn bg_black w-100 rounded d-flex justify-content-center">{$lang_menu['確認送出']}
+                            <input name="subject" type="submit" class="">
+                        </label>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{/block}
+
+{block name="ownJS"}
+    <script type="text/javascript">
+        /*一般登入驗證碼*/
+        var codeVerifyCheck_newloginForm = true
+        $('#verification_newloginForm').codeVerify({
+            type: 1,
+            // arith:24,
+            width: '100%',
+            height: '40px',
+            fontSize: '30px',
+            codeLength: 4,
+            btnId: 'check_btn_newloginForm',
+            ready: function () {},
+            success: function () {
+                // alert('驗證成功');
+                codeVerifyCheck_newloginForm = true;
+            },
+            error: function () {
+                alert("{$lang_menu['驗證失敗']}");
+                codeVerifyCheck_newloginForm = false;
+            }
+        });
+
+        /*送出表單前先驗證*/
+        function submitForm(formName){
+            setTimeout(function(){
+                if (eval('codeVerifyCheck_' + formName)) {
+                    eval(formName).submit();
+                }
+            }, 50);
+        }
+        $('.verify-change-code').html("{$lang_menu['換一張']}")
+    </script>
+{/block}
+

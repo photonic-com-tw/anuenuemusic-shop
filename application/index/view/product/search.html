@@ -1,0 +1,50 @@
+{extend name="Public/mainTpl" /}
+
+{block name="title"}{$lang_menu['商品搜尋']} | {$seo[0]['title']}{/block}
+
+{block name="css"}
+<!-- mycss -->
+{/block}
+
+{block name="content"}
+    <div class="product_search content_wrap content_block">
+        <div class="anuenue_container bg_white pt_big pb_big">
+            <div class="container-fluid">
+                <div class="row position-relative">
+                    <div class="color_block"></div>
+                    <div class="color_block"></div>
+                    
+                    {empty name="productinfo"}
+                        <h2>{$lang_menu['查無內容']}</h2>
+                    {/empty}
+                    {volist name="productinfo" id="productvo" key='k'}
+                    <!-- 一個商品 -->
+                    <div class="product col-lg-4 col-md-6 col-12 pb_smal">
+                        <a class="w-100 pt_big pb_xsmal d-flex flex-column align-items-center"
+                           href="{:url('Product/productinfo')}?id={$productvo.id}">
+                            <div class="intro_img">
+                                <img src="__PUBLIC__{$productvo.pic1}">
+                            </div>
+                            <h2 class="mb-3 pt_medi">{$productvo.title|fat_index_text=40}</h2>
+                            <div class="text-center text">
+                                <p>{$productvo.Author}</p>
+                            </div>
+                            <div class="text-center text">
+                                <p class="pt_xsmal">{$productvo['show'][0]['offerPrice']}</p>
+                            </div>
+                        </a>
+                    </div>
+                    {/volist}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+{/block}
+
+{block name="ownJS"}
+{/block}
+
+
+

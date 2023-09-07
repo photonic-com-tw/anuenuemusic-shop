@@ -1,0 +1,111 @@
+{extend name="Public/mainTpl" /}
+
+{block name="title"}{$lang_menu['紅利點數']} - {$lang_menu['會員專區']} | {$seo[0]['title']}{/block}
+
+{block name="css"}{/block}
+
+{block name="flulid_content"}
+    <!-- <section class="container max-wideVersion directoryRow">
+        <ul class="clearfix">
+            <li><a href="{$MAIN_WEB_LAN}/">{$lang_menu['首頁']}</a><i class="icon-right"></i></li>
+            <li><a href="{:url('Member/member')}">{$lang_menu['會員專區']}</a><i class="icon-right"></i></li>
+            <li><a href="{:url('Points/points')}">{$lang_menu['紅利點數']}</a></li>
+        </ul>
+    </section> -->
+    <div class="d-flex justify-content-center">
+        <div class="w-100 bg_anuenue bg_pic d-flex justify-content-center">
+            <section class="reg_prod_area box_show bg_white max-wideVersion productPublic">
+                <div class="pt_sxsmal pb_ssmal">
+                    <h3 class="page_title">
+                        {$lang_menu['會員專區']}
+                        <span>{include file='Public/member_menu' /}</span>
+                    </h3>
+                </div>
+                <div class="row">
+                    <div class="col-12 text-center mb-3">
+                        <span class="other_login color_gray"><span>{$lang_menu['紅利點數']}</span></span>
+                    </div>
+
+                    <div class="form-group col-12 justify-content-end">
+                        <a class="use-btn" data-toggle="modal" data-target="#descriptionContModel" ng-click="contCtrl.useDescription()">{$lang_menu['使用說明']}</a>
+                    </div>
+                    <div class="memberContentBox">
+                        <p>
+                            {$lang_menu['目前累計紅利']}：<span class="bonusNum">                                           
+                            <span>{$current_poiints}</span>{$lang_menu['點']}</span>
+                            <!-- 
+                                <span style="padding-left: 150px;">
+                                    {$expiring_count_date}
+                                    {$lang_menu['將到期的點數']}：
+                                    <span>{$expiring_poiints}</span>
+                                </span>
+                            -->
+                        </p>
+                    </div>
+                    <table class="prodReg orderTable table table-striped table-bordered table-rwd">
+                        <thead>
+                            <tr class="tr-only-hide">
+                                <th><span>{$lang_menu['日期']}</span></th>
+                                <th><span>{$lang_menu['說明']}</span></th>
+                                <th><span>{$lang_menu['增減']}</span></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {volist name="records" id="vo" empty=""}
+                            <tr>
+                                <td data-th="{$lang_menu['日期']}"><span>{$vo.msg_time}</span></td>
+                                <td data-th="{$lang_menu['說明']}"><span>{$vo.msg}</span></td>
+                                <td data-th="{$lang_menu['增減']}"><span>{$vo.points}</span></td>
+                            </tr>
+                            {/volist}
+                        </tbody>
+                    </table>
+                </div>
+                <!-- <div class="memberBottom">
+                    <div>
+                        {$consent_other}
+                    </div>
+                </div> -->
+                <div class="row paginationBox">
+                    <div class="col-12 boxCenter">
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <div class="modal fade " id="descriptionContModel" tabindex="-1" role="dialog" aria-labelledby="descriptionContModelTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content ">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="descriptionContModelTitle">{$lang_menu['使用說明']}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- <img src="img/process_img_01.png" alt=""> -->
+                    <p>{$consent}</p>
+                </div>
+            </div>
+        </div>
+    </div>     
+{/block}
+
+{block name="ownJS"}
+    <script src="__PUBLIC__/js/memberToggle.js"></script>
+{/block}
+
+{block name="angularJs"}
+    self.useDescription = function(){   
+        $http({
+            method : "GET",
+            url : "{:url('Points/teach')}",
+        }).success(function(data){
+            //console.log(data);
+            self.useDescription = data.point.replace(/\n/g);
+            //console.log(self.useDescription);
+        }).error(function(){
+        })//error
+    }//self.couponDesc
+{/block}

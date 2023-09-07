@@ -1,0 +1,199 @@
+{extend name="Public/aside" /}
+
+{block name="title"}商品管理區 > 庫存警示{/block}
+
+{block name="css"}
+
+    <style type="text/css">
+
+    
+
+        /*表格樣式*/
+        table{
+            margin-top:25px;
+            width: 100%;
+            table-layout: fixed;
+            border-collapse: collapse;
+        }
+
+        table th:nth-child(1){
+            border-left:none;
+        }  
+     
+        table th:nth-child(1) { width: 220px; cursor: default; }
+        table th:nth-child(2) { width: 220px; cursor: default; }
+        table th:nth-child(3) { width: 220px; cursor: default; }
+        table th:nth-child(4),
+        table td:nth-child(4) { width: 200px; }
+        table th:nth-child(5),
+        table td:nth-child(5) { width: 140px; text-align: right; }
+        table th:nth-child(6),
+        table td:nth-child(6) { width: 140px; text-align: right; }
+        table th:nth-child(7),
+        table td:nth-child(7) { width: 140px; text-align: right; }
+        table th:nth-child(8),
+        table td:nth-child(8) { width: 140px; text-align: right; }
+        table td:nth-child(1),
+        table td:nth-child(4) { word-break:break-all; }
+        table td:nth-child(4),
+        table td:nth-child(5),
+        table td:nth-child(6),
+        table td:nth-child(7),
+        table td:nth-child(8) { padding-right:19px }
+        
+        table thead {
+            background-color:#E0E0E0;
+        }
+
+        table tbody {
+            width: 100%;
+        }
+
+        table thead tr th span{
+            font-size:14px;
+            padding-left:1px;
+        }
+
+        /* 捲軸樣式 */
+        table tbody::-webkit-scrollbar {
+            width: .5em;
+        }
+        table tbody::-webkit-scrollbar-track {
+            -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+        }
+
+        table tbody::-webkit-scrollbar-thumb {
+            background-color: darkgrey;
+            outline: 1px solid slategrey;
+        }
+        .wrap-outer {
+            margin-left: calc(100vw - 100%);
+        }
+    </style>
+
+{/block}
+
+{block name="content"}
+
+    <div id="content">
+        <p id="title">
+            商品管理區 > 庫存警示
+            {neq name="searchKey" value=""}
+                > 搜尋：{$searchKey}
+            {/neq}
+        </p>
+
+        <div style="padding:10px 30px;">
+            <form action="" name="searchForm" method="get">
+                <input type="text" name="searchKey" style="text-align:center;width: 300px;" value="{$searchKey}" placeholder="請輸入商品編號/商品名稱/包裝名稱">
+
+                {if condition="empty($close_function['網紅列表'])"}
+                <select name="kol_id">
+                    {if condition="-1 == $kol_id"}
+                        <option value="-1" selected>請選擇網紅</option>
+                    {else/}
+                        <option value="-1">請選擇網紅</option>
+                    {/if}
+
+                    {if condition="0 == $kol_id"}
+                        <option value="0" selected>無指派網紅</option>
+                    {else/}
+                        <option value="0">無指派網紅</option>
+                    {/if}
+
+                    {volist name="kol" id="vo"}
+                        {if condition="$vo.id == $kol_id"}
+                            <option value="{$vo.id}" selected>{$vo.kol_name}</option>
+                        {else/}
+                            <option value="{$vo.id}">{$vo.kol_name}</option>
+                        {/if}
+                    {/volist}
+                </select>
+                {/if}
+                <a class="button" onclick="searchForm.submit();">搜尋</a>
+                <a class="button" href="/admin/limit/index.html?searchKey=&kol_id=-1">清除搜尋</a>
+            </form>
+
+            <table>
+                <!-- 標題 -->
+                <thead>
+                    <tr>
+                        <th>商品編號</th>
+                        <th>商品名稱</th>
+						<th>商品品項</th>
+
+                        {if condition="empty($close_function['網紅列表'])"}
+                            <th>所屬網紅</th>
+                        {/if}
+
+                        <th><a href="{:url('limit/index')}?orderGet=create_time">上架日期<span class="glyphicon glyphicon-arrow-down"></span></a></th>
+                        <th><a href="{:url('limit/index')}?orderGet=num">線上數量<span class="glyphicon glyphicon-arrow-down"></span></a></th>
+
+                        {if condition="empty($close_function['存放位置管理'])"}
+                            <th>實際庫存</th>
+                        {/if}
+                    </tr>
+                </thead>
+                <!-- 內容 -->
+                <tbody>
+                    {volist name="limit_num_items" id="voproductinfo" empty="沒有數據"}                
+                    <tr>
+                        <td data-th="商品編號">{$voproductinfo.productinfo_product_id}</td>
+						<td data-th="商品名稱">{$voproductinfo.productinfo_title}</td>
+                        <td data-th="商品品項"><a href="{:url('productinfo/edit', ['id' => $voproductinfo.productinfo_id])}">{$voproductinfo.productinfo_type_title}</a></td>
+
+                        {if condition="empty($close_function['網紅列表'])"}
+                            <td data-th="所屬網紅">{$voproductinfo.kol_name}</a></td>
+                        {/if}
+
+                        <td data-th="上架日期">
+                            {$voproductinfo.productinfo_create_time|date='Y-m-d',###}
+                            &emsp;&emsp;&emsp;
+                            {$voproductinfo.productinfo_create_time|date='H:i:s',###}
+                        </td>
+                        <td data-th="線上數量">{$voproductinfo.productinfo_type_num}</td>
+
+                        {if condition="empty($close_function['存放位置管理'])"}
+                            <td data-th="實際庫存">{$voproductinfo.productinfo_type_total}</td>
+                        {/if}
+                    </tr>
+                    {/volist}        
+                </tbody>
+            </table>
+            <div class="row text-center">
+                {$limit_num->render()}
+            </div>
+        </div>
+    </div>
+{/block}
+
+{block name="ownJS"}
+    <script>
+        $(function(){
+            $(document).ready(function(){
+                $(window).resize(function() {
+                    var i ;
+                    for(i=1 ; i<=8; i++){
+                        $('table').find('td:nth-child('+i+')').outerWidth($('table').find('th:nth-child('+i+')').outerWidth());
+                    }
+                    if($('table').find('thead').find('tr').outerWidth() != $('table').find('tbody').find('tr').outerWidth()){
+                        for(i=4 ; i<=8; i++){
+                            $('table').find('td:nth-child('+i+')').css('padding-right','calc(19px - .5em)')
+                        }
+                    }
+                });
+            });
+
+            var i ;
+            for(i=1 ; i<=8; i++){
+                $('table').find('td:nth-child('+i+')').outerWidth($('table').find('th:nth-child('+i+')').outerWidth());
+            }
+
+            if($('table').find('thead').find('tr').outerWidth() != $('table').find('tbody').find('tr').outerWidth()){
+                for(i=4 ; i<=8; i++){
+                    $('table').find('td:nth-child('+i+')').css('padding-right','calc(19px - .5em)')
+                }
+            }
+        })
+    </script>
+{/block}

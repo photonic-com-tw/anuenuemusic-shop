@@ -1,0 +1,247 @@
+{extend name="Public/mainTpl" /}
+
+<!--搜尋引擎SEO-->
+{block name="title"}加價購 | {$seo[0]['title']}{/block}
+
+{block name="css"}
+    <style>
+        /* jquery ui 調整  */
+        .ui-menu .ui-menu-item{
+            padding: 0;
+        }
+        .ui-menu .ui-menu-item-wrapper{
+            padding: 3px 1em 3px 1.2em;
+        }
+    </style>
+{/block}
+
+{block name="path"}
+    <div class="add_price">
+        <div class="title_block bg_dark_black">
+            <div class="anuenue_container">
+                <h2 class="pt_xsmal pb_xsmal m-0 d-flex align-items-center justify-content-between">
+                    加購配件
+                    <select id="category_select" class="form-control">
+                        {volist name="typeinfos" id="vo"}
+                            <option value="{$vo['id']}" {$vo['id']|compare_return=$typeinfo_id,'selected'}>{$vo['title']}</option>
+                        {/volist}
+                    </select>
+                </h2>
+            </div>
+        </div>
+        <div class="title_block bg_white">
+            <div class="anuenue_container">
+                <h2 class="color_dark_black d-flex align-items-center justify-content-between">
+                    購物車商品金額_ {$dolar}{$dolar_mark} {$discountData.Total}
+                    <div class="productIntroBox mxw_270px">
+                        <div class="shoppingCartBox">
+                            <a href="{:url('Cart/cart')}" class="def_tb_sp">
+                                結帳去
+                            </a> 
+                        </div>
+                    </div>
+                </h2>
+            </div>
+        </div>
+        <div class="musician">
+            <div class="banner_carousel">
+                <div class="item position-relative">
+                    <img src="__PUBLIC__/anuenuemusic/images/add_price.png">
+                    <div class="position-absolute w-100">
+                        <div class="w-100">
+                            <div class="anuenue_container">
+                                <p class="mb-md-4 mb-3">覺得好像還缺了什麼？</p>
+                                <p>彩虹人為你精選適合的配件</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container_fluid bg_xlight pt_medi pb_xbig">
+            <div class="anuenue_container product_search">
+                <div class="row">
+                    <!-- 一個商品 -->
+                    {volist name="productinfo" id="product" key="key"}
+                    <div class="product col-xl-4 col-md-6 col-12 border-0 pb_xsmal">
+                        <span class="bg_white w-100 pt_smal pb_xsmal d-flex flex-column align-items-center pr-4 pl-4">
+                            <div class="intro_img">
+                                {volist name="$product['pic1']" id="pic" key="pic_k"}
+                                <img class="type_{$product['id']}_pic type_{$product['id']}_pic_{$pic_k}" src="__PUBLIC__{$pic}" style="display:none;">
+                                {/volist}
+                            </div>
+                            <h2 class="mb-3 pt_medi align-self-baseline">{$product['title']}</h2>
+                            <div class="prod_content text-center text align-self-baseline text-left">
+                                <p>{$product['content']}</p>
+                            </div>
+
+                            <div class="w-100 price_option_area">
+                                {if condition=" !in_array($product['show'][0]['has_price'], ['報名已截止', '請詢價']) "}
+                                    <div class="text-left text w-100 price_option pt_smal pb_smal">
+                                        <p>款式-<span id="type_{$product['id']}_text">{$product['show'][0]['title']}</span></p>
+                                        <div class="d-flex align-items-center">
+                                            {volist name="product['show']" id="price" key="p_k"}
+                                            <div class="option_group type_{$product['id']} 
+                                                       {$p_k|compare_return='1','active'}">
+                                                <label class="option_label"
+                                                       for="type_{$product['id']}_{$p_k}" 
+                                                       {if condition="preg_match('/^#[\dabcdefABCDEF][\dabcdefABCDEF][\dabcdefABCDEF][\dabcdefABCDEF][\dabcdefABCDEF][\dabcdefABCDEF]$/', $price['title'])"}
+                                                             style="background: {$price['title']};" 
+                                                       {/if}
+                                                       product_id="{$product['id']}"
+                                                       type_id="{$price['id']}"
+                                                       pic_index="{$price['pic_index']}"
+                                                       text="{$price['title']}"
+                                                       price="{$price['has_price']}">
+                                                    {if condition="!preg_match('/^#[\dabcdefABCDEF][\dabcdefABCDEF][\dabcdefABCDEF][\dabcdefABCDEF][\dabcdefABCDEF][\dabcdefABCDEF]$/', $price['title'])"}
+                                                        {$price['title']}
+                                                    {/if}
+                                                </label>
+                                                <input id="type_{$product['id']}_{$p_k}" type="radio" 
+                                                       {$p_k|compare_return='1','checked'}
+                                                       name="type_{$product['id']}" value="{$price['id']}">
+                                            </div>
+                                            {/volist}
+                                        </div>
+                                    </div>
+                                    <div class="text-left text w-100 price_option price_row pb_xsmal d-flex align-items-center justify-content-between">
+                                        <p>{$dolar}<text id="type_{$product['id']}_price">{$product['show'][0]['has_price']}</text></p>
+                                        <span class="color_gray">已加入數量：<text id="type_{$product['id']}_cartnum">＿</text></span>
+                                    </div>
+                                    <div class="addcart btn rounded-0 w-100" onclick="addprice_to_cart('{$product['id']}')">
+                                        加入購物車
+                                    </div>
+                                {else /}
+                                    <div class="addcart btn rounded-0 w-100 cursor-initial bg-secondary">
+                                        {$product['show'][0]['has_price']}
+                                    </div>
+                                {/if}
+                            </div>
+                            <a class="color_brown rounded-0 pt_xsmal pb_xsmal" href="/index/product/productinfo.html?id={$product['id']}">
+                                詳細介紹
+                                <i class="bi bi-chevron-right"></i>
+                                <i class="bi bi-chevron-right"></i>
+                            </a>
+                            
+                        </span>
+                    </div>
+                    {/volist}
+
+                </div>
+            </div>
+        </div>
+    </div>
+{/block}
+{block name="content"}
+{/block}
+
+{block name="flulid_content"}
+{/block}
+
+{block name="Modal"}
+{/block}
+
+{block name="ownJS"}
+    <script type="text/javascript" src="/public/static/admin/js/vue.min.js"></script>
+    <script src="https://unpkg.com/vue-toasted@1.1.28/dist/vue-toasted.min.js"></script>
+    <script type="text/javascript">
+        Vue.use(Toasted);
+
+        // 品項actie選擇
+        $('.option_label').on('click', function(e) {
+            var input_id = $(this).attr('for');
+            var text = $(this).attr('text');
+            
+            /*處理款式*/
+            radio = $('#' + input_id).attr('name');
+            $('.option_group.' + radio).removeClass('active');
+            $(this).parent().addClass('active');
+            $('#' + radio + '_text').html(text);
+
+            /*處理金額*/
+            var product_id = $(this).attr('product_id');
+            var price = $(this).attr('price');
+            $('#type_' + product_id + '_price').html(price);
+
+            /*處理已加入購物車數量*/
+            var type_id =$(this).attr('type_id');
+            $.ajax({
+                url: "{:url('Cart/cartCtrl_num')}",
+                type: 'POST',
+                datatype: 'json',
+                data: {
+                    product_id: type_id,
+                },
+                error: function (xhr) {
+                    alert('失敗');
+                    console.error(xhr);
+                },
+                success: function (response) {
+                    // console.log(response)
+                    if (response.status) {
+                        $('#type_' + product_id + '_cartnum').html(response.message);  
+                    }
+                }
+
+            });
+
+            /*處理對應圖片*/
+            var pic_index = $(this).attr('pic_index');
+            if(pic_index!="" && pic_index>=0 && pic_index<= $('.type_' + product_id + '_pic').length){
+                $('.type_' + product_id + '_pic').hide();
+                $($('.type_' + product_id + '_pic')[pic_index-1]).show();
+            }
+        })
+    </script>
+    <script type="text/javascript">
+        $("#category_select").selectmenu();
+        setTimeout(function(){
+            $('.product .option_group:nth-child(1) label').click()
+        }, 300);
+
+        $("#category_select").on('selectmenuchange', function() {
+            var typeinfo_id = $("#category_select").val();
+            location.href = "/index/cart/add_price.html?id=" + typeinfo_id;
+        });
+    </script>
+
+    <!-- 加價購功能 -->
+    <script type="">
+        function addprice_to_cart(product_id){
+            var cart_id = $('input[name="type_' + product_id + '"]:checked').val();
+
+            $.ajax({
+                url: "{:url('Cart/cartCtrl')}",
+                type: 'POST',
+                datatype: 'json',
+                data: {
+                    cmd: 'increase',
+                    num: 1,
+                    product_id: cart_id,
+                },
+                error: function (xhr) {
+                    alert('失敗');
+                    console.error(xhr);
+                },
+                success: function (response) {
+                    // console.log(response)
+                    if (response.status) {
+                            alert('加入成功');
+                            location.reload();
+                    }
+                    else{
+                        if(response.message == '商品庫存不足' || response.message == '不存在此品項' || response.message == '超出加價購數量上限'){
+                            alert(response.message);
+                        }else{
+                            alert('加入失敗，請重新加入一次');
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+{/block}
+
+{block name="angularJs"}
+{/block}

@@ -1,0 +1,160 @@
+{extend name="Public/mainTpl" /}
+{block name="title"}報名紀錄 | {$seo[0]['title']}{/block}
+{block name="css"}
+    <style type="text/css">
+        @media (min-width: 1281px){
+            .modal-dialog {
+                max-width: 1200px;
+            }
+        }
+
+        #ticketModel .modal-dialog{
+          min-width: 670px;
+        }
+    </style>
+{/block}
+{block name="content"}
+                <section class="container max-wideVersion directoryRow">
+                    <ul class="clearfix">
+                        <li><a href="{$MAIN_WEB_LAN}/">首頁</a><i class="icon-right"></i></li>
+                        <li><a href="{:url('Orderform/orderform')}">報名紀錄</a></li>
+                    </ul>
+                </section>
+                <section class="container max-wideVersion productPublic member_nofooterimg examination">
+                    <!-- /////////////////////////////////////////// -->
+                    <!-- /////////////////////////////////////////// -->
+                    <!-- /////////////////////////////////////////// -->
+                    <div id="itemBox" class="memberInforBox">
+                        <div id="rightContentBox" class="innerPageBox memberContentBox">
+                            <div class="paddingSpacing">
+                                <div class="pack">
+                                    <div class="memberTop">
+                                        <div class="title">
+                                            <h3>報名紀錄</h3>
+                                        </div>
+                                        <div class="orderBtnBox">
+                                            <a data-toggle="modal" data-target="#processModel">操作說明</a>
+                                            <!-- <a href="">訂單狀態</a>
+                                            <a href="">歷史紀錄</a> -->
+                                        </div>
+                                    </div>
+									<table class="orderTable table table-striped table-bordered table-rwd">
+										<thead>
+										<tr class="tr-only-hide">
+											<th >考試名稱</th>
+											<th>考試日期</th>
+										</tr>
+										</thead>
+                                        <h3>查詢身份證:{$id_card}</h3>
+										{volist name="re" id="vo" empty="查無此報名資料,若有問題請與客服聯繫"}
+											<tr>
+												<td data-th="考試名稱"><a  class="personal" alt="{$vo.id}" data-toggle="modal" data-target="#exampleModal">{$vo.in_title}-{$vo.area_title}</a></td>
+												<td data-th="考試日期">{if condition="$vo.examinee_date=='-28800'"}無日期{else/}{$vo.examinee_date|date="Y-m-d",###}{/if}</td>
+											</tr>
+										{/volist}
+									</table>                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ticketModel start-->
+                    <div class="modal fade " id="ticketModel" tabindex="-1" role="dialog" aria-labelledby="ticketModelTitle" aria-hidden="true" style="z-index:9999;background-color: #0009;">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content ">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="ticketModelTitle">電子准考證<button type="button" class="btn btn-secondary" id="download" onclick="download()">下載</button></h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body" style="display: flex; flex-direction: column; align-items: center;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- ticketModel end-->
+
+                    <!-- processModel start-->
+                    <div class="modal fade " id="processModel" tabindex="-1" role="dialog" aria-labelledby="processModelTitle" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content ">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="processModelTitle">操作說明</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <!-- <img src="__PUBLIC__/img/process_img_01.png" alt=""> -->
+                                    <p>{$g_process}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- processModel end-->
+
+                    <!-- /////////////////////////////////////////// -->
+					<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+					  <div class="modal-dialog" role="document">
+						<div class="modal-content">
+						  <div class="modal-header">
+							<h5 class="modal-title" id="exampleModalLabel">詳細內容</h5>
+							<button type="button" class="close eeeeeee" data-dismiss="modal" aria-label="Close">
+							  <span aria-hidden="true">&times;</span>
+							</button>
+						  </div>
+						  <div class="modal-body" id="boxModel">
+						  </div>
+						  <div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+						  </div>
+						</div>
+					  </div>
+					</div>
+                </section>
+{/block}
+{block name="ownJS"}
+    <!-- phone member menu -->
+    <script src="__PUBLIC__/js/memberToggle.js"></script>
+	<script>
+        $('.personal').click(function () {
+            var t = $(this).attr('alt');
+    		$.ajax({
+    			url: "{:url('orderform/personal')}",
+    			type: 'POST',
+    			data: {
+    				id:t,
+    			},			
+    			success: function(re) {
+    				//$('#exampleModal').modal('show');
+    				$('#boxModel').html(re);
+    			}
+    		});
+        });	
+	
+        function print_admin_ticket(id,examinee_id){
+            $.ajax({
+                url: "/index/orderform/personal_show/id/"+id+'/examinee_id/'+examinee_id+'.html',
+                type: 'GET',        
+                success: function(re) {
+                    //$('#exampleModal').modal('show');
+                    $('#ticketModel .modal-body').html(re);
+                }
+            });
+        }
+        $('#ticketModel .close').on('click', function(e){
+            $('#ticketModel .modal-body').html('');
+        });
+        $('#ticketModel').on('click', function(e){
+            if(e.target==e.currentTarget){
+                $('#ticketModel .modal-body').html('');
+            }
+            
+        });
+	</script>
+{/block}
+
+{block name="angularJs"}
+{/block}
+

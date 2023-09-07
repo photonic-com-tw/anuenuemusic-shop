@@ -1,0 +1,229 @@
+{extend name="Public/aside" /}
+
+{block name="title"}SEO行銷/發布設定 - 後台設定{/block}
+
+{block name="css"}
+  
+  <style>
+       input, #title, textarea, select{
+           width:calc(100% - 450px);
+           padding:5px;
+           font-size:15px
+       }
+       textarea{
+           height:200px;
+       }
+       input[type=file]{
+           cursor: pointer;
+       }
+       label{
+           font-size:15px;
+           padding:5px;
+           width:200px;
+           text-align: right;
+       }
+       .block{
+           width:1100px;
+           margin:20px auto;
+           margin-bottom:60px;
+           position: relative;
+       }
+       .title{
+           font-size:30px;
+           font-weight: bold;
+           text-align: center
+       }
+       .form-group{
+           position: relative;
+       }
+       .button{
+           font-size:25px;
+           padding:3px 20px;
+       }
+       .upl, .imgbox{
+           width:calc(100% - 450px);
+           height:200px;
+       }
+       .imgbox{
+           border:1px solid #ADADAD;
+           position: absolute;
+           left:200px;
+           top:0;
+           text-align: center;
+       }
+       .preview{
+           position: relative;
+           max-height: 100%;
+           max-width: 100%;
+           z-index: 2;
+
+       }
+
+       .subtitle{
+          text-align: center;
+          font-size: 20px;
+          font-weight: 700;
+       }
+    </style>
+
+{/block}
+
+{block name="content"}
+
+<div id="content">
+
+    <form action="{:url('seo/update_social')}" method="post" enctype="multipart/form-data">
+
+    <input type="hidden" name="id" value="1">
+
+    <div class="block">
+
+        <p class="title">SEO行銷/發布設定</p>
+
+        <p class="subtitle">FB關聯設定</p>
+        <div class="form-group"><label>貼在FB顯示公司名稱：</label><input type="text" id="fb_name" name="fb_name" value="{$seo['fb_name']}"></div>
+
+        <div class="form-group"><label>標題：</label><input type="text" id="fb_title" name="fb_title" value="{$seo['fb_title']}"></div>
+
+        <div class="form-group">
+
+            <label style="position:absolute;">描述：</label>
+
+            <textarea style="position:relative; left:200px; height:100px;" type="text" id="fb_descr" name="fb_descr">{$seo['fb_descr']}</textarea>
+
+            <font style="position:absolute; color:red; top:0; right:140px;">*三十字以內最佳</font>
+
+        </div>
+
+        <div class="form-group">
+
+            <label style="position:absolute;">上傳圖片：</label>
+
+            <input  class="upl" style="position:relative; left:200px; z-index:3;" type="file" id="fb_img" name="fb_img">
+
+            <div class="imgbox">
+
+                <p style="position:absolute; left:45%; top:45%; z-index:1">點擊上傳圖片</p>
+
+                <img class="preview" src="__UPLOAD__/{$seo['fb_img']}">
+
+            </div>
+
+            <font style="position:absolute; color:red; top:0; right:105px;">*圖片大小1200*630px</font>
+
+        </div>
+
+    </div>
+
+    <div class="block">
+
+        <p class="subtitle">Twitter關聯設定</p>
+        <div class="form-group"><label>貼在Twitter顯示公司名稱：</label><input type="text" id="twitter_name" name="twitter_name" value="{$seo['twitter_name']}"></div>
+
+        <div class="form-group"><label>標題：</label><input type="text" id="twitter_title" name="twitter_title" value="{$seo['twitter_title']}"></div>
+
+        <div class="form-group">
+
+            <label style="position:absolute;">描述：</label>
+
+            <textarea style="position:relative; left:200px; height:100px;" type="text" id="twitter_descr" name="twitter_descr">{$seo['twitter_descr']}</textarea>
+
+            <font style="position:absolute; color:red; top:0; right:140px;">*三十字以內最佳</font>          
+
+        </div>
+
+    </div>
+
+    <div class="block" style="text-align:center">
+        <button class="button">儲存</button>
+    </div>            
+
+    </form>
+
+</div>
+
+{/block}
+
+{block name="ownJS"}
+
+    <script src="__PUBLIC__/js/action.js"></script>
+
+    <script>
+
+        
+
+        function format_float(num, pos)
+
+        {
+
+            var size = Math.pow(10, pos);
+
+            return Math.round(num * size) / size;
+
+        }
+
+    
+
+        function preview(input) {
+
+    
+
+            if (input.files && input.files[0]) {
+
+                var reader = new FileReader();
+
+                
+
+                reader.onload = function (e) {
+
+                    $('.preview').attr('src', e.target.result);
+
+                }
+
+    
+
+                reader.readAsDataURL(input.files[0]);
+
+            }
+
+        }
+
+    
+
+        $("body").on("change", ".upl", function (){
+
+            preview(this);
+
+        })
+
+
+
+        $('#down').click(function(){
+
+            $('.robots').animate({height:'710px'},1000)
+
+            $('#down').fadeOut()
+
+            $('#up').fadeIn()
+
+        })
+
+        $('#up').click(function(){
+
+            $('.robots').animate({height:'150px'},1000)
+
+            $('#up').fadeOut()
+
+            $('#down').fadeIn()
+
+        })
+
+        function openList() {
+
+            $('#backstageListli').click();
+
+        }
+
+    </script>
+
+{/block}

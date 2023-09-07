@@ -1,0 +1,531 @@
+{extend name="Public/aside" /}
+{block name="title"}客戶服務區 > 經營據點{/block}
+{block name="css"}
+    <style type="text/css">
+
+        .frame{
+            padding:10px 20px;
+            border: 1.5px #9D9D9D solid;
+            margin: 0px auto;
+            margin-top: 10px;
+            width: 99%
+        }
+
+        .frame li{
+            display: inline;
+        }
+
+        .frame .add{
+            color:#fff;
+            font-size:20px;
+            text-align:center;
+            background:#333;
+            padding:10px;
+            border-radius:100px;
+            cursor:pointer
+        }
+        .frame .edit{
+            font-size:25px;
+            display: inline-block;
+            margin-left:5%;
+            cursor:pointer
+        }
+        .switch{
+            display:inline-flex;
+            margin-top: 5px;
+        }
+        .upl{
+            position: absolute;
+            z-index:3;
+        }
+        .preview{
+            max-width:300px;
+            max-height:100%;
+            position:relative;
+        }
+        .preview_r{
+            max-width:100%;
+            max-height:100%;
+            position:relative;
+        }
+        .img-box{
+            height: 100px;
+            width: 200px;
+            margin:5px;
+            cursor:default;
+        }
+		.change-title{
+            position: absolute;
+            border: 2px solid rgb(157, 157, 157);
+            background: rgb(255, 255, 255);
+            padding: 5px;
+            width: 150px;
+			margin-top: -25px;
+			margin-left: 145px;
+            z-index: 999;
+        }
+        .change-title input {
+            border: 1px solid #000000;
+        }
+
+        /* 新增活動區塊 */
+        .add-act{
+            position: fixed;
+            background: #fff;
+            padding:30px;
+            width: 800px;
+            height:560px;
+            z-index:999;
+            top:calc(50% - 560px / 2);
+            left:calc(50% - 800px / 2);
+        }
+        .add-act .img-box{
+            position:relative;
+            border: 1px solid #333;
+            width:100%;
+            height:200px;
+            margin:0px
+        }
+        .add-act input{
+            width:290px;
+            border: none;
+            border-bottom: 1px solid #000000;
+        }            
+        .add-act textarea{
+            margin-top:-15px;
+            margin-left:45px;
+            width:290px;
+            height:150px;
+            padding:5px
+        }            
+        .add-act .button{
+            right:15px;
+            bottom:15px;
+            position:absolute;
+        }
+
+        /* 編輯 */
+        .edit-item{
+            position: absolute;
+            border: 2px solid #9D9D9D;
+            background: #fff;
+            z-index: 5;
+            padding: 10px;
+            left: calc(5% + 55px);
+            font-size: 16px;
+        }
+        .edit-item .switch{
+            display:inline-flex;
+            margin-top: 10px;
+        }
+
+        /* 表格設定 */
+        table{
+            width:99%;
+            margin:0px auto;
+            margin-top:-2px;
+        }
+        tr:nth-child(1) td {
+            background: #E0E0E0;
+            border: 2px #9D9D9D solid;
+            padding-right: 5px;
+        }
+        td:nth-child(1){
+            width:5%;
+            text-align: center;
+        }
+        td:nth-child(2){
+            width:10%;
+            text-align: center;                
+        }
+        td:nth-child(3){
+            width:25%;
+            text-align: center;
+            position:relative;
+        }
+        td:nth-child(4){
+            width:45%;
+            text-align: left;
+        }
+        td:nth-child(5){
+            width:7%;
+            text-align: center;
+        }
+
+        .sub_pic_item{
+            display: flex;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+    </style>
+{/block}
+{block name="content"}
+<iframe id="boxFormIframe" name="boxFormIframe" style="display: none;"></iframe>
+
+    <div id="block" onclick="CloseAdd('.add-act')"></div>
+
+    <!-- 新增修改活動開始 -->
+    <div class="add-act none" id="Box">
+        <form name="boxForm" :action="action" method="post" target="boxFormIframe" enctype="multipart/form-data">
+            <div class="img-box" style="text-align: center;">
+                <span style="font-size:30px;position: absolute;top:45%;" class="glyphicon glyphicon-picture"></span>
+                <input type='file' ref="img" class="upl" name="image" accept="image/*" @change="previewImg">
+                <img class="preview" :src="src"/>
+            </div>
+            <br>
+            <div>
+                <div style="padding:10px 0px;" class="col-xs-6">
+                    <p style="font-size:12px">建議大小：700*475</p>
+                    <p>標題：
+                        <input type="text" name="title" v-model="title">
+                    </p>
+    				<p>排序：
+                        <input type="text" name="orders" v-model="orders">
+                    </p>
+                    <p>內文：<br>
+                        <textarea v-model="content"></textarea>
+                        <input name="content" type="hidden" v-model="contentNl2br">                    
+                    </p><br>
+                    <p>URL：
+                        <input type="text" name="url" v-model="url">
+                    </p>
+                </div>
+                <div style="padding:10px 0px;" class="col-xs-6">
+                    <a class="btn" @click="add_pic">新增附圖</a>
+                    <div v-for="(pic, index) in sub_pics" class="sub_pic_item">
+                        <img v-if="pic.slice(0,7)==='/upload'" :src="'/public/static/index' + pic" >
+                        <img v-if="pic.slice(0,7)!='/upload' && pic!=' '" :src="pic" >
+                        <input type='file' ref="sub_pic" name="sub_pics[]" accept="image/*" @change="previewSubImg(index)">
+                        <a class="btn" @click="delSubImg(index)">刪除</a>
+                    </div>
+                    <p>附圖建議尺寸:36*36</p>
+                </div>
+            </div>
+            <input type="hidden" name="id" v-model="id">    
+            <input type="hidden" name="parent_id" value="{$parent_id}">    
+            <input type="hidden" name="json_sub_pics" :value="json_sub_pics">    
+            <a class="button" @click="formSubmit">儲存</a>
+        </form>
+    </div>
+    <!-- 新增修改活動結束 -->
+
+    <div id="content">
+        <p id="title">
+            <span onclick="goback()" style="cursor:pointer;">客戶服務區 > 經營據點</span> > <span id="item-title" onclick="Show('.change-title')" style="margin: 0;">{$distrtitle[0]['title']}</span>
+            {neq name="searchKey" value=""}
+                > 搜尋：{$searchKey}
+            {/neq}
+        </p>
+		<!-- 更改標題 -->
+		<form action="{:url('Stronghold/updatetitle')}" name="productForm" method="post" enctype="multipart/form-data">
+			<div class="change-title none">
+				<p style="margin-bottom:5px">分類名稱</p>
+				<input id="item-name" name="title" type="text" value="{$distrtitle[0]['title']}" style="width:100%; margin-bottom:10px" autofocus>
+				<input id="item-id" name="id" type="hidden" value="{$distrtitle[0]['id']}" style="width:100%; margin-bottom:10px" autofocus>
+				<div style="text-align:right">
+					<a class="button" onclick="productForm.submit();" style="display:unset; border:1px solid #000000; padding:0px 5px">儲存</a>
+					<a class="button" onclick="Show('.change-title')" style="display:unset; border:1px solid #000000; padding:0px 5px">取消</a>
+				</div>
+			</div>
+		</form>
+        <!-- 更改標題 結束 -->
+        <div style="padding:10px 30px;">
+            <form action="" name="searchForm" method="get">
+                <input type="text" name="searchKey" style="text-align:center" placeholder="搜尋據點">
+                <a class="button" onclick="searchForm.submit();">搜尋</a>
+            </form>
+        </div>
+
+        <!--新增與編輯-->
+        <div class="frame">
+            <span class="glyphicon glyphicon-plus add" onclick="newBlock();"></span>
+
+            <div class="edit" onclick="Show('.edit-item')">編輯 <span class="glyphicon glyphicon-triangle-bottom"></span></div>
+            <!-- 編輯開始 -->
+            <div class="edit-item none">
+                <a onclick="multiOnline();">
+                    <font>上架&nbsp;</font>
+                    <label class="switch" name="0">
+                        <input type="checkbox" disabled checked><span class="slider round"></span>
+                    </label>
+                </a>
+                <br>
+                <a onclick="multiOffline();">
+                    <font>下架&nbsp;</font>
+                    <label class="switch" name="0">
+                        <input type="checkbox" disabled><span class="slider round"></span>
+                    </label>
+                </a>
+                <br>
+                <hr style="border-top: 1px solid #333; margin:10px 0px">
+                <a onclick="multiDelete();">
+                    刪除 <span style="margin-left: 15px;" class="glyphicon glyphicon-trash"></span>
+                </a>
+            </div>
+            <!-- 編輯結束 -->
+        </div>
+
+        <table class="tableListA">
+            <tr>
+                <td><input type="checkbox" class="activityCheckboxAll" onclick="$('.tableListA input[class=strongholdCheckbox]').prop('checked', ($(this).is(':checked')?true:false))"style="width:100%; cursor:pointer;"></td>
+                <td style="cursor:pointer">上下架</td>
+                <td>預覽圖片</td>
+                <td>標題</td>
+                <td>排序</td>
+                <td>刪除</td>
+            </tr>
+            {volist name="stronghold" id="vo" empty="沒有數據"}
+            <tr id="stronghold_{$vo.id}">
+                <td><input type="checkbox" class="strongholdCheckbox" alt="{$vo.id}"></td>
+                <td>
+                    <label class="switch">
+                        <input type="checkbox" v-model="online">
+                        <span class="slider round"></span>
+                    </label>
+                </td>
+                <td>
+                    <div class="img-box">
+                        <p style="position:absolute;">700*475</p>
+                        <img class="preview_r" :src="src"/>
+                    </div>
+                </td>
+                <td><a @click="openBox">{{title}}</a></td>
+				<td>{{orders}}</td>
+                <td><span class="glyphicon glyphicon-trash" onclick="delete_one('{$vo.id}','{$parent_id}')"></span></td>
+            </tr>
+            {/volist}
+        </table>
+        <div class="row text-center">
+            {$stronghold->render()}
+        </div>
+    </div>
+{/block}
+{block name="ownJS"}
+    <script src="__PUBLIC__/js/action.js"></script>
+    <script>
+        $(function() {
+            $(document).click(function() {
+                $('.edit-item').fadeOut();
+            })
+            $('.edit').click(function(event) {
+                event.stopPropagation();
+            })
+            $('.edit-item').click(function(event) {
+                event.stopPropagation();
+            })
+        });
+        Vue.prototype.blockCtrl = function (blockData) {
+            $.ajax({
+                url: "{:url('stronghold/cellCtrl')}",
+                type: 'POST',
+                dataType: 'json',
+                data: blockData,
+                success: function(response) {
+                    if(response.status){
+                        //alert('留言成功');
+                    }else{
+                        alert('更改失敗');
+                        console.log(response.message);
+                    }
+                },
+                error: function(xhr) {
+                    alert('更改失敗');
+                    console.log(xhr);
+                }
+            });
+        };
+        var Box = {
+            title: "", src: "", content: "", id: 0,
+            action: "", url: "", sub_pics: [], orders:0,
+            caller: null
+        }
+        var BoxVM = new Vue({
+            el: '#Box', 
+            data: Box,
+            computed: {
+                contentNl2br: function () {
+                    return this.content.replace(/\n/g, '<br>');
+                },
+                json_sub_pics: function(){
+                    return JSON.stringify(this.sub_pics);
+                },
+            },
+            methods: {
+                formSubmit: function () {
+    				document.boxForm.submit();
+                },
+                previewImg: function () {
+                    // console.log(this.$refs.img.files);
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        // console.log(e.target.result)
+                        Box.src = e.target.result;
+                    }
+                    reader.readAsDataURL(this.$refs.img.files[0]);
+                },
+                updateCallerData: function () {
+                    this.caller.src = this.src;
+                    this.caller.title = this.title;
+                    this.caller.sub_pics = this.sub_pics;
+                    this.caller.url = this.url;
+                    this.caller.content = this.content;
+                    CloseAdd('.add-act');
+                },
+                add_pic: function(){
+                    this.sub_pics.push(" ");
+                },
+                previewSubImg: function(index){
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        // 以此方式設定陣列的值vue才能偵測到資料更新，然後渲染畫面
+                        BoxVM.$set(BoxVM.sub_pics, index, e.target.result);
+                    }
+                    reader.readAsDataURL(this.$refs.sub_pic[index].files[0]);
+                },
+                delSubImg: function(index){
+                    this.sub_pics.splice(index, 1);
+                },
+            }
+        });
+        $('#boxFormIframe').load(function () {
+            var uploadStatus = $(this).contents().find('h1').text();
+            if(uploadStatus == "上傳成功"){
+                // alert("上傳成功");
+                // if(BoxVM.caller == 'new'){
+                //     location.reload();
+                // }else{
+                //     BoxVM.updateCallerData();
+                // }
+                location.reload();
+            }else{
+                alert("上傳失敗");
+                console.log($(this).contents().find('body').text());
+            }
+        });
+
+        {volist name="stronghold" id="vo" empty=""}
+            var stronghold_{$vo.id} = {
+                id: "{$vo.id}",
+                title: "{$vo.title}",
+                sub_pics: '{$vo.sub_pics}',
+                src: "__UPLOAD__{$vo.pic}",
+                url: "{$vo.url}",
+                content: "<?php echo preg_replace('/<br\\s*?\/??>/i','\n', $vo['content']); ?>",
+                online: +"{$vo.online}",
+    			orders:{$vo.orders},
+                action: "{:url('stronghold/update')}"
+            }
+            var stronghold_{$vo.id}_VM = new Vue({
+                el: '#stronghold_{$vo.id}',
+                data: stronghold_{$vo.id},
+                watch: {
+                    online: function () {
+                        blockData = {
+                            id: this.id,
+                            online: this.online ? 1 : 0
+                        }
+                        this.blockCtrl(blockData);
+                    }
+                },
+                methods: {
+                    openBox: function () {
+                        BoxVM.id = this.id;
+                        BoxVM.title = this.title;
+                        BoxVM.sub_pics = this.sub_pics;
+                        BoxVM.src = this.src;
+                        BoxVM.content = this.content;
+                        BoxVM.url = this.url;
+    					BoxVM.orders = this.orders;
+                        BoxVM.action = this.action;
+                        BoxVM.caller = this;
+                        ShowAdd('.add-act');
+                    }
+                }
+            });
+            stronghold_{$vo.id}_VM.sub_pics = stronghold_{$vo.id}_VM.sub_pics ? JSON.parse(stronghold_{$vo.id}_VM.sub_pics): [];
+        {/volist}
+
+        function newBlock(){
+            BoxVM.id = "";
+            BoxVM.title = "";
+            BoxVM.sub_pics = [];
+            BoxVM.src = "";
+            BoxVM.url = "";
+            BoxVM.content = "";
+    		BoxVM.orders = 0;
+            BoxVM.action = "{:url('stronghold/doCreate')}";
+            BoxVM.caller = "new";
+            ShowAdd('.add-act');
+        }
+
+        function getMultiId() {
+            var multiIdArray = [];
+            $('.strongholdCheckbox').each(function () {
+                if($(this).prop("checked")){
+                    multiIdArray.push($(this).attr('alt'));
+                    $(this).prop("checked", false);
+                }
+            });
+            return multiIdArray;
+        }
+
+        function delete_one(id, parent_id){
+            if(confirm('確認刪除?')){
+                 location.href = '{:url('stronghold/delete')}?id='+id+'&parent_id='+parent_id;
+            }
+        }
+        function multiDelete() {
+            if(confirm('確認刪除?')){
+                var form = document.createElement("form");
+                form.action = "{:url('stronghold/multiDelete')}";
+                form.method = "post";
+
+                multiId = document.createElement("input");
+                multiId.value = JSON.stringify(getMultiId());
+                multiId.name = "id";
+
+                form.appendChild(multiId);
+                document.body.appendChild(form);
+                form.submit();
+                $('.activityCheckboxAll').each(function () {
+                    if($(this).prop("checked")){
+                        $(this).prop("checked", false);
+                    }
+                });
+            }
+        }
+
+        function multiOnline() {
+            var multiIdArray = getMultiId();
+            multiIdArray.forEach(function(element) {
+                eval('stronghold_' + element + '.online = true;');
+            });
+            $('.activityCheckboxAll').each(function () {
+                if($(this).prop("checked")){
+                    $(this).prop("checked", false);
+                }
+            });
+        }
+
+        function multiOffline() {
+            var multiIdArray = getMultiId();
+            multiIdArray.forEach(function(element) {
+                eval('stronghold_' + element + '.online = false;');
+            });
+            $('.activityCheckboxAll').each(function () {
+                if($(this).prop("checked")){
+                    $(this).prop("checked", false);
+                }
+            });
+        }
+    	
+    	/*andy*/
+    	function goback(){
+    		/*抓取網址 andy*/
+    			var checkurl = location.href.split('?')[0];
+    			if(checkurl){
+    				location.href=checkurl;
+    			}
+    	}
+    </script>
+{/block}

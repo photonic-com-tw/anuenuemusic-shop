@@ -1,0 +1,860 @@
+{extend name="Public/aside" /}
+{block name="title"}{$singleData.order_number} - {$singleData.statusName} - 訂單管理{/block}
+
+{block name="css"}
+<style>
+    .block{
+        position: fixed;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        width: 100vw;
+        background-color: #0005;
+        z-index: 999;
+        display: none;
+    }
+    .model{
+        width: 80%;
+        height: 60vh;
+        background-color: #fff;
+        display: flex;
+    }
+    .model table th{
+        font-weight: bold;
+        padding: 10px;
+        background-color: #E0E0E0;
+    }
+    .model table th, .model table td{
+        font-size: 16px;
+        border: 2px solid #9D9D9D;
+    }
+    .col-6{
+        display: inline-block;
+        overflow-y: scroll;
+        padding: 30px;
+        width: 50%;
+    }
+
+    .back{
+        border:1px solid #333;
+        background:#E0E0E0;
+        padding:0px 10px;
+        padding-top:4px;
+        color:#333;
+        margin-left:10px
+    }
+    .back:hover{
+        background: #BEBEBE;
+    }
+    table, tr, td{
+        position: relative;
+        border: 2px solid #9D9D9D;
+    }
+    table{
+        margin:10px auto;
+        width:80%;
+    }
+    td{
+        padding:10px;
+    }
+    .change{
+        float:right;
+    }
+    @media (max-width:1440px){
+        table{width:90%;}
+    }
+    @media (max-width:1280px){
+        table{width:95%;}
+    }
+    @media (max-width:1024px){
+        .change{float:left;}
+    }
+    .inquiry{
+        margin:10px 0px;
+    }
+    .inquiry td{
+        padding:10px;
+    }
+    .inquiry tr:nth-child(1) td{
+        text-align: left;
+        border: 2px solid #9D9D9D;
+        background:#E0E0E0;
+    }
+    .inquiry tr:nth-child(1) td:nth-child(6){
+        text-align: center;
+    }
+    .inquiry td{
+        border:none;
+    }
+    .inquiry td input{
+        width:89%;
+    }
+    .inquiry td:nth-child(1) input{
+        width:100%;
+    }
+    .inquiry td:nth-child(1),
+    .inquiry td:nth-child(1) input{
+        text-align: left;
+    }
+    .inquiry td:nth-child(6){
+        text-align: center;
+    }
+    .image-box{
+        position: relative;
+        width: 100%;
+        height: 48%;
+        background-color: #fff;
+        text-align: center;
+        border: 2px solid #000000;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .image-box span{
+        position: absolute;
+        right: 0;
+        cursor: pointer;
+    }
+    .image-box .upl {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+        opacity: 0;
+        cursor: pointer;
+    }
+    .theadGray{
+        background-color:#E0E0E0;
+    }
+    @media print {
+        .content {
+            width: 100%;
+        }
+        .ps {
+            display: table-row !important;
+        }
+        td{
+            padding: 0;
+            margin: 0;
+        }
+        .NoPrint {
+            display: none;
+        }
+        table {
+            width: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        *{
+            font-size: 12px;
+        }
+        .theadGray{
+            font-size: 16px;
+            text-align: center;
+        }
+    }
+</style>
+
+{/block}
+
+{block name="content"}
+    <div class="block" id="positionVM">
+        <div class="model row">
+            <div class="col-6">
+                <h4>請選擇項目:</h4>
+                <table>
+                    <tr>
+                        <th>庫存編碼</th>
+                        <th>數量</th>
+                        <th>選擇</th>
+                    </tr>
+                    <tr v-for="item in positions">
+                        <td>{{item.p_code}}</td>
+                        <td>{{item.num}}</td>
+                        <td><a @click="change_item(item.pp_id,item.p_code, item.num,'plus')">選擇</a></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-6">
+                <h4>已選擇項目:</h4>
+                <table>
+                    <tr>
+                        <th>庫存編碼</th>
+                        <th>數量</th>
+                        <th>刪除</th>
+                    </tr>
+                    <tr v-for="item in positions_selected">
+                        <td>{{item.p_code}}</td>
+                        <td>{{item.num}}</td>
+                        <td><a  @click="change_item(item.pp_id,item.p_code, item.num,'minus')">刪除</a></td>
+                    </tr>
+                </table>
+                <a class="btn btn-primary btn-sm text-white" style="float:right;" @click="check_num()">確認撿貨</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="content">
+        <p class="title" >訂單管理 > {$singleData.statusName} > {$singleData.order_number}</p>
+        <a class="back NoPrint" href="
+            {if condition="($singleData.status == 'Return') OR ($singleData.status == 'Cancel')"}
+                {:url('OrderCtrl/index', ['state' => 'Trash'])}
+            {else/}
+                {:url('OrderCtrl/index', ['state' => $singleData.status])}
+
+            {/if}
+            ">
+            <span style="font-size:18px; color:#333" class="glyphicon glyphicon-arrow-left"></span>
+        </a>
+
+        <table>
+            <tr>
+                <td class="theadGray">訂單編號</td>
+                <td>{$singleData.order_number}</td>
+                <td class="theadGray">下單日期</td>
+                <td>{$singleData.create_time|date='Y-m-d H:i',###}</td>
+                <td class="theadGray">付款方式</td>
+                <td>{$singleData.payment}</td>
+                <td class="theadGray">運送方式</td>
+                <td>{$singleData.transport}{$transportPaperBtn}</td>
+                <td rowspan="2">購買金額<br>{$singleData.total}</td>
+            </tr>
+            <tr>
+                <td class="theadGray">匯款回報</td>
+                <td>
+                    {$singleData.report|default="尚未回報"}
+
+                    {if condition="($singleData.status != 'Return') AND ($singleData.status != 'Cancel')"}
+                        {eq name="singleData.report_check_time" value=""}
+                            {neq name="singleData.report" value=""}
+                                <button class="NoPrint" id="checkReportButton" onclick="checkReport();">確認</button>
+                            {/neq}
+                        {/eq}
+                    {/if}
+                </td>
+                <td class="theadGray">匯款確認</td>
+                <td id="checkDay">
+                    {neq name="singleData.report_check_time" value=""}
+                        {$singleData.report_check_time|date='Y-m-d',###}
+                    {/neq}
+                </td>
+                <td class="theadGray">收款狀況</td>
+                <td id="receiptsState">{$singleData.receipts_state}
+                    {if condition="($singleData.status != 'Return') AND ($singleData.status != 'Cancel') "}
+                        {eq name="singleData.receipts_state" value="未收款"}
+                            <br><button onclick="setReceiptsState();" class="NoPrint">收款</button>
+                        {/eq}
+                    {/if}
+                </td>
+                <td class="theadGray">出貨狀況</td>
+                <td id="transportState">{$singleData.transport_state}
+                    {if condition="($singleData.status != 'Return') AND ($singleData.status != 'Cancel') "}
+                        {eq name="singleData.transport_state" value="未出貨"}
+                            <br><button onclick="setTransportState();" class="NoPrint">出貨</button>
+                        {/eq}
+
+                    {/if}
+                </td>
+            </tr>
+
+            <tr style="border-top:none; border-bottom:none;">
+                <td colspan="10" style="padding:2% 10px; border-top:none; border-bottom:none;">
+                    <font style="margin-left:10px">商品細項</font>
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td class="theadGray">品項</td>
+                                <td class="theadGray">單價</td>
+                                <td class="theadGray">數量</td>
+                                <td class="theadGray">總價
+                                    {if condition="$singleData.AllPayLogisticsID != ''"}
+                                        <a style="position: absolute; right: 0px; top:-30px" data-toggle="modal" data-target="#logisticModel"><span>查看物流狀態</span></a>
+                                    {/if}
+                                </td>
+                            </tr>
+
+                            {volist name="singleData.product" id="product"}
+                                <tr>
+                                    <td>
+										<div class="row">
+											<div class="col-sm-2">
+												{notempty name="$product.url2"}
+													<img src="http://{$product.url2}" style="width:100px;"/>
+												{/notempty}
+
+                                                {if condition="isset($product.key_type)"}
+                                                {if condition="substr($product.key_type,0,3)== 'kol'"}
+                                                    <span class="prod_tag kol_tag">網紅推薦</span>
+                                                {/if}
+                                                {/if}
+
+                                                {if condition="isset($product.key_type)"}
+                                                {if condition="$product.key_type== 'add'"}
+                                                    <span class="prod_tag add_tag">加價購</span>
+                                                {/if}
+                                                {/if}
+											</div>
+
+											<div class="col-sm-9">
+												{$product.name}
+                                                {notempty name="$product.ISBN"}
+                                                    ：{$product.ISBN}
+                                                {/notempty}
+												{notempty name="$product.Author"}
+                                                    <br>
+    												{$product.position}&emsp;
+    												{$product.Author}&emsp;
+    												{$product.house}
+												{/notempty}
+												<br>
+												{notempty name="$product.url"}
+													<a target="_blank" href="http://{$product.url}">{$product.url}</a>
+
+                                                    {if condition="$control_register==1 AND isset($product.is_registrable)"}
+                                                    {if condition="$product.is_registrable == '1'"}
+                                                    <a target="_blank" href="http://{$product.url|change_url}?order_number={$singleData.order_number}&type_id={$product.type_id_ori}" class="btn btn-success btn-sm text-white">查看報名資料</a>
+                                                    {/if}
+                                                    {/if}
+
+                                                    {if condition=" !isset($Front_name['存放位置管理']) AND isset($product.deal_position)"}
+                                                    {if condition="$product.deal_position == '0' && $product.key_type!='coupon'"}
+                                                    <a href="javascript:deal_position('{$product.info_id}','{$product.type_id}','{$product.num}')" class="btn btn-primary btn-sm text-white">撿貨</a>
+                                                    {/if}
+                                                    {/if}
+
+                                                    {if condition=" !isset($Front_name['存放位置管理']) AND isset($product.position_code)"}
+                                                    <br><span>撿貨編碼：{$product.position_code}</span>
+                                                    {/if}
+												{/notempty}
+											</div>
+										</div>
+									</td>
+                                    <td>{$product.price}</td>
+                                    <td>{$product.num}</td>
+                                    <td>{$product.total}</td>
+                                </tr>
+                            {/volist}
+
+                            {volist name="singleData.discount" id="discount"}
+                                <tr>
+                                    <td colspan="3">【{$discount.type}】{$discount.name}</td>
+                                    <td>{$discount.count}</td>
+                                </tr>
+                            {/volist}
+
+                            {if condition="$singleData.freediscount != 0"}
+                                <tr>
+                                    <td colspan="3">【折扣】購物現折</td>
+                                    <td>折抵{$singleData.freediscount}元</td>
+                                </tr>
+                            {/if}
+                            <tr>
+                                <td colspan="3">{if condition=" !isset($Front_name['點數設定'])"} 本訂單增加紅利{$singleData.add_point}點 {/if}</td>
+                                <td>總金額{$singleData.total}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+
+			<tr>
+                <td class="theadGray" colspan="9">購買人資料</td>
+            </tr>
+
+            <tr>
+                <td class="theadGray">會員編號</td>
+                <td>{$singleData.user.number}</td>
+                <td class="theadGray">帳號</td>
+                <td colspan="2"><a href="mailto:{$singleData.user.email}">{$singleData.user.email}</a></td>
+				<td class="theadGray">姓名</td>
+                <td colspan="3">{$singleData.user.name}</td>
+            </tr>
+
+			<tr>
+                <td class="theadGray">手機</td>
+                <td>{$singleData.user.phone}</td>
+                <td class="theadGray">聯絡電話</td>
+                <td colspan="2">{$singleData.user.tele}</td>
+				<td class="theadGray">信用卡末4碼</td>
+                <td colspan="3">{$singleData.card4no}</td>
+            </tr>
+
+			<tr>
+                <td class="theadGray">聯絡地址</td>
+                <td colspan="9">{$singleData.user.home}</td>
+            </tr>		
+
+			<tr>
+                <td  colspan="9"> </td>
+            </tr>
+
+			<tr>
+                <td class="theadGray" colspan="9"><span style="color:red;font-size:3rem">*</span>收件人資料</td>
+            </tr>
+
+            <tr>
+                <td class="theadGray">姓名</td>
+                <td>{$singleData.transport_location_name}</td>
+                <td class="theadGray">手機</td>
+                <td colspan="2">{$singleData.transport_location_phone}</td>
+                <td class="theadGray">聯絡電話</td>
+                <td colspan="3">{$singleData.transport_location_tele}</td>
+            </tr>	
+
+            <tr>
+                <td class="theadGray">聯絡信箱</td>
+                <td colspan="9">{$singleData.transport_email}</td>
+            </tr>
+
+			<tr>
+                <td class="theadGray">出貨地址</td>
+                <td colspan="9">{$singleData.transport_location}</td>
+            </tr>
+
+            <tr>
+                <td class="theadGray">統一編號</td>
+                <td colspan="1">{$singleData.uniform_numbers}</td>
+                <td class="theadGray">公司抬頭</td>
+                <td colspan="6">{$singleData.company_title}</td>
+            </tr>
+
+			<tr>
+                <td class="theadGray">備註</td>
+                <td colspan="9">{$singleData.transport_location_textarea}</td>
+            </tr>
+
+            <tr class="NoPrint" style="border-top:none; border-bottom:none;">
+                <td colspan="10" style="padding:2% 10px; border-top:none; border-bottom:none;">
+                    <font style="margin-left:10px">訂單備註</font>
+                    <div style="border:2px solid #9D9D9D; margin:10px; height:200px; position:relative; padding:30px">
+                        <textarea id="ps" style="width:100%; height:125px; border:1px solid #333; resize:none;">{$singleData.ps}</textarea>
+                        <div style="position:absolute; bottom:1%; right:5px">
+                            <button onclick="setPS('ps');">更新備註</button>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+
+            <tr class="NoPrint" style="border-top:none; border-bottom:none;">
+                <td colspan="10" style="padding:2% 10px; border-top:none; border-bottom:none;">
+                    <font style="margin-left:10px">訂單備註(消費者查看)</font>
+                    <div style="border:2px solid #9D9D9D; margin:10px; height:200px; position:relative; padding:30px">
+                        <textarea id="ps2" style="width:100%; height:125px; border:1px solid #333; resize:none;">{$singleData.ps2}</textarea>
+                        <div style="position:absolute; bottom:1%; right:5px">
+                            <button onclick="setPS('ps2');">更新備註</button>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            {switch $singleData.status}
+
+                {case value="Return"}
+                    {include file="order_ctrl/returnPS" /}
+                {/case}
+
+                {case value="Cancel"}
+                    {include file="order_ctrl/cancelPS" /}
+                {/case}
+
+                {default /}
+                    <tr class="NoPrint" style="border-top:none; border-bottom:none;">
+                        <td colspan="10" style="padding:2% 10px; border-top:none; border-bottom:none;">
+                            <font style="margin-left:10px">客戶取消備註</font>
+                            <div style="border:2px solid #9D9D9D; margin:10px; height:200px; position:relative; padding:30px">
+                                <textarea id="cancel_ps" style="width:100%; height:125px; border:1px solid #333; resize:none;"></textarea>
+                                <div style="position:absolute; bottom:1%; right:5px">
+                                    <button onclick="changeStatus2Cancel();">確認取消</button>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr class="NoPrint" style="border-top:none; border-bottom:none;">
+                        <td colspan="10" style="padding:2% 10px; border-top:none; border-bottom:none;">
+                            <font style="margin-left:10px">客戶退貨備註</font>
+                            <div style="border:2px solid #9D9D9D; margin:10px; height:200px; position:relative; padding:30px">
+                                <textarea id="return_ps" style="width:100%; height:125px; border:1px solid #333; resize:none;"></textarea>
+                                <div style="position:absolute; bottom:1%; right:5px">
+                                    <button onclick="changeStatus2Return();">確認退貨</button>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+            {/switch}
+
+            <tr class="NoPrint" style="border-top:none; border-bottom:none;">
+                <td colspan="10" style="border-top:none; border-bottom:none;">
+                    <button style="padding:5px 30px" onClick="window.print()">列印訂單</button>
+                    <button style="float:right;padding:5px 30px">
+                        <a style="color:black;" href="
+                            {if condition="($singleData.status == 'Return') OR ($singleData.status == 'Cancel')"}
+                                {:url('OrderCtrl/index', ['state' => 'Trash'])}
+                            {else/}
+                                {:url('OrderCtrl/index', ['state' => $singleData.status])}
+                            {/if}
+                        ">
+                            返回列表
+                        </a>
+                    </button>
+                </td>
+            </tr>
+            <tr class="ps" style="display:none; border-bottom:none;">
+                <td colspan="10" style="padding:2% 10px; border-top:none; border-bottom:none;">
+                    <font style="margin-left:10px">訂單備註</font>
+                    <div id="print_ps" style="border:2px solid #9D9D9D; margin:10px; position:relative; padding:30px">
+                        {$singleData.ps|nl2br}
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- logisticModel start-->
+    <div class="modal fade " id="logisticModel" tabindex="-1" role="dialog" aria-labelledby="processModelTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content ">
+                <div class="modal-header">
+                    <span class="modal-title" id="processModelTitle">物流狀態</span>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <p>取貨方式：<span id="logist_type"></span></p>
+                    <table class="table table-striped table-bordered table-rwd">
+                        <thead>
+                            <tr>
+                                <th>狀態說明</th>
+                                <th>時間</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- logisticModel end-->
+{/block}
+
+{block name="ownJS"}
+    <script type="text/javascript" src="/public/static/admin/js/vue.min.js"></script>
+    <script>
+        function checkReport(){
+            $.ajax({
+                url: "{:url('OrderCtrl/checkReport')}",
+                type: 'POST',
+                dataType: 'json',
+                data:{
+                    id: '{$singleData.id}',
+                    status: '{$singleData.report}'
+                },
+                success: function(response) {
+                    if(response.status){
+                        $.alert('確認成功');
+                        $('#checkReportButton').hide();
+                        var NowDate = new Date();
+                        var year = NowDate.getFullYear();
+                        var month = NowDate.getMonth() + 1;
+                        var date = NowDate.getDate();
+                        $('#checkDay').text(year+'-'+month+'-'+date);
+                    }else{
+                        $.alert('確認失敗');
+                        console.log(response.message);
+                    }
+                },
+                error: function(xhr) {
+                    $.alert('確認失敗');
+                    console.log(xhr);
+                }
+           });
+        }
+
+        function setReceiptsState(){
+            $.ajax({
+                url: "{:url('OrderCtrl/setReceiptsState')}",
+                type: 'POST',
+                dataType: 'json',
+                data:{
+                    id: '{$singleData.id}',
+                    state: '1'
+                },
+                success: function(response) {
+                    if(response.status){
+                        $.alert('更動成功');
+                        $('#receiptsState').html('已收款');
+                    }else{
+                        $.alert('更動失敗');
+                        console.log(response.message);
+                    }
+                },
+                error: function(xhr) {
+                    $.alert('更動失敗');
+                    console.log(xhr);
+                }
+            });
+        }
+
+        function setTransportState(){
+            $.ajax({
+                url: "{:url('OrderCtrl/setTransportState')}",
+                type: 'POST',
+                dataType: 'json',
+                data:{
+                    id: '{$singleData.id}',
+                    state: '1'
+                },
+                success: function(response) {
+                    if(response.status){
+                        $.alert('更動成功');
+                        $('#transportState').html('已出貨');
+
+                    }else{
+                        // $.alert('更動失敗');
+                        $.alert(response.message);
+                    }
+                },
+                error: function(xhr) {
+                    $.alert('更動失敗');
+                    console.log(xhr);
+                }
+            });
+
+        }
+
+        function setPS(column){
+            var data = {};
+            data['id'] = '{$singleData.id}';
+            data[column] = column == 'ps' ? $('#ps').val() : $('#ps2').val();
+            $.ajax({
+                url: "{:url('OrderCtrl/setPS')}",
+                type: 'POST',
+                dataType: 'json',
+                data: data,
+                success: function(response) {
+                    if(response.status){
+                        $.alert('更動成功');
+                        $('#print_ps').html($('#ps').val().replace(/\n/g, '<br>'));
+                    }else{
+                        $.alert('更動失敗');
+                        console.log(response.message);
+                    }
+                },
+                error: function(xhr) {
+                    $.alert('更動失敗');
+                    console.log(xhr);
+                }
+            });
+        }
+
+        function changeStatus2Return(){
+            var form = document.createElement("form");
+            form.action = "{:url('OrderCtrl/changeStatus2Return')}";
+            form.method = "post";
+
+            id = document.createElement("input");
+            id.value = '{$singleData.id}';
+            id.name = 'id';
+            form.appendChild(id);
+
+            reason = document.createElement("input");
+            reason.value = $('#return_ps').val().replace(/\n/g, '<br>');
+            reason.name = 'reason';
+            form.appendChild(reason);
+
+            document.body.appendChild(form);
+            form.submit();
+        }
+
+        function changeStatus2Cancel(){
+            var form = document.createElement("form");
+            form.action = "{:url('OrderCtrl/changeStatus2Cancel')}";
+            form.method = "post";
+
+            id = document.createElement("input");
+            id.value = '{$singleData.id}';
+            id.name = 'id';
+            form.appendChild(id);
+
+            reason = document.createElement("input");
+            reason.value = $('#cancel_ps').val().replace(/\n/g, '<br>');
+            reason.name = 'reason';
+            form.appendChild(reason);
+
+            document.body.appendChild(form);
+            form.submit();
+        }
+    </script>
+
+    <script type="text/javascript">
+        function getTransportPaper() {
+            $.ajax({
+                url: "{:url('ajax/EcpayLogistic/getTransportPaper')}",
+                type: 'POST',
+                dataType: 'json',
+                data:{
+                    id: '{$singleData.id}',
+                },
+                beforeSend:function() {
+                    $('.view_block').css('display','block');
+                },
+                success: function(response) {
+                },
+                error: function(xhr) {
+                    $.alert('網路錯誤');
+                },
+                complete: function() {
+                    $('.view_block').css('display','none');
+                },
+            });
+        }
+
+        function get_logistic_record(){
+            $.ajax({
+                url: "/order/order_ctrl/ajax_logistic_status/id/{$singleData['id']}",
+                type: 'GET',
+                dataType: 'json',
+                success: function(response) {
+                    console.log(response);
+                    $("#logist_type").html("{$singleData['transport']}");
+                    record_html = "";
+                    for(var i =0; i<response.length; i++){
+                        record_html = record_html + '<tr><td>'+response[i]['message']+'</td><td>'+response[i]['time']+'</td></tr>';
+                    }
+                    $('#logisticModel tbody').html(record_html);
+                },
+                error: function(xhr) {
+                    alert('失敗');
+                    console.log(xhr);
+                }
+            });
+        }
+        get_logistic_record();
+    </script>
+
+    <script type="text/javascript">
+        var position_table = {
+            deal_num: 0,
+            type_id:'',
+            positions:[],
+            positions_selected:[],
+        }
+
+        var  positionVM = new Vue({
+            el: '#positionVM',
+            data: position_table,
+            methods: {
+                change_item: function(pp_id, p_code, top_num, methods){
+                    change_num = methods == 'plus' ? 1 : -1;
+
+                    not_exsit = true;
+                    for (var i = 0; i < this.positions_selected.length; i++) {
+                        if(this.positions_selected[i]['pp_id']==pp_id){
+                            final_num = parseInt(this.positions_selected[i]['num']) + (change_num);
+                            if(final_num > parseInt(top_num) ){
+                                alert('超出數量上限');
+                                return;
+                            }else{
+                                this.positions_selected[i]['num'] = final_num;
+                            }
+                            not_exsit = false;
+                            if( this.positions_selected[i]['num'] <= 0){
+                                this.positions_selected.splice(i, 1);
+                            }
+                            break;
+                        }
+                    }
+                    if(not_exsit && methods == 'plus'){
+                        this.positions_selected.push({
+                            'pp_id' : pp_id,
+                            'p_code': p_code,
+                            'num'   : 1
+                        });
+                    }
+                },
+                check_num: function(){
+                    total_num = 0;
+                    for (var i = 0; i < this.positions_selected.length; i++) {
+                       total_num += parseInt(this.positions_selected[i]['num']);
+                    }
+
+                    if(this.deal_num!=total_num){
+                        alert("本次需撿貨 "+ this.deal_num +"個，請確認數量正確");
+                        return;
+                    }
+
+                    this.release_position();
+                },
+                release_position: function(){
+                    $.ajax({
+                        url: "{:url('OrderCtrl/release_position')}",
+                        type: 'POST',
+                        dataType: 'json',
+                        data: {
+                            order_number: '{$singleData.order_number}', 
+                            type_id     : this.type_id,
+                            positions   : this.positions_selected,
+                        },
+                        success: function(response) {
+                            if(response.code==1){
+                                alert("撿貨成功");
+                                location.reload();
+                            }else{
+                                alert(response.msg);
+                            }
+                        },
+                        error: function(xhr) {
+                            alert('失敗');
+                            console.log(xhr);
+                        }
+                    });
+                }
+            }
+        });
+
+        /* 核銷商品(撿貨) */
+        function deal_position(prod_id, type_id, num){
+            // console.log(prod_id+' '+type_id+' '+num);
+            $.ajax({
+                url: "{:url('OrderCtrl/get_position')}",
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    order_number: '{$singleData.order_number}', 
+                    prod_id     : prod_id,
+                    type_id     : type_id,
+                    num         : num,
+                },
+                success: function(response) {
+                    if(response.code==1){
+                        positionVM.deal_num = num;
+                        positionVM.type_id = type_id;
+                        positionVM.positions = response.position_portion;
+                        positionVM.positions_selected = [];
+                        $('.block').css('display','flex');
+                    }else if(response.code==2){
+                        alert("撿貨成功");
+                        location.reload();
+                    }else{
+                        alert(response.msg);
+                    }
+                },
+                error: function(xhr) {
+                    alert('失敗');
+                    console.log(xhr);
+                }
+            });
+        }
+
+        $('.block').on('click', function(e){
+            // console.log(e.currentTarget); // 點擊的元件
+            // console.log(e.target); // 選擇器的元件
+            if(e.currentTarget == e.target){
+                $('.block').css('display','none');
+                positionVM.deal_num = 0;
+                positionVM.type_id = '';
+                positionVM.positions = [];
+                positionVM.positions_selected = [];
+            }
+        });
+    </script>
+{/block}
+

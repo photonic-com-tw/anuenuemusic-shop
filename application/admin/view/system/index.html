@@ -1,0 +1,95 @@
+{extend name="Public/aside" /}
+{block name="title"}後台{/block}
+{block name="cssChange"}
+    <link rel="stylesheet" href="__PUBLIC__/css/style_old.css">
+    <link rel="stylesheet" href="__PUBLIC__/css/style.css">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+{/block}
+{block name="css"}
+    <style>
+        .tableListA{
+            padding:10px 20px;
+            margin: 0px auto;
+            margin-top: 10px;
+            width: 99%
+        }
+    </style>
+{/block}
+{block name="content"}
+    <div id="content">
+        <p id="title">
+           參數設定 > <span style="margin: 0;">版本說明</span>
+        </p>
+
+        <form action="{:url('System/update')}" method="post">
+	        <div class="tableListA">
+	        	<div class="row">
+					<div class="col-md-6">
+						<div class="form-group">
+							<label for="sys_title">系統名稱</label>
+							<input type="text" class="form-control ng-pristine ng-untouched ng-valid" id="sys_title" placeholder="" value="{$system_intro.system_title}" name="system_title">
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div class="form-group">
+							<label for="sys_version">系統版本</label>
+							<input type="text" class="form-control ng-pristine ng-untouched ng-valid" id="sys_version" placeholder="" value="{$system_intro.system_version}" name="system_version">
+						</div>
+					</div>
+
+					<div class="col-md-12">
+						<div class="form-group">
+							<label for="sys_note">系統備註</label>
+							<textarea class="form-control ng-pristine ng-untouched ng-valid" id="sys_note" rows="3" placeholder="" name="system_note">{$system_intro.system_note}</textarea>
+						</div>
+					</div>
+
+					<div class="col-md-6">
+						<div class="form-group">
+							<label for="sys_front_end">前台開發程式</label>
+							<textarea class="form-control ng-pristine ng-untouched ng-valid" id="sys_front_end" rows="3" placeholder="" name="front_end">{$system_intro.front_end}</textarea>
+						</div>
+					</div>
+
+					<div class="col-md-6">
+						<div class="form-group">
+							<label for="sys_back_end">後台開發程式</label>
+							<textarea class="form-control ng-pristine ng-untouched ng-valid" id="sys_back_end" rows="3" placeholder="" name="back_end">{$system_intro.back_end}</textarea>
+						</div>
+					</div>
+
+					<div class="col-md-6">
+						<div class="form-group">
+							<label for="php_v">php版本</label>
+							<input type="text" class="form-control ng-pristine ng-untouched ng-valid" id="php_v" placeholder="" value="{$system_intro.php_version}" name="php_version">
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div class="form-group">
+							<label for="sql_v">sql版本</label>
+							<input type="text" class="form-control ng-pristine ng-untouched ng-valid" id="sql_v" placeholder="" value="{$system_intro.sql_version}" name="sql_version">
+						</div>
+					</div>
+					<div class="col-md-12">
+						<div class="form-group">
+							<label for="time">結案時間</label>
+							<input type="text" class="form-control ng-pristine ng-untouched ng-valid" id="time" placeholder="" value="{$system_intro.closing_date}" name="closing_date">
+						</div>
+					</div>
+					<div class="col-md-12">
+						<div class="form-group">
+							<label for="s_note">備註</label>
+							<textarea class="form-control ng-pristine ng-untouched ng-valid" id="s_note" rows="20" placeholder="" name="note">{$system_intro.note}</textarea>
+						</div>
+					</div>
+					
+					<div class="col-12 mt-3">
+						<input type="submit" class="btn btn-success btn-block" value="確認送出">
+					</div>
+				</div>
+	        </div>
+	    </form>
+    </div>
+{/block}
+{block name="ownJS"}
+{/block}
