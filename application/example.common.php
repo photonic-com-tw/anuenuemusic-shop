@@ -170,8 +170,8 @@ function randomkeys($length){
 /*合併訂單後台 函式 結束*/
 
 //自定義共用變數
-define('MAIN_WEB', 'https://anuenuemusic.com');         //主形象網站
-define('MAIN_WEB_LAN', 'https://anuenuemusic.com/ch');  //主形象網站-語言版
+define('MAIN_WEB', 'https://anuenuemusic.com');    //主形象網站
+define('MAIN_WEB_LAN', 'https://anuenuemusic.com');//主形象網站-語言版
 
 //自定義共用變數
 /*商品固定欄位，設定-1為隱藏*/
@@ -180,16 +180,16 @@ define('property2', '-1'); //文字
 define('property3', '-1'); //文字
 
 /*FB 粉專*/
-define('FB_PAGE_URL', 'https://www.facebook.com/aNueNueMusic');
+define('FB_PAGE_URL', 'https://www.facebook.com/Crm傳訊光科技股份有限公司-358077690789/');
 
 /*edm網址*/
-define('EDM_URL', 'shop-edm.anuenuemusic.com');
+define('EDM_URL', 'shop-edm.sprlight.net');
 
 /*LINE*/
 define('client_secret', '');
-define('client_id', '');
-define('line_url', 'https://shop.anuenuemusic.com/index/Linglogin/callBack');
-define('line_url_open', 'https://shop.anuenuemusic.com/index/Linglogin/open');
+define('client_id', '1578554831');
+define('line_url', 'https://anuenuemusic.sprlight.net/index/Linglogin/callBack');
+define('line_url_open', 'https://anuenuemusic.sprlight.net/index/Linglogin/open');
 /*LINE LIFF APP ID*/
 define('LIFF_ID', '');
 
@@ -203,16 +203,16 @@ define('FB_appID', '');
 define('Footer_Title', '鋐宇樂器有限公司');
 define('Service_Tel', '(02)2536-4488');
 define('Service_Tel_A', '0225364488');
-define('Service_Email', 'service@anuenuemusic.com');
+define('Service_Email', 'service@photonic.com.tw');
 
 /*幣別*/
-define('dolar', 'NT');
+define('dolar', 'USD');
 define('dolar_mark', '$');
 
 /*mail server*/
 define('Mail_Host', '127.0.0.1');
-define('Mail_Username', 'admin@anuenuemusic.com');
-define('Mail_Password', 'O35V0R[tnI*z0c');
+define('Mail_Username', 'admin@sprlight.net');
+define('Mail_Password', '');
 
 /*google 機器人驗證*/
 define('GOOGLE_RECAPTCHA_SITEKEY', ''); /*網站金鑰*/
@@ -222,17 +222,17 @@ define('Paypal_Pay', '0'); /*Paypal 1.用 0.不用*/
 define('WeChat_Pay', '0'); /*微信 1.用 0.不用*/
 
 // 測試用綠界金流
-// define('ServiceURL', 'https://payment-stage.ecpay.com.tw/Cashier/AioCheckOut/V5');
-// define('HashKey', '5294y06JbISpM5x9');
-// define('HashIV', 'v77hoKGq4kWxNNIS');
-// define('MerchantID', '2000132');
-// define('CreditInstallment', "3,6,12"); //分期期數
-// 正式用綠界金流
-define('ServiceURL', 'https://payment.ecpay.com.tw/Cashier/AioCheckOut/V5');
-define('HashKey', 'sBXqZkYge8mEVQwI');
-define('HashIV', 'qPKqJAqZJ25T71rN');
-define('MerchantID', '3316094');
+define('ServiceURL', 'https://payment-stage.ecpay.com.tw/Cashier/AioCheckOut/V5');
+define('HashKey', '5294y06JbISpM5x9');
+define('HashIV', 'v77hoKGq4kWxNNIS');
+define('MerchantID', '2000132');
 define('CreditInstallment', "3,6,12"); //分期期數
+// 正式用綠界金流
+// define('ServiceURL', 'https://payment.ecpay.com.tw/Cashier/AioCheckOut/V5');
+// define('HashKey', '');
+// define('HashIV', '');
+// define('MerchantID', '');
+// define('CreditInstallment', "3,6,12"); //分期期數
 
 // 台新金流
 define('Tspg_mid', '000812770028244');

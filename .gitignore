@@ -23,8 +23,10 @@ public/uploads/excel/*
 !public/uploads/excel/.gitignore
 public/uploads/findorderForm/*
 !public/uploads/findorderForm/.gitignore
-# application/config.php
-# application/database.php
+
+application/common.php
+application/config.php
+application/database.php
 
 # 初始化圖片
 !public/static/index/upload/06
