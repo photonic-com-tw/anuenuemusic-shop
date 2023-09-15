@@ -7,6 +7,9 @@ runtime/temp/*
 runtime/log/*
 # thinkphp
 
+lang/1/menu_admin.json
+lang/1/menu.json
+
 public/static/index/upload/*
 !public/static/index/upload/.gitignore.
 !public/static/index/upload/examinee
@@ -24,7 +27,6 @@ public/uploads/excel/*
 public/uploads/findorderForm/*
 !public/uploads/findorderForm/.gitignore
 
-application/common.php
 application/config.php
 application/database.php
 

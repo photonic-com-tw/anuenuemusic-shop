@@ -19,7 +19,6 @@ class Excel extends MainController
 	const SIMPLE_MODE_PAGINATE = false;
 
 	public function index() {
-
 		$page = Request::instance()->get('page') ?? 1;
 		$searchKey = Request::instance()->get('searchKey') ?? '';
 		$searchKey = trim($searchKey);
@@ -92,8 +91,7 @@ class Excel extends MainController
 
 	}
 
-    public function reply() {
-
+	public function reply() {
 		$searchKey = Request::instance()->get('searchKey') ?? '';
 		$do = Request::instance()->get('do') ?? '';
 
@@ -126,16 +124,14 @@ class Excel extends MainController
         $this->assign('qa', $qa);
 
 		return $this->fetch('reply');
-    }
+	}
 
 	public function Import() {
-
 		//接收檔案
 		$files = Request::instance()->file("file");
 		$type = explode(".",$_FILES['file']['name']);
 
 		if($type[1]== 'xlsx'){
-
 			//儲存檔案
 			$info = $files->move(ROOT_PATH . 'public' . DS . 'uploads' . DS . 'excel');
 
@@ -149,9 +145,7 @@ class Excel extends MainController
 		}
 	}
 
-
 	function read_excel($filename){
-
 		$objPHPExcel = new \PHPExcel();
 		//require_once 'Classes/PHPExcel/Reader/Excel5.php';
 		$PHPReader = new \PHPExcel_Reader_Excel2007(); 
@@ -184,9 +178,7 @@ class Excel extends MainController
 		}
 	}
 
-
 	public function update(){
-
 		$id = Request::instance()->post('id');
 		$val = Request::instance()->post('val');
 		$user_id = Request::instance()->post('user_id');
@@ -238,59 +230,49 @@ class Excel extends MainController
 				}
 
 				Db::table('excel')->where(" product_code = '".$product_code."'")
-					->update([
-					'status'=>$val,
-					'pic'=>$pic,
-					'account_number'=>$user_id,
-					'account_name'=>$user_name,
-					'regtime'=>$regtime,
-					'tax_ID_number'=>$tax_ID_number,
-					'buytime'=>$buytime
-					]);
+													->update([
+														'status'=>$val,
+														'pic'=>$pic,
+														'account_number'=>$user_id,
+														'account_name'=>$user_name,
+														'regtime'=>$regtime,
+														'tax_ID_number'=>$tax_ID_number,
+														'buytime'=>$buytime
+													]);
+				$product_reg_letter_success = LANG_MENU['商品註冊成功信'];
+				$product_reg_letter_success = str_replace("{name}", $name, $product_reg_letter_success);
+				$product_reg_letter_success = str_replace("{product_code}", $product_code, $product_reg_letter_success);
 				$mail->Body = "
 				<html>
 				<head></head>
 				<body>
 					<div>
-						親愛的會員您好：<br>
-						商品：<sapn style='color:red;'>".$name."</sapn><br>
-						機身碼：<sapn style='color:red;'>".$product_code."</sapn><br>
-						註冊已審核通過<br>
-						詳細內容可至會員專區>註冊商品查看<br>
-						<br><br>
-						<br><br>
+						".$product_reg_letter_success."
 					</div>
 					<div style='color:red;'>
-						≡ 此信件為系統自動發送，請勿直接回覆 ≡
+						≡ ".LANG_MENU['此信件為系統自動發送，請勿直接回覆']." ≡
 					</div>
 				</body>
 				</html>
 				";
-
-			}else if($val == 2){ // 修改成失敗
+			}
+			else if($val == 2){ // 修改成失敗
+				$product_reg_letter_error = LANG_MENU['商品註冊失敗信'];
+				$product_reg_letter_error = str_replace("{name}", $name, $product_reg_letter_error);
+				$product_reg_letter_error = str_replace("{product_code}", $product_code, $product_reg_letter_error);
 				$mail->Body = "
 				<html>
-				<head></head>
-				<body>
-				<div>
-					親愛的會員您好：<br>
-					商品：<sapn style='color:red;'>".$name."</sapn><br>
-					機身碼：<sapn style='color:red;'>".$product_code."</sapn><br>
-					註冊審核未通過<br>
-					麻煩您確認填寫資料無誤後<br>
-					再次提交註冊資訊<br>
-					如有任何疑問<br>
-					歡迎來電洽詢<br>
-					<br><br>
-					<br><br>
-				</div>
-				<div style='color:red;'>
-					≡ 此信件為系統自動發送，請勿直接回覆 ≡
-				</div>
-				</body>
+					<head></head>
+					<body>
+						<div>
+							".$product_reg_letter_error."
+						</div>
+						<div style='color:red;'>
+							≡ ".LANG_MENU['此信件為系統自動發送，請勿直接回覆']." ≡
+						</div>
+					</body>
 				</html>
 				";
-
 			}
 
 			$mail->IsHTML(true);
@@ -305,43 +287,40 @@ class Excel extends MainController
 		}
 	}
 
-    public function delete() {
+	public function delete() {
+		$id = Request::instance()->get('id');
+		try{
+				Db::table('excel_reply')->delete($id);
+		} catch (\Exception $e){
+				$this->dumpException($e);
+		}
+		$this->success('刪除成功');
+	}
 
-        $id = Request::instance()->get('id');
-        try{
-            Db::table('excel_reply')->delete($id);
-        } catch (\Exception $e){
-            $this->dumpException($e);
-        }
-        $this->success('刪除成功');
-    }
+	public function multiDelete() {
+		$idList = Request::instance()->post('id');
+		try{
+			if ($idList) {
+				$idList = json_decode($idList);
+				Db::table('excel_reply')->delete($idList);
+			}
+		} catch (\Exception $e){
+			$this->dumpException($e);
+		}
+		$this->success('刪除成功');
+	}
 
-    public function multiDelete() {
-
-        $idList = Request::instance()->post('id');
-        try{
-            if ($idList) {
-                $idList = json_decode($idList);
-                Db::table('excel_reply')->delete($idList);
-            }
-        } catch (\Exception $e){
-            $this->dumpException($e);
-        }
-        $this->success('刪除成功');
-    }
-
-    public function multiDelete_or() {
-
-        $idList = Request::instance()->post('id');
-        try{
-            if ($idList) {
-                $idList = json_decode($idList);
-                Db::table('excel')->delete($idList);
-            }
-        } catch (\Exception $e){
-            $this->dumpException($e);
-        }
-        $this->success('刪除成功');
-    }
+	public function multiDelete_or() {
+		$idList = Request::instance()->post('id');
+		try{
+			if ($idList) {
+				$idList = json_decode($idList);
+				Db::table('excel')->delete($idList);
+			}
+		} catch (\Exception $e){
+			$this->dumpException($e);
+		}
+		$this->success('刪除成功');
+	}
 }
 

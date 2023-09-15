@@ -68,7 +68,7 @@ class Tspg extends PublicController
 			$mail->AddAddress($email);
 			$mail->IsHTML(true);
 
-			$paid_order_letter = $this->lang_menu['訂單已付款消費者信'];
+			$paid_order_letter = LANG_MENU['訂單已付款消費者信'];
 	        $paid_order_letter = str_replace("{order_number}", $o[0]['order_number'], $paid_order_letter);
 	        $paid_order_letter = str_replace("{id}", $id, $paid_order_letter);
 			$mail->Body = $paid_order_letter;
@@ -161,7 +161,7 @@ class Tspg extends PublicController
 			*/
 			$mail->AddAddress($email);
 			$mail->IsHTML(true);
-			$new_order_letter = $this->lang_menu['訂單成功消費者信'];
+			$new_order_letter = LANG_MENU['訂單成功消費者信'];
             $new_order_letter = str_replace("{globalMailData_mailFromName}", $globalMailData['mailFromName'], $new_order_letter);
             $new_order_letter = str_replace("{Service_Tel}", Service_Tel, $new_order_letter);
             $mail->Body = "
@@ -170,18 +170,18 @@ class Tspg extends PublicController
                     <body>
                         <div>
                             ".$new_order_letter."
-                            ".$this->lang_menu['訂單編號']."：".$o[0]['order_number']."<br>
-                            ".$this->lang_menu['訂單時間']."：".date('Y/m/d H:i',$o[0]['create_time'])."<br>
-                            ".$this->lang_menu['訂購商品']."：".$res_goods."<br>
-                            ".$this->lang_menu['訂單金額']."：".$OrderData['total']."<br>
-                            ".$this->lang_menu['購買人']."：".$this->user['name']."<br>
-                            ".$this->lang_menu['收件人']."：".$o[0]['transport_location_name']."<br>
-                            ".$this->lang_menu['出貨地址']."：".$o[0]['transport_location']."<br>
+                            ".LANG_MENU['訂單編號']."：".$o[0]['order_number']."<br>
+                            ".LANG_MENU['訂單時間']."：".date('Y/m/d H:i',$o[0]['create_time'])."<br>
+                            ".LANG_MENU['訂購商品']."：".$res_goods."<br>
+                            ".LANG_MENU['訂單金額']."：".$OrderData['total']."<br>
+                            ".LANG_MENU['購買人']."：".$this->user['name']."<br>
+                            ".LANG_MENU['收件人']."：".$o[0]['transport_location_name']."<br>
+                            ".LANG_MENU['出貨地址']."：".$o[0]['transport_location']."<br>
                             E-mail：".$OrderData['email']."<br>
-                            ".$this->lang_menu['手機號碼']."：".$o[0]['transport_location_phone']."<br>
-                            ".$this->lang_menu['聯絡電話']."：".$o[0]['transport_location_tele']."<br>
-                            ".$this->lang_menu['付款方式']."：".$o[0]['payment']."<br>
-                            ".$this->lang_menu['備註']."：".$o[0]['transport_location_textarea']."<br>
+                            ".LANG_MENU['手機號碼']."：".$o[0]['transport_location_phone']."<br>
+                            ".LANG_MENU['聯絡電話']."：".$o[0]['transport_location_tele']."<br>
+                            ".LANG_MENU['付款方式']."：".$o[0]['payment']."<br>
+                            ".LANG_MENU['備註']."：".$o[0]['transport_location_textarea']."<br>
                         </div>
                         <div>
                         ". $globalMailData['system_email']['order_complete'] ."

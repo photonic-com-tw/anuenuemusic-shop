@@ -81,7 +81,7 @@ trait Jump
             'data' => $data,
             'url'  => $url,
             'wait' => $wait,
-            'lang_menu' => $this->lang_menu,
+            'lang_menu' => LANG_MENU,
         ];
 
         $type = $this->getResponseType();
@@ -110,7 +110,7 @@ trait Jump
             'msg'  => $msg,
             'time' => Request::instance()->server('REQUEST_TIME'),
             'data' => $data,
-            'lang_menu' => $this->lang_menu,
+            'lang_menu' => LANG_MENU,
         ];
         $type     = $type ?: $this->getResponseType();
         $response = Response::create($result, $type)->header($header);

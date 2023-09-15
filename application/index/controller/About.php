@@ -117,6 +117,7 @@ class About extends PublicController
 	}
 	public function test_mail(){
 		$mail_return = parent::Mail_Send('test','client','andyplanner@photonic.com.tw', "測試回函");
+		dump($mail_return);
 	}
 
 	public function about_map() {

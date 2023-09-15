@@ -64,7 +64,7 @@ class Product extends PublicController {
 					webtype_description') //多加webtype_keywords,webtype_description
 			->find($id);
 			if($product['online'] =='2')
-				$this->error($this->lang_menu['無此頁面'], 'product/typeinfo'); /*此館已關閉*/
+				$this->error(LANG_MENU['無此頁面'], 'product/typeinfo'); /*此館已關閉*/
 		}else{
 			$product = Db::table('product')
 			->field('id,
@@ -158,7 +158,7 @@ class Product extends PublicController {
 		//dump($product);
 		
 		if($product['online'] == '2'){
-			$this->error($this->lang_menu['無此頁面']); /*此館已關閉*/
+			$this->error(LANG_MENU['無此頁面']); /*此館已關閉*/
 		}
 
 		// 製作麵包屑
@@ -310,7 +310,7 @@ class Product extends PublicController {
 	public function productinfo() {
 		$id = Request::instance()->get('id');
 		if(!$id){
-			$this->error($this->lang_menu['無此頁面']); /*商品不存在*/
+			$this->error(LANG_MENU['無此頁面']); /*商品不存在*/
 		}
 
 		/*商品相關設定參數*/
@@ -345,10 +345,10 @@ class Product extends PublicController {
 									 card_pay')
 							->find($id);
 		if( empty($productinfo) ){
-			$this->error($this->lang_menu['無此頁面']); /*商品不存在*/
+			$this->error(LANG_MENU['無此頁面']); /*商品不存在*/
 		}
 		if($productinfo['online'] == '2'){
-			$this->error($this->lang_menu['無此頁面']); /*商品不存在*/
+			$this->error(LANG_MENU['無此頁面']); /*商品不存在*/
 		}	
 
 		$kol_id = Request::instance()->get('kol');
@@ -400,7 +400,7 @@ class Product extends PublicController {
 
 		// 檢查 分館/分類是否關閉 及 麵包屑紀錄是否有效
 		$position = $this->check_product_and_infotype_close($productinfo['final_array'], $title_array);
-		if($position->close){$this->error($this->lang_menu['無此頁面'],'index/index');} /*此館/分類已關閉*/
+		if($position->close){$this->error(LANG_MENU['無此頁面'],'index/index');} /*此館/分類已關閉*/
 
 		/* 依照檢查結果回傳麵包屑紀錄 */
 		if(count($position->title_array)==0){ /*檢查麵包屑無效*/
@@ -528,8 +528,8 @@ class Product extends PublicController {
 		// $layer範例：['prev_id'=>'', 'branch_id'=>''];
 		$layer = (array)$layer;
 		// dump($layer);
-		if(!isset($layer['branch_id'])){ $this->error($this->lang_menu['無此頁面']); }else{ $branch_id=$layer['branch_id']; } /*找不到分類*/
-		if(!isset($layer['prev_id'])){ $this->error($this->lang_menu['無此頁面']); }else{ $prev_id=$layer['prev_id']; } /*找不到分館*/
+		if(!isset($layer['branch_id'])){ $this->error(LANG_MENU['無此頁面']); }else{ $branch_id=$layer['branch_id']; } /*找不到分類*/
+		if(!isset($layer['prev_id'])){ $this->error(LANG_MENU['無此頁面']); }else{ $prev_id=$layer['prev_id']; } /*找不到分館*/
 
 		/*處理分類*/
 		$title_array = [];
@@ -556,8 +556,8 @@ class Product extends PublicController {
 										(typeinfo.start < " . time() . " AND typeinfo.end > " . time() . ")
 										)")
 							->find($id);
-		if(!$typeinfo)$this->error($this->lang_menu['無此頁面']); /*此分類不存在*/
-		if($typeinfo['online']==2)$this->error($this->lang_menu['無此頁面']); /*此分類已關閉*/
+		if(!$typeinfo)$this->error(LANG_MENU['無此頁面']); /*此分類不存在*/
+		if($typeinfo['online']==2)$this->error(LANG_MENU['無此頁面']); /*此分類已關閉*/
 		return $typeinfo;
 	}
 
@@ -674,7 +674,7 @@ class Product extends PublicController {
 	            		'login_time' => time()
 	    			]);
 	        }else{
-	        	$respData['message'] = $this->lang_menu['內容有誤']; /*優惠券不存在*/
+	        	$respData['message'] = LANG_MENU['內容有誤']; /*優惠券不存在*/
 	        }
         }
         return $respData;
@@ -703,7 +703,7 @@ class Product extends PublicController {
         if(!$coupon){
         	return $respData = [
                 'status'  => false,
-                'message' => $this->lang_menu['內容有誤'] /*無此優惠券*/
+                'message' => LANG_MENU['內容有誤'] /*無此優惠券*/
             ];
         }
         $limit_num = $coupon['limit_num']; // 領取數量上限
@@ -724,24 +724,24 @@ class Product extends PublicController {
 	    if( !Session::get('user') ){
 			$respData = [
                 'status'  => false,
-                'message' => $this->lang_menu['請先登入會員']
+                'message' => LANG_MENU['請先登入會員']
             ];
 		}elseif(!$coupon){
 			//  $this->error('這張券不存在');
             $respData = [
                 'status'  => false,
-                'message' => $this->lang_menu['優惠券已全數領取完畢']
+                'message' => LANG_MENU['優惠券已全數領取完畢']
             ];
         }elseif ($coupon_count > $limit_num){
 			//  $this->error('優惠券已領取完畢');
             $respData = [
                 'status'  => false,
-                'message' => $this->lang_menu['您已達優惠券領取上限']
+                'message' => LANG_MENU['您已達優惠券領取上限']
             ];
         }else{
             $respData = [
                 'status'  => true,
-                'message' => $this->lang_menu['操作成功']/*領取成功*/
+                'message' => LANG_MENU['操作成功']/*領取成功*/
             ];
         }
         return $respData;
@@ -772,31 +772,31 @@ class Product extends PublicController {
 
 	public function reg() {
 		if(empty(session('user')['id'])){
-			$this->error($this->lang_menu['請先登入會員']);
+			$this->error(LANG_MENU['請先登入會員']);
 		}
 		if(empty(session('user')['name'])){
-			$this->error($this->lang_menu['請確認會員後台已填寫會員姓名']);
+			$this->error(LANG_MENU['請確認會員後台已填寫會員姓名']);
 		}
 
 		if(empty( Db::table('excel')->where("product_name = '".$_POST['product_name']."'")->select() )){
-			$this->error($this->lang_menu['請先登入會員']);
+			$this->error(LANG_MENU['請先登入會員']);
 		}
 
 		$compare_code = Db::table('excel')->where("product_name = '".$_POST['product_name']."' and product_code = 'XXXXXXXXXXXXXX'")->select();
 		if(empty($compare_code)){ // 當沒有特殊產品序號，要比對有無產品序號
 			if(empty(Db::table('excel')->where("product_code = '".$_POST['product_code']."' and product_name = '".$_POST['product_name']."'")->select() )){
-				$this->error($this->lang_menu['產品序號不存在(請注意前後是否有輸入到空白或英文數字以外的符號)']);
+				$this->error(LANG_MENU['產品序號不存在(請注意前後是否有輸入到空白或英文數字以外的符號)']);
 			}
 		}
 		
 		// 比對是否被註冊過
 		if(!empty(Db::table('excel')->where("product_code = '".$_POST['product_code']."' and product_name = '".$_POST['product_name']."' and status != '0'")->select() )){
-			$this->error($this->lang_menu['產品序號已註冊']);
+			$this->error(LANG_MENU['產品序號已註冊']);
 		}
 
 		// 比對是否僅輸入數字+英文
 		if(preg_match('/^([0-9A-Za-z]+)$/',$_POST['product_code']) ==0 ){
-			$this->error($this->lang_menu['產品序號僅可輸入英文及數字']);
+			$this->error(LANG_MENU['產品序號僅可輸入英文及數字']);
 		}
 
 		$width = 370; $height = 370;
@@ -805,7 +805,7 @@ class Product extends PublicController {
 			$DBFileConnecter = new DBFileConnecter();
 			$_POST['pic'] = 	$DBFileConnecter->fixedFileUp($image, 'reg_' . time(), $width, $height);
 		}else{
-			$this->error($this->lang_menu['請上傳購買證明']);
+			$this->error(LANG_MENU['請上傳購買證明']);
 		}
 
 		$_POST['regtime'] = date('Y-m-d');
@@ -836,7 +836,7 @@ class Product extends PublicController {
 			</html>
 		";
 		$mail_return = parent::Mail_Send($mailBody,'admin','',"註冊商品資訊");
-		$this->success($this->lang_menu['寄送成功，我們已收到您的註冊資料，將盡速為您處理']);
+		$this->success(LANG_MENU['寄送成功，我們已收到您的註冊資料，將盡速為您處理']);
 	}
 
 	/*依商品id取得品項*/
@@ -898,11 +898,11 @@ class Product extends PublicController {
 
 		if( $this->control_register ==1 && $item['is_registrable'] ==1 && $item['expire_date'] < time() && $item['expire_date'] !=-28800){ // 需填寫註冊資料 且 截止日期小於現在時間 且 截止日期不等於-28800
 			$return_item[0]['subtitle'] = '';
-			$return_item[0]['has_price'] = $this->lang_menu['報名已截止'];
+			$return_item[0]['has_price'] = LANG_MENU['報名已截止'];
 			$return_item[0]['idtype'] = '';
 
 			$return_item[0]['originalPrice']	= '';
-            $return_item[0]['offerPrice'] 		= '<span class="price">'.$this->lang_menu['報名已截止'].'</span>';
+            $return_item[0]['offerPrice'] 		= '<span class="price">'.LANG_MENU['報名已截止'].'</span>';
 		}else if ($item['has_price'] == 1){
 								
             /*取得商品所有品項*/						
@@ -917,30 +917,30 @@ class Product extends PublicController {
 
 					if($sv['price']==$sv['count']){
 						$return_item[$sk]['originalPrice']	= '';
-            			$return_item[$sk]['offerPrice'] 	= dolar.dolar_mark.' '.'<span class="price">'.$sv['count'].'</span> '.$this->lang_menu['起'];
+            			$return_item[$sk]['offerPrice'] 	= dolar.dolar_mark.' '.'<span class="price">'.$sv['count'].'</span> '.LANG_MENU['起'];
 					}else{
 						$return_item[$sk]['originalPrice']	= dolar.dolar_mark.' '.$sv['price'];
-            			$return_item[$sk]['offerPrice'] 	= dolar.dolar_mark.' '.'<span class="price">'.$sv['count'].'</span> '.$this->lang_menu['起'];
+            			$return_item[$sk]['offerPrice'] 	= dolar.dolar_mark.' '.'<span class="price">'.$sv['count'].'</span> '.LANG_MENU['起'];
 					}
 				}
 			}else{
 				$return_item[0]['subtitle'] = '';
-				$return_item[0]['has_price'] = $this->lang_menu['請詢價'];
+				$return_item[0]['has_price'] = LANG_MENU['請詢價'];
 				$return_item[0]['idtype'] = '';
 				$return_item[0]['pic_index'] = '';
 
 				$return_item[0]['originalPrice']	= '';
-            	$return_item[0]['offerPrice'] 		= '<span class="price">'.$this->lang_menu['請詢價'].'</span>';
+            	$return_item[0]['offerPrice'] 		= '<span class="price">'.LANG_MENU['請詢價'].'</span>';
 			}
 
 		}else{
 			$return_item[0]['subtitle'] = '';
-			$return_item[0]['has_price'] = $this->lang_menu['請詢價'];
+			$return_item[0]['has_price'] = LANG_MENU['請詢價'];
 			$return_item[0]['idtype'] = '';
 			$return_item[0]['pic_index'] = '';
 
 			$return_item[0]['originalPrice']	= '';
-            $return_item[0]['offerPrice'] 		= '<span class="price">'.$this->lang_menu['請詢價'].'</span>';
+            $return_item[0]['offerPrice'] 		= '<span class="price">'.LANG_MENU['請詢價'].'</span>';
 		}
 
 		// dump($return_item);

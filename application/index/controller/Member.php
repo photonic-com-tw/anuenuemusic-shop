@@ -23,7 +23,7 @@ class Member extends PublicController
 		$referer_url = Request::instance()->server('HTTP_REFERER');
 		// dump($referer_url);exit();
 		if( preg_match('/'.$_SERVER["HTTP_HOST"].'/i', $referer_url) || !$referer_url){
-			if(!$this->user){ $this->error($this->lang_menu['請先登入會員'], url('Login/login'));};
+			if(!$this->user){ $this->error(LANG_MENU['請先登入會員'], url('Login/login'));};
 		}else{
 			if(!$this->user){ $this->redirect(url('Login/login'));};
 		}
@@ -80,13 +80,13 @@ class Member extends PublicController
 		$passwordB = Request::instance()->post('passwordB');
 
 		// if( !preg_match('/([0-9]+)/' ,$passwordA) || !preg_match('/([a-zA-Z]+)/' ,$passwordA) ){
-		// 	$this->error($this->lang_menu['密碼需包含英文及數字']);
+		// 	$this->error(LANG_MENU['密碼需包含英文及數字']);
 		// }
 		if( preg_match('/[^A-Za-z0-9 ]/' ,$passwordA) || strlen($passwordA)<5 || strlen($passwordA)>14 ){
-			$this->error($this->lang_menu['密碼需包含英文及數字']);
+			$this->error(LANG_MENU['密碼需包含英文及數字']);
 		}
 		if($passwordA != $passwordB){
-			$this->error($this->lang_menu['密碼不一致']);
+			$this->error(LANG_MENU['密碼不一致']);
 		}
 
 		$data = [
@@ -97,13 +97,13 @@ class Member extends PublicController
 		try{
 			Db::connect(config('main_db'))->table('account')->update($data);
         } catch (\Exception $e){
-            $this->error($this->lang_menu['發生錯誤']);
+            $this->error(LANG_MENU['發生錯誤']);
 		}
 		$userD = Db::connect(config('main_db'))->table('account')->find($this->user['id']);
 
 		Session::set('user', $userD);
 
-        $this->success($this->lang_menu['操作成功']); /*更新成功*/
+        $this->success(LANG_MENU['操作成功']); /*更新成功*/
 	}
 
 	public function chdata()
@@ -119,13 +119,13 @@ class Member extends PublicController
 			// 'F_S_NH_Zip' => 'require'
 		];
 		$msg = [
-			'name.require' => $this->lang_menu['名稱不得為空'],
-			'phone.require' => $this->lang_menu['手機不得為空'],
-			'phone.number' => $this->lang_menu['手機只能是數字'],
-			'F_S_NH_Address.require' => $this->lang_menu['地址不得為空'],
-			// 'F_I_CNo.require' => $this->lang_menu['請選擇縣市'],
-			// 'F_I_TNo.require' => $this->lang_menu['請選擇區'],
-			// 'F_S_NH_Zip.require' => $this->lang_menu['請確認郵遞區號有填寫'],
+			'name.require' => LANG_MENU['名稱不得為空'],
+			'phone.require' => LANG_MENU['手機不得為空'],
+			'phone.number' => LANG_MENU['手機只能是數字'],
+			'F_S_NH_Address.require' => LANG_MENU['地址不得為空'],
+			// 'F_I_CNo.require' => LANG_MENU['請選擇縣市'],
+			// 'F_I_TNo.require' => LANG_MENU['請選擇區'],
+			// 'F_S_NH_Zip.require' => LANG_MENU['請確認郵遞區號有填寫'],
 		];
 		$validate = new Validate($rule,$msg);
 		$validate->rule('regex', '/^.[A-Za-z0-9]+$/');
@@ -149,12 +149,12 @@ class Member extends PublicController
 			try{
 				Db::connect(config('main_db'))->table('account')->update($data);			
 	        } catch (\Exception $e){
-	            $this->error($this->lang_menu['內容有誤']);
+	            $this->error(LANG_MENU['內容有誤']);
 			}
 			$userD = Db::connect(config('main_db'))->table(	'account')->find($this->user['id']);
 
 			Session::set('user', $userD);
-	        $this->success($this->lang_menu['操作成功']);
+	        $this->success(LANG_MENU['操作成功']);
 	    }else{
 	    	$this->error($validate->getError());
 	    }

@@ -2412,7 +2412,12 @@ margin-left: -6px;
 margin-right: -6px;
 }
 .productIntroBox .pdSpacing {
-padding: 0px 6px;
+  padding: 0px 6px;
+}
+@media only screen and (max-width: 575px){
+  .productIntroBox .pdSpacing.product_title{
+    padding-top: 1rem !important;
+  }
 }
 .productIntroBox .proImgBox {
 margin-bottom: 12px;
@@ -4005,7 +4010,8 @@ font-weight: bold;
 margin-right: 10px;
 color: #000;
 text-align: -webkit-right;
-width: 85px;
+/* width: 85px; */
+width: auto;
 }
 .orderTable.table-rwd td.noData:before {
 content: "";

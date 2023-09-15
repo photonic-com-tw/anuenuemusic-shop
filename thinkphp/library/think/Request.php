@@ -678,6 +678,9 @@ class Request
         if (empty($this->get)) {
             $this->get = $_GET;
         }
+        foreach ($this->get as $key => $value) {
+			$this->get[$key] = param_filter($value);
+		}
         if (is_array($name)) {
             $this->param      = [];
             return $this->get = array_merge($this->get, $name);
@@ -703,6 +706,9 @@ class Request
                 $this->post = $_POST;
             }
         }
+        foreach ($this->post as $key => $value) {
+			$this->post[$key] = param_filter($value);
+		}
         if (is_array($name)) {
             $this->param       = [];
             return $this->post = array_merge($this->post, $name);

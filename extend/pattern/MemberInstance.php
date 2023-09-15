@@ -89,10 +89,8 @@ class MemberInstance
     }
     /*修改會員資料*/
     public function update_user_data($updateData, $cond=[], $change_format=true){
-    	$lang_menu = get_lang_menu();
-
     	$returnData = ['code'=>0, 'msg'=>"", 'data'=>[]];
-    	if( empty($updateData) ){ $returnData['msg'] = $lang_menu['資訊不足']; } /*請提供修改資料*/
+    	if( empty($updateData) ){ $returnData['msg'] = LANG_MENU['資訊不足']; } /*請提供修改資料*/
 
     	if( isset($updateData[self::$account_column]) ){ /*要修改帳號*/
 			/*檢查是否有與「其他」帳號重複*/
@@ -101,7 +99,7 @@ class MemberInstance
 									'a.id'=>array('neq', $this->user_id)
 								]);
 			if($adminData){
-				$returnData['msg'] = $lang_menu['內容有誤']; /*帳號已經存在*/
+				$returnData['msg'] = LANG_MENU['內容有誤']; /*帳號已經存在*/
 				return $returnData;
 			}
 		}
@@ -128,17 +126,16 @@ class MemberInstance
 
     	if($result){
     		$returnData['code'] = 1;
-    		$returnData['msg'] = $lang_menu['操作成功']; /*修改成功*/
+    		$returnData['msg'] = LANG_MENU['操作成功']; /*修改成功*/
     		$returnData['data'] = $this->get_user_data($addr_change="combine", $cond);
     	}else{
-    		$returnData['msg'] == $lang_menu['操作成功']; /*無資料需要修改*/
+    		$returnData['msg'] == LANG_MENU['操作成功']; /*無資料需要修改*/
     	}
 
     	return $returnData;
     }
     /*新增會員資料*/
     public function insert_user_data($newData, $change_format=true){
-    	$lang_menu = get_lang_menu();
     	$returnData = ['code'=>0, 'msg'=>"", 'data'=>[]];
 
     	/* 判斷帳號唯一性 */
@@ -172,7 +169,7 @@ class MemberInstance
 				$accounts = $this->get_user_data($addr_change="ori", $where);
 
 				if($accounts){
-					$returnData['msg'] = $lang_menu['內容有誤']; /*帳號已經存在*/
+					$returnData['msg'] = LANG_MENU['內容有誤']; /*帳號已經存在*/
 					return $returnData;
 				}
 	    	}
@@ -506,7 +503,6 @@ class MemberInstance
 	}
 	/*調整資料格式以符合資料庫*/
 	static public function arrange_data_to_db_format($data){
-		$lang_menu = get_lang_menu();
 		$returnData = ['code'=>0, 'msg'=>"", 'data'=>[]];
 
 		/*設定檢查*/
@@ -515,33 +511,33 @@ class MemberInstance
 				$msg = [];
 				if( isset($data['email']) ){
 					$rule['email'] = 'require|email';
-					$msg['email.email'] = $lang_menu['email格式錯誤'];
-					$msg['email.require'] = $lang_menu['email不得為空'];
+					$msg['email.email'] = LANG_MENU['email格式錯誤'];
+					$msg['email.require'] = LANG_MENU['email不得為空'];
 				}
 				if( isset($data['name']) ){
 					$rule['name'] = 'require';
-					$msg['name.require'] = $lang_menu['名稱不得為空'];
+					$msg['name.require'] = LANG_MENU['名稱不得為空'];
 				}
 				if( isset($data['phone']) ){
 					$rule['phone'] = 'require|number';
-					$msg['phone.require'] = $lang_menu['手機不得為空'];
-					$msg['phone.number'] = $lang_menu['手機只能是數字'];
+					$msg['phone.require'] = LANG_MENU['手機不得為空'];
+					$msg['phone.number'] = LANG_MENU['手機只能是數字'];
 				}
 				if( isset($data['F_S_NH_Address']) ){
 					$rule['F_S_NH_Address'] = 'require';
-					$msg['F_S_NH_Address.require'] = $lang_menu['地址不得為空'];
+					$msg['F_S_NH_Address.require'] = LANG_MENU['地址不得為空'];
 				}
 				// if( isset($data['F_I_CNo']) ){
 				// 	$rule['F_I_CNo'] = 'require';
-				// 	$msg['F_I_CNo.require'] = $lang_menu['請選擇縣市'];
+				// 	$msg['F_I_CNo.require'] = LANG_MENU['請選擇縣市'];
 				// }
 				// if( isset($data['F_I_TNo']) ){
 				// 	$rule['F_I_TNo'] = 'require';
-				// 	$msg['F_I_TNo.require'] = $lang_menu['請選擇區'];
+				// 	$msg['F_I_TNo.require'] = LANG_MENU['請選擇區'];
 				// }
 				// if( isset($data['F_S_NH_Zip']) ){
 				// 	$rule['F_S_NH_Zip'] = 'require';
-				// 	$msg['F_S_NH_Zip.require'] = $lang_menu['請確認郵遞區號有填寫'];
+				// 	$msg['F_S_NH_Zip.require'] = LANG_MENU['請確認郵遞區號有填寫'];
 				// }
 				/*進行驗證*/
 				$validate = new Validate($rule,$msg);
@@ -556,16 +552,16 @@ class MemberInstance
 					$password = isset($data['password']) ? $data['password'] : "";
 					$password = isset($data['pwd']) ? $data['pwd'] : $password;
 					// if( !preg_match('/([0-9]+)/' ,$password) || !preg_match('/([a-zA-Z]+)/' ,$password)){
-					// 	$returnData['msg'] = $lang_menu['密碼需包含英文及數字'];
+					// 	$returnData['msg'] = LANG_MENU['密碼需包含英文及數字'];
 					// 	return $returnData;
 					// }
 					if( preg_match('/[^A-Za-z0-9 ]/' ,$password) || strlen($password)<5 || strlen($password)>14 ){
-						$returnData['msg'] = $lang_menu['密碼需包含英文及數字'];
+						$returnData['msg'] = LANG_MENU['密碼需包含英文及數字'];
 			    		return $returnData;
 					}
 					if( isset($data['passwordB']) ){
 						if($password != $data['passwordB']){
-							$returnData['msg'] = $lang_menu['密碼不一致'];
+							$returnData['msg'] = LANG_MENU['密碼不一致'];
 				    		return $returnData;
 						}
 					}
@@ -583,7 +579,7 @@ class MemberInstance
 		    		if($data['birthday']){
 		    			$data['birthday'] = strtotime($data['birthday']);
 		    			if(!$data['birthday']){
-							$returnData['msg'] = $lang_menu['生日格式請輸入YYYY/MM/DD'];
+							$returnData['msg'] = LANG_MENU['生日格式請輸入YYYY/MM/DD'];
 							return $returnData;
 						}
 		    		}

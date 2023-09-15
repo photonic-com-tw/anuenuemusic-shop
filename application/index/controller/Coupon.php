@@ -17,7 +17,7 @@ class Coupon extends PublicController
 		$consent = Db::table('consent')->where("id=1")->find();
 		$this->assign('consent_other', $consent['other']);
 
-		if(!$this->user){ $this->error($this->lang_menu['請先登入會員'], url('Login/login'));};
+		if(!$this->user){ $this->error(LANG_MENU['請先登入會員'], url('Login/login'));};
 	}
 
 	public function coupon() {
@@ -104,10 +104,10 @@ class Coupon extends PublicController
 				->find();
 
 			if(!$coupon){
-				throw new \Exception($this->lang_menu['內容有誤']); /*找不到這張優惠券*/
+				throw new \Exception(LANG_MENU['內容有誤']); /*找不到這張優惠券*/
 			}
 			if (!sizeof($coupon)) {
-				throw new \Exception($this->lang_menu['內容有誤']); /*找不到這張優惠券*/
+				throw new \Exception(LANG_MENU['內容有誤']); /*找不到這張優惠券*/
 			}
 
 			$coupon_type = Db::table('coupon')
@@ -119,7 +119,7 @@ class Coupon extends PublicController
 				->where('owner', $this->user['id'])
 				->select();
 			if(count($user_coupons)>=$limit_num){
-				throw new \Exception($this->lang_menu['您已達優惠券領取上限']);
+				throw new \Exception(LANG_MENU['您已達優惠券領取上限']);
 			}
 
 			Db::table('coupon_pool')
@@ -132,7 +132,7 @@ class Coupon extends PublicController
             $this->error($e->getMessage());
 		}
 
-		$this->success($this->lang_menu['操作成功']); /*領取成功*/
+		$this->success(LANG_MENU['操作成功']); /*領取成功*/
 	}
 
 	public function transforCoupon() {
@@ -145,7 +145,7 @@ class Coupon extends PublicController
 				->find();
 
 			if (!sizeof($userId)) {
-				throw new \Exception($this->lang_menu['內容有誤']); /*找不到這位會員*/
+				throw new \Exception(LANG_MENU['內容有誤']); /*找不到這位會員*/
 			}
 
 			$couponId = Request::instance()->post('id');
@@ -159,6 +159,6 @@ class Coupon extends PublicController
             $this->error($e->getMessage());
 		}
 
-		$this->success($this->lang_menu['操作成功']); /*轉移成功*/
+		$this->success(LANG_MENU['操作成功']); /*轉移成功*/
 	}
 }

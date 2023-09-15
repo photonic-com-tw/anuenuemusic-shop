@@ -33,7 +33,7 @@ class Cart extends PublicController {
         $this->assign('dolar', dolar);
 
         // $this->error("系統升級中，暫時無法購物");
-        if(!$this->user){ $this->error($this->lang_menu['請先登入會員'], url('Login/login'));};
+        if(!$this->user){ $this->error(LANG_MENU['請先登入會員'], url('Login/login'));};
 
         /* 商品可否設定刷卡 */
         $this->card_pay_set = Db::connect('main_db')->table('excel')->where('id = 7')->find()['value1'];
@@ -265,9 +265,9 @@ class Cart extends PublicController {
         // dump($DiscountProposal->projectData);
 
         /* 處理運費 */
-        if($_GET['send_way']=='undefined') return "<p style='line-height: 1.4285em; font-family: microsoft jhenghei; font-size: 14px;'>".$this->lang_menu['請選擇運送方式，或是此筆訂單的商品有限制個別運送方式，請分開結帳']."</p>";
+        if($_GET['send_way']=='undefined') return "<p style='line-height: 1.4285em; font-family: microsoft jhenghei; font-size: 14px;'>".LANG_MENU['請選擇運送方式，或是此筆訂單的商品有限制個別運送方式，請分開結帳']."</p>";
         $shipping = $this->get_shipping_method($cartData, $_GET['send_way']);
-        if( !$shipping ) return "<p style='line-height: 1.4285em; font-family: microsoft jhenghei; font-size: 14px;'>".$this->lang_menu['無此運送方式']."</p>";
+        if( !$shipping ) return "<p style='line-height: 1.4285em; font-family: microsoft jhenghei; font-size: 14px;'>".LANG_MENU['無此運送方式']."</p>";
 
         if($need_shipfee){
             $shipping[0]['price'] = $DiscountProposal->projectData['Total'] < $shipping[0]['free_rule'] ? $shipping[0]['price'] : 0;
@@ -280,7 +280,7 @@ class Cart extends PublicController {
         //////////////////////////////////////////////////////////////
         //////////////////////////////////////////////////////////////
         if( $DiscountProposal->projectData['Total'] > 20000 && in_array($shipping[0]['name'], ['全家取貨', '7-11取貨', '萊爾富取貨']) ){ //綠界物流金額上限
-            return "<p style='line-height: 1.4285em; font-family: microsoft jhenghei; font-size: 14px;'>".$this->lang_menu['超商取貨無法運送金額超過20,000元之商品']."</p>";
+            return "<p style='line-height: 1.4285em; font-family: microsoft jhenghei; font-size: 14px;'>".LANG_MENU['超商取貨無法運送金額超過20,000元之商品']."</p>";
         }else{
             return $this->fetch('discount');
         }
@@ -322,7 +322,7 @@ class Cart extends PublicController {
 
             //檢查哪種超商取貨
             $send_way = Db::table('shipping_fee')->where('id='.$Order_Data->send_way)->find();
-            if(!$send_way)$this->error($this->lang_menu['無此運送方式']);
+            if(!$send_way)$this->error(LANG_MENU['無此運送方式']);
 
             if($send_way['name'] =="全家取貨"){
                 $LogisticsSubType = \EcpayLogisticsSubType::FAMILY;
@@ -331,7 +331,7 @@ class Cart extends PublicController {
             }elseif ($send_way['name'] =="萊爾富取貨") {
                 $LogisticsSubType = \EcpayLogisticsSubType::HILIFE;
             }else{
-                $this->error($this->lang_menu['無此運送方式']); /*無此超商取件方式*/
+                $this->error(LANG_MENU['無此運送方式']); /*無此超商取件方式*/
             }
 
             $AL->Send = array(
@@ -344,7 +344,7 @@ class Cart extends PublicController {
                 'Device' => $Device
             );
             // CvsMap(Button名稱, Form target)
-            $html = $AL->CvsMap($this->lang_menu['電子地圖(統一)']);
+            $html = $AL->CvsMap(LANG_MENU['電子地圖(統一)']);
             echo $html;
         } catch(Exception $e) {
             echo $e->getMessage();
@@ -355,7 +355,7 @@ class Cart extends PublicController {
         // dump($_POST);
         if(isset($_POST['ExtraData'])){
             $temp_order_data_id = Db::table('temp_order_data')->where('randomkey="'.$_POST['ExtraData'].'" AND over=0')->find();
-            if(!$temp_order_data_id)$this->error($this->lang_menu['資訊不足']); /*請填寫完整訂單內容*/
+            if(!$temp_order_data_id)$this->error(LANG_MENU['資訊不足']); /*請填寫完整訂單內容*/
 
             $cart = json_decode( $temp_order_data_id['cart_data'] );
             Session::set('cart', $temp_order_data_id['cart_data']);
@@ -412,22 +412,22 @@ class Cart extends PublicController {
                     $Product = new Product(Request::instance());
                     $respData = $Product->check_product_and_infotype_close($prod_data['final_array']);
                     if( $prod_data['p_online'] ==2 || $respData->close){
-                        $this->error($this->lang_menu['此筆訂單包含已下架的商品，'].$this->lang_menu['請刪除後再建立訂單']);
+                        $this->error(LANG_MENU['此筆訂單包含已下架的商品，'].LANG_MENU['請刪除後再建立訂單']);
                     }
 
                     // 檢查品項是否被假刪除
                     if( $prod_data['pt_online'] == 0){
-                        $this->error($this->lang_menu['此筆訂單包含不正確的品項，'].$this->lang_menu['請刪除後再建立訂單']);
+                        $this->error(LANG_MENU['此筆訂單包含不正確的品項，'].LANG_MENU['請刪除後再建立訂單']);
                     }
 
                     // 檢查商品是否可刷卡
-                    if( $this->card_pay_set==1 && ($OrderData['pay_way'] == $this->lang_menu['綠界刷卡(一次付清)'] || $OrderData['pay_way'] == $this->lang_menu['綠界刷卡(分期付款)']) && $prod_data['card_pay'] == 0){
-                        $this->error($this->lang_menu['此筆訂單包含不可刷卡之商品，請勿使用刷卡功能']);
+                    if( $this->card_pay_set==1 && ($OrderData['pay_way'] == LANG_MENU['綠界刷卡(一次付清)'] || $OrderData['pay_way'] == LANG_MENU['綠界刷卡(分期付款)']) && $prod_data['card_pay'] == 0){
+                        $this->error(LANG_MENU['此筆訂單包含不可刷卡之商品，請勿使用刷卡功能']);
                     }
 
                     // 檢查商品是還可報名
                     if( $this->control_register== 1 && $prod_data['is_registrable'] == '1' && $prod_data['expire_date'] < time() && $prod_data['expire_date'] != -28800){
-                        $this->error($this->lang_menu['此筆訂單包含已報名截止的商品，'].$this->lang_menu['請刪除後再建立訂單']);
+                        $this->error(LANG_MENU['此筆訂單包含已報名截止的商品，'].LANG_MENU['請刪除後再建立訂單']);
                     }
 
                     /* 檢查商品是否適用點數 */
@@ -462,7 +462,7 @@ class Cart extends PublicController {
 
         if(strpos($OrderData['discount'], 'points_') !== false){
             if($OrderData['point']>$points_limit){
-                $this->error($this->lang_menu['超出可使用點數上限']);
+                $this->error(LANG_MENU['超出可使用點數上限']);
             }
         }
 
@@ -481,10 +481,10 @@ class Cart extends PublicController {
                     $store_num[$prod_id]['num'] = (int)$store_num[$prod_id]['num'] - (int)$v;
                     if($store_num[$prod_id]['num'] < 0){ // 減到小於0表示購買的一般+網紅商品+加價購商品數量超過庫存量
                         $this->error(
-                            $this->lang_menu['商品']."：".$store_num[$prod_id]["pro_name"]."，<br>".
-                            $this->lang_menu['規格']."：".$store_num[$prod_id]["title"]."，<br>".
-                            $this->lang_menu['數量剩下']."：".$store_num[$prod_id]["rest_num"]."，".
-                            $this->lang_menu['請再重新填選數量']
+                            LANG_MENU['商品']."：".$store_num[$prod_id]["pro_name"]."，<br>".
+                            LANG_MENU['規格']."：".$store_num[$prod_id]["title"]."，<br>".
+                            LANG_MENU['數量剩下']."：".$store_num[$prod_id]["rest_num"]."，".
+                            LANG_MENU['請再重新填選數量']
                         );
                     }
                 }
@@ -673,15 +673,15 @@ class Cart extends PublicController {
             }
             // dump($products);exit;
             if( count($products)==0 ){
-                $this->error($this->lang_menu['資訊不足']); /*購物車內無商品，不可建立訂單*/
+                $this->error(LANG_MENU['資訊不足']); /*購物車內無商品，不可建立訂單*/
             }
         //----
 
         // 處理運費
             $shipping = $this->get_shipping_method($cartData, $OrderData['send_way']);
-            if( $OrderData['send_way']==$this->lang_menu['到店取貨'] || !$need_shipfee){ /*商品銷售、到店取貨、不需運費 使用*/
+            if( $OrderData['send_way']==LANG_MENU['到店取貨'] || !$need_shipfee){ /*商品銷售、到店取貨、不需運費 使用*/
                 array_push($products, [
-                    'name' => $this->lang_menu['運費'],
+                    'name' => LANG_MENU['運費'],
                     'price' => 0,
                     'num' => 1,
                     'total' => 0
@@ -689,7 +689,7 @@ class Cart extends PublicController {
                 $shipping[0]['price'] = 0;
 
             }else{ // 有需運送的商品，且配送方式非到店取貨
-                if( !$shipping )$this->error($this->lang_menu['無此運送方式']);
+                if( !$shipping )$this->error(LANG_MENU['無此運送方式']);
                 $OrderData['send_way'] = $shipping[0]['name'];
 
                 if($DiscountProposal->projectData['Total'] > $shipping[0]['free_rule']) { // 如果購物金額超過免運條件
@@ -697,7 +697,7 @@ class Cart extends PublicController {
                 }
 
                 array_push($products, [
-                    'name' => $shipping[0]['name'].$this->lang_menu['運費'],
+                    'name' => $shipping[0]['name'].LANG_MENU['運費'],
                     'price' => $shipping[0]['price'],
                     'num' => 1,
                     'total' => $shipping[0]['price']
@@ -706,7 +706,7 @@ class Cart extends PublicController {
         //----
 
         //create add_point data
-            if($OrderData['pay_way']!=$this->lang_menu['綠界刷卡(分期付款)']){
+            if($OrderData['pay_way']!=LANG_MENU['綠界刷卡(分期付款)']){
                 if($OrderData['discount'] == 'none_discount' && empty($this->Front_name['點數設定'])){
                     $point_rate = (float)Db::table('points_setting')->find(3)['value'];
                     $add_point = floor(($DiscountProposal->projectData['Total'] - $DiscountProposal->projectData['acts']['sumNoneGetPoint']) / $point_rate);
@@ -730,15 +730,15 @@ class Cart extends PublicController {
 
                     if (($acValue['type']==1)|($acValue['type']==3))
                         $discountFinal[] = [
-                                            'type'=>$this->lang_menu['活動'],
+                                            'type'=>LANG_MENU['活動'],
                                             'name'=>$acValue['name'],
-                                            'count'=>$this->lang_menu['打'].$actDiscount.$this->lang_menu['折'],
+                                            'count'=>LANG_MENU['打'].$actDiscount.LANG_MENU['折'],
                                             'product'=>$acValue['prod']];
                     else
                         $discountFinal[] = [
-                                            'type'=>$this->lang_menu['活動'],
+                                            'type'=>LANG_MENU['活動'],
                                             'name'=>$acValue['name'],
-                                            'count'=>$this->lang_menu['扣'].$actDiscount.$this->lang_menu['元'],
+                                            'count'=>LANG_MENU['扣'].$actDiscount.LANG_MENU['元'],
                                             'product'=>$acValue['prod']
                                         ];
                 }
@@ -749,9 +749,9 @@ class Cart extends PublicController {
             }else if($discountData[0] == "firstbuy"){ // 會員首購優惠
                 $discountFinalData['discount'] = urldecode(json_encode([
                     [
-                        'type' => urlencode($this->lang_menu['會員首購優惠']),
+                        'type' => urlencode(LANG_MENU['會員首購優惠']),
                         'name' => urlencode($DiscountProposal->projectData['firstBuyDiscount']['vip_name']),
-                        'count' => urlencode($this->lang_menu['扣'] . $DiscountProposal->projectData['firstBuyDiscount']['discount'] . '元'),
+                        'count' => urlencode(LANG_MENU['扣'] . $DiscountProposal->projectData['firstBuyDiscount']['discount'] . '元'),
                     ]
                 ]));
                 $discountFinalData['total'] = $DiscountProposal->projectData['Total'] - $DiscountProposal->projectData['firstBuyDiscount']['discount'];
@@ -759,9 +759,9 @@ class Cart extends PublicController {
             }else if($discountData[0] == "vipdiscount"){ // VIP會員優惠
                 $discountFinalData['discount'] = urldecode(json_encode([
                     [
-                        'type' => urlencode($this->lang_menu['VIP會員優惠']),
+                        'type' => urlencode(LANG_MENU['VIP會員優惠']),
                         'name' => urlencode($DiscountProposal->projectData['vipDiscount']['vip_name']),
-                        'count' => urlencode($this->lang_menu['扣'] . $DiscountProposal->projectData['vipDiscount']['discount'] . '元'),
+                        'count' => urlencode(LANG_MENU['扣'] . $DiscountProposal->projectData['vipDiscount']['discount'] . '元'),
                     ]
                 ]));
                 $discountFinalData['total'] = $DiscountProposal->projectData['Total'] - $DiscountProposal->projectData['vipDiscount']['discount'];
@@ -789,11 +789,11 @@ class Cart extends PublicController {
         //ps for uniform_numbers and company_title
             $ps = '';
             if($OrderData['uniform_numbers'] != ''){
-                $ps .= $this->lang_menu['統一編號'].'：' . $OrderData['uniform_numbers'];
+                $ps .= LANG_MENU['統一編號'].'：' . $OrderData['uniform_numbers'];
             }
 
             if($OrderData['company_title'] != ''){
-                $ps .= $this->lang_menu['公司抬頭'].'：' . $OrderData['company_title'];
+                $ps .= LANG_MENU['公司抬頭'].'：' . $OrderData['company_title'];
             }
         //----
 
@@ -928,10 +928,10 @@ class Cart extends PublicController {
             }
         }
 
-        if($OrderData['pay_way']!=$this->lang_menu['綠界刷卡(一次付清)'] && $OrderData['pay_way']!=$this->lang_menu['綠界刷卡(分期付款)']){
+        if($OrderData['pay_way']!=LANG_MENU['綠界刷卡(一次付清)'] && $OrderData['pay_way']!=LANG_MENU['綠界刷卡(分期付款)']){
             $globalMailData = parent::getMailData();
 
-            $new_order_letter = $this->lang_menu['訂單成功消費者信'];
+            $new_order_letter = LANG_MENU['訂單成功消費者信'];
             $new_order_letter = str_replace("{globalMailData_mailFromName}", $globalMailData['mailFromName'], $new_order_letter);
             $new_order_letter = str_replace("{Service_Tel}", Service_Tel, $new_order_letter);
             $mailBody = "
@@ -940,18 +940,18 @@ class Cart extends PublicController {
                     <body>
                         <div>
                             ".$new_order_letter."
-                            ".$this->lang_menu['訂單編號']."：".$o[0]['order_number']."<br>
-                            ".$this->lang_menu['訂單時間']."：".date('Y/m/d H:i',$o[0]['create_time'])."<br>
-                            ".$this->lang_menu['訂購商品']."：".$res_goods."<br>
-                            ".$this->lang_menu['訂單金額']."：".$OrderData['total']."<br>
-                            ".$this->lang_menu['購買人']."：".$this->user['name']."<br>
-                            ".$this->lang_menu['收件人']."：".$o[0]['transport_location_name']."<br>
-                            ".$this->lang_menu['出貨地址']."：".$o[0]['transport_location']."<br>
+                            ".LANG_MENU['訂單編號']."：".$o[0]['order_number']."<br>
+                            ".LANG_MENU['訂單時間']."：".date('Y/m/d H:i',$o[0]['create_time'])."<br>
+                            ".LANG_MENU['訂購商品']."：".$res_goods."<br>
+                            ".LANG_MENU['訂單金額']."：".$OrderData['total']."<br>
+                            ".LANG_MENU['購買人']."：".$this->user['name']."<br>
+                            ".LANG_MENU['收件人']."：".$o[0]['transport_location_name']."<br>
+                            ".LANG_MENU['出貨地址']."：".$o[0]['transport_location']."<br>
                             E-mail：".$OrderData['email']."<br>
-                            ".$this->lang_menu['手機號碼']."：".$o[0]['transport_location_phone']."<br>
-                            ".$this->lang_menu['聯絡電話']."：".$o[0]['transport_location_tele']."<br>
-                            ".$this->lang_menu['付款方式']."：".$o[0]['payment']."<br>
-                            ".$this->lang_menu['備註']."：".$o[0]['transport_location_textarea']."<br>
+                            ".LANG_MENU['手機號碼']."：".$o[0]['transport_location_phone']."<br>
+                            ".LANG_MENU['聯絡電話']."：".$o[0]['transport_location_tele']."<br>
+                            ".LANG_MENU['付款方式']."：".$o[0]['payment']."<br>
+                            ".LANG_MENU['備註']."：".$o[0]['transport_location_textarea']."<br>
                         </div>
                         <div>
                         ". $globalMailData['system_email']['order_complete'] ."
@@ -959,7 +959,7 @@ class Cart extends PublicController {
                     </body>
                 </html>
             ";
-            $mail_return = parent::Mail_Send($mailBody,'client',$OrderData['email'],$this->lang_menu['訂單成功資訊']);
+            $mail_return = parent::Mail_Send($mailBody,'client',$OrderData['email'],LANG_MENU['訂單成功資訊']);
             $mailBody = "
                 <html>
                     <head></head>
@@ -991,13 +991,13 @@ class Cart extends PublicController {
 
 
         if($this->ecpay_card==1){
-            if($OrderData['pay_way']==$this->lang_menu['綠界刷卡(一次付清)'] || $OrderData['pay_way']==$this->lang_menu['綠界刷卡(分期付款)']){
+            if($OrderData['pay_way']==LANG_MENU['綠界刷卡(一次付清)'] || $OrderData['pay_way']==LANG_MENU['綠界刷卡(分期付款)']){
                 $this->ecpy_card_pay($OrderData);
             }
-            else if($OrderData['pay_way']==$this->lang_menu['Paypal']){
+            else if($OrderData['pay_way']==LANG_MENU['Paypal']){
                 $this->paypal_pay($OrderData);
             }
-            else if($OrderData['pay_way']==$this->lang_menu['支付寶'] || $OrderData['pay_way']==$this->lang_menu['微信支付']){
+            else if($OrderData['pay_way']==LANG_MENU['支付寶'] || $OrderData['pay_way']==LANG_MENU['微信支付']){
                 $this->tsbc_pay($OrderData);
             }
         }else if($this->tspg_card==1){
@@ -1035,7 +1035,7 @@ class Cart extends PublicController {
             $obj->Send['MerchantTradeNo']   = $MerchantTradeNo;                          //訂單編號
             $obj->Send['MerchantTradeDate'] = date('Y/m/d H:i:s');                       //交易時間
             $obj->Send['TotalAmount']       = (int)$OrderData['total'];                  //交易金額
-            $obj->Send['TradeDesc']         = $globalMailData['mailFromName'].$this->lang_menu['訂單'];   //交易描述
+            $obj->Send['TradeDesc']         = $globalMailData['mailFromName'].LANG_MENU['訂單'];   //交易描述
             $obj->Send['ChoosePayment']     = \ECPay_PaymentMethod::Credit ;              //付款方式:Credit
             $backurl ="";
 
@@ -1048,7 +1048,7 @@ class Cart extends PublicController {
 
             //訂單的商品資料
             array_push($obj->Send['Items'], [
-                'Name' => $globalMailData['mailFromName'].$this->lang_menu['訂單'],
+                'Name' => $globalMailData['mailFromName'].LANG_MENU['訂單'],
                 'Price' => (int)$OrderData['total'],
                 'Currency' => "元",
                 'Quantity' => (int) "1",
@@ -1058,11 +1058,11 @@ class Cart extends PublicController {
             echo $e->getMessage();
         }
 
-        if($OrderData['pay_way'] == $this->lang_menu['綠界刷卡(一次付清)']) {
+        if($OrderData['pay_way'] == LANG_MENU['綠界刷卡(一次付清)']) {
             $obj->CheckOut();
         }
 
-        if($OrderData['pay_way'] == $this->lang_menu['綠界刷卡(分期付款)']) {
+        if($OrderData['pay_way'] == LANG_MENU['綠界刷卡(分期付款)']) {
             $obj->SendExtend['CreditInstallment'] = CreditInstallment;         //分期期數，預設0(不分期)，信用卡分期可用參數為:3,6,12,18,24
             $obj->SendExtend['InstallmentAmount'] = (int)$OrderData['total'] ;  //使用刷卡分期的付款金額，預設0(不分期)
             $obj->SendExtend['Redeem'] = false ;                                //是否使用紅利折抵，預設false
@@ -1071,7 +1071,7 @@ class Cart extends PublicController {
         }
     }
     private function paypal_pay($OrderData){
-        if($OrderData['pay_way']==$this->lang_menu['Paypal']){
+        if($OrderData['pay_way']==LANG_MENU['Paypal']){
             $backurl = "https://".$_SERVER['SERVER_NAME']."/index/paypal/callback";
 
             $globalMailData = parent::getMailData();
@@ -1081,12 +1081,12 @@ class Cart extends PublicController {
                 $res = $Paypal->pay($OrderData['order_number'], $OrderData['total'], $globalMailData['mailFromName'], $backurl, $OrderData['id']);
                 exit;
             }catch (\Exception $e){
-                $this->error($this->lang_menu['交易有誤，'].$this->lang_menu['請稍後再試'], url('orderform/orderform_success', ['id' => $OrderData['order_number']]) );
+                $this->error(LANG_MENU['交易有誤，'].LANG_MENU['請稍後再試'], url('orderform/orderform_success', ['id' => $OrderData['order_number']]) );
             }
         }
     }
     private function tsbc_pay($OrderData){
-        if($OrderData['pay_way']==$this->lang_menu['支付寶'] || $OrderData['pay_way']==$this->lang_menu['微信支付']) {
+        if($OrderData['pay_way']==LANG_MENU['支付寶'] || $OrderData['pay_way']==LANG_MENU['微信支付']) {
             $backurl = "https://".$_SERVER['SERVER_NAME']."/index/orderform/orderform_success/id/".$OrderData['order_number'];
 
             $globalMailData = parent::getMailData();
@@ -1094,14 +1094,14 @@ class Cart extends PublicController {
             $Tsbc = new Tsbc();
             $res = $Tsbc->auth($OrderData, $globalMailData['mailFromName'], $backurl);
             if($res){
-                $this->success($this->lang_menu['已生成付款QRcode，再請您掃碼付款'], url('orderform/orderform_success', ['id' => $OrderData['order_number']]) );
+                $this->success(LANG_MENU['已生成付款QRcode，再請您掃碼付款'], url('orderform/orderform_success', ['id' => $OrderData['order_number']]) );
             }else{
-                $this->error($this->lang_menu['生成付款QRcode有誤，'].$this->lang_menu['請稍後再試'], url('orderform/orderform_success', ['id' => $OrderData['order_number']]) );
+                $this->error(LANG_MENU['生成付款QRcode有誤，'].LANG_MENU['請稍後再試'], url('orderform/orderform_success', ['id' => $OrderData['order_number']]) );
             }
         }
     }
     private function tspg_card_pay($OrderData){
-        if($OrderData['pay_way']==$this->lang_menu['台新刷卡(一次付清)']) {
+        if($OrderData['pay_way']==LANG_MENU['台新刷卡(一次付清)']) {
 
             $backurl = "https://".$_SERVER['SERVER_NAME']."/index/orderform/orderform_success/id/".$OrderData['order_number'];
 
@@ -1114,7 +1114,7 @@ class Cart extends PublicController {
                 $this->redirect($res->params->hpp_url);
                 // $this->redirect($res->params->post_back_url);
             }else{
-                $this->error($this->lang_menu['交易有誤，'].$this->lang_menu['請稍後再試'], url('orderform/orderform_success', ['id' => $OrderData['order_number']]) );
+                $this->error(LANG_MENU['交易有誤，'].LANG_MENU['請稍後再試'], url('orderform/orderform_success', ['id' => $OrderData['order_number']]) );
             }
         }
     }
@@ -1187,7 +1187,7 @@ class Cart extends PublicController {
                         if( $store_num[$cart_key_id]['online']==0){
                             return json([
                                 'status' => false,
-                                'message' => $this->lang_menu['內容有誤'], /*不存在此品項*/
+                                'message' => LANG_MENU['內容有誤'], /*不存在此品項*/
                                 'num' => Request::instance()->post('num'),
                             ], 200);
                         }
@@ -1227,7 +1227,7 @@ class Cart extends PublicController {
                     if($num_limit){
                         return json([
                             'status' => false,
-                            'message' => $this->lang_menu['庫存不足'],
+                            'message' => LANG_MENU['庫存不足'],
                             'num' => Request::instance()->post('num'),
                         ], 200);
                         exit;
@@ -1255,7 +1255,7 @@ class Cart extends PublicController {
                     if($num_limit){
                         return json([
                             'status' => false,
-                            'message' => $this->lang_menu['超出加價購數量上限'],
+                            'message' => LANG_MENU['超出加價購數量上限'],
                             'num' => Request::instance()->post('num'),
                         ], 200);
                     }

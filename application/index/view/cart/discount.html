@@ -213,9 +213,11 @@
               <div id="pointDiv">
                 {volist name="discountData.points" id="vo" empty=""}
                 {$lang_menu['使用']}{$lang_menu['紅利']}：
-                <input id="point" value="0" size="10">{$lang_menu['點']}
-                {$lang_menu['目前剩餘紅利']} {$vo.point}，{$lang_menu['本次可用']} {$points_limit}{$lang_menu['點']}</input>
-                <input id="point_old" type="hidden" value="points_{$vo.point}" size="10"></input>
+                <input id="point" value="0" size="10">{$lang_menu['點']}<br>
+                {$lang_menu['目前剩餘紅利']} {$vo.point}
+                |
+                {$lang_menu['本次可用']}{$points_limit}
+                <input id="point_old" type="hidden" value="points_{$vo.point}" size="10">
                 {/volist}
               </div>
             </div>
@@ -461,7 +463,7 @@
         alert("{$lang_menu['超過您的點數']}");
         return;
       }
-      $('#discount').text("{$lang_menu['扣']}" + $(item).val() + {$lang_menu['元']});
+      $('#discount').text("{$lang_menu['扣']}" + $(item).val() + "{$lang_menu['元']}");
       var total = {$discountData.Total} - $(item).val();
       total = total < 0 ? 0:total;
       // $('#ck_coupon').val("point_"+$('#point_old').val());

@@ -22,8 +22,6 @@ class couponDiscount extends Discount
     }
 
     private function getDiscount(){
-        $lang_menu = get_lang_menu();
-
         $coupon = Db::table('coupon_pool')
              ->field('
                     coupon_pool.id AS coupon_pool_id, 
@@ -39,9 +37,9 @@ class couponDiscount extends Discount
         return [
             'discount' => [
                 [
-                    'type' => urlencode($lang_menu['優惠券']),
-                    'name' => urlencode($lang_menu['名稱'].'：' . $coupon['coupon_title']),
-                    'count' => urlencode($lang_menu['扣'] . $coupon['discount'] . $lang_menu['元']),
+                    'type' => urlencode(LANG_MENU['優惠券']),
+                    'name' => urlencode($coupon['coupon_title']),
+                    'count' => urlencode(LANG_MENU['扣'] . $coupon['discount'] . LANG_MENU['元']),
                     'coupon_pool_id' => $coupon['coupon_pool_id']
                 ]
             ],

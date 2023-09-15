@@ -5,69 +5,62 @@
 {block name="css"}{/block}
 
 {block name="flulid_content"}
-    <!-- <section class="container max-wideVersion directoryRow">
-        <ul class="clearfix">
-            <li><a href="{$MAIN_WEB_LAN}/">首頁</a><i class="icon-right"></i></li>
-            <li><a href="{:url('Member/reg_product_sign')}">產品註冊</a></li>
-        </ul>
-    </section> -->
     <div class="d-flex justify-content-center">
         <div class="w-100 bg_anuenue bg_pic d-flex justify-content-center">
             <section class="reg_prod_area box_show bg_white max-wideVersion productPublic">
                 <div class="pt_sxsmal pb_ssmal">
                     <h3 class="page_title">
-                        產品註冊
+                        {$lang_menu['產品註冊']}
                     </h3>
                 </div>
                 <form action="{:url('Product/reg')}" method="post" name="prodRegForm" enctype="multipart/form-data" class="w-100">
                     <div class="form-group col-12">
-                        <label class="col-form-label">產品種類</label>
+                        <label class="col-form-label">{$lang_menu['產品種類']}</label>
                         <select name="product_name" id="product_name" class="ui fluid selection dropdown no label use-btn">
-                            <option value="">請選擇產品種類</option>
-                            {volist name="excel" id="vo" empty="沒有數據"}
+                            <option value="">{$lang_menu['請選擇']}</option>
+                            {volist name="excel" id="vo" empty=""}
                             <option value="{$vo.product_name}">{$vo.product_name}</option>
                             {/volist}
                         </select>
                     </div>
 
                     <div class="form-group col-12">
-                        <label for="product_type_code" class="col-form-label">產品型號</label>
-                        <input type="text" name="product_type_code" class="form-control" id="product_type_code" placeholder="位於音孔內側的內貼型號" value="" required>
+                        <label for="product_type_code" class="col-form-label">{$lang_menu['產品型號']}</label>
+                        <input type="text" name="product_type_code" class="form-control" id="product_type_code" 
+                               placeholder="{$lang_menu['位於音孔內側的內貼型號']}" value="" required>
                     </div>
                     
                     <div class="form-group col-12">
-                        <label for="product_code">產品序號</label>
-                        <input type="text" name="product_code" class="form-contro form-control" id="product_code" placeholder="英文字母＋6位數字" value="" required>
+                        <label for="product_code">{$lang_menu['產品序號']}</label>
+                        <input type="text" name="product_code" class="form-contro form-control" id="product_code" placeholder="{$lang_menu['英文字母＋6位數字']}" value="" required>
                     </div>
                     
                     <div class="form-group col-12">
-                        <label for="buytime">購買日期</label>
-                        <!-- <input type="" name="buytime" id="buytime" class="form-control" placeholder="購買日期" value="" required> -->
-                        <input type="date" name="buytime" id="buytime" class="form-control" placeholder="購買日期" required>
+                        <label for="buytime">{$lang_menu['購買日期']}</label>
+                        <input type="date" name="buytime" id="buytime" class="form-control" required>
                     </div>
                     <div class="form-group col-12">
-                        <label for="tax_ID_number" class="col-form-label">購買店家</label>
-                        <input type="text" name="tax_ID_number" class="form-control" id="tax_ID_number" placeholder="經銷商名稱/網路商城名稱" value="" required>
+                        <label for="tax_ID_number" class="col-form-label">{$lang_menu['購買店家']}</label>
+                        <input type="text" name="tax_ID_number" class="form-control" id="tax_ID_number" placeholder="{$lang_menu['經銷商名稱/網路商城名稱']}" value="" required>
                     </div>
                     <div class="form-group col-12">
-                        <label for="image">購買證明</label>
-                        <label for="image" class="btn bg_light_gray color_white m-0 mr-3">上傳圖片</label>
+                        <label for="image">{$lang_menu['購買證明']}</label>
+                        <label for="image" class="btn bg_light_gray color_white m-0 mr-3">{$lang_menu['上傳圖片']}</label>
                         <span>
-                            *請上傳蓋有購買店家店章與購買日期之保證卡照片或<br>
-                            具任何購買證明圖片。圖片大小請在2MB以內。
+                            {$lang_menu['上傳購買證明圖片說明']}
                         </span>
                     </div>
                     <div class="image-box col-12 mb-4 d-flex justify-content-center">
-                        <img class="no_pic" src="/public/static/index/anuenuemusic/images/shop/no_pic.gif" />
+                        <img class="no_pic" src="/public/static/index/anuenuemusic/images/shop/no_pic.jpg" />
                         <img id="pic_preview" class="preview" name="image" />
                         <input class="invisible position-absolute" type='file' ref="img" id="image" class="upl" name="image" accept="image/*">
                     </div>
                     <div class="row p-0 pb-4">
                         <div class="form-group col-4 text-center registrationModel">
-                            <a class="btn rounded bg_gray color_white w-100" onclick="location.reload()">取消</a>
+                            <a class="btn rounded bg_gray color_white w-100" onclick="location.reload()">{$lang_menu['取消']}</a>
                         </div>
                         <div class="form-group col-8 text-center registrationModel">
-                            <a class="btn rounded bg_gray color_white w-100" onclick="reg_check()">註冊</a>
+                            <a class="btn rounded bg_gray color_white w-100" onclick="reg_check()">{$lang_menu['註冊']}</a>
                         </div>
                     </div>
                 </form>
@@ -92,27 +85,27 @@
     <script>
         function reg_check() {
             if ($('#product_name').val() == '') {
-                alert('請選擇產品種類');
+                alert("{$lang_menu['請選擇產品種類']}");
                 return;
             }
             if ($('#product_type_code').val() == '') {
-                alert('請輸入產品型號');
+                alert("{$lang_menu['請輸入產品型號']}");
                 return;
             }
             if ($('#product_code').val() == '') {
-                alert('請輸入產品序號');
+                alert("{$lang_menu['請輸入產品序號']}");
                 return;
             }
             if ($('#buytime').val() == '') {
-                alert('請選擇購買日期');
+                alert("{$lang_menu['請選擇購買日期']}");
                 return;
             }
             if ($('#tax_ID_number').val() == '') {
-                alert('請輸入購買店家');
+                alert("{$lang_menu['請輸入購買店家']}");
                 return;
             }
             if ($('#image').val() == '') {
-                alert('請上傳購買證明');
+                alert("{$lang_menu['請上傳購買證明']}");
                 return;
             }
 

@@ -87,7 +87,7 @@ class Tsbc extends PublicController
 		$mail->AddAddress($email);
 		$mail->IsHTML(true);
 
-		$paid_order_letter = $this->lang_menu['訂單已付款消費者信'];
+		$paid_order_letter = LANG_MENU['訂單已付款消費者信'];
         $paid_order_letter = str_replace("{order_number}", $o['order_number'], $paid_order_letter);
         $paid_order_letter = str_replace("{id}", $o['id'], $paid_order_letter);
 		$mail->Body = $paid_order_letter;
@@ -101,9 +101,9 @@ class Tsbc extends PublicController
 		$request_url = "https://".(self::API_ROOT)."/gwMerchantApiQRCodePlus.ashx";
 
 		$data = [ "amount" => (Int)$OrderData['total'] ];
-		if($OrderData['pay_way']==$this->lang_menu['支付寶']){
+		if($OrderData['pay_way']==LANG_MENU['支付寶']){
 			$data['gw'] = "ALIPAY_O";
-		}else if($OrderData['pay_way']==$this->lang_menu['微信支付']){
+		}else if($OrderData['pay_way']==LANG_MENU['微信支付']){
 			$data['gw'] = "WEIXIN_O";
 		}else{
 			return;
@@ -156,9 +156,9 @@ class Tsbc extends PublicController
 
 		$o=Db::connect('main_db')->table('orderform')->join('account','orderform.user_id = account.id')->where('orderform.order_number', $orderid)->find();
 		if($o){
-			if($o['payment']==$this->lang_menu['支付寶']){
+			if($o['payment']==LANG_MENU['支付寶']){
 				$data['gw'] = "ALIPAY_O";
-			}else if($o['payment']==$this->lang_menu['微信支付']){
+			}else if($o['payment']==LANG_MENU['微信支付']){
 				$data['gw'] = "WEIXIN_O";
 			}
 		}
@@ -190,12 +190,12 @@ class Tsbc extends PublicController
 				Db::connect('main_db')->table('orderform')->where('order_number', $orderid)->update([
 					'receipts_state' => 1,
 				]);
-				$this->success($this->lang_menu['交易已確認付款'], url('orderform/orderform_c', ['id' => $orderid]));
+				$this->success(LANG_MENU['交易已確認付款'], url('orderform/orderform_c', ['id' => $orderid]));
 			}else{
-				$this->error($this->lang_menu['交易未付款，請完成付款後再進行交易確認'], url('orderform/orderform_c', ['id' => $orderid]));
+				$this->error(LANG_MENU['交易未付款，請完成付款後再進行交易確認'], url('orderform/orderform_c', ['id' => $orderid]));
 			}
 		}else{
-			$this->error($this->lang_menu['查詢交易有誤，請使用補單更新交易'], url('orderform/orderform'));
+			$this->error(LANG_MENU['查詢交易有誤，請使用補單更新交易'], url('orderform/orderform'));
 		}
 	}
 	public function cancel_pay($orderid=""){
@@ -205,12 +205,12 @@ class Tsbc extends PublicController
 		$request_url = "https://".(self::API_ROOT)."/gwMerchantApiRefund.ashx";
 		
 		$data = [ "amount" => (Int)$orderform['total'] ];
-		if($orderform['payment']==$this->lang_menu['支付寶']){
+		if($orderform['payment']==LANG_MENU['支付寶']){
 			$data['gw'] = "ALIPAY_O";
-		}else if($orderform['payment']==$this->lang_menu['微信支付']){
+		}else if($orderform['payment']==LANG_MENU['微信支付']){
 			$data['gw'] = "WEIXIN_O";
 		}else{
-			$this->error($this->lang_menu['訂單內容有誤，無法退款']);
+			$this->error(LANG_MENU['訂單內容有誤，無法退款']);
 		}
 
 		$data['merchantid'] = self::MERCHANTID;
@@ -237,7 +237,7 @@ class Tsbc extends PublicController
 		// dump($xml);exit;
 
 		if($xml['return_code']=="000"){
-			$this->success($this->lang_menu['交易完成退款'], url('orderform/orderform_c', ['id' => $orderid]));
+			$this->success(LANG_MENU['交易完成退款'], url('orderform/orderform_c', ['id' => $orderid]));
 		}else{
 			$this->error($xml['return_message'], url('orderform/orderform_c', ['id' => $orderid]));
 		}

@@ -27,7 +27,7 @@ class Orderform extends PublicController{
 
 
 	public function orderform() {
-		if(!$this->user){ $this->error($this->lang_menu['請先登入會員'], url('Login/login'));};
+		if(!$this->user){ $this->error(LANG_MENU['請先登入會員'], url('Login/login'));};
 
 		$orderform = Db::connect('main_db')
 				->table('orderform')
@@ -51,7 +51,7 @@ class Orderform extends PublicController{
 
 
 	public function history() {
-		if(!$this->user){ $this->error($this->lang_menu['請先登入會員'], url('Login/login'));};
+		if(!$this->user){ $this->error(LANG_MENU['請先登入會員'], url('Login/login'));};
 		
 		if($this->user == null){
 			$this->redirect('Index/index');
@@ -84,9 +84,9 @@ class Orderform extends PublicController{
 				if($res->params->ret_code == '00'){
 					$Tspg->send_order_complete_email($id);
 				}
-				echo("<script>alert('".$this->lang_menu['信用卡交易成功，但收款狀態可能不會即時更新，若1日後仍無更新，請來電洽詢']."')</script>");
+				echo("<script>alert('".LANG_MENU['信用卡交易成功，但收款狀態可能不會即時更新，若1日後仍無更新，請來電洽詢']."')</script>");
 			}else{
-				echo("<script>alert('".$this->lang_menu['信用卡交易失敗，請點選補單按鈕再次進行交易']."')</script>");
+				echo("<script>alert('".LANG_MENU['信用卡交易失敗，請點選補單按鈕再次進行交易']."')</script>");
 			}
 		}
 
@@ -162,7 +162,7 @@ class Orderform extends PublicController{
 			if($reportNumber == ''){
 				return json([
 					'status' => false,
-					'message' => $this->lang_menu['內容有誤'] /*不可為空*/
+					'message' => LANG_MENU['內容有誤'] /*不可為空*/
 				], 200);
 			}
 
@@ -172,7 +172,7 @@ class Orderform extends PublicController{
 				return;
 			}
 			if($this->user == null && $Order_data['user_id'] != 0){ // 訂單為會員訂單，且未登入會員
-				$this->error($this->lang_menu['請先登入會員']);
+				$this->error(LANG_MENU['請先登入會員']);
 			}
 
 			$Order = OrderFactory::createOrder($id, $this->order_tableName, $this->coupon_tableName);
@@ -247,9 +247,9 @@ class Orderform extends PublicController{
 		if ($id != '' && $id != null){
 			$this->Order = OrderFactory::createOrder($id, $this->order_tableName, $this->coupon_tableName);
 			$this->Order->changeStatus2Cancel('消費者取消');
-			$this->success($this->lang_menu['操作成功']);
+			$this->success(LANG_MENU['操作成功']);
 		}else{
-			$this->error($this->lang_menu['發生錯誤']);
+			$this->error(LANG_MENU['發生錯誤']);
 		}
 	}
 
@@ -263,7 +263,7 @@ class Orderform extends PublicController{
 		if ($singleData){
 			if ($singleData['user_id']!=0){
 				if (!Session::get('user')){
-					$retData = ['status' => 200,'order_number'=>$singleData['order_number'],'info'=>$this->lang_menu['請先登入會員']];
+					$retData = ['status' => 200,'order_number'=>$singleData['order_number'],'info'=>LANG_MENU['請先登入會員']];
 				}else{
 					$retData = ['status' => 200,'order_number'=>$singleData['order_number'],'info'=>''];
 				}
@@ -314,7 +314,7 @@ class Orderform extends PublicController{
 			$search = " and ex.order_id not in (".join(",",$order_id_cancel).")";
 		}
 
-		$id = Request::instance()->post('id_card')?? $this->error($this->lang_menu['請輸入身分證'],'orderform/tracking_registration');;
+		$id = Request::instance()->post('id_card')?? $this->error(LANG_MENU['請輸入身分證'],'orderform/tracking_registration');;
 		// $pw = Request::instance()->post('password')??'977878';
 
 		$re = Db::table('examinee_info ex')

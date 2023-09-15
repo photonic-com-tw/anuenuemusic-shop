@@ -22,6 +22,12 @@ class PublicController extends Controller{
 	public function __construct(Request $request)
 	{
 		parent::__construct();
+		foreach ($_POST as $key => $value) {
+			$_POST[$key] = param_filter($value);
+		}
+		foreach ($_GET as $key => $value) {
+			$_GET[$key] = param_filter($value);
+		}
 
 		/***版面控制***/
 		$controller = strtolower($request->controller());
@@ -59,7 +65,7 @@ class PublicController extends Controller{
 		if($ck == 1){
 			$this->redirect(url('Login/signup'));
 			// $this->redirect(MAIN_WEB_LAN);
-			$this->error($this->lang_menu['無此頁面']);
+			$this->error(LANG_MENU['無此頁面']);
 		}
 
 		$this->assign('Front_name',$Front_name);
@@ -122,12 +128,12 @@ class PublicController extends Controller{
 					$index_excel[15]['product']['has_price'] = $price[0]['count'];
 				}else{
 					$index_excel[15]['product']['subtitle'] = '';
-					$index_excel[15]['product']['has_price'] = $this->lang_menu['請詢價'];
+					$index_excel[15]['product']['has_price'] = LANG_MENU['請詢價'];
 				}
 
 			}else{
 				$index_excel[15]['product']['subtitle'] = '';
-				$index_excel[15]['product']['has_price'] = $this->lang_menu['請詢價'];
+				$index_excel[15]['product']['has_price'] = LANG_MENU['請詢價'];
 			}
 			$index_excel[15]['product']['pic'] = json_decode($index_excel[15]['product']['pic'],true)[0];
 		}
@@ -146,12 +152,12 @@ class PublicController extends Controller{
 					$index_excel[16]['product']['has_price'] = $price[0]['count'];
 				}else{
 					$index_excel[16]['product']['subtitle'] = '';
-					$index_excel[16]['product']['has_price'] = $this->lang_menu['請詢價'];
+					$index_excel[16]['product']['has_price'] = LANG_MENU['請詢價'];
 				}		
 
 			} else {
 				$index_excel[16]['product']['subtitle'] = '';
-				$index_excel[16]['product']['has_price'] = $this->lang_menu['請詢價'];
+				$index_excel[16]['product']['has_price'] = LANG_MENU['請詢價'];
 			}
 			$index_excel[16]['product']['pic'] = json_decode($index_excel[16]['product']['pic'],true)[0];
 		}
@@ -247,10 +253,10 @@ class PublicController extends Controller{
 	public function dumpException(\Exception $e) {
 		if(Config::get('app_debug')){
 			$this->assign('waitSecond', 5);
-			$this->error($this->lang_menu['發生錯誤'].'：' . $e->getMessage());
+			$this->error(LANG_MENU['發生錯誤'].'：' . $e->getMessage());
 		}else{
 			$this->assign('waitSecond', 1);
-			$this->error($this->lang_menu['發生錯誤']); /*'操作失敗，請洽管理員'*/
+			$this->error(LANG_MENU['發生錯誤']); /*'操作失敗，請洽管理員'*/
 		}
 	}
 
@@ -260,7 +266,7 @@ class PublicController extends Controller{
 		}else{
 			$this->assign('waitSecond', 1);
 		}
-		$this->error($this->lang_menu['發生錯誤'].'：' . $errorMessage);
+		$this->error(LANG_MENU['發生錯誤'].'：' . $errorMessage);
 	}
 
 	public function product_species($id) {
@@ -321,12 +327,11 @@ class PublicController extends Controller{
 		$system_email = Db::connect($config_db)->table('system_email')->where("id=1")->select()[0];
 		$return_email = Db::table('admin')->field('email')->where("email IS NOT NULL")->select();
 
-		$lang_menu = get_lang_menu();
 		$globalMailData = [
 			'mailHost'		 =>	Mail_Host,
 			'mailUsername'	 =>	Mail_Username,
 			'mailPassword'	 =>	Mail_Password,
-			'mailSubject'	 =>	$seo[0]['title'].' '.$lang_menu['系統信箱'],
+			'mailSubject'	 =>	$seo[0]['title'].' '.LANG_MENU['系統信箱'],
 			'mailFrom'		 =>	Mail_Username,
 			'mailFromName'	 =>	$seo[0]['title'],
 			'system_email'	 => $system_email,

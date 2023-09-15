@@ -5,13 +5,6 @@
 {block name="css"}{/block}
 
 {block name="flulid_content"}
-    <!-- <section class="container max-wideVersion directoryRow">
-        <ul class="clearfix">
-            <li><a href="{$MAIN_WEB_LAN}/">首頁</a><i class="icon-right"></i></li>
-            <li><a href="{:url('Member/member')}">{$lang_menu['會員專區']}</a><i class="icon-right"></i></li>
-            <li><a href="{:url('Member/reg_product')}">{$lang_menu['產品註冊紀錄']}</a></li>
-        </ul>
-    </section> -->
     <div class="d-flex justify-content-center">
         <div class="w-100 bg_anuenue bg_pic d-flex justify-content-center">
             <section class="reg_prod_area box_show bg_white max-wideVersion productPublic">
@@ -43,11 +36,11 @@
                         <tbody>
                             {volist name="userD" id="vo" empty=""}
                             <tr>
-                                <td data-th="{$lang_menu['產品種類']}"><span>{$vo.product_name} </span></td>
-                                <td data-th="{$lang_menu['產品型號']}"><span>{$vo.product_type_code} </span></td>
-                                <td data-th="{$lang_menu['產品序號']}"><span>{$vo.product_code} </span></td>
-                                <td data-th="{$lang_menu['購買日期']}"><span>{$vo.buytime} </span></td>
-                                <td data-th="{$lang_menu['註冊日期']}"><span>{$vo.regtime} </span></td>
+                                <td data-th="{$lang_menu['產品種類']}">{$vo.product_name}</td>
+                                <td data-th="{$lang_menu['產品型號']}">{$vo.product_type_code}</td>
+                                <td data-th="{$lang_menu['產品序號']}">{$vo.product_code}</td>
+                                <td data-th="{$lang_menu['購買日期']}">{$vo.buytime}</td>
+                                <td data-th="{$lang_menu['註冊日期']}">{$vo.regtime}</td>
                                 <td data-th="{$lang_menu['購買店家']}">{$vo.tax_ID_number}</td>
                             </tr>
                             {/volist}

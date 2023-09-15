@@ -15,10 +15,10 @@ class Login extends PublicController {
 		parent::__construct(request()->instance());
 
 		self::$ACCOUNT_MODE = [
-			$this->lang_menu['審核中'], 
-			$this->lang_menu['通過'], 
-			$this->lang_menu['黑名單'], 
-			$this->lang_menu['停用']
+			LANG_MENU['審核中'], 
+			LANG_MENU['通過'], 
+			LANG_MENU['黑名單'], 
+			LANG_MENU['停用']
 		];
 	}
 
@@ -37,8 +37,8 @@ class Login extends PublicController {
 			'password' => 'require'
 		];
 		$msg = [
-			'email.require' => $this->lang_menu['帳號不得為空'],
-			'password.require' => $this->lang_menu['密碼不得為空']
+			'email.require' => LANG_MENU['帳號不得為空'],
+			'password.require' => LANG_MENU['密碼不得為空']
 		];
 		$validate = new Validate($rule,$msg);
 		$data = [
@@ -56,19 +56,19 @@ class Login extends PublicController {
 		if($adminData){
 			if($adminData[0]['pwd'] == md5($password)){
 				if($adminData[0]['status'] == '0'){
-					$this->error($this->lang_menu['請先去到您的MAIL收取驗証信 點擊連結後帳號才會開通喔！']);
+					$this->error(LANG_MENU['請先去到您的MAIL收取驗証信 點擊連結後帳號才會開通喔！']);
 				}else if($adminData[0]['status'] == '3'){
-					$this->error($this->lang_menu['帳號為審核中或停用，無法登入']);
+					$this->error(LANG_MENU['帳號為審核中或停用，無法登入']);
 				}
 
 				Session::set('user', $adminData[0]);
-				$this->success($this->lang_menu['操作成功'], url('Member/member')); /*登入成功*/
+				$this->success(LANG_MENU['操作成功'], url('Member/member')); /*登入成功*/
 
 			}else{
-				$this->error($this->lang_menu['內容有誤']); /*密碼錯誤*/
+				$this->error(LANG_MENU['內容有誤']); /*密碼錯誤*/
 			}
 		}else{
-			$this->error($this->lang_menu['內容有誤']); /*$email.'帳號不存在'*/
+			$this->error(LANG_MENU['內容有誤']); /*$email.'帳號不存在'*/
 		}
 	}
 
@@ -125,16 +125,16 @@ class Login extends PublicController {
 		];
 
 		$msg = [
-			'name.require' => $this->lang_menu['名稱不得為空'],
-			'email.email' => $this->lang_menu['帳號格式錯誤'],
-			'email.require' => $this->lang_menu['帳號不得為空'],
-			'mobile.require' => $this->lang_menu['手機不得為空'],
-			'mobile.number' => $this->lang_menu['手機只能是數字'],
-			'term.accepted' => $this->lang_menu['請確認已閱讀，並同意遵守本網站之會員條款'],
-			'F_S_NH_Address.require' => $this->lang_menu['地址不得為空'],
-			// 'F_I_CNo.require' => $this->lang_menu['請選擇縣市'],
-			// 'F_I_TNo.require' => $this->lang_menu['請選擇區'],
-			// 'F_S_NH_Zip.require' => $this->lang_menu['請確認郵遞區號有填寫'],
+			'name.require' => LANG_MENU['名稱不得為空'],
+			'email.email' => LANG_MENU['帳號格式錯誤'],
+			'email.require' => LANG_MENU['帳號不得為空'],
+			'mobile.require' => LANG_MENU['手機不得為空'],
+			'mobile.number' => LANG_MENU['手機只能是數字'],
+			'term.accepted' => LANG_MENU['請確認已閱讀，並同意遵守本網站之會員條款'],
+			'F_S_NH_Address.require' => LANG_MENU['地址不得為空'],
+			// 'F_I_CNo.require' => LANG_MENU['請選擇縣市'],
+			// 'F_I_TNo.require' => LANG_MENU['請選擇區'],
+			// 'F_S_NH_Zip.require' => LANG_MENU['請確認郵遞區號有填寫'],
 		];
 
 		$validate = new Validate($rule,$msg);
@@ -153,14 +153,14 @@ class Login extends PublicController {
 
 		if ($validate->check($data)) {
 			if(!preg_match("/^[A-Za-z0-9]{6,14}$/", $password)){
-				$this->error($email . $this->lang_menu['密碼需包含英文及數字']);
+				$this->error($email . LANG_MENU['密碼需包含英文及數字']);
 			}
 			$where = [
 				'email' => $email
 			];
 			$adminData = Db::connect(config('main_db'))->table('account')->where($where)->limit(1)->select();
 			if($adminData){
-				$this->error($email . $this->lang_menu['帳號已被使用']);
+				$this->error($email . LANG_MENU['帳號已被使用']);
 			}else{
 				if( preg_match('/([0-9]+)/' ,$password) && preg_match('/([a-zA-Z]+)/' ,$password)){
 
@@ -184,7 +184,7 @@ class Login extends PublicController {
 						$newData['number'] = config('subDeparment') . 'US' . date('Ymd') . $count;
 						$globalMailData = parent::getMailData();
 
-						$do_signup_letter = $this->lang_menu['註冊消費者信'];
+						$do_signup_letter = LANG_MENU['註冊消費者信'];
             			$do_signup_letter = str_replace("{name}", $name, $do_signup_letter);
             			$do_signup_letter = str_replace("{mailFromName}", $globalMailData['mailFromName'], $do_signup_letter);
 						$verify_url = "http://".$_SERVER['HTTP_HOST']."/index/login/signcheck.html?id=".$email;
@@ -202,7 +202,7 @@ class Login extends PublicController {
 								</html>
 								";
 
-						$mail_return = parent::Mail_Send($mailBody,'client',$email,$this->lang_menu['註冊通知']);
+						$mail_return = parent::Mail_Send($mailBody,'client',$email,LANG_MENU['註冊通知']);
 						if ($mail_return) {
 							$mailBody = "
 								<html>
@@ -226,14 +226,14 @@ class Login extends PublicController {
 							$this->redirect('Login/signup_complete');
 							$this->success('註冊成功，已寄出註冊信', 'Login/signup');
 						}else{
-							$this->error($this->lang_menu['驗證信寄送有誤']);// 输出错误信息
+							$this->error(LANG_MENU['驗證信寄送有誤']);// 输出错误信息
 						}
 						
 					}else{
-						$this->error($this->lang_menu['密碼不一致']);
+						$this->error(LANG_MENU['密碼不一致']);
 					}
 				}else{
-					$this->error($this->lang_menu['密碼需包含英文及數字']);
+					$this->error(LANG_MENU['密碼需包含英文及數字']);
 				}
 			}
 		}else{
@@ -248,9 +248,9 @@ class Login extends PublicController {
 	public function signcheck() {
 		$name = Request::instance()->get('id');
 		if(Db::connect(config('main_db'))->table('account')->where('email', $name)->update(['status' => '1'])){
-			$this->success($this->lang_menu['操作成功'], 'index/index');
+			$this->success(LANG_MENU['操作成功'], 'index/index');
 		}else{
-			$this->success($this->lang_menu['內容有誤'], 'index/index');
+			$this->success(LANG_MENU['內容有誤'], 'index/index');
 		}
 	}
 
@@ -265,7 +265,7 @@ class Login extends PublicController {
 			$email=$main[0]['email'];
 			$time=base64_encode(time());
 
-			$forget_password_letter = $this->lang_menu['密碼重設消費者信'];
+			$forget_password_letter = LANG_MENU['密碼重設消費者信'];
 			$forget_password_letter = str_replace("{name}", $name, $forget_password_letter);
 			$forget_password_letter = str_replace("{date_time}", date("Y-m-d H:i:s"), $forget_password_letter);
 			$forget_password_letter = str_replace("{mailFromName}", $globalMailData['mailFromName'], $forget_password_letter);
@@ -296,7 +296,7 @@ class Login extends PublicController {
 				</html>
 			";
 			// dump($mailBody);exit;
-			$mail_return = parent::Mail_Send($mailBody,'client',$email,$this->lang_menu['密碼重設通知']);
+			$mail_return = parent::Mail_Send($mailBody,'client',$email,LANG_MENU['密碼重設通知']);
 			$oekd = $email;
 		}
 
@@ -315,7 +315,7 @@ class Login extends PublicController {
 
 		$now_time=(time()-$asef)/60;
 		if($id=='' or $now_time > 30){
-			$this->error($this->lang_menu['無此頁面'], url('index/index'));
+			$this->error(LANG_MENU['無此頁面'], url('index/index'));
 		}
 
 		$this->assign('id', base64_decode($id));
@@ -330,14 +330,14 @@ class Login extends PublicController {
 		$re_password = Request::instance()->post('re_password');
 
 		if($password != $re_password){
-			$this->error($this->lang_menu['密碼不一致']);
+			$this->error(LANG_MENU['密碼不一致']);
 		}else if( !preg_match('/([0-9]+)/' ,$password) || !preg_match('/([a-zA-Z]+)/' ,$password) ){
-			$this->error($this->lang_menu['密碼需包含英文及數字']);
+			$this->error(LANG_MENU['密碼需包含英文及數字']);
 		}else{
 			if(Db::connect('main_db')->table('account')->where('email', $id)->update(['pwd'=> md5($password)])){
-				$this->success($this->lang_menu['操作成功'], 'index/index');
+				$this->success(LANG_MENU['操作成功'], 'index/index');
 			}else{
-				$this->error($this->lang_menu['您輸入的密碼與原密碼相同，請重新輸入']);
+				$this->error(LANG_MENU['您輸入的密碼與原密碼相同，請重新輸入']);
 			}
 		}
 	}
@@ -372,14 +372,14 @@ class Login extends PublicController {
 				$adminData = Db::connect(config('main_db'))->table('account')->where("gmail = '".$userEmail."'")->limit(1)->select();
 				if($adminData){
 					if($adminData[0]['status'] == '0' || $adminData[0]['status'] == '3'){
-						$this->error($this->lang_menu['此帳號無法登入，請連繫客服人員']);
+						$this->error(LANG_MENU['此帳號無法登入，請連繫客服人員']);
 					}
 					Session::set('user', $adminData[0]);
 					//Session::set('cart','[]');
 					return true;
 
 				}else{
-					$this->error($this->lang_menu['內容有誤']);
+					$this->error(LANG_MENU['內容有誤']);
 				}
 				//$this->success('登入成功', 'Index/index');
 			}else{
@@ -387,19 +387,19 @@ class Login extends PublicController {
 				$adminData = Db::connect(config('main_db'))->table('account')->where("gmail = '".$userEmail."'")->limit(1)->select();
 				if($adminData){
 					if($adminData[0]['status'] == '0' || $adminData[0]['status'] == '3'){
-						$this->error($this->lang_menu['此帳號無法登入，請連繫客服人員']);
+						$this->error(LANG_MENU['此帳號無法登入，請連繫客服人員']);
 					}	
 					Session::set('user', $adminData[0]);
 					//Session::set('cart','[]');
 					return true;
 				}else{
-					$this->error($this->lang_menu['內容有誤']);
+					$this->error(LANG_MENU['內容有誤']);
 				}
 					//$this->success('登入成功', 'Index/index');
 			}
 		}else{//做開通
 			if(Db::connect(config('main_db'))->table('account')->where("gmail = '".$userEmail."' and email IS NOT NULL ")->limit(1)->select()){
-				return $this->lang_menu['內容有誤'];
+				return LANG_MENU['內容有誤'];
 				// return '此google已註冊';
 
 			}else if(empty(Db::connect(config('main_db'))->table('account')->where("gmail = '".$userEmail."'")->limit(1)->select())){//都沒有直接加
@@ -456,7 +456,7 @@ class Login extends PublicController {
 				//dump($newData);
 				Db::connect(config('main_db'))->table('account')->where("email = '".$this->user['email']."'")->update($newData);		
 				Session::set("user.gmail",$email);
-				return $this->lang_menu['內容有誤'];
+				return LANG_MENU['內容有誤'];
 			}		
 		}
 	}
@@ -488,13 +488,13 @@ class Login extends PublicController {
 			$adminData = Db::connect(config('main_db'))->table('account')->where("FB_id = '".$userEmail."'")->limit(1)->select();
 			if($adminData){
 				if($adminData[0]['status'] == '0' || $adminData[0]['status'] == '3'){
-						$this->error($this->lang_menu['此帳號無法登入，請連繫客服人員']);
+						$this->error(LANG_MENU['此帳號無法登入，請連繫客服人員']);
 				}
 				Session::set('user', $adminData[0]);
 				//Session::set('cart','[]');
 				return true;
 			}else{
-				$this->error($this->lang_menu['內容有誤']);
+				$this->error(LANG_MENU['內容有誤']);
 			}								
 		}	
 	}
@@ -503,7 +503,7 @@ class Login extends PublicController {
 		$userEmail = $_POST['U3'];
 		$userName = $_POST['ig'];
 		if(Db::connect(config('main_db'))->table('account')->where("FB_id = '".$userEmail."' and email IS NOT NULL ")->limit(1)->select()){
-			return $this->lang_menu['內容有誤'];
+			return LANG_MENU['內容有誤'];
 
 		}else if(empty(Db::connect(config('main_db'))->table('account')->where("FB_id = '".$userEmail."'")->limit(1)->select())){//都沒有直接加
 			$aa = Db::connect(config('main_db'))->table('account')->where("email = '".$this->user['email']."'")->update(['FB_id' => $userEmail]);
@@ -570,13 +570,13 @@ class Login extends PublicController {
 
 			if($adminData){
 				if($adminData[0]['status'] == '0' || $adminData[0]['status'] == '3'){
-					$this->error($this->lang_menu['此帳號無法登入，請連繫客服人員']);
+					$this->error(LANG_MENU['此帳號無法登入，請連繫客服人員']);
 				}
 				Session::set('user', $adminData[0]);
 				//Session::set('cart','[]');
 				return true;
 			}else{
-				$this->error($this->lang_menu['內容有誤']);
+				$this->error(LANG_MENU['內容有誤']);
 			}
 		}}
 	/*商城帳號綁定 line*/
@@ -585,7 +585,7 @@ class Login extends PublicController {
 		$userEmail = $_POST['U3'];
 		$userName = $_POST['ig'];
 		if(Db::connect(config('main_db'))->table('account')->where("line_id = '".$userEmail."' and email IS NOT NULL ")->limit(1)->select()){
-			return $this->lang_menu['內容有誤'];
+			return LANG_MENU['內容有誤'];
 
 		}else if(empty(Db::connect(config('main_db'))->table('account')->where("line_id = '".$userEmail."'")->limit(1)->select())){//都沒有直接加
 			Db::connect(config('main_db'))->table('account')->where("email = '".$this->user['email']."'")->update(['line_id' => $userEmail]);
@@ -637,12 +637,12 @@ class Login extends PublicController {
 			if(!empty($aa = Db::connect(config('main_db'))->table('account')->where("email = '".$id."'")->select())){
 				$aa = $aa[0];
 				if($aa[$aim] == $user_new){
-					return $this->lang_menu['內容有誤'];
+					return LANG_MENU['內容有誤'];
 					// '此會員已註冊';
 					exit;
 				}
 				if($aa[$aim] != ''){
-					return $this->lang_menu['內容有誤'];
+					return LANG_MENU['內容有誤'];
 					// '此會員已開通';
 					exit;
 				}
@@ -676,11 +676,11 @@ class Login extends PublicController {
 					Db::connect(config('main_db'))->table('account')->delete($user_new['id']);//合併完刪除
 					return 1;
 				}else{
-					return $this->lang_menu['內容有誤'];
+					return LANG_MENU['內容有誤'];
 					// '密碼錯誤'
 				}
 			}else{
-				return $this->lang_menu['內容有誤'];
+				return LANG_MENU['內容有誤'];
 				// '找不到帳密'
 			}
 		}
@@ -693,7 +693,7 @@ class Login extends PublicController {
 				echo "<option value='".$v['AutoNo']."'>".$v['Name']."</option>";
 			}
 		}else{
-			echo "<option value=''>".$this->lang_menu['請選擇區']."</option>";
+			echo "<option value=''>".LANG_MENU['請選擇區']."</option>";
 		}
 	}
 	public function ZIP_ajax(){	
@@ -701,7 +701,7 @@ class Login extends PublicController {
 		if(!empty($town = Db::table('town')->where("AutoNo = '".$_POST["TNo"]."'")->select())){
 			echo $town[0]['Post'];
 		}else{
-			echo $this->lang_menu['內容有誤'];
+			echo LANG_MENU['內容有誤'];
 		}
 	}
 

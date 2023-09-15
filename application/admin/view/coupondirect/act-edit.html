@@ -143,7 +143,11 @@
                             </div>
                             <div class="info-div">
                                 優惠券代碼：<span class="text-danger">*</span>
-                                <input type="text" value="{$singleData.user_code}" name="user_code" style="border:none" placeholder="消費者使用此代碼取得優惠" class="w-c100">
+                                <input type="text" value="{$singleData.user_code}" name="user_code" style="border:none" placeholder="消費者輸入此代碼可享優惠" class="w-c100">
+                            </div>
+                            <div class="info-div">
+                                限制使用次數：<span class="text-danger">*</span>
+                                <input type="number" value="{$singleData.limit_num}" name="limit_num" style="border:none" placeholder="同一消費者使可用此代碼次數" class="w-c100">
                             </div>
                             <div class="info-div" style="height:140px;">
                                 注意簡介

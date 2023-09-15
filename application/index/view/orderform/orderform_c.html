@@ -242,17 +242,17 @@
                             {volist name="singleData.discount" id="discount"}
                                 <tr>
                                     <td colspan="4">
-                                        <p><span>【{$discount.type}】</span>{$discount.name}-<span>{$discount.count}</span></p>
+                                        <p class="text-right">【{$discount.type}】{$discount.name}:{$discount.count}</p>
                                     </td>
                                 </tr>
                             {/volist}
                             {if condition="$singleData.freediscount != 0"}
                                 <tr>
                                     <td colspan="4">
-                                        <p>
-                                            <span>【{$lang_menu['折扣']}】</span>
-                                            <span>{$lang_menu['購物現折']-</span>
-                                            <span>{$dolar_mark}{$singleData.freediscount}</span>
+                                        <p class="text-right">
+                                            【{$lang_menu['折扣']}】
+                                            {$lang_menu['購物現折']}:
+                                            {$dolar_mark}{$singleData.freediscount}
                                         </p>
                                     </td>
                                 </tr>
@@ -260,22 +260,22 @@
                         </tbody>
                     </table>
                     <hr>
-                    <div class="row">
+                    <div class="row m-0">
                         <div class="col-lg-6">
                             {empty name="$Front_name['點數設定']"}
-                                <span>{$lang_menu['本訂單增加紅利']}<span>{$singleData.add_point}{$lang_menu['點']}</span></span>
+                                {$lang_menu['本訂單增加紅利']}:{$singleData.add_point}
                             {/empty}
                         </div>
-                        <div class="col-lg-6">
-                            <span>{$lang_menu['訂單金額']}<span>{$singleData.total}</span></span>
+                        <div class="col-lg-6 text-right">
+                            {$lang_menu['訂單金額']}:{$singleData.total}
 
                             {if condition="$singleData.AllPayLogisticsID != ''"}
-                                <a class="use-btn float-right" data-toggle="modal" data-target="#logisticModel"><span>{$lang_menu['查看物流狀態']}</span></a>
+                                <a class="use-btn float-right" data-toggle="modal" data-target="#logisticModel">{$lang_menu['查看物流狀態']}</a>
                             {/if}
                         </div>
                     </div>
                     <hr>
-                    <div class="row">
+                    <div class="row m-0">
                         <p class="col-lg-6">{$lang_menu['購買人']}：<span>{$singleData.name}</span></p>
                         <p class="col-lg-6">{$lang_menu['收件人']}：<span>{$singleData.transport_location_name}</span></p>
                         <p class="col-lg-6">{$lang_menu['出貨地址']}：<span>{$singleData.transport_location}</span></p>

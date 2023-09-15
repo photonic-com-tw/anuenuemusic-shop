@@ -18,11 +18,9 @@ use pattern\PointRecords;
 class pointsdiscount extends discount
 {
     public function getdiscountAndTotal($OrderData) {
-        $lang_menu = get_lang_menu();
-
         $PointRecords = new PointRecords($OrderData['id']);
         $records = $PointRecords->add_records([
-            'msg'           => $lang_menu['使用紅利線上購物'],
+            'msg'           => LANG_MENU['使用紅利線上購物'],
             'points'        => $this->discountId * (-1),
             'belongs_time'  => time()
         ]);
@@ -31,9 +29,9 @@ class pointsdiscount extends discount
             'total' => $this->total - $this->discountId,
             'discount' => urldecode(json_encode([
                 [
-                    'type' => urlencode($lang_menu['紅利']),
-                    'name' => urlencode($lang_menu['使用'] . (int)$this->discountId . $lang_menu['點']),
-                    'count' => urlencode($lang_menu['扣'] . (int)$this->discountId . $lang_menu['元']),
+                    'type' => urlencode(LANG_MENU['紅利']),
+                    'name' => urlencode(LANG_MENU['使用'] . (int)$this->discountId . LANG_MENU['點']),
+                    'count' => urlencode(LANG_MENU['扣'] . (int)$this->discountId . LANG_MENU['元']),
 					'dis' => (int)$this->discountId
                 ]
             ]))

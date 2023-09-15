@@ -71,9 +71,7 @@ class Controller
     {
         $this->assign('MAIN_WEB', MAIN_WEB);            /*主形象網站*/
         $this->assign('MAIN_WEB_LAN', MAIN_WEB_LAN);    /*主形象網站-語言版*/
-        $lang_menu = get_lang_menu();
-        $this->lang_menu = $lang_menu;
-        $this->assign('lang_menu', $lang_menu);
+        $this->assign('lang_menu', LANG_MENU);
         $subDeparment = config('subDeparment');
         $this->assign('subDeparment', $subDeparment);
     }

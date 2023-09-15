@@ -24,10 +24,10 @@ class Kol extends PublicController {
         $this->resTableName = 'kol';
 
         self::$ACCOUNT_MODE = [
-            $this->lang_menu['審核中'], 
-            $this->lang_menu['通過'], 
-            $this->lang_menu['黑名單'], 
-            $this->lang_menu['停用']
+            LANG_MENU['審核中'], 
+            LANG_MENU['通過'], 
+            LANG_MENU['黑名單'], 
+            LANG_MENU['停用']
         ];
     }
 
@@ -39,8 +39,8 @@ class Kol extends PublicController {
 			'password' => 'require'
 		];
 		$msg = [
-			'email.require' => $this->lang_menu['帳號不得為空'],
-			'password.require' => $this->lang_menu['密碼不得為空']
+			'email.require' => LANG_MENU['帳號不得為空'],
+			'password.require' => LANG_MENU['密碼不得為空']
 		];
 		$validate = new Validate($rule,$msg);
 		$data = [
@@ -60,13 +60,13 @@ class Kol extends PublicController {
 			if($kolData[0]['password'] == $password){
 
 				Session::set('kol', $kolData[0]);
-				$this->success($this->lang_menu['操作成功'], url('kol/kol_data')); /*登入成功*/
+				$this->success(LANG_MENU['操作成功'], url('kol/kol_data')); /*登入成功*/
 
 			}else{
-				$this->error($this->lang_menu['內容有誤']); /*密碼錯誤*/
+				$this->error(LANG_MENU['內容有誤']); /*密碼錯誤*/
 			}
 		}else{
-			$this->error($this->lang_menu['內容有誤']); /*$email.'帳號不存在'*/
+			$this->error(LANG_MENU['內容有誤']); /*$email.'帳號不存在'*/
 		}
 	}
 
@@ -77,7 +77,7 @@ class Kol extends PublicController {
 
 	public function check_login(){
 		if( empty(session::get('kol')) ){
-			$this->error($this->lang_menu['請以網紅身分登入'], url('Index/index'));
+			$this->error(LANG_MENU['請以網紅身分登入'], url('Index/index'));
 		}else{
 			// dump(session::get('kol'));
 			return true;
@@ -178,7 +178,7 @@ class Kol extends PublicController {
 		$kol_startdate = $kol['start_date'];
         $kol_counttdate = (int)$kol['count_days'];
 
-        $period = Request::instance()->get('period') ? Request::instance()->get('period') : $this->error($this->lang_menu['請選擇期數']); // 所選期數
+        $period = Request::instance()->get('period') ? Request::instance()->get('period') : $this->error(LANG_MENU['請選擇期數']); // 所選期數
         $this->assign('period', $period);
 
         // 依期數取得標訂單
@@ -206,9 +206,9 @@ class Kol extends PublicController {
 		// 計算當下與開始計算當下時間與該網紅指定開賣日的差異
         $period_now = $this->get_current_period($kol_startdate, $kol_counttdate); // 取得當前期數 
         if($period<=0){
-            $this->error($this->lang_menu['內容有誤']); /*期數選擇有誤*/
+            $this->error(LANG_MENU['內容有誤']); /*期數選擇有誤*/
         }else if( $period_now-$period < 2){ // 當前期數與所選期數相差小於2期，則不能看
-            $this->error($this->lang_menu['內容有誤']); /*此期數尚未拋轉至結算中，無法查看*/
+            $this->error(LANG_MENU['內容有誤']); /*此期數尚未拋轉至結算中，無法查看*/
         }
 
         $s_time = date('Y-m-d', strtotime($kol_startdate)).' +'.($kol_counttdate*($period-1)).'Days';
@@ -443,15 +443,15 @@ class Kol extends PublicController {
 			$kol_startdate = $kol['start_date'];
 	        $kol_counttdate = (int)$kol['count_days'];
 	    }else if(session::get('admin')){ // 用admin登入則依查詢值看
-	        $kol_id = $_POST['kol_id'] ? $_POST['kol_id'] : $this->error($this->lang_menu['資訊不足']); /*請選擇網紅*/
+	        $kol_id = $_POST['kol_id'] ? $_POST['kol_id'] : $this->error(LANG_MENU['資訊不足']); /*請選擇網紅*/
 	        $kol = Db::table($this->resTableName)->find($kol_id);
 	        $kol_startdate = $kol['start_date'];
 	        $kol_counttdate = (int)$kol['count_days'];
 	    }else{ // 都沒有就不允許使用
-	    	$this->error($this->lang_menu['請以網紅身分登入']);
+	    	$this->error(LANG_MENU['請以網紅身分登入']);
 	    }
 
-        $type = $_POST['type'] ? $_POST['type'] : $this->error($this->lang_menu['資訊不足']); /*請選結算類型*/
+        $type = $_POST['type'] ? $_POST['type'] : $this->error(LANG_MENU['資訊不足']); /*請選結算類型*/
 
         // 不設時間，取得所有已結算的訂單
         $return_data = $this->get_target_order($kol_id, $kol_startdate, $kol_counttdate, $type);
@@ -495,9 +495,9 @@ class Kol extends PublicController {
 	    	$kol = session::get('kol');
 			$kol_id = $kol['id'];
 	    }else if(session::get('admin')){ // 用admin登入則依查詢值看
-	        $kol_id = $_GET['kol_id'] ? $_GET['kol_id'] : $this->error($this->lang_menu['資訊不足']); /*請選擇網紅*/
+	        $kol_id = $_GET['kol_id'] ? $_GET['kol_id'] : $this->error(LANG_MENU['資訊不足']); /*請選擇網紅*/
 	    }else{ // 都沒有就不允許使用
-	    	$this->error($this->lang_menu['請以網紅身分登入']);
+	    	$this->error(LANG_MENU['請以網紅身分登入']);
 	    }
     	$productinfo = Db::table('productinfo p')
                     ->field('p.id, p.title, p.product_id, p.pic, kp.kol_id')

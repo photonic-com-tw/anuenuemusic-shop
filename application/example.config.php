@@ -8,6 +8,97 @@
 // +----------------------------------------------------------------------
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
+//自定義共用變數
+define('MAIN_WEB', 'https://anuenuemusic.com');    //主形象網站
+define('MAIN_WEB_LAN', 'https://anuenuemusic.com');//主形象網站-語言版
+
+//自定義共用變數
+/*商品固定欄位，設定-1為隱藏*/
+define('property1', '副標：'); //文字
+define('property2', '-1'); //文字
+define('property3', '-1'); //文字
+
+/*FB 粉專*/
+define('FB_PAGE_URL', 'https://www.facebook.com/Crm傳訊光科技股份有限公司-358077690789/');
+
+/*edm網址*/
+define('EDM_URL', 'shop-edm.sprlight.net');
+
+/*LINE*/
+define('client_secret', '');
+define('client_id', '1578554831');
+define('line_url', 'https://anuenuemusic.sprlight.net/index/Linglogin/callBack');
+define('line_url_open', 'https://anuenuemusic.sprlight.net/index/Linglogin/open');
+/*LINE LIFF APP ID*/
+define('LIFF_ID', '');
+
+/*Google*/
+define('Google_appId', '');
+
+/*FB*/
+define('FB_appID', '');
+
+/*公司資訊*/
+define('Footer_Title', '鋐宇樂器有限公司');
+define('Service_Tel', '(02)2536-4488');
+define('Service_Tel_A', '0225364488');
+define('Service_Email', 'service@photonic.com.tw');
+
+/*幣別*/
+define('dolar', 'USD');
+define('dolar_mark', '$');
+
+/*mail server*/
+define('Mail_Host', '127.0.0.1');
+define('Mail_Username', 'admin@sprlight.net');
+define('Mail_Password', '');
+
+/*google 機器人驗證*/
+define('GOOGLE_RECAPTCHA_SITEKEY', ''); /*網站金鑰*/
+define('GOOGLE_RECAPTCHA_SECKEY', '');  /*密鑰*/
+
+define('Paypal_Pay', '0'); /*Paypal 1.用 0.不用*/
+define('WeChat_Pay', '0'); /*微信 1.用 0.不用*/
+
+// 測試用綠界金流
+define('ServiceURL', 'https://payment-stage.ecpay.com.tw/Cashier/AioCheckOut/V5');
+define('HashKey', '5294y06JbISpM5x9');
+define('HashIV', 'v77hoKGq4kWxNNIS');
+define('MerchantID', '2000132');
+define('CreditInstallment', "3,6,12"); //分期期數
+// 正式用綠界金流
+// define('ServiceURL', 'https://payment.ecpay.com.tw/Cashier/AioCheckOut/V5');
+// define('HashKey', '');
+// define('HashIV', '');
+// define('MerchantID', '');
+// define('CreditInstallment', "3,6,12"); //分期期數
+
+// 台新金流
+define('Tspg_mid', '000812770028244');
+define('Tspg_s_mid', '');
+define('Tspg_tid', 'T0000000');
+
+/*合併訂單後台 自定義共用變數 開始*/
+// 紅利點數 0.不使用  1.使用
+define('POINT_DISCOUNT', '1');
+// 推播功能 0.不使用 1.使用
+define('NOTIFICATION', '0');
+
+//綠界物流 測試用
+define('Logistic_HashKey', '5294y06JbISpM5x9');
+define('Logistic_HashIV', 'v77hoKGq4kWxNNIS');
+//綠界物流 正式用(預設串接B2C，若改C2C需修改 index\controller\Cart.php, ajax\controller\Ecpaylogistic.php)
+// define('Logistic_HashKey', '');
+// define('Logistic_HashIV', '');
+
+// 綠界物流 寄件人資料(出貨方)
+define('SenderName', '鋐宇樂器有限公司');
+define('SenderPhone', '0225364488');
+define('SenderCellPhone', '0900000000');
+define('SenderZipCode', '10467');
+define('SenderAddress', '臺北市中山區松江路188巷1號1樓');
+/*合併訂單後台 自定義共用變數 結束*/
+
 return [
     // +----------------------------------------------------------------------
     // | 应用设置

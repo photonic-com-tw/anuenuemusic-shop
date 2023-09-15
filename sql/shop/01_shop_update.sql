@@ -399,3 +399,6 @@
     ALTER TABLE `productinfo` ADD `register_data_change_limit` TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT '報名資料修改截止日' AFTER `shipping_fee_tag`;
 -- 2022-04-14 可開關商品總分類選單
     ALTER TABLE `index_online` ADD `product_nav_total` TINYINT(1) NOT NULL DEFAULT '1' COMMENT '總商品選單' AFTER `block_news`;
+
+-- 2023-09-15 直接輸入優惠券加入使用次數設定
+    ALTER TABLE `coupon_direct` ADD `limit_num` INT(11) NOT NULL DEFAULT '1' COMMENT '限制使用次數' AFTER `content`;

@@ -98,7 +98,7 @@ class Ajax extends PublicController
 		    foreach ($act as $actKey => $actValue){
                 $act[$actKey]['title'] = $actValue['name'];
             }
-            $productMenu[] = ['title'=>$this->lang_menu['優惠專區'],'id'=>0,'subType'=>$act];
+            $productMenu[] = ['title'=>LANG_MENU['優惠專區'],'id'=>0,'subType'=>$act];
         }
 
 
@@ -414,11 +414,11 @@ class Ajax extends PublicController
 	/*依給定資料表處理紀錄*/
 	private function deal_record($tableName){
 		$prodInfoId = isset($_POST['prodInfoId']) ? $_POST['prodInfoId'] : 0;
-		if(!$prodInfoId){ $this->error($this->lang_menu['資訊不足']); } /*請提供商品id*/
+		if(!$prodInfoId){ $this->error(LANG_MENU['資訊不足']); } /*請提供商品id*/
 		$status = isset($_POST['status']) ? $_POST['status'] : null;
-		if($status===null){ $this->error($this->lang_menu['資訊不足']); } /*請提供收藏狀態*/
+		if($status===null){ $this->error(LANG_MENU['資訊不足']); } /*請提供收藏狀態*/
 		$user_id = Session('user.id');
-		if(!$user_id){ $this->error($this->lang_menu['請先登入會員']); }
+		if(!$user_id){ $this->error(LANG_MENU['請先登入會員']); }
 
 		if($status==0){ /*取消*/
 			Db::table($tableName)->where('product_id', $prodInfoId)->where('user_id', $user_id)->delete();

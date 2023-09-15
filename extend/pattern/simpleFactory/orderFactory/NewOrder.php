@@ -51,8 +51,6 @@ class NewOrder extends Order
     }
 
     private function returndiscount() {
-        $lang_menu = get_lang_menu();
-
         $discount = Db::connect($this->order_db)->table('orderform')
             ->field('*')
             ->find($this->id);
@@ -61,18 +59,18 @@ class NewOrder extends Order
 
         if($discount['discount']){
             switch ($discount['discount'][0]['type']) {
-                case $lang_menu['紅利']:
+                case LANG_MENU['紅利']:
 				
 					$PointRecords = new PointRecords($discount['user_id']);
                     $records = $PointRecords->add_records([
-                        'msg'           => $lang_menu['取消訂單'].'：'.$discount['order_number'].$lang_menu['，返還使用點數'],
+                        'msg'           => LANG_MENU['取消訂單'].'：'.$discount['order_number'].LANG_MENU['，返還使用點數'],
                         'points'        => $discount['discount'][0]['dis'],
                         'belongs_time'  => $discount['create_time']
                     ]);
                     $PointRecords->set_point_expire(); /*扣除過期點數*/
 					
                     break;
-                case $lang_menu['優惠券']:
+                case LANG_MENU['優惠券']:
 					/*Db::connect(substr($discount['order_number'], 0, 1) . '_sub')*/
                     Db::connect('A_sub')
                         ->table('coupon_pool')

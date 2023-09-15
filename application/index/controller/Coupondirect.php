@@ -16,30 +16,34 @@ class Coupondirect extends Controller
 	public static function get_discount($user_code=false)
 	{
 		$user_id = session('user.id');
-		if($user_id === null) return ['status'=>0, 'discount'=> 0, 'msg'=>$this->lang_menu['請先登入會員']];
+		if($user_id === null) return ['status'=>0, 'discount'=> 0, 'msg'=>LANG_MENU['請先登入會員']];
 
 		$user_code = $user_code ? $user_code : $_POST['user_code'];
-		if(!$user_code) return ['status'=>0, 'discount'=> 0, 'msg'=>$this->lang_menu['請輸入優惠券代碼']];
+		if(!$user_code) return ['status'=>0, 'discount'=> 0, 'msg'=>LANG_MENU['請輸入優惠券代碼']];
 
 		/*找出適用的優惠券*/
 		$end_time = strtotime(date('Y-m-d'));
 		$coupon_direct = Db::table('coupon_direct')
-			->where('user_code', $user_code)
-			->where('online', 1)
-			->where('start', "<=", time())
-			->where(function ($query) use ($end_time){
-                $query->whereOr('end', -28800)
-                	  ->whereOr('end',  ">=", $end_time);
-            })
-			->find();
-		if(!$coupon_direct) return ['status'=>0, 'discount'=> 0, 'msg'=>$this->lang_menu['查無此優惠券']];
+                            ->where('user_code', $user_code)
+                            ->where('online', 1)
+                            ->where('start', "<=", time())
+                            ->where(function ($query) use ($end_time){
+                                $query->whereOr('end', -28800)
+                                    ->whereOr('end',  ">=", $end_time);
+                            })
+                            ->find();
+		if(!$coupon_direct) return ['status'=>0, 'discount'=> 0, 'msg'=>LANG_MENU['查無此優惠券']];
 
 		/*檢查是否已使用過*/
 		$coupon_direct_record = Db::table('coupon_direct_record')
-			->where('coupon_id', $coupon_direct['id'])
-			->where('user_id', $user_id)
-			->select();
-		if($coupon_direct_record) return ['status'=>0, 'discount'=> 0, 'msg'=>$this->lang_menu['您已達此優惠券的使用上限']];
+                                    ->where('coupon_id', $coupon_direct['id'])
+                                    ->where('user_id', $user_id)
+                                    ->select();
+        if($coupon_direct['limit_num']!==null && $coupon_direct['limit_num']!==''){
+            if($coupon_direct['limit_num'] <= count($coupon_direct_record) ){ 
+                return ['status'=>0, 'discount'=> 0, 'msg'=>LANG_MENU['您已達此優惠券的使用上限']];
+            }
+        }
 
 		$coupon_product = Db::table('coupon_direct_product')->where('coupon_id', $coupon_direct['id'])->select();
         $total = 0; // 優惠券商品總金額
@@ -72,7 +76,7 @@ class Coupondirect extends Controller
             $discountReault['disTotal'] = 0;
         }
 
-        if($discountReault['discount']==0) return ['status'=>0, 'discount'=> 0, 'msg'=>$this->lang_menu['不符合此優惠券的使用條件']];
+        if($discountReault['discount']==0) return ['status'=>0, 'discount'=> 0, 'msg'=>LANG_MENU['不符合此優惠券的使用條件']];
 
 		return ['status'=>1, 'id'=>$coupon_direct['id'], 'name'=> $coupon_direct['name'], 'discount'=> $discountReault['discount']];
 	}

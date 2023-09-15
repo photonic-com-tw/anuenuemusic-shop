@@ -444,6 +444,10 @@ class App
      */
     protected static function exec($dispatch, $config)
     {
+        /*帶入語言版固定文字*/
+        $lang_menu = get_lang_menu();
+        define('LANG_MENU', $lang_menu);
+    
         switch ($dispatch['type']) {
             case 'redirect': // 重定向跳转
                 $data = Response::create($dispatch['url'], 'redirect')

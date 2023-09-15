@@ -87,7 +87,6 @@ class PointRecords
     }
     /*設定點數成過期*/
     public function set_point_expire(){
-        $lang_menu = get_lang_menu();
         $expired_poiints = $this->get_expiring_poiints($type="expired");
 
         if($expired_poiints>0){
@@ -95,7 +94,7 @@ class PointRecords
             $time_str = strtotime( $this->expire_point_belongs_timeexpire_point_belongs_timeexpire_point_belongs_time($type="expired").' -1Day');
             $count_date = date('Y-m-d', $time_str);
             $this->add_records([
-                'msg'           => $count_date.' '.$lang_menu['點數到期'],
+                'msg'           => $count_date.' '.LANG_MENU['點數到期'],
                 'points'        => $expired_poiints,
                 'belongs_time'  => time()
             ]);

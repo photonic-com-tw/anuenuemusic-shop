@@ -79,7 +79,6 @@ abstract class Order extends Controller{
 
     // 更新出貨狀態
     public function setTransportState($state) {
-        $lang_menu = get_lang_menu();
         try{
             $o = Db::connect($this->order_db)->table($this->tableName)->where('id', $this->id)->find();
 
@@ -91,7 +90,7 @@ abstract class Order extends Controller{
                 if($o['add_point']>0){
                     $PointRecords = new PointRecords($o['user_id']);
                     $records = $PointRecords->add_records([
-                        'msg'           => $lang_menu['完成訂單'].'：'.$o['order_number'].$lang_menu['，贈送點數'],
+                        'msg'           => LANG_MENU['完成訂單'].'：'.$o['order_number'].LANG_MENU['，贈送點數'],
                         'points'        => $o['add_point'],
                         'belongs_time'  => time()
                     ]);
@@ -140,7 +139,6 @@ abstract class Order extends Controller{
 
     // 取消訂單
     public function changeStatus2Cancel($reason) {
-        $lang_menu = get_lang_menu();
         try{
             // 收回優惠券
             $this->change_coupon('take_back');
@@ -172,7 +170,7 @@ abstract class Order extends Controller{
             /*取得寄信通用資料*/
             $globalMailData = PublicController::getMailData($this->config_db);
 
-            $cancel_order_letter = $this->lang_menu['訂單取消消費者信'];
+            $cancel_order_letter = LANG_MENU['訂單取消消費者信'];
             /*通知消費者*/
             if($account){ /*會員購物*/
                 $client_email = $account['email'];
@@ -182,18 +180,18 @@ abstract class Order extends Controller{
                         <body>
                             <div>
                                 ".$cancel_order_letter."<br>
-                                ".$this->lang_menu['訂單編號']."：".$o['order_number']."<br>
-                                ".$this->lang_menu['訂單時間']."：".date('Y/m/d H:i',$o['create_time'])."<br>
-                                ".$this->lang_menu['訂購商品']."：".$res_goods."<br>
-                                ".$this->lang_menu['訂單金額']."：".$o['total']."<br>
-                                ".$this->lang_menu['購買人']."：".$account['name']."<br>
-                                ".$this->lang_menu['收件人']."：".$o['transport_location_name']."<br>
-                                ".$this->lang_menu['出貨地址']."：".$o['transport_location']."<br>
+                                ".LANG_MENU['訂單編號']."：".$o['order_number']."<br>
+                                ".LANG_MENU['訂單時間']."：".date('Y/m/d H:i',$o['create_time'])."<br>
+                                ".LANG_MENU['訂購商品']."：".$res_goods."<br>
+                                ".LANG_MENU['訂單金額']."：".$o['total']."<br>
+                                ".LANG_MENU['購買人']."：".$account['name']."<br>
+                                ".LANG_MENU['收件人']."：".$o['transport_location_name']."<br>
+                                ".LANG_MENU['出貨地址']."：".$o['transport_location']."<br>
                                 E-mail：".$account['email']."<br>
-                                ".$this->lang_menu['手機號碼']."：".$o['transport_location_phone']."<br>
-                                ".$this->lang_menu['聯絡電話']."：".$o['transport_location_tele']."<br>
-                                ".$this->lang_menu['付款方式']."：".$o['payment']."<br>
-                                ".$this->lang_menu['備註']."：".$o['transport_location_textarea']."<br>
+                                ".LANG_MENU['手機號碼']."：".$o['transport_location_phone']."<br>
+                                ".LANG_MENU['聯絡電話']."：".$o['transport_location_tele']."<br>
+                                ".LANG_MENU['付款方式']."：".$o['payment']."<br>
+                                ".LANG_MENU['備註']."：".$o['transport_location_textarea']."<br>
                             </div>
                             <div>
                                 <br>
@@ -210,18 +208,18 @@ abstract class Order extends Controller{
                         <body>
                             <div>
                                 ".$cancel_order_letter."<br>
-                                ".$this->lang_menu['訂單編號']."：".$o['order_number']."<br>
-                                ".$this->lang_menu['訂單時間']."：".date('Y/m/d H:i',$o['create_time'])."<br>
-                                ".$this->lang_menu['訂購商品']."：".$res_goods."<br>
-                                ".$this->lang_menu['訂單金額']."：".$o['total']."<br>
-                                ".$this->lang_menu['購買人']."：".$o['transport_location_name']."<br>
-                                ".$this->lang_menu['收件人']."：".$o['transport_location_name']."<br>
-                                ".$this->lang_menu['出貨地址']."：".$o['transport_location']."<br>
+                                ".LANG_MENU['訂單編號']."：".$o['order_number']."<br>
+                                ".LANG_MENU['訂單時間']."：".date('Y/m/d H:i',$o['create_time'])."<br>
+                                ".LANG_MENU['訂購商品']."：".$res_goods."<br>
+                                ".LANG_MENU['訂單金額']."：".$o['total']."<br>
+                                ".LANG_MENU['購買人']."：".$o['transport_location_name']."<br>
+                                ".LANG_MENU['收件人']."：".$o['transport_location_name']."<br>
+                                ".LANG_MENU['出貨地址']."：".$o['transport_location']."<br>
                                 E-mail：".$o['transport_email']."<br>
-                                ".$this->lang_menu['手機號碼']."：".$o['transport_location_phone']."<br>
-                                ".$this->lang_menu['聯絡電話']."：".$o['transport_location_tele']."<br>
-                                ".$this->lang_menu['付款方式']."：".$o['payment']."<br>
-                                ".$this->lang_menu['備註']."：".$o['transport_location_textarea']."<br>
+                                ".LANG_MENU['手機號碼']."：".$o['transport_location_phone']."<br>
+                                ".LANG_MENU['聯絡電話']."：".$o['transport_location_tele']."<br>
+                                ".LANG_MENU['付款方式']."：".$o['payment']."<br>
+                                ".LANG_MENU['備註']."：".$o['transport_location_textarea']."<br>
                             </div>
                             <div>
                                 <br>

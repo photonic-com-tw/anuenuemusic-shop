@@ -102,6 +102,7 @@ class Coupondirect extends MainController
 				'id' => Request::instance()->post('id'),
 				'name' => Request::instance()->post('name'),
 				'user_code' => Request::instance()->post('user_code'),
+				'limit_num' => Request::instance()->post('limit_num'),
 				'content' => Request::instance()->post('content'),
 				'start' => strtotime(Request::instance()->post('start')),
 				'end' => strtotime(Request::instance()->post('end')),
@@ -223,6 +224,7 @@ class Coupondirect extends MainController
             $newData = [
                 'name'      => $actData['name'],
                 'user_code' => $actData['user_code'],
+                'limit_num' => $actData['limit_num'],
                 'content'   => $actData['content'],
                 'start'     => strtotime($actData['start']),
                 'end'       => strtotime($actData['end']),

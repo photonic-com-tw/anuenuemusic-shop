@@ -23,17 +23,15 @@ class directcouponDiscount extends Discount
     }
 
     private function getDiscount($user_code){
-        $lang_menu = get_lang_menu();
-
         $coupondirectDiscount = Coupondirect::get_discount($user_code);
         
         if($coupondirectDiscount['status']=="1"){
             return [
                 'discount' => [
                     [
-                        'type' => urlencode($lang_menu['直接輸入型優惠券']),
-                        'name' => urlencode($lang_menu['名稱'].'：' . $coupondirectDiscount['name']),
-                        'count' => urlencode($lang_menu['扣'] . $coupondirectDiscount['discount'] . $lang_menu['元']),
+                        'type' => urlencode(LANG_MENU['直接輸入型優惠券']),
+                        'name' => urlencode($coupondirectDiscount['name']),
+                        'count' => urlencode(LANG_MENU['扣'] . $coupondirectDiscount['discount'] . LANG_MENU['元']),
                         'coupon_id' => $coupondirectDiscount['id']
                     ]
                 ],

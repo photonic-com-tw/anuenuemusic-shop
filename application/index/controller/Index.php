@@ -50,7 +50,7 @@ class Index extends PublicController
 					/*若存在商品 且為 開啟狀態*/
 					if($productinfo){
 						if($productinfo[0]['has_price']=='0'){
-						    $product[$key][$show_price]= '<span>'.$this->lang_menu['請詢價'].'</span>';
+						    $product[$key][$show_price]= '<span>'.LANG_MENU['請詢價'].'</span>';
 							continue;
 						}
 
@@ -58,9 +58,9 @@ class Index extends PublicController
 						if(!$new_price) continue;
 
 						if($new_price[0]['price']==$new_price[0]['count']){
-							$product[$key][$show_price]='<span>'.$this->lang_menu['原價'].dolar.dolar_mark.' '.$new_price[0]['price'].'</span>';
+							$product[$key][$show_price]='<span>'.LANG_MENU['原價'].dolar.dolar_mark.' '.$new_price[0]['price'].'</span>';
 						}else{
-						    $product[$key][$show_price]= '<s>'.$this->lang_menu['原價'].dolar.dolar_mark.' '.$new_price[0]['price'].'</s>'."&nbsp;&nbsp;&nbsp;".'<span>'.$this->lang_menu['優惠'].dolar.dolar_mark.' '.$new_price[0]['count'].'</span>';
+						    $product[$key][$show_price]= '<s>'.LANG_MENU['原價'].dolar.dolar_mark.' '.$new_price[0]['price'].'</s>'."&nbsp;&nbsp;&nbsp;".'<span>'.LANG_MENU['優惠'].dolar.dolar_mark.' '.$new_price[0]['count'].'</span>';
 						}
 
 					}
