@@ -277,7 +277,7 @@
 	"密碼不一致":"Wrong Password",
 	"驗證信寄送有誤":"The verification letter was sent incorrectly",
 	"註冊通知":"Registration Notice",
-	"註冊消費者信":"<div>Dear<u>&nbsp;&nbsp;{name}&nbsp;&nbsp;</u>:<br>Welcome to become member of {mailFromName}.<br>Please click the link within 24 hours of receiving this letter：<br><a href='{verify_url}'>{verify_url}</a>to complete the membership verification, thank you for your registration!<br><br></div>",
+	"註冊消費者信":"<div>Dear<u>&nbsp;&nbsp;{name}&nbsp;&nbsp;</u>:<br>Welcome to become member of {mailFromName}.<br>Please click the link within 24 hours of receiving this letter：<br><a href='{verify_url}'>{verify_url}</a> to complete the membership verification, thank you for your registration!<br><br></div>",
 	"密碼重設通知":"Password reset notification",
 	"密碼重設消費者信":"<table style='width:100%;'><tr><th style='background-color: #ffc107;'>Password reset notification</th></tr><tr><td>Dear <u>&nbsp;&nbsp;customer&nbsp;&nbsp;</u>：<br></td></tr><tr><td><div style='padding-left:5%'><div>You want to reset your password on a shopping site of {mailFromName} at&nbsp;&nbsp;{$date_time}&nbsp;&nbsp;. Please click the link below to reset your password.<br><br>This is your confirmation URL： <a href='{change_password_url}'>Please click here to reset my password</a><small>( This link will expire in 30 minutes )</small><br><br></div><center></center></div></td></tr></table>",
 	"您輸入的密碼與原密碼相同，請重新輸入":"The password you entered is the same as the original password, please re-enter",

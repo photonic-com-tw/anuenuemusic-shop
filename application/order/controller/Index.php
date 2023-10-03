@@ -191,7 +191,7 @@ class Index extends MainController
 			$value['status'] = self::ORDER_STATE[$value['status']];
 		}
 
-		$MemberInstance->change_user_id($rowData['upline_user']);
+		$MemberInstance->change_user_id($rowData['upline_user'] ?? 0);
 		$rowData['up_user'] = $MemberInstance->get_user_data();
 		// dump($rowData);exit();
 		$this->assign('rowData', $rowData);
