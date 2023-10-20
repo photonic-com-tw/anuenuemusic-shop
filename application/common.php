@@ -22,7 +22,7 @@ function param_filter($variable){
     }else{
         if($not_json){ 
             if($variable == strip_tags($variable)){
-                $variable = preg_replace('/[`;,\'"]/i', '', $variable);
+                $variable = preg_replace('/[`;\'"]/i', '', $variable);
             }
         }
     }
