@@ -23,9 +23,9 @@ class Member extends PublicController
 		$referer_url = Request::instance()->server('HTTP_REFERER');
 		// dump($referer_url);exit();
 		if( preg_match('/'.$_SERVER["HTTP_HOST"].'/i', $referer_url) || !$referer_url){
-			if(!$this->user){ $this->error(LANG_MENU['請先登入會員'], url('Login/login'));};
+			if(!$this->user){ $this->error(LANG_MENU['請先登入會員'], url('Login/login').'?jumpUri='.$_SERVER['REQUEST_URI']);};
 		}else{
-			if(!$this->user){ $this->redirect(url('Login/login'));};
+			if(!$this->user){ $this->redirect(url('Login/login').'?jumpUri='.$_SERVER['REQUEST_URI']);};
 		}
 	}
 

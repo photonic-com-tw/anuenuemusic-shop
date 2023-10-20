@@ -27,7 +27,7 @@ class Orderform extends PublicController{
 
 
 	public function orderform() {
-		if(!$this->user){ $this->error(LANG_MENU['請先登入會員'], url('Login/login'));};
+		if(!$this->user){ $this->error(LANG_MENU['請先登入會員'], url('Login/login').'?jumpUri='.$_SERVER['REQUEST_URI']);};
 
 		$orderform = Db::connect('main_db')
 				->table('orderform')
@@ -51,7 +51,7 @@ class Orderform extends PublicController{
 
 
 	public function history() {
-		if(!$this->user){ $this->error(LANG_MENU['請先登入會員'], url('Login/login'));};
+		if(!$this->user){ $this->error(LANG_MENU['請先登入會員'], url('Login/login').'?jumpUri='.$_SERVER['REQUEST_URI']);};
 		
 		if($this->user == null){
 			$this->redirect('Index/index');

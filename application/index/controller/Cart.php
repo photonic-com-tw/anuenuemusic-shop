@@ -33,7 +33,7 @@ class Cart extends PublicController {
         $this->assign('dolar', dolar);
 
         // $this->error("系統升級中，暫時無法購物");
-        if(!$this->user){ $this->error(LANG_MENU['請先登入會員'], url('Login/login'));};
+        if(!$this->user){ $this->error(LANG_MENU['請先登入會員'], url('Login/login').'?jumpUri='.$_SERVER['REQUEST_URI']);};
 
         /* 商品可否設定刷卡 */
         $this->card_pay_set = Db::connect('main_db')->table('excel')->where('id = 7')->find()['value1'];
@@ -212,6 +212,25 @@ class Cart extends PublicController {
     }
 
     public function getdiscount() {
+        $send_way = param_filter($_GET['send_way'] ?? '');
+        $discount_data = $this->getdiscount_data($send_way);
+        $this->assign('points_limit', $discount_data['points_limit']);
+        $this->assign('discountData', $discount_data['discountData']);
+        $this->assign('coupon_c', $discount_data['coupon_c']);
+        $this->assign('acts_c', $discount_data['acts_c']);
+        $this->assign('shipping', $discount_data['shipping']);
+        if($discount_data['error_msg']){
+            return $discount_data['error_msg'];
+        }else{
+            return $this->fetch('discount');
+        }
+    }
+    public function getdiscount_ajax() {
+        $send_way = param_filter($_GET['send_way'] ?? '');
+        $discount_data = $this->getdiscount_data($send_way);
+        return json($discount_data, 200);
+    }
+    private function getdiscount_data($send_way){
         $Proposal = Proposal::withTeamMembersAndRequire(
             ['GetCartData'],
             ['user_id' => $this->userId]
@@ -224,11 +243,9 @@ class Cart extends PublicController {
         $need_shipfee = false; /* 預設不須處理運費 */
         $cartData = [];
         foreach (json_decode($Proposal->projectData['data'], true) as $key => $value) {
-            
             $singleData = $this->get_singleData($key); /* 取得商品資料 */
             if($singleData['key_type']=='normal' || substr($singleData['key_type'],0,3)=='kol' || $singleData['key_type']=='add'){ /* 有購買 一般商品 或 網紅商品 或 加價購商品 */
                 $need_shipfee = true; /* 需處理運費 */
-
                 /* 檢查商品是否適用點數 */
                 $final_array = Db::table('productinfo')->field('final_array')->find($singleData['type_product_id'])['final_array'];
                 if($points_setting){
@@ -240,7 +257,6 @@ class Cart extends PublicController {
                     }
                 }
             }
-
             $singleData['num'] = $value;
             array_push($cartData, $singleData);
         }
@@ -258,36 +274,36 @@ class Cart extends PublicController {
         if($DiscountProposal->projectData["points"]){
             $points_limit = $points_limit > $DiscountProposal->projectData["points"][0]["point"] ? $DiscountProposal->projectData["points"][0]["point"] : $points_limit;
         }
-        $this->assign('points_limit', $points_limit);
-        $this->assign('discountData', $DiscountProposal->projectData);
-        $this->assign('coupon_c', count($DiscountProposal->projectData['coupon']));
-        $this->assign('acts_c', count($DiscountProposal->projectData['acts']['actCart']));
+        $discount_data['error_msg'] = '';
+        $discount_data['points_limit'] = $points_limit;
+        $discount_data['discountData'] = $DiscountProposal->projectData;
+        $discount_data['coupon_c'] = count($DiscountProposal->projectData['coupon']);
+        $discount_data['acts_c'] = count($DiscountProposal->projectData['acts']['actCart']);
         // dump($DiscountProposal->projectData);
 
         /* 處理運費 */
-        if($_GET['send_way']=='undefined') return "<p style='line-height: 1.4285em; font-family: microsoft jhenghei; font-size: 14px;'>".LANG_MENU['請選擇運送方式，或是此筆訂單的商品有限制個別運送方式，請分開結帳']."</p>";
-        $shipping = $this->get_shipping_method($cartData, $_GET['send_way']);
-        if( !$shipping ) return "<p style='line-height: 1.4285em; font-family: microsoft jhenghei; font-size: 14px;'>".LANG_MENU['無此運送方式']."</p>";
+        if($send_way=='undefined'){
+            $discount_data['error_msg'] = "<p style='line-height: 1.4285em; font-family: microsoft jhenghei; font-size: 14px;'>".LANG_MENU['請選擇運送方式，或是此筆訂單的商品有限制個別運送方式，請分開結帳']."</p>";
+            return $discount_data;
+        }
+        $shipping = $this->get_shipping_method($cartData, $send_way);
+        if( !$shipping ){
+            $discount_data['error_msg'] = "<p style='line-height: 1.4285em; font-family: microsoft jhenghei; font-size: 14px;'>".LANG_MENU['無此運送方式']."</p>";
+            return $discount_data;
+        }
 
         if($need_shipfee){
             $shipping[0]['price'] = $DiscountProposal->projectData['Total'] < $shipping[0]['free_rule'] ? $shipping[0]['price'] : 0;
         }else{
             $shipping[0]['price'] = 0;
         }
-        $this->assign('shipping', $shipping[0]);
-        //////////////////////////////////////////////////////////////
-        //////////////////////////////////////////////////////////////
-        //////////////////////////////////////////////////////////////
-        //////////////////////////////////////////////////////////////
+        $discount_data['shipping'] = $shipping[0];
+
         if( $DiscountProposal->projectData['Total'] > 20000 && in_array($shipping[0]['name'], ['全家取貨', '7-11取貨', '萊爾富取貨']) ){ //綠界物流金額上限
-            return "<p style='line-height: 1.4285em; font-family: microsoft jhenghei; font-size: 14px;'>".LANG_MENU['超商取貨無法運送金額超過20,000元之商品']."</p>";
-        }else{
-            return $this->fetch('discount');
+            $discount_data['error_msg'] = "<p style='line-height: 1.4285em; font-family: microsoft jhenghei; font-size: 14px;'>".LANG_MENU['超商取貨無法運送金額超過20,000元之商品']."</p>";
+            return $discount_data;
         }
-        //////////////////////////////////////////////////////////////
-        //////////////////////////////////////////////////////////////
-        //////////////////////////////////////////////////////////////
-        //////////////////////////////////////////////////////////////
+        return $discount_data;
     }
 
     public function selectPlace(){
@@ -352,7 +368,7 @@ class Cart extends PublicController {
     }
 
     public function buy() {
-        // dump($_POST);
+        // dump($_POST);exit;
         if(isset($_POST['ExtraData'])){
             $temp_order_data_id = Db::table('temp_order_data')->where('randomkey="'.$_POST['ExtraData'].'" AND over=0')->find();
             if(!$temp_order_data_id)$this->error(LANG_MENU['資訊不足']); /*請填寫完整訂單內容*/

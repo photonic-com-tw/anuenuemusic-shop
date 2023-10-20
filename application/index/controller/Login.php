@@ -23,6 +23,8 @@ class Login extends PublicController {
 	}
 
 	public function login() {
+		$login_redirect = $_GET['jumpUri'] ?? url('Member/member');
+		$this->assign('login_redirect', $login_redirect);
 		return $this->fetch('login');
 	}
 
@@ -31,6 +33,7 @@ class Login extends PublicController {
 
 		$email = Request::instance()->post('email');
 		$password = Request::instance()->post('password');
+		$redirect = Request::instance()->post('redirect');
 		
 		$rule = [
 			'email'  => 'require',
@@ -62,8 +65,11 @@ class Login extends PublicController {
 				}
 
 				Session::set('user', $adminData[0]);
-				$this->success(LANG_MENU['操作成功'], url('Member/member')); /*登入成功*/
-
+				if($redirect){
+					$this->success(LANG_MENU['操作成功'], $redirect);
+				}else{
+					$this->success(LANG_MENU['操作成功']);
+				}
 			}else{
 				$this->error(LANG_MENU['內容有誤']); /*密碼錯誤*/
 			}
@@ -250,7 +256,7 @@ class Login extends PublicController {
 		if(Db::connect(config('main_db'))->table('account')->where('email', $name)->update(['status' => '1'])){
 			$this->success(LANG_MENU['操作成功'], 'index/index');
 		}else{
-			$this->success(LANG_MENU['內容有誤'], 'index/index');
+			$this->error(LANG_MENU['帳號不存在或已完成驗證'], 'index/index');
 		}
 	}
 

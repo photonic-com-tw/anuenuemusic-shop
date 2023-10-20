@@ -19,7 +19,8 @@ class Coupondirect extends Controller
 		if($user_id === null) return ['status'=>0, 'discount'=> 0, 'msg'=>LANG_MENU['請先登入會員']];
 
 		$user_code = $user_code ? $user_code : $_POST['user_code'];
-		if(!$user_code) return ['status'=>0, 'discount'=> 0, 'msg'=>LANG_MENU['請輸入優惠券代碼']];
+		// if(!$user_code) return ['status'=>0, 'discount'=> 0, 'msg'=>LANG_MENU['請輸入優惠券代碼']];
+		if(!$user_code) return ['status'=>0, 'discount'=> 0, 'msg'=>''];
 
 		/*找出適用的優惠券*/
 		$end_time = strtotime(date('Y-m-d'));

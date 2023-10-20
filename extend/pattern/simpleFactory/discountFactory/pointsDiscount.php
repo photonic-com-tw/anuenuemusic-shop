@@ -15,7 +15,7 @@ use pattern\PointRecords;
  *
 */
 
-class pointsdiscount extends discount
+class pointsdiscount extends Discount
 {
     public function getdiscountAndTotal($OrderData) {
         $PointRecords = new PointRecords($OrderData['id']);
@@ -30,7 +30,7 @@ class pointsdiscount extends discount
             'discount' => urldecode(json_encode([
                 [
                     'type' => urlencode(LANG_MENU['紅利']),
-                    'name' => urlencode(LANG_MENU['使用'] . (int)$this->discountId . LANG_MENU['點']),
+                    'name' => urlencode(LANG_MENU['使用紅利']),
                     'count' => urlencode(LANG_MENU['扣'] . (int)$this->discountId . LANG_MENU['元']),
 					'dis' => (int)$this->discountId
                 ]

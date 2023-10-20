@@ -23,7 +23,7 @@ class Points extends PublicController
 		$consent = Db::table('consent')->where("id=1")->find();
 		$this->assign('consent_other', $consent['other']);
 
-		if(!$this->user){ $this->error(LANG_MENU['請先登入會員'], url('Login/login'));};
+		if(!$this->user){ $this->error(LANG_MENU['請先登入會員'], url('Login/login').'?jumpUri='.$_SERVER['REQUEST_URI']);};
 	}
 
 	public function set_point_expire() {

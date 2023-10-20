@@ -86,7 +86,7 @@
         <link rel="stylesheet" href="__PUBLIC__/anuenuemusic/css/bootstrap-icons.css">
         <link rel="stylesheet" href="{$MAIN_WEB}/frontEndPackage/css/animate.css">
         <link rel="stylesheet" href="{$MAIN_WEB}/frontEndPackage/css/RWD_eidtor_style.css">
-        <link rel="stylesheet" href="{$MAIN_WEB}/frontEndPackage/css/all.css?1">
+        <link rel="stylesheet" href="{$MAIN_WEB}/frontEndPackage/css/all.css?12">
         <link rel="stylesheet" href="{$MAIN_WEB}/frontEndPackage/css/all_andy.css?1234">
         <!-- ///////////////////////////////////////////////////////////////////////////// -->
         {block name="css"}{/block}
@@ -190,7 +190,7 @@
                                         {else /}
                                             <!-- 未登入 -->
                                             <a class="dropdown-item" href="javascript:alert('{$lang_menu['請先登入會員']}');
-                                                                           location.href='{:url('Login/login')}'">
+                                                                           location.href='{:url('Login/login')}?jumpUri={:url('Member/reg_product_sign')}'">
                                                 {$lang_menu['產品註冊']}
                                             </a>
                                         {/if}
@@ -211,7 +211,7 @@
                                 {else /}
                                     <!-- 未登入 -->
                                     <li class="shapcar-btn">
-                                        <a href="javascript:alert('{$lang_menu['請先登入會員']}');location.href='{:url('Login/login')}'">
+                                        <a href="javascript:alert('{$lang_menu['請先登入會員']}');location.href='{:url('Login/login')}?jumpUri={:url('Cart/Cart')}'">
                                             <i class="fas fa-shopping-cart"></i><span class="counter prodNum">{$cartCount|default="0"}</span>
                                         </a>
                                     </li>

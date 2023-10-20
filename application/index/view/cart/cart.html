@@ -1,6 +1,7 @@
 {extend name="Public/mainTpl" /}
 {block name="title"}{$lang_menu['購物車']} | {$seo[0]['title']}{/block}
 {block name="css"}
+    <link rel="stylesheet" href="/public/static/index/css/iframe_discount.css?1">
     <style>
         .modal{
             overflow: scroll !important;
@@ -112,7 +113,6 @@ $(function() {
 
                 <div class="memberMiddle">
                     <div class="orderDetailsBox shoppingCartBox">
-
                         {if condition="$control_register==1"}
                             <a class="process_btn" data-toggle="modal" data-target="#descriptionContModel">{$lang_menu['報名流程說明']}</a>
                         {/if}
@@ -204,10 +204,6 @@ $(function() {
                                     {/volist}
                                 </tbody>
                             </table>
-
-                            
-                            <br>
-                            <br>
                             <!-- /////////////// -->
                             <div class="row pt_xsmal">
                                 <div class="col-12 text-center mb-3">
@@ -270,8 +266,6 @@ $(function() {
                                 {/if}
                             </div>
                             <!-- /////////////// -->
-                            <br>
-                            <br>
                             <div class="row pt_xsmal">
                                 <div class="col-12 text-center mb-3">
                                     <span class="other_login color_gray"><span>{$lang_menu['配送方式']}</span></span>
@@ -285,8 +279,131 @@ $(function() {
                                 </div>
                             </div> 
 
-                            <br>
-                            <br>
+                            <div class="row pt_xsmal">
+                                <div class="col-12 text-center mb-3">
+                                    <span class="other_login color_gray"><span>{$lang_menu['直接輸入型優惠券']}</span></span>
+                                </div>
+                            </div>
+                            <div id="discountVM">
+                                <div id="member_cart_inf">
+                                    <div id="new_info">
+                                        {if condition="($user.id)"}
+                                            {if condition="$FirstBuyDiscount==1"}
+                                                <template v-if="discountData.firstBuyDiscount.can_use==1">
+                                                    <div class="optionsOfferBox" @click="set_total('firstbuy_select')">
+                                                        <div class="type" :style="{background: ck_coupon=='firstbuy_select' ? 'rgba(0%, 0%, 0%, 0.5)' : '#FFF'}"></div>
+                                                        {$lang_menu['會員首購優惠']}&nbsp;&nbsp;{$}
+                                                        <span v-text="discountData.firstBuyDiscount.note"></span>
+                                                    </div>
+                                                </template>
+                                            {/if}
+                                
+                                            {if condition="$VipDiscount==1"}
+                                                <template v-if="discountData.vipDiscount.can_use==1">
+                                                    <div class="optionsOfferBox" @click="set_total('vipdiscount_select')">
+                                                        <div class="type" :style="{background: ck_coupon=='vipdiscount_select' ? 'rgba(0%, 0%, 0%, 0.5)' : '#FFF'}"></div>
+                                                        {$lang_menu['VIP會員優惠']}&nbsp;&nbsp;
+                                                        <span v-text="discountData.vipDiscount.note"></span>
+                                                    </div>
+                                                </template>
+                                            {/if}
+                                
+                                            {empty name="$Front_name['直接輸入型優惠券']"}
+                                                <div class="optionsOfferBox" @click="set_total('directcoupon')">
+                                                    <!-- <div class="type" :style="{background: ck_coupon.slice(0,12)=='directcoupon' ? 'rgba(0%, 0%, 0%, 0.5)' : '#FFF'}"></div> -->
+                                                    <!-- {$lang_menu['請輸入優惠券代碼']}： -->
+                                                    <div class="form-group input-group mb-0">
+                                                        <input class="form-control" type="text" v-model="directcoupon_code"
+                                                            @blur="get_direct_coupon_discount" @keydown="keydown_blur($event)">
+                                                        <div class="input-group-append">
+                                                            <span class="input-group-text">{$lang_menu['確認']}</span>
+                                                        </div>
+                                                    </div>
+                                                    <span v-if="direct_coupon_msg" v-text="direct_coupon_msg" style="color:red;"></span>
+                                                </div>
+                                            {/empty}
+                                
+                                            {empty name="$Front_name['優惠券專區']"}
+                                                <!-- 屬於會員優惠券 -->
+                                                <div class="optionsOfferBox" @click="show_couponblock(true)">
+                                                <div class="type" :style="{background: ck_coupon.slice(0,6)=='coupon' ? 'rgba(0%, 0%, 0%, 0.5)' : '#FFF'}"></div>
+                                                <a>{$lang_menu['您有']}<span v-text="discountData.coupon.length"></span>{$lang_menu['張優惠券可以使用']}</a>
+                                                <div class="coupon_select_context" v-if="show_couponblock_statas">
+                                                    <template v-for="vo in discountData.coupon">
+                                                        <div class="conpon_select_radio" 
+                                                            :style="{'background-color': ck_coupon=='coupon_'+vo.coupon_pool_id ? 'var(--bg-light-color)' : '#000'}"
+                                                            @click="set_total('coupon_'+vo.coupon_pool_id)">
+                                                            {$vo.coupon_title}
+                                                        </div>
+                                                    </template>
+                                                </div>
+                                                </div>
+                                            {/empty}
+                                        {/if}
+                            
+                                        {empty name="$Front_name['活動優惠']"}
+                                        <div class="optionsOfferBox" @click="set_total('acts_0')">
+                                            <div class="type" :style="{background: ck_coupon=='acts_0' ? 'rgba(0%, 0%, 0%, 0.5)' : '#FFF'}"></div>
+                                            {$lang_menu['目前有']}<span v-text="acts_c"></span>{$lang_menu['個活動符合條件']}
+                                            <div class="act_select_context">
+                                            </div>
+                                        </div>
+                                        {/empty}
+                            
+                                        {if condition="($user.id)"}
+                                            {empty name="$Front_name['點數設定']"} 
+                                                <div class="optionsOfferBox" @click="set_total('points')">
+                                                <div class="type" :style="{background: ck_coupon=='points' ? 'rgba(0%, 0%, 0%, 0.5)' : '#FFF'}"></div>
+                                                <div id="pointDiv">
+                                                    <template v-for="vo in discountData.points">
+                                                        {$lang_menu['使用紅利']}：
+                                                        <div class="form-group input-group mb-0">
+                                                            <input class="form-control" type="number" step="1" size="10" v-model="pointcount"
+                                                                @blur="set_points_discount" @keydown="keydown_blur($event)">
+                                                            <div class="input-group-append">
+                                                                <span class="input-group-text">{$lang_menu['確認']}</span>
+                                                            </div>
+                                                        </div>
+                                                        {$lang_menu['目前剩餘紅利']} <span v-text="vo.point.toLocaleString('en-US')"></span>
+                                                        |
+                                                        {$lang_menu['本次可用']} <span v-text="points_limit.toLocaleString('en-US')"></span>
+                                                        <input id="point_old" type="hidden" :value="'points_'+vo.point" size="10">
+                                                    </template>
+                                                </div>
+                                                </div>
+                                            {/empty}
+                                        {/if}
+                                        <div class="optionsOfferBox d-none" @click="set_total('none_discount')">
+                                            <div class="type" :style="{background: ck_coupon=='none_discount' ? 'rgba(0%, 0%, 0%, 0.5)' : '#FFF'}"></div>
+                                            <div>
+                                                {$lang_menu['取消任何折扣']} 
+                                                {empty name="$Front_name['點數設定']"}
+                                                ({$lang_menu['累積紅利點數']})
+                                                {/empty}
+                                            </div> <!--(累積紅利點數)-->
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div id="info">
+                                        <ul>
+                                        <li>{$lang_menu['商品合計']}：<span>{$dolar_mark} <span v-text="discountData.Total.toLocaleString('en-US')"></span></li>
+                                        <li>{$lang_menu['運送方式']}：<span v-text="shipping.name"></span></li>
+                                        <li>{$lang_menu['運費']}
+                                            <span class="freightColor" v-if="shipping.free_rule<=99999998">
+                                            ({$lang_menu['滿']}<span v-text="shipping.free_rule"></span>{$lang_menu['元免收取']})
+                                            </span>：
+                                            <span>{$dolar_mark} <span v-text="shipping.price.toLocaleString('en-US')"></span></span>
+                                        </li>
+                                        <li>{$lang_menu['折價']}：<span v-text="discount_msg"></span></li>
+                                        <li class="totalColor">{$lang_menu['總計']}：{$dolar_mark}<span v-text="Total_show"></span></li>
+                                        </ul>
+                                    </div>
+                                    <!-- <div id="pay">
+                                        <a class="pay_btn send_clr arrow" @click="get_order()">{$lang_menu['前往結帳']}</a>
+                                    </div> -->
+                                </div>
+                            </div>
+
                             <div class="row pt_xsmal">
                                 <div class="col-12 text-center mb-3">
                                     <span class="other_login color_gray"><span>{$lang_menu['訂單資料']}</span></span>
@@ -381,27 +498,30 @@ $(function() {
                             </div>
                             <hr>
                             <div>
-                                <h3>{$lang_menu['購物條款']}</h3>
-                                <p class="precautionsText">{$consent_shopping}</p>
-                                <br>
                                 <div class="form-check">
-                                    <input id="defaultCheck1" class="form-check-input" type="checkbox" value="" name="tygwtk">
+                                    <h3>{$lang_menu['購物條款']} (<a href="###" data-toggle="modal" data-target="#shopping_rule">{$lang_menu['查看']}</a>)</h3>
+                                    <!-- <input id="defaultCheck1" class="form-check-input" type="checkbox" value="" name="tygwtk"> -->
                                     <label class="form-check-label" for="defaultCheck1">
-                                        <span class="terms">{$lang_menu['同意購物條款(*必勾選)']}</span>
+                                        <span class="terms">
+                                            <!-- {$lang_menu['同意購物條款(*必勾選)']} -->
+                                        </span>
                                     </label>
                                 </div>
-                                <span class="smallText">※{$lang_menu['請您再次確認以上購買資料是否無誤，並勾選「同意購物條款」後再按"確定送出"']}</span>
+                                <!-- <span class="smallText">※{$lang_menu['請您再次確認以上購買資料是否無誤，並勾選「同意購物條款」後再按"確定送出"']}</span> -->
                             </div>
-                            <hr>
-                            <div>
-                                <h3>{$lang_menu['其他資訊']}</h3>
-                                {$consent_other}
-                            </div>
-                            <hr>
+
+                            {if condition="$consent_other"}
+                                <hr>
+                                <div>
+                                    <h3>{$lang_menu['其他資訊']}</h3>
+                                    {$consent_other}
+                                </div>
+                                <hr>
+                            {/if}
 
                             {neq name="$cartCount" value="0"}
-                                <!-- <button type="button" class="btn btn-primary" ng-click="contCtrl.getdiscount()">選擇優惠AJAX</button> -->
-                                <a  class=" modalBtn getdiscountBtn" id="getdiscount" data-toggle="modal" data-target="#model">{$lang_menu['選擇優惠，前往購買']}</a>
+                                <a class="getdiscountBtn" href="###" id="getdiscount">{$lang_menu['選擇優惠，前往購買']}</a>
+                                <!-- <a class="modalBtn getdiscountBtn" id="getdiscount" data-toggle="modal" data-target="#model">{$lang_menu['選擇優惠，前往購買']}</a> -->
                             {/neq}
                         </form>
                     </div>
@@ -417,6 +537,22 @@ $(function() {
 {/block}
 
 {block name="Modal"}
+    <div class="modal fade" id="shopping_rule" tabindex="-1" role="dialog" aria-labelledby="shopping_ruleTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="shopping_ruleTitle">{$lang_menu['購物條款']}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p class="precautionsText">{$consent_shopping}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal -->
     <div class="modal fade" id="model" tabindex="-1" role="dialog" aria-labelledby="modelTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
@@ -527,7 +663,7 @@ $(function() {
                     $('#cartCount').text(response.message);
                     $('#cart_tol_'+$product_id).empty();
                     $('#cart_tol_'+$product_id).append($('#cart_tol_'+$product_id).attr('value')*response.num);
-
+                    discountVM.get_discountdata();
                 } else {
                     if(response.message){
                         alert(response.message);
@@ -538,12 +674,9 @@ $(function() {
                 }
             }
         });
-
-
     }
 
     $('#getdiscount').click(function () {
-
         send_way_id = $('input[name="send_way"]:checked').val();
         send_way = $('input[name="send_way"]:checked').attr('label');
         // if( $('input[name="pay_way"]:checked').val() == '貨到付款' && send_way == '宅配'){lat=lat+'<p>宅配無法使用貨到付款</p>'}
@@ -553,14 +686,14 @@ $(function() {
         if($('#transport_location_name').val()==''){lat=lat+"<p>{$lang_menu['請輸入']}{$lang_menu['姓名']}</p>"}
         if($('#transport_location').val()=='' && send_way!="{$lang_menu['到店取貨']}"){lat=lat+"<p>{$lang_menu['請輸入']}{$lang_menu['地址']}</p>"}
         if($('#transport_location_phone').val()==''){
-            lat=lat+"<p>{$lang_menu['請輸入']}:{$lang_menu['手機號碼']}</p>";
+            lat=lat+"<p>{$lang_menu['請輸入']}{$lang_menu['手機號碼']}</p>";
         }else{
             {if condition="$subDeparment=='A'"}
                 if(!$('#transport_location_phone').val().match(/^09[0-9]{8}$/)){lat=lat+"<p>{$lang_menu['請輸入09開頭的10位手機號碼']}</p>"}
             {/if}//
         }
         
-        if(ch ==false){lat=lat+"<p>{$lang_menu['未勾選購買須知']}</p>"}
+       // if(ch ==false){lat=lat+"<p>{$lang_menu['未勾選購買須知']}</p>"}
 
         {volist name="cartData" id="vo" empty=""}
             {if condition="$control_register== 1 AND $vo.is_registrable==1"}
@@ -572,13 +705,16 @@ $(function() {
 
         if(lat !=''){
             // alert(lat);
-            $(this).attr('href', "");
+            $('#model').modal('show');
+            // $(this).attr('href', "");
             $('#boxModel').html(lat)
             $('#modelTitle').html("{$lang_menu['發生錯誤']}")
             return;
         }else{
-            $('#modelTitle').html("{$lang_menu['選擇優惠方式']}")
-            $(this).attr('href', "{:url('Cart/getdiscount')}?id={$user.id}&send_way="+send_way_id);
+            discountVM.get_order();
+            return;
+            // $('#modelTitle').html("{$lang_menu['選擇優惠方式']}")
+            // $(this).attr('href', "{:url('Cart/getdiscount')}?id={$user.id}&send_way="+send_way_id);
 
             // $(this).attr('href', "{:url('Cart/getdiscount')}?id={$user.id}&payment="
             //     + $('#pay_way').val()
@@ -917,12 +1053,182 @@ $(function() {
     }
 </script>
 
+<!-- 選擇優惠功能 -->
+<script>
+    const discountVM_data = {
+        send_way: 0,
+
+        Total_show: 0,
+        discount_msg: "{$lang_menu['扣']}{$dolar_mark}0",
+
+        ck_coupon: 'none_discount', /*選擇優惠(預設無優惠)*/
+        show_couponblock_statas: false,
+        discountData:{
+        Total: 0,                                   /*商品總額*/
+        points: [],
+        coupon: [                                   /*會員優惠券優惠金額*/
+            // {coupon_pool_id:'', discount:''},                              
+        ],
+        firstBuyDiscount:{                          /*會員首購優惠金額*/
+            can_use: 0,
+            note: '',
+            discount: 0,
+        },
+        vipDiscount:{                               /*VIP會員優惠金額*/
+            can_use: 0,
+            note: '',
+            discount: 0,
+        },
+        acts: {                                     /*活動優惠「後」總金額*/
+            sum: 0,
+        }
+        },
+        directcoupon_codediscount: 0,                 /*直接輸入型優惠券優惠金額*/
+        directcoupon_code: '',
+        direct_coupon_msg: '',
+        pointcount: 0,                                /*輸入點數*/
+        points_limit: 0,
+        acts_c: 0,                                    /*符合的活動數*/
+        shipping:{
+        price: 0,
+        free_rule: 999999999,
+        name: '',
+        },
+    };
+    discountVM = new Vue({
+        el: '#discountVM',
+        data: discountVM_data,
+        methods: {
+        show_couponblock: function(status=true){
+            self = this;
+            self.show_couponblock_statas = status;
+            self.direct_coupon_msg = '';
+            $(".conpon_select_radio").css("background","#FFF");
+        },
+        keydown_blur: function($event){
+            if($event.keyCode === 13) $event.currentTarget.blur();
+        },
+        get_direct_coupon_discount: function(){
+            self = this;
+            if(!self.directcoupon_code){ self.set_total('none_discount'); return; }
+            $.ajax({
+            url: "/index/coupondirect/get_discount.html",
+            type: 'POST',
+            data: {
+                user_code: self.directcoupon_code,
+            },  
+            success: function(resp) {
+                if(resp.status==0){
+                self.direct_coupon_msg = resp.msg;
+                self.set_total('none_discount');
+                }else{
+                self.direct_coupon_msg = "{$lang_menu['已套用優惠']}";
+                self.directcoupon_codediscount = resp.discount;
+                self.set_total('directcoupon_' + self.directcoupon_code);
+                }
+            }
+            });
+        },
+        set_points_discount: function(){
+            self = this;
+            if(!self.pointcount){
+            self.set_total('none_discount'); return;
+            }
+            if(isNaN(self.pointcount)){
+            self.pointcount = 0;
+            alert("{$lang_menu['內容有誤']}");
+            self.set_total('none_discount'); return;
+            }else{
+            self.pointcount = Number(self.pointcount);
+            }
+            if(self.pointcount > self.discountData.Total){
+            self.pointcount = self.discountData.Total;
+            }
+            if (self.pointcount > self.points_limit) {
+            self.pointcount = 0;
+            alert("{$lang_menu['超過您的點數']}");
+            return;
+            }
+            self.set_total('points');
+        },
+        set_total: function(dicount_type='none_discount'){
+            self = this;
+            self.ck_coupon = dicount_type;
+            if(self.ck_coupon=='firstbuy_select'){ /*會員首購優惠*/
+            discount_num = self.discountData.firstBuyDiscount.discount;
+            }
+            else if(self.ck_coupon=='vipdiscount_select'){ /*VIP會員優惠*/
+            discount_num = self.discountData.vipDiscount.discount;
+            }
+            else if(self.ck_coupon.slice(0,12)=='directcoupon'){ /*直接輸入型優惠券*/
+            discount_num = self.directcoupon_codediscount;
+            }
+            else if(self.ck_coupon.slice(0,6)=='coupon'){ /*會員優惠券*/
+            discount_num = self.coupon[self.ck_coupon];
+            }
+            else if(self.ck_coupon=='acts_0'){ /*活動優惠*/
+            discount_num = self.discountData.Total - self.discountData['acts']['sum'];
+            }
+            else if(self.ck_coupon=='points'){ /*紅利點數優惠*/
+            discount_num = self.pointcount;
+            }
+            else{
+            discount_num = 0;
+            }
+            
+            // console.log(discount_num);
+            if(self.ck_coupon=='none_discount'){
+            self.discount_msg = "{$lang_menu['無']}";
+            }else{
+            self.discount_msg = "{$lang_menu['扣']}" + discount_num.toLocaleString('en-US') + "{$lang_menu['元']}";
+            }
+            self.Total_show = (self.discountData.Total + self.shipping.price - discount_num).toLocaleString('en-US');
+        },
+        get_order: function(){
+            self = this;
+            discountData = {
+            'discount'          : self.ck_coupon,
+            'point'             : self.pointcount,
+            'directcoupon_code' : self.directcoupon_code,
+            }
+            // console.log(discountData);
+            // return discountData;
+            getOrder(discountData);
+        },
+
+        get_discountdata: function(){
+            self = this;
+            $('#block').show();
+            return $.ajax({
+                url: "/index/cart/getdiscount_ajax.html",
+                type: 'GET',
+                data: {
+                    send_way: self.send_way,
+                },  
+                success: function(resp) {
+                    console.log(resp);
+                    if(resp.error_msg==''){
+                    self.points_limit = resp.points_limit;
+                    self.discountData = resp.discountData;
+                    self.acts_c = resp.acts_c;
+                    self.shipping = resp.shipping;
+
+                    self.set_total();
+                    $('#block').hide();
+                    }
+                },
+            });
+        }
+        },
+    });
+</script>
+
 <!-- 運費功能 -->
 <script type="text/javascript">
     var shippingData = {
-            type: '{$shipping|json_encode}',
-            send_way: 0,
-        }
+        type: '{$shipping|json_encode}',
+        send_way: 0,
+    }
     var maskVM = new Vue({
         el: '#shipping_div', 
         data: shippingData,
@@ -932,12 +1238,13 @@ $(function() {
             }
         },
         methods: {
-            
         },
     });
     /* 初始化勾選運費 */
     var shipping_type = JSON.parse(maskVM.type);
     maskVM.send_way = shipping_type[0]['id'];
+    discountVM.send_way = maskVM.send_way;
+    discountVM.get_discountdata();
     show_mart_btn(shipping_type[0]['name']);
 
 
@@ -1007,9 +1314,8 @@ $(function() {
             success: function (response) {
                 // console.log(response)
                 if (response.status) {
-                        alert("{$lang_menu['操作成功']}");
-                        location.reload();
-                    
+                    alert("{$lang_menu['操作成功']}");
+                    location.reload(); 
                 }else {
                     if(response.message == "{$lang_menu['庫存不足']}" || response.message == "{$lang_menu['內容有誤']}" || response.message == "{$lang_menu['超出加價購數量上限']}"){
                         alert(response.message);

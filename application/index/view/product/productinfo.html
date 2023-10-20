@@ -923,7 +923,12 @@
                     // $('#gotocart').click(); //會員登入畫面
                 }
             }
-            ajax_cartCtrl(successFunction); /*送出請求*/
+            if( "{$user.name}" != ''){
+                ajax_cartCtrl(successFunction); /*送出請求*/
+            }else{
+                alert("{$lang_menu['請先登入會員']}");
+                location.href = "{:url('Login/login')}?jumpUri={$_SERVER['REQUEST_URI']}";
+            }
         }
         /*發送加入購物車請求*/
         function ajax_cartCtrl(successFunction) {

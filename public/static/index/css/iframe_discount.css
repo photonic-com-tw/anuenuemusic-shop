@@ -1,0 +1,125 @@
+html,body{
+  font-family: '微軟正黑體', Arial, Helvetica, sans-serif;
+}
+#bg header{
+  color:  #ff7300;
+  margin-bottom:  .5rem;
+}
+#bg #discount #ck_coupon{
+  margin-left: 66px;
+  text-align: center;
+  text-align-last: center;
+  padding: 0 5px;
+}
+#bg #member_cart_inf #info{
+  background-color: #FFF;
+  text-align: left;
+  /* padding: 10px 7%; */
+}
+#bg #member_cart_inf #info ul{
+  list-style: none;
+  margin: 0px;
+  padding: 0px;
+  font-size:  1rem;
+  color:  #333;
+}
+#bg #member_cart_inf #info ul li{
+  margin-bottom: 10px;
+}
+#bg #member_cart_inf #pay{
+  text-align: center;
+  margin-top: 2rem;
+}
+#bg #member_cart_inf #pay .pay_btn{
+  background-color: #777;
+  color: #FFF;
+  display: inline-block;
+  font-size: 1rem;
+  padding: .5rem .75rem;
+}
+#coupon_select:hover > .type1{
+  background:rgba(0%, 0%, 0%, 0.4);
+}
+.optionsOfferBox{
+  position: relative;
+}
+.pay_btn:hover, .optionsOfferBox:hover{
+  cursor:pointer;
+}
+.type{
+  border-radius: 50%;
+  width:.5rem;
+  height:.5rem;
+  background: transform;
+  border: 1px solid #777;
+  float: left;
+  margin-right:.5rem;
+  position: relative;
+  top: 6px;
+}
+.optionsOfferBox a{
+  color: #333;
+  font-size:  1rem;
+  display: inline-block;
+}
+.optionsOfferBox{
+  display: inline-block;
+  margin-bottom: 1rem;
+  width: 100%;
+}
+#act_select:hover > .type2{
+  background:rgba(0%, 0%, 0%, 0.4);
+}
+#point_select{
+  margin-bottom: 16px;
+}
+#point_select:hover > .type3{
+  background:rgba(0%, 0%, 0%, 0.4);
+}
+#none_select:hover > .type4{
+  background:rgba(0%, 0%, 0%, 0.4);
+}
+.coupon_select_context{
+  z-index:2;
+  /* display:none; */
+  width:100%;
+  height:auto;
+  border: 1px solid #ededed;
+  /* color:  #000; */
+  box-sizing: border-box;
+}
+.act_select_context{
+  z-index:2;
+  display:none;
+  width:100%;
+  height:auto;
+}
+.point_select_context{
+  z-index:2;
+  width:100%;
+  height:auto;
+}
+.conpon_select_radio{
+  display: block;
+  padding:.25rem .5rem;
+  /* background-color: transform; */
+}
+.conpon_select_radio:not(:last-child){
+  border-bottom: 1px solid #ededed;
+}
+.conpon_select_radio:hover{
+  background-color: rgba(0%, 0%, 0%, 0.4);
+}
+
+#div[id~='acts_']:hover{
+  background-color: rgba(0%, 0%, 0%, 0.4);
+}
+#div[id~='coupon_']:hover{
+  background-color: rgba(0%, 0%, 0%, 0.4);
+}
+.freightColor{
+  color:#5442f5;
+}
+#bg #member_cart_inf #info ul li.totalColor {
+  color:  #ff7300;
+}
