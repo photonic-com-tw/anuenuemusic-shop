@@ -394,7 +394,8 @@
 				url : "{:url('Product/getList')}",
 				//data: orderPost,
 			}).success(function(data){
-				// console.log(data); 
+				// console.log(data);
+                self.getCateProd({seriesId:0});
 				self.model.series = data.message;
 				// 
 			}).error(function(){

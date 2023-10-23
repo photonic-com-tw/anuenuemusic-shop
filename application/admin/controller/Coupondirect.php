@@ -307,9 +307,8 @@ class Coupondirect extends MainController
                     $seriesProd = DB::table('product')->alias('prod')
                                     ->join('typeinfo ti','prod.id = ti.parent_id')
                                     ->join('productinfo pi','ti.id = pi.parent_id')
-									->join($this->associated_tableName.' ap','pi.id=ap.prod_id','LEFT')
                                     ->where('prod.id',$serValue['id'])
-									->where('ap.coupon_prod_id is null')->select();
+									->select();
                     foreach($seriesProd as $spKey => $spValue){
                         $actSeries[] = $spValue;
                     }
@@ -323,9 +322,8 @@ class Coupondirect extends MainController
                     $createCate = true;
                     $cateProd = DB::table('typeinfo')->alias('ti')
                         ->join('productinfo pi','ti.id = pi.parent_id')
-						->join($this->associated_tableName.' ap','pi.id=ap.prod_id','LEFT')
                         ->where('ti.id',$cateValue['id'])
-						->where('ap.coupon_prod_id is null')->select();
+                        ->select();
 					// echo $sql = Db::table('typeinfo')->getLastSql();
                     foreach($cateProd as $cpKey => $cpValue){
                         $actCate[] = $cpValue;
@@ -473,10 +471,11 @@ class Coupondirect extends MainController
     public function delActProd(){
         $postData = json_decode(file_get_contents('php://input'), true);
         $delProd = $postData['cateProd'];
+        $actId = $postData['actId'];
         foreach($delProd as $dpKey => $dpValue){
             if (isset($dpValue['select'])) {
                 if ($dpValue['select'] == true) {
-                    Db::table($this->associated_tableName)->where('prod_id',$dpValue['id'])->delete();
+                    Db::table($this->associated_tableName)->where('prod_id',$dpValue['id'])->where('coupon_id',$actId)->delete();
                 }
             }
         }
@@ -522,31 +521,39 @@ class Coupondirect extends MainController
     public function getCouponDirectProd(){
         $id = Request::instance()->post('cateId');
         $first = Request::instance()->post('first');
+        $coupon_id = Request::instance()->post('coupon_id');
+        $used = Db::table($this->associated_tableName)->where('coupon_id="'.$coupon_id.'"')->select();
+        $used_ids = [];
+        foreach ($used as $value) {
+            array_push($used_ids, $value['prod_id']);
+        }
+        $used_ids_where = count($used_ids)>0 ? 'pi.id not in ('.implode(',', $used_ids).')' : '1=1';
+
         if($first){
             //是第一階
-            $productinfo = Db::table('productinfo')->alias('pi')
-            ->join($this->associated_tableName.' ap','pi.id=ap.prod_id','LEFT')
-            ->where("final_array like '%\"prev_id\":\"".$id."\"%\"parent_id\":\"0\"%'")
-            ->where('ap.coupon_prod_id is null')
-            ->order('pi.order_id, pi.id desc')->select();
+            $productinfo = Db::table('productinfo')->alias('pi')->where($used_ids_where);
+            if($id){
+                $productinfo = $productinfo->where("final_array like '%\"prev_id\":\"".$id."\"%\"parent_id\":\"0\"%'");
+            }
+            $productinfo = $productinfo->order('pi.order_id, pi.id desc')->select();
             
         }else{
-            $productinfo = Db::table('productinfo')->alias('pi')
-            ->join($this->associated_tableName.' ap','pi.id=ap.prod_id','LEFT')
-            ->where("final_array like '%\"parent_id\":\"".$id."\"%'")
-            ->where('ap.coupon_prod_id is null')
-            ->order('pi.order_id, pi.id desc')->select();
+            $productinfo = Db::table('productinfo')->alias('pi')->where($used_ids_where);
+            if($id){
+                $productinfo = $productinfo->where("final_array like '%\"parent_id\":\"".$id."\"%'");
+            }
+            $productinfo = $productinfo->order('pi.order_id, pi.id desc')->select();
         }
             
         
         if(empty($productinfo)){
-            $productinfo = Db::table('productinfo')->alias('pi')
-            ->join($this->associated_tableName.' ap','pi.id=ap.prod_id','LEFT')
-            ->where("final_array like '%\"branch_id\": \"".$id."\"%' ")
-            ->where('ap.coupon_prod_id is null')
-            ->order('pi.order_id, pi.id desc')->select();
+            $productinfo = Db::table('productinfo')->alias('pi')->where($used_ids_where);
+            if($id){
+                $productinfo = $productinfo->where("final_array like '%\"branch_id\": \"".$id."\"%' ");
+            }
+            $productinfo = $productinfo->order('pi.order_id, pi.id desc')->select();
         }
-        
+
         foreach($productinfo as $k => $v){
             $pic1 = json_decode($v['pic'],true);
             $productinfo[$k]['pic1'] = $pic1[0];

@@ -409,7 +409,7 @@
 
 		var self = this; //self.ngtest = "angular test";alert(self.ngtest);
 		self.model = {};
-		self.actId = <?php echo $actId?>;
+		self.actId = {$actId};
         self.img = "/public/static/index{$singleData['img']}";
 
 		self.getActProd = function(){
@@ -452,6 +452,7 @@
 				//data: orderPost,
 			}).success(function(data){
 				// console.log(data); 
+                self.getCateProd({seriesId:0});
 				self.model.series = data.message;
 				// 
 			}).error(function(){
@@ -524,7 +525,7 @@
 			$http({
 				method : "post",
 				url : "{:url('Coupondirect/getCouponDirectProd')}",
-				data: {cateId:item.seriesId, first:item.first},
+				data: {cateId:item.seriesId, first:item.first, coupon_id:self.actId},
 
 			}).success(function(data){
 				self.catProd = item.title;
@@ -575,14 +576,13 @@
 
 		self.delActProd = function(){
             $('#block_block').show();
-			for(var prop in self.model.cateProd){
-				self.model.actProd[prop]['actId'] = self.actId;
-			}
-
 			$http({
 				method : "post",
 				url : "{:url('Coupondirect/delActProd')}",
-				data: {cateProd:self.model.actProd}
+				data: {
+                    cateProd:self.model.actProd,
+                    actId:self.actId,
+                }
 			}).success(function(data){
 				if (data.status == 200){
 					alert("優惠券商品已刪除")
