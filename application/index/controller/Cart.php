@@ -33,7 +33,6 @@ class Cart extends PublicController {
         $this->assign('dolar', dolar);
 
         // $this->error("系統升級中，暫時無法購物");
-        if(!$this->user){ $this->error(LANG_MENU['請先登入會員'], url('Login/login').'?jumpUri='.$_SERVER['REQUEST_URI']);};
 
         /* 商品可否設定刷卡 */
         $this->card_pay_set = Db::connect('main_db')->table('excel')->where('id = 7')->find()['value1'];
@@ -48,6 +47,8 @@ class Cart extends PublicController {
     }
 
     public function cart() {
+        if(!$this->user){ $this->error(LANG_MENU['請先登入會員'], url('Login/login').'?jumpUri='.$_SERVER['REQUEST_URI']);};
+
         /* 處理購物車商品 start */
         $Proposal = Proposal::withTeamMembersAndRequire(
             ['GetCartData'],
