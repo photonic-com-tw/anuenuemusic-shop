@@ -732,46 +732,50 @@ $(function() {
     });
 
     function getOrder($discountData) {
-        console.log($discountData)
+        console.log($discountData);
         $('#discount').val($discountData['discount']);
         $('#point').val($discountData['point']);
         $('#directcoupon_code').val($discountData['directcoupon_code']);
-        
         console.log($('#discount').val());
         console.log($('#point').val());
         console.log($('#directcoupon_code').val());
-
 
         pay_way = $('input[name="pay_way"]:checked').val()
         send_way = $('input[name="send_way"]:checked').attr('label');
         if( (pay_way == "{$lang_menu['綠界刷卡(一次付清)']}" || pay_way == "{$lang_menu['綠界刷卡(分期付款)']}") &&  '0' == '{$card_pay}' ){
             alert("{$lang_menu['此筆訂單包含不可刷卡之商品，請勿使用刷卡功能']}")
         }else{
-            
             if( "{$ecpay_logistic}"=="1" && ["{$lang_menu['全家取貨']}","{$lang_menu['7-11取貨']}","{$lang_menu['萊爾富取貨']}"].indexOf( send_way ) != -1){
                 cartform_obj = new FormData(cartform);
 
                 var Order_Data = {
-                        "pay_way" : cartform_obj.get('pay_way'),
-                        "send_way" : cartform_obj.get('send_way'),
-                        "transport_location_name" : cartform_obj.get('transport_location_name'),
-                        "transport_email" : cartform_obj.get('transport_email'),
-                        "transport_location_phone" : cartform_obj.get('transport_location_phone'),
-                        "transport_location_tele" : cartform_obj.get('transport_location_tele'),
-                        "addrC" :  cartform_obj.get('addrC'),
-                        "id" : cartform_obj.get('id'),
-                        "discount" :cartform_obj.get('discount'),
-                        "point" : cartform_obj.get('point'),
-                        "directcoupon_code" : cartform_obj.get('directcoupon_code'),
-                        "uniform_numbers" : cartform_obj.get('uniform_numbers'),
-                        "company_title" : cartform_obj.get('company_title'),
-                        "transport_location_textarea" : cartform_obj.get('transport_location_textarea'),
-                    }
+                    "pay_way" : cartform_obj.get('pay_way'),
+                    "send_way" : cartform_obj.get('send_way'),
+                    "transport_location_name" : cartform_obj.get('transport_location_name'),
+                    "transport_email" : cartform_obj.get('transport_email'),
+                    "transport_location_phone" : cartform_obj.get('transport_location_phone'),
+                    "transport_location_tele" : cartform_obj.get('transport_location_tele'),
+                    "addrC" :  cartform_obj.get('addrC'),
+                    "id" : cartform_obj.get('id'),
+                    "discount" :cartform_obj.get('discount'),
+                    "point" : cartform_obj.get('point'),
+                    "directcoupon_code" : cartform_obj.get('directcoupon_code'),
+                    "uniform_numbers" : cartform_obj.get('uniform_numbers'),
+                    "company_title" : cartform_obj.get('company_title'),
+                    "transport_location_textarea" : cartform_obj.get('transport_location_textarea'),
+                }
 
                 Order_Data = JSON.stringify(Order_Data);
                 location.href = "{:url('Cart/selectPlace')}?Order_Data="+Order_Data; //跳至綠界畫面選擇門市
             }else{
-                cartform.submit();
+                $('#block').show();
+                setTimeout(()=>{
+                    cartform.submit();
+                    setTimeout(()=>{
+                        $('#block').show();
+                    }, 300);
+                }, 300);
+                
             }
         }
     }
@@ -1110,44 +1114,50 @@ $(function() {
         },
         get_direct_coupon_discount: function(){
             self = this;
-            if(!self.directcoupon_code){ self.set_total('none_discount'); return; }
-            $.ajax({
-            url: "/index/coupondirect/get_discount.html",
-            type: 'POST',
-            data: {
-                user_code: self.directcoupon_code,
-            },  
-            success: function(resp) {
-                if(resp.status==0){
-                self.direct_coupon_msg = resp.msg;
-                self.set_total('none_discount');
-                }else{
-                self.direct_coupon_msg = "{$lang_menu['已套用優惠']}";
-                self.directcoupon_codediscount = resp.discount;
-                self.set_total('directcoupon_' + self.directcoupon_code);
-                }
+            if(!self.directcoupon_code){
+                self.direct_coupon_msg = "";
+                self.directcoupon_codediscount = 0;
+                self.set_total('none_discount'); 
+                return;
             }
+            $.ajax({
+                url: "/index/coupondirect/get_discount.html",
+                type: 'POST',
+                data: {
+                    user_code: self.directcoupon_code,
+                },  
+                success: function(resp) {
+                    if(resp.status==0){
+                        self.direct_coupon_msg = resp.msg;
+                        self.directcoupon_codediscount = 0;
+                        self.set_total('none_discount');
+                    }else{
+                        self.direct_coupon_msg = "{$lang_menu['已套用優惠']}";
+                        self.directcoupon_codediscount = resp.discount;
+                        self.set_total('directcoupon_' + self.directcoupon_code);
+                    }
+                }
             });
         },
         set_points_discount: function(){
             self = this;
             if(!self.pointcount){
-            self.set_total('none_discount'); return;
+                self.set_total('none_discount'); return;
             }
             if(isNaN(self.pointcount)){
-            self.pointcount = 0;
-            alert("{$lang_menu['內容有誤']}");
-            self.set_total('none_discount'); return;
+                self.pointcount = 0;
+                alert("{$lang_menu['內容有誤']}");
+                self.set_total('none_discount'); return;
             }else{
-            self.pointcount = Number(self.pointcount);
+                self.pointcount = Number(self.pointcount);
             }
             if(self.pointcount > self.discountData.Total){
-            self.pointcount = self.discountData.Total;
+                self.pointcount = self.discountData.Total;
             }
             if (self.pointcount > self.points_limit) {
-            self.pointcount = 0;
-            alert("{$lang_menu['超過您的點數']}");
-            return;
+                self.pointcount = 0;
+                alert("{$lang_menu['超過您的點數']}");
+                return;
             }
             self.set_total('points');
         },
@@ -1155,41 +1165,41 @@ $(function() {
             self = this;
             self.ck_coupon = dicount_type;
             if(self.ck_coupon=='firstbuy_select'){ /*會員首購優惠*/
-            discount_num = self.discountData.firstBuyDiscount.discount;
+                discount_num = self.discountData.firstBuyDiscount.discount;
             }
             else if(self.ck_coupon=='vipdiscount_select'){ /*VIP會員優惠*/
-            discount_num = self.discountData.vipDiscount.discount;
+                discount_num = self.discountData.vipDiscount.discount;
             }
             else if(self.ck_coupon.slice(0,12)=='directcoupon'){ /*直接輸入型優惠券*/
-            discount_num = self.directcoupon_codediscount;
+                discount_num = self.directcoupon_codediscount;
             }
             else if(self.ck_coupon.slice(0,6)=='coupon'){ /*會員優惠券*/
-            discount_num = self.coupon[self.ck_coupon];
+                discount_num = self.coupon[self.ck_coupon];
             }
             else if(self.ck_coupon=='acts_0'){ /*活動優惠*/
-            discount_num = self.discountData.Total - self.discountData['acts']['sum'];
+                discount_num = self.discountData.Total - self.discountData['acts']['sum'];
             }
             else if(self.ck_coupon=='points'){ /*紅利點數優惠*/
-            discount_num = self.pointcount;
+                discount_num = self.pointcount;
             }
             else{
-            discount_num = 0;
+                discount_num = 0;
             }
             
             // console.log(discount_num);
-            if(self.ck_coupon=='none_discount'){
-            self.discount_msg = "{$lang_menu['無']}";
+            if(self.ck_coupon=='none_discount' || (self.ck_coupon=='directcoupon' && self.directcoupon_codediscount==0) ){
+                self.discount_msg = "{$lang_menu['無']}";
             }else{
-            self.discount_msg = "{$lang_menu['扣']}" + discount_num.toLocaleString('en-US') + "{$lang_menu['元']}";
+                self.discount_msg = "{$lang_menu['扣']}" + discount_num.toLocaleString('en-US') + "{$lang_menu['元']}";
             }
             self.Total_show = (self.discountData.Total + self.shipping.price - discount_num).toLocaleString('en-US');
         },
         get_order: function(){
             self = this;
             discountData = {
-            'discount'          : self.ck_coupon,
-            'point'             : self.pointcount,
-            'directcoupon_code' : self.directcoupon_code,
+                'discount'          : self.ck_coupon,
+                'point'             : self.pointcount,
+                'directcoupon_code' : self.directcoupon_code,
             }
             // console.log(discountData);
             // return discountData;
