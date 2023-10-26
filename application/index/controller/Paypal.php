@@ -24,10 +24,10 @@ class Paypal extends PublicController
 	// Sandbox account
 	// sb-lz43pt9149445@business.example.com
 	
-	// const clientId = 'AZUaA-jptku630bkxzVAI138vtW41fpahzteIAa0jZjujiJnogW5P4RqyTl5EvptIYMZzeQMez57w8V8';//ID TEST
-    // const clientSecret = 'EGpI28Jv_SZ2NuzQcxztghU_GwOvCqJ-VK2WQD9D7z1trfg51tcbBIgVNPh_wav54us3X6KtLhOjv9yK';//祕鑰 TEST
-	const clientId = 'AWaq_dVSvtq9lXgN_L8A4Wysnv6UxZb30CIXouyGcMY3MXhfuSn6LIgjnoquhhwMAb5Bl0EBeZGX1ioD';//ID
-    const clientSecret = 'EMXoc3brhOkrv69lR6z4kq6fdshYCSioOZU3btVMQwrKtMocr0nVEmiVi7ijkkjw51B2xg9ejIxHwSb3';//祕鑰
+	// const clientId = 'AWMeIJxbyF-7jYw7Ob9EPckTGx1jg78JNy2ps7TFy_cLN2-Jw0oSFSna18ZTvofXauUx4Kxw9iG5lnp3';//info@anuenuemusic.com TEST ID 
+    // const clientSecret = 'ENlzw_lwX8KmPTqVO4m7pI4Qlfp-CJWCEIGg4b1W0Rb1N97tOEuHmtFZ09Hoc5mtitCtVVM7CbJrxAUH';//info@anuenuemusic.com TEST 祕鑰
+	const clientId = 'AdyHkt3-GTqlK1qufYngp4sRRBskxmvGW7tZDOVlIWNmmzeMisN26dbof799mITRiX_uW12w6F0Exh4a';//info@anuenuemusic.com 正式 ID
+    const clientSecret = 'EAXMIajv7JxWXZf61fnzPiHYj-TaNx2Zb9fzbqaGKzE_2-9PVlR2oCkNF5ncayjDXjabCC6lc2F9Dvsw';//info@anuenuemusic.com 正式 祕鑰
     const Currency = 'USD';//幣種
     protected $PayPal;
 
@@ -40,7 +40,7 @@ class Paypal extends PublicController
             )
         );
         //如果不是沙盒測試環境就設定為live
-        if(self::clientId!='AZUaA-jptku630bkxzVAI138vtW41fpahzteIAa0jZjujiJnogW5P4RqyTl5EvptIYMZzeQMez57w8V8'){
+        if(self::clientId!='AWMeIJxbyF-7jYw7Ob9EPckTGx1jg78JNy2ps7TFy_cLN2-Jw0oSFSna18ZTvofXauUx4Kxw9iG5lnp3'){
 			$this->PayPal->setConfig(
 			    array(
 			        'mode' => 'live',
@@ -124,17 +124,21 @@ class Paypal extends PublicController
             $this->redirect("https://".$_SERVER['SERVER_NAME']."/index/orderform/orderform");
         }
 
-        $payment = Payment::get($paymentId, $this->PayPal);        
+        try {
+            $payment = Payment::get($paymentId, $this->PayPal);        
+        } catch (\Exception $e) {
+            $this->error(LANG_MENU['發生錯誤，請再試一次'], "https://".$_SERVER['SERVER_NAME']."/index/orderform/orderform");
+        }
 
         $execute = new PaymentExecution();
-
         $execute->setPayerId($PayerID);
 
         try {
             $payment->execute($execute, $this->PayPal);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
+            // dump($e->getMessage());exit;
             // echo ',支付失敗，支付ID【' . $paymentId . '】,支付人ID【' . $PayerID . '】';die;
-            $this->redirect("https://".$_SERVER['SERVER_NAME']."/index/orderform/orderform");
+            $this->error(LANG_MENU['發生錯誤，請再試一次'], "https://".$_SERVER['SERVER_NAME']."/index/orderform/orderform");
         }
 
         $order_number = $payment->transactions[0]->description;

@@ -1,8 +1,8 @@
 {
-  "name": "傳訊光測試購物車",
-  "short_name": "傳訊光",
-  "description": "測試購物車~~~",
-  "theme_color": "#ff0000",
+  "name": "aNueNue Music",
+  "short_name": "aNueNue",
+  "description": "aNueNue Music",
+  "theme_color": "#000000",
   "background_color": "#ffffff",
   "display": "standalone",
   "orientation": "portrait",

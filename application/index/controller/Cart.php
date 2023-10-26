@@ -736,6 +736,9 @@ class Cart extends PublicController {
         //----
         
         //產生優惠說明 & 計算購物總金額
+            if(!isset($OrderData['discount'])){
+                $this->error(LANG_MENU['發生錯誤，請再試一次']);
+            }
             $discountData = explode("_", $OrderData['discount']);
             $discountData[1] = $discountData[0] == 'points' ? $OrderData['point'] : $discountData[1];
 

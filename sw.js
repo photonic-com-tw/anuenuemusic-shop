@@ -12,7 +12,7 @@ self.addEventListener('push', function (event) {
     }
 
     const sendNotification = body => {
-        const title = "傳訊光推播";
+        const title = "推播";
         
         // console.log(body)
         body = JSON.parse(body);
