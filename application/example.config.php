@@ -238,7 +238,7 @@ return [
     // 异常页面的模板文件
     'exception_tmpl'         => THINK_PATH . 'tpl' . DS . 'think_exception.tpl',
     // 错误显示信息,非调试模式有效
-    'error_message'          => '頁面錯誤！請稍後再試～',
+    'error_message'          => 'There was an error. Please try later.',
     // 显示错误信息
     'show_error_msg'         => false,
     // 异常处理handle类 留空使用 \think\exception\Handle

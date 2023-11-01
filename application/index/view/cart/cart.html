@@ -411,7 +411,6 @@ $(function() {
                             </div>
                             <div class="row">
                                 <div class="col-12">
-                                    <!-- <a href="">{$lang_menu['同會員資料']}</a> -->
                                     {if condition="($user.name != '')"}
                                         <div class="mb-2">
                                             <a class="send_btn" onclick="assign_memeber_data()">{$lang_menu['同會員資料']}</a>
@@ -499,7 +498,7 @@ $(function() {
                             <hr>
                             <div>
                                 <div class="form-check">
-                                    <h3>{$lang_menu['購物條款']} (<a href="###" data-toggle="modal" data-target="#shopping_rule">{$lang_menu['查看']}</a>)</h3>
+                                    <h3>{$lang_menu['購物條款']} (<a href data-toggle="modal" data-target="#shopping_rule">{$lang_menu['查看']}</a>)</h3>
                                     <!-- <input id="defaultCheck1" class="form-check-input" type="checkbox" value="" name="tygwtk"> -->
                                     <label class="form-check-label" for="defaultCheck1">
                                         <span class="terms">
@@ -520,7 +519,7 @@ $(function() {
                             {/if}
 
                             {neq name="$cartCount" value="0"}
-                                <a class="getdiscountBtn" href="###" id="getdiscount">{$lang_menu['選擇優惠，前往購買']}</a>
+                                <a class="getdiscountBtn" id="getdiscount">{$lang_menu['選擇優惠，前往購買']}</a>
                                 <!-- <a class="modalBtn getdiscountBtn" id="getdiscount" data-toggle="modal" data-target="#model">{$lang_menu['選擇優惠，前往購買']}</a> -->
                             {/neq}
                         </form>
@@ -768,13 +767,18 @@ $(function() {
                 Order_Data = JSON.stringify(Order_Data);
                 location.href = "{:url('Cart/selectPlace')}?Order_Data="+Order_Data; //跳至綠界畫面選擇門市
             }else{
-                $('#block').show();
-                setTimeout(()=>{
-                    cartform.submit();
+                if(!$('#discount').val()){
+                    getOrder($discountData);
+                    return;
+                }else{
+                    $('#block').show();
                     setTimeout(()=>{
-                        $('#block').show();
-                    }, 300);
-                }, 1000);
+                        cartform.submit();
+                        setTimeout(()=>{
+                            $('#block').show();
+                        }, 300);
+                    }, 1000);
+                }
             }
         }
     }

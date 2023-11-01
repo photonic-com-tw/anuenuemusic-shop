@@ -740,7 +740,12 @@ class Cart extends PublicController {
                 $this->error(LANG_MENU['發生錯誤，請再試一次']);
             }
             $discountData = explode("_", $OrderData['discount']);
-            $discountData[1] = $discountData[0] == 'points' ? $OrderData['point'] : $discountData[1];
+            if(count($discountData)<2){
+                $this->error(LANG_MENU['發生錯誤，請再試一次']);
+            }
+            if($discountData[0] == 'points'){
+                $discountData[1] = $OrderData['point'];
+            }
 
             if ($discountData[0] == 'acts'){ // 活動優惠
                 $discountFinal = [];
