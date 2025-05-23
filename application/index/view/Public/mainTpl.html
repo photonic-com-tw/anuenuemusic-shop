@@ -88,6 +88,7 @@
         <link rel="stylesheet" href="{$MAIN_WEB}/frontEndPackage/css/RWD_eidtor_style.css">
         <link rel="stylesheet" href="{$MAIN_WEB}/frontEndPackage/css/all.css?12">
         <link rel="stylesheet" href="{$MAIN_WEB}/frontEndPackage/css/all_andy.css?1234">
+         <link rel="stylesheet" href="__PUBLIC__/css/nav2025.css">
         <!-- ///////////////////////////////////////////////////////////////////////////// -->
         {block name="css"}{/block}
         {block name="mycode"}{/block}
@@ -128,10 +129,135 @@
     </head>
     <body class="anuenueshop" ng-controller="ContentController as contCtrl">
         <div id="block" class="position-fixed w-100 h-100 bg-dark" style="opacity: 0.8; z-index:9999; display: none;"></div>
-        <div id="phoneMenu" class="page">
+        
+            <!-- 新製作選單 -->
+            <nav class="navbar navbar-expand-xl">
+                <div class="brand-logo web">
+                    <a href="{$MAIN_WEB_LAN}"><img src="/public/static/index/img/logo_aNueNue-White-sm.png" alt="anuenue" /></a>
+                    <a href="{$MAIN_WEB_LAN}/singer.html"><img src="/public/static/index/img/logo_Singer-White.png" alt="singer" /></a>
+                    <a href="{$MAIN_WEB_LAN}/mastermind.html"><img src="/public/static/index/img/logo_Mastermind-White.png" alt="mastermind" /></a>
+                </div>
+                <div class="container-xl main-container">
+                    <h1 class="main-logo">
+                        <a href="{$MAIN_WEB_LAN}" style="background-image: url('/public/static/index/img/logo_aNueNue-Black.png')">anuenue</a>
+                    </h1> 
+                    <div class="logo-dropdown dropdown">
+                        <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                            <div class="img" style="background-image:url('/public/static/index/img/logo_aNueNue-White.png')"></div>
+                        </a>
+                        <div class="dropdown-menu">
+                            <a href="{$MAIN_WEB_LAN}" class="dropdown-item">
+                                <img src="/public/static/index/img/logo_aNueNue-White.png" alt="anuenue" />
+                            </a>
+                            <a href="{$MAIN_WEB_LAN}/singer.html" class="dropdown-item">
+                                <img src="/public/static/index/img/logo_Singer-White.png" alt="singer" />
+                            </a>
+                            <a href="{$MAIN_WEB_LAN}/mastermind.html" class="dropdown-item">
+                                <img src="/public/static/index/img/logo_Mastermind-White.png" alt="mastermind" />
+                            </a>
+                        </div>
+                    </div>
+                    <div class="collapse navbar-collapse" id="navbar-menu">
+                        <div>
+                            <ul class="nav navbar-nav" data-in="fadeInDown" data-out="fadeOutUp">
+                                <li class="nav-item">
+                                    <a href="{$MAIN_WEB_LAN}/ukulele.html">{$lang_menu['烏克麗麗']}</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{$MAIN_WEB_LAN}/guitar.html">{$lang_menu['木吉他']}</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{$MAIN_WEB_LAN}/nylon_guitar.html">{$lang_menu['尼龍吉他']}</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{$MAIN_WEB_LAN}/bass.html">{$lang_menu['貝斯']}</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{$MAIN_WEB_LAN}/accessories.html">{$lang_menu['配件']}</a>
+                                </li>
+                                <li><a href="{$MAIN_WEB_LAN}/musician.html">{$lang_menu['音樂人']}</a></li>
+                                <li><a href="{$MAIN_WEB_LAN}/dealer.html">{$lang_menu['經銷商']}</a></li>
+                                <li><a href="{$MAIN_WEB_LAN}/about.html">{$lang_menu['關於我們']}</a></li>
+                            </ul>
+                            <div>
+                                <div class="brand-logo mobile">
+                                    <a href="{$MAIN_WEB_LAN}"><img src="/public/static/index/img/logo_aNueNue-White-sm.png" alt="anuenue" /></a>
+                                    <a href="{$MAIN_WEB_LAN}/singer.html"><img src="/public/static/index/img/logo_Singer-White.png" alt="singer" /></a>
+                                    <a href="{$MAIN_WEB_LAN}/mastermind.html"><img src="/public/static/index/img/logo_Mastermind-White.png" alt="mastermind" /></a>
+                                </div>
+                                <ul class="lang-menu justify-content-center d-xl-none">
+                                    <li><a class="lang-btn mobile" href="{$MAIN_WEB}/cn">簡</a>
+                                    <li><a class="lang-btn mobile" href="{$MAIN_WEB}">繁</a>
+                                    <li><a class="lang-btn mobile" href="{$MAIN_WEB}/en">EN</a>
+                                    <li><a class="lang-btn mobile" href="{$MAIN_WEB}/jp">JP</a>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>  
+                    <ul class="lang-menu d-none d-xl-flex">
+                        <li><a class="lang-btn web" href="{$MAIN_WEB}/cn">簡</a></li>
+                        <li><a class="lang-btn web" href="{$MAIN_WEB}">繁</a></li>
+                        <li><a class="lang-btn web" href="{$MAIN_WEB}/en">EN</a></li>
+                        <li><a class="lang-btn web" href="{$MAIN_WEB}/jp">JP</a></li>
+                    </ul>
+                    <ul class="menu-icons">
+                        <li class="user-btn dropdown">
+                            <a class="dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
+                                aria-haspopup="true" aria-expanded="false">
+                                <i class="bi bi-person-circle"></i>
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                {if condition="($user.name != '')"}
+                                    <a class="dropdown-item" href="{:url('Member/member')}">{$lang_menu['會員專區']}</a>
+                                {else /}
+                                    <a class="dropdown-item" href="{:url('Login/login')}">{$lang_menu['會員登入']}</a>
+                                    <a class="dropdown-item" href="{:url('Login/signup')}">{$lang_menu['註冊會員']}</a>
+                                {/if}
+
+                                {empty name="$Front_name['註冊商品回函']"}
+                                {if condition="($user.name != '')"}
+                                    <a class="dropdown-item" href="{:url('Member/reg_product_sign')}">{$lang_menu['產品註冊']}</a>
+                                {else /}
+                                    <a class="dropdown-item" href="javascript:alert('{$lang_menu['請先登入會員']}');
+                                                                    location.href='{:url('Login/login')}?jumpUri={:url('Member/reg_product_sign')}'">
+                                        {$lang_menu['產品註冊']}
+                                    </a>
+                                {/if}
+                                {/empty}
+                            </div>
+                            
+                        </li>
+                        <li class="search-btn">
+                            <a href="javascript:void(0);">
+                                <i class="bi bi-search"></i>
+                            </a>
+                        </li>
+                        {if condition="($user.name != '')"}
+                            <li class="shapcar-btn">
+                                <a href="{:url('Cart/add_price')}" class="position-relative">
+                                    <i class="bi bi-cart-check"></i></i><span class="counter prodNum">{$cartCount|default="0"}</span>
+                                </a>
+                            </li>
+                        {else /}
+                            <li class="shapcar-btn" >
+                                <a href="javascript:alert('{$lang_menu['請先登入會員']}');location.href='{:url('Login/login')}?jumpUri={:url('Cart/Cart')}'" class="position-relative">
+                                    <i class="bi bi-cart-check"></i><span class="counter prodNum">{$cartCount|default="0"}</span>
+                                </a>
+                            </li>
+                        {/if}
+                    </ul>
+                    <div class="menu-icon navbar-toggle" data-toggle="collapse" data-target="#navbar-menu">
+                        <input class="menu-icon-checkbox" type="checkbox" />
+                        <div>
+                            <span></span>
+                            <span></span>         
+                        </div>
+                    </div>
+                </div>
+            </nav>
             <!-- anuenuemusic選單 開始 -->
                 <!-- 選單menu -->
-                <nav class="navbar navbar-default navbar-mobile bootsnav">
+                <!-- <nav class="navbar navbar-default navbar-mobile bootsnav">
                     <div class="container w1400">
                         <div class="navbar-header">
                             <div class="logo">
@@ -139,8 +265,6 @@
                                    href="{$MAIN_WEB_LAN}/"></a>
                             </div>
                         </div>
-
-                        <!-- Collect the nav links, forms, and other content for toggling -->
                         <div class="collapse navbar-collapse" id="navbar-menu">
                             <ul class="nav navbar-nav" data-in="slideDown" data-out="slideUp">
                                 <li><a href="{$MAIN_WEB_LAN}/ukulele.html">{$lang_menu['烏克麗麗']}</a></li>
@@ -159,7 +283,6 @@
                                 <a class="lang-btn shop-jp" href="{$MAIN_WEB}/jp">JP</a>
                             </div>
                         </div>
-                        <!-- /.navbar-collapse -->
                         <div class="r-btn-box ">
                             <ul>
                                 <li class="lang-desk">
@@ -175,20 +298,16 @@
                                     </a>
                                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                                         {if condition="($user.name != '')"}
-                                            <!-- 已登入 -->
                                             <a class="dropdown-item" href="{:url('Member/member')}">{$lang_menu['會員專區']}</a>
                                         {else /}
-                                            <!-- 未登入 -->
                                             <a class="dropdown-item" href="{:url('Login/login')}">{$lang_menu['會員登入']}</a>
                                             <a class="dropdown-item" href="{:url('Login/signup')}">{$lang_menu['註冊會員']}</a>
                                         {/if}
 
                                         {empty name="$Front_name['註冊商品回函']"}
                                         {if condition="($user.name != '')"}
-                                            <!-- 已登入 -->
                                             <a class="dropdown-item" href="{:url('Member/reg_product_sign')}">{$lang_menu['產品註冊']}</a>
                                         {else /}
-                                            <!-- 未登入 -->
                                             <a class="dropdown-item" href="javascript:alert('{$lang_menu['請先登入會員']}');
                                                                            location.href='{:url('Login/login')}?jumpUri={:url('Member/reg_product_sign')}'">
                                                 {$lang_menu['產品註冊']}
@@ -201,15 +320,12 @@
                                 <li class="search-btn"><a href="/"><i class="fas fa-search"></i></a></li>
                                 
                                 {if condition="($user.name != '')"}
-                                    <!-- 已登入 -->
                                     <li class="shapcar-btn">
-                                        <!-- <a href="{:url('Cart/cart')}"> -->
                                         <a href="{:url('Cart/add_price')}">
                                             <i class="fas fa-shopping-cart"></i><span class="counter prodNum">{$cartCount|default="0"}</span>
                                         </a>
                                     </li>
                                 {else /}
-                                    <!-- 未登入 -->
                                     <li class="shapcar-btn">
                                         <a href="javascript:alert('{$lang_menu['請先登入會員']}');location.href='{:url('Login/login')}?jumpUri={:url('Cart/Cart')}'">
                                             <i class="fas fa-shopping-cart"></i><span class="counter prodNum">{$cartCount|default="0"}</span>
@@ -229,7 +345,7 @@
                             </div>
                         </div>
                     </div>
-                </nav>
+                </nav> -->
 
                 <!-- 產品搜尋  -->
                 <div id="product_search_menu"></div>
@@ -321,7 +437,7 @@
             {eq name='$index_online.block11' value='1'}
             {/eq}
 
-        </div>
+     
 
         {block name="Modal"}{/block}
 
@@ -604,7 +720,7 @@
         <!-- 載入Bootstrap JS -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"></script>
-        <script src="{$MAIN_WEB}/frontEndPackage/js/all.js"></script>
+        <!-- <script src="{$MAIN_WEB}/frontEndPackage/js/all.js"></script> -->
         <script src="{$MAIN_WEB}/frontEndPackage/js/template.js"></script>
         <script src="{$MAIN_WEB}/frontEndPackage/js/all_andy.js"></script>
 
@@ -613,6 +729,16 @@
             target_lang = target_lang.split('//');
             target_lang = target_lang.length==2 ? target_lang[1] : '';
             if(target_lang){ $('.'+target_lang).addClass('active'); }
+        </script>
+        <script>
+           $(function () {
+                //search
+                $(".search-btn a", this).on("click", function (e) {
+                    e.preventDefault();
+                    $(this).toggleClass('show');
+                    $(".search-box").toggleClass('show');
+                });
+            });
         </script>
     </body>
 </html>

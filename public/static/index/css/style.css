@@ -3541,16 +3541,14 @@ color: #fff;
 span.counter.prodNum {
 position: absolute;
 background: #ff4300;
-display: flex;
-align-items: center;
-justify-content: center;
 font-size: 10px;
 font-weight: normal;
 height: 22px;
 width: 22px;
+text-align: center;
 border-radius: 50%;
-line-height: 19px;
-right: -5px;
+line-height: 22px;
+right: -12px;
 top: -7px;
 color: #fff;
 }
@@ -4602,3 +4600,66 @@ margin-bottom: 0px;
 #phoneMenu nav.panel ul li ul .prevSubPanel:hover{
 color:#676767;
 }
+
+/* 原先放在形象站的搜尋樣式  */
+
+.type-box .type-item {
+  display      : flex;
+  flex-wrap    : wrap;
+  width        : 100%;
+  border-bottom: 1px dashed #b8b8b8;
+  padding      : 0;
+}
+
+.type-box .type-item:last-child {
+  border-bottom: none;
+}
+
+.type-box ul {
+  display      : flex;
+  flex-wrap    : wrap;
+  width        : calc(100% - 8%);
+  margin-bottom: 0;
+}
+
+.type-box ul li {
+  display: inline-block;
+  padding: 0;
+  flex   : 1 0 50%;
+  padding: .5rem 0;
+}
+
+.type-box .title {
+  color  : #afafaf;
+  flex   : 0 0 100%;
+  padding: .5rem 0;
+}
+
+.form-check-input {
+  position    : relative;
+  margin-left : 0;
+  border-width: 2px;
+}
+
+.form-check {
+  padding-left: 0;
+}
+
+@media (min-width: 992px) {
+  .type-box .title {
+    flex: 0 0 7.5%;
+  }
+
+  .type-box ul li {
+    flex: 0 0 13.1%;
+  }
+
+  .type-box {
+    margin-top: 50px;
+  }
+
+  .search-box.show {
+    height: auto;
+  }
+}
+
