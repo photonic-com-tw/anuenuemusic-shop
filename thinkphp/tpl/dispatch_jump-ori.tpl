@@ -121,15 +121,15 @@
                     </p>
                     {/notempty}
                 </div>
-                <p class="detail text_center">{$lang_menu['頁面自動跳轉，等待']}：<b id="wait"><?php echo($wait);?></b> {$lang_menu['秒']}</p>
+                <p class="detail text_center">頁面自動跳轉，等待：<b id="wait"><?php echo($wait);?></b> 秒</p>
                 <p class="jump text_center">
                 
                     <?php switch ($code) {?>
                         <?php case 1:?>
-                        <a id="href" class="btn btn-primary"  href="<?php echo($url);?>">{$lang_menu['直接跳轉']}</a> 
+                        <a id="href" class="btn btn-primary"  href="<?php echo($url);?>">直接跳轉</a> 
                         <?php break;?>
                         <?php case 0:?>
-                        <a id="href" class="btn btn-danger"  href="<?php echo($url);?>">{$lang_menu['直接跳轉']}</a> 
+                        <a id="href" class="btn btn-danger"  href="<?php echo($url);?>">直接跳轉</a> 
                         <?php break;?>
                     <?php } ?>
                     
